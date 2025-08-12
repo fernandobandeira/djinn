@@ -11,7 +11,17 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # Vector Database
-.vector_db/
+.vector_db/venv/
+.vector_db/chroma_db/
+.vector_db/chromadb/
+.vector_db/*.pyc
+.vector_db/__pycache__/
+.vector_db/document_hashes.json
+.vector_db/statistics.json
+# Keep the KB scripts and instructions
+!.vector_db/kb.py
+!.vector_db/KB-INSTRUCTIONS.md
+!.vector_db/requirements.txt
 
 # IDE
 .vscode/
