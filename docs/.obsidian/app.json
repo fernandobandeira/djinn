@@ -1,0 +1,15 @@
+{
+  "legacyEditor": false,
+  "livePreview": true,
+  "defaultViewMode": "preview",
+  "readableLineLength": true,
+  "showFrontmatter": true,
+  "showLineNumber": true,
+  "vimMode": false,
+  "attachmentFolderPath": "./attachments",
+  "alwaysUpdateLinks": true,
+  "newFileLocation": "folder",
+  "newFileFolderPath": "architecture",
+  "useMarkdownLinks": true,
+  "strictLineBreaks": false
+}
