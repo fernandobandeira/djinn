@@ -67,6 +67,12 @@ class KnowledgeBase:
         DocumentType("standard", [".md"], ["docs/architecture/standards"], 
                     collection="architecture", mode=IndexMode.ARCHITECTURE),
         
+        # Zettelkasten knowledge notes
+        DocumentType("zettelkasten", [".md"], 
+                    ["zettelkasten", "zettelkasten/permanent", "zettelkasten/literature", 
+                     "zettelkasten/hubs", "zettelkasten/maps", "zettelkasten/index"],
+                    chunk_size=800, collection="zettelkasten", mode=IndexMode.DOCS),
+        
         # General documentation
         DocumentType("documentation", [".md", ".rst", ".txt"], 
                     ["docs", "README.md", "CLAUDE.md", "*.md"], 
@@ -436,6 +442,7 @@ class KnowledgeBase:
             # Only allow indexing within docs folder or specific safe locations
             safe_paths = [
                 docs_path,
+                (self.project_root / "zettelkasten").resolve(),  # Add zettelkasten folder
                 self.project_root / "CLAUDE.md",
                 self.project_root / "README.md"
             ]
@@ -456,8 +463,8 @@ class KnowledgeBase:
                     continue
             
             if not is_safe:
-                print(f"⚠️  Error: Path '{path}' is outside the docs folder.")
-                print("For safety, indexing is restricted to the /docs directory.")
+                print(f"⚠️  Error: Path '{path}' is outside the allowed folders.")
+                print("For safety, indexing is restricted to /docs and /zettelkasten directories.")
                 print("If you need to index other locations, please update the code.")
                 return 0
         

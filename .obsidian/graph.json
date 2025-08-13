@@ -1,51 +1,22 @@
 {
   "collapse-filter": false,
-  "search": "",
+  "search": "path:zettelkasten  ",
   "showTags": true,
   "showAttachments": false,
   "hideUnresolved": false,
   "showOrphans": true,
   "collapse-color-groups": false,
-  "colorGroups": [
-    {
-      "query": "path:adrs",
-      "color": {
-        "a": 1,
-        "rgb": 4632635
-      }
-    },
-    {
-      "query": "path:patterns",
-      "color": {
-        "a": 1,
-        "rgb": 3506952
-      }
-    },
-    {
-      "query": "path:designs",
-      "color": {
-        "a": 1,
-        "rgb": 11657298
-      }
-    },
-    {
-      "query": "path:templates",
-      "color": {
-        "a": 1,
-        "rgb": 5419488
-      }
-    }
-  ],
+  "colorGroups": [],
   "collapse-display": false,
-  "showArrow": true,
-  "textFadeMultiplier": -0.5,
-  "nodeSizeMultiplier": 1.2,
-  "lineSizeMultiplier": 1.5,
+  "showArrow": false,
+  "textFadeMultiplier": 0,
+  "nodeSizeMultiplier": 1,
+  "lineSizeMultiplier": 1,
   "collapse-forces": false,
-  "centerStrength": 0.5,
+  "centerStrength": 0.518713248970312,
   "repelStrength": 10,
   "linkStrength": 1,
   "linkDistance": 250,
   "scale": 1,
-  "close": true
+  "close": false
 }

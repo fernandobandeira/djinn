@@ -5,7 +5,25 @@ The knowledge base is a unified vector database that intelligently organizes and
 
 ## Collection Categories
 
-### 1. `architecture` Collection
+### 1. `zettelkasten` Collection
+**What's Indexed Here:**
+- Permanent notes (atomic insights) in `/zettelkasten/permanent/`
+- Literature notes (source-based) in `/zettelkasten/literature/`
+- Hub notes (topic centers) in `/zettelkasten/hubs/`
+- Concept maps in `/zettelkasten/maps/`
+- Learning journey documentation
+- Connected knowledge graph
+
+**How to Search:**
+```bash
+# Find learning insights and concepts
+./.vector_db/kb search "recursion analogy" --collection zettelkasten
+./.vector_db/kb search "learning patterns" --collection zettelkasten
+./.vector_db/kb search "concept explanation" --collection zettelkasten
+./.vector_db/kb search "misconception" --collection zettelkasten
+```
+
+### 2. `architecture` Collection
 **What's Indexed Here:**
 - Architecture Decision Records (ADRs) in `/docs/architecture/adrs/`
 - System design documents
@@ -21,7 +39,7 @@ The knowledge base is a unified vector database that intelligently organizes and
 ./.vector_db/kb search "system design" --collection architecture
 ```
 
-### 2. `documentation` Collection
+### 3. `documentation` Collection
 **What's Indexed Here:**
 - Brainstorming session results
 - Market research documents
@@ -40,7 +58,7 @@ The knowledge base is a unified vector database that intelligently organizes and
 ./.vector_db/kb search "user requirements" --collection documentation
 ```
 
-### 3. `code` Collection
+### 4. `code` Collection
 **What's Indexed Here:**
 - Source code with extracted docstrings
 - Function and class definitions
@@ -56,7 +74,7 @@ The knowledge base is a unified vector database that intelligently organizes and
 ./.vector_db/kb search "class UserService" --collection code
 ```
 
-### 4. `api` Collection
+### 5. `api` Collection
 **What's Indexed Here:**
 - API endpoint definitions
 - OpenAPI/Swagger specifications
@@ -72,7 +90,7 @@ The knowledge base is a unified vector database that intelligently organizes and
 ./.vector_db/kb search "GraphQL mutation" --collection api
 ```
 
-### 5. `tests` Collection
+### 6. `tests` Collection
 **What's Indexed Here:**
 - Test files and test cases
 - Test documentation
@@ -85,7 +103,7 @@ The knowledge base is a unified vector database that intelligently organizes and
 ./.vector_db/kb search "integration test" --collection tests
 ```
 
-### 6. `config` Collection
+### 7. `config` Collection
 **What's Indexed Here:**
 - Configuration files
 - Environment settings
@@ -201,6 +219,9 @@ The knowledge base is a unified vector database that intelligently organizes and
 ./.vector_db/kb index
 
 # Index specific paths
+./.vector_db/kb index --path ./zettelkasten/
+./.vector_db/kb index --path ./zettelkasten/permanent/
+./.vector_db/kb index --path ./zettelkasten/hubs/
 ./.vector_db/kb index --path ./docs/architecture/adrs/
 ./.vector_db/kb index --path ./docs/brainstorming/
 ./.vector_db/kb index --path ./docs/analysis/
@@ -211,12 +232,38 @@ The knowledge base is a unified vector database that intelligently organizes and
 
 ### What Gets Auto-Categorized
 The KB automatically categorizes based on:
-- **File location**: `/docs/architecture/` → architecture collection
-- **File name**: `ADR-*.md` → architecture collection
-- **Content type**: Brainstorming results → documentation collection
+- **File location**: 
+  - `/zettelkasten/` → zettelkasten collection
+  - `/docs/architecture/` → architecture collection
+- **File name**: 
+  - `ADR-*.md` → architecture collection
+  - Timestamp format in zettelkasten → zettelkasten collection
+- **Content type**: 
+  - Brainstorming results → documentation collection
+  - Permanent notes → zettelkasten collection
 - **File extension**: `.py`, `.js`, `.ts` → code collection
 
 ## Query Patterns by Role
+
+### Teacher (Tina) Queries
+```bash
+# Find existing learning materials
+./.vector_db/kb search "concept explanation" --collection zettelkasten
+./.vector_db/kb search "learning [topic]" --collection zettelkasten
+./.vector_db/kb search "analogy" --collection zettelkasten
+./.vector_db/kb search "misconception" --collection zettelkasten
+./.vector_db/kb search "feynman explanation" --collection zettelkasten
+```
+
+### Zelda (Zettelkasten) Queries
+```bash
+# Find existing notes and connections
+./.vector_db/kb search "[insight]" --collection zettelkasten
+./.vector_db/kb search "permanent note [topic]" --collection zettelkasten
+./.vector_db/kb search "hub [topic]" --collection zettelkasten
+./.vector_db/kb search "literature note" --collection zettelkasten
+./.vector_db/kb search "concept map" --collection zettelkasten
+```
 
 ### Business Analysis Queries
 ```bash
@@ -258,6 +305,21 @@ The KB automatically categorizes based on:
 2. Review all ADRs before decisions
 3. Search code for current implementation
 4. Check documentation for requirements
+
+### Tina (Teacher) Should:
+1. Search zettelkasten for existing learning materials
+2. Check for concept explanations and analogies
+3. Find previous misconceptions and corrections
+4. Index learning sessions and insights
+5. Trigger Zelda for note capture
+
+### Zelda (Zettelkasten) Should:
+1. Always search zettelkasten before creating notes
+2. Check for duplicate insights
+3. Find related permanent notes
+4. Index all new notes immediately
+5. Update hub notes with connections
+6. Maintain knowledge graph integrity
 
 ### All Agents Should:
 1. Search before creating

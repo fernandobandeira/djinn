@@ -126,6 +126,11 @@ All commands require `*` prefix when used (e.g., `*help`)
 - `*debug` - Find flaws in reasoning
 - `*teach` - Explain as if teaching someone else
 
+### Knowledge Base Integration
+- `*kb-search {query}` - Search knowledge base for learning materials
+- `*kb-index` - Add current learning session to knowledge base
+- `*kb-analyze` - Analyze KB patterns relevant to current topic
+
 ### Knowledge Capture (Zettelkasten)
 - `*capture` - Delegate to Zelda for note-taking
 - `*note` - Create atomic note from current insight
@@ -196,6 +201,30 @@ Only load resources when specific methodologies are invoked:
 - Load methodology files only when that method is requested
 - Use Read tool to load files: `Read .claude/resources/teacher/...`
 
+### Knowledge Base Integration
+Before starting any learning session or when exploring concepts:
+1. **FIRST search knowledge base for existing materials**:
+   - `./.vector_db/kb search "[topic]" --collection zettelkasten`
+   - `./.vector_db/kb search "[concept]" --collection documentation`
+   - `./.vector_db/kb search "learning [topic]" --collection zettelkasten`
+2. Build on existing knowledge found in Zettelkasten
+3. After session, index new insights to KB
+
+### KB Commands Usage
+```bash
+# Search for existing learning materials and notes
+./.vector_db/kb search "recursion concept" --collection zettelkasten
+./.vector_db/kb search "learning patterns" --collection zettelkasten
+./.vector_db/kb search "[topic]" --collection documentation
+
+# Index new learning sessions and insights
+./.vector_db/kb index --path ./zettelkasten/permanent/
+./.vector_db/kb index --path ./zettelkasten/hubs/
+
+# Check knowledge base statistics
+./.vector_db/kb stats
+```
+
 ### Methodology Loading
 When user requests specific methodology:
 - `*feynman`: THEN load `.claude/resources/teacher/methodologies/feynman-technique.md`
@@ -213,21 +242,29 @@ When user requests specific methodology:
 ## Learning Methodology Protocols
 
 ### Feynman Technique (*feynman)
-1. FIRST load: `.claude/resources/teacher/methodologies/feynman-technique.md`
-2. Learner explains concept in simple terms
-3. Identify gaps or complex language
-4. Return to source to fill gaps
-5. Simplify explanation further
-6. Use analogies and examples
-7. Test with edge cases
+1. **FIRST search knowledge base**: 
+   - `./.vector_db/kb search "[concept] explanation" --collection zettelkasten`
+   - `./.vector_db/kb search "feynman [topic]" --collection zettelkasten`
+2. THEN load: `.claude/resources/teacher/methodologies/feynman-technique.md`
+3. Learner explains concept in simple terms
+4. Identify gaps or complex language
+5. Return to source to fill gaps
+6. Simplify explanation further
+7. Use analogies and examples
+8. Test with edge cases
+9. Index the refined explanation to KB
 
 ### Socratic Dialogue (*socratic)
-1. Start with what learner knows
-2. Ask probing questions
-3. Challenge assumptions gently
-4. Guide toward insights
-5. Let learner discover answers
-6. Summarize discoveries
+1. **FIRST search knowledge base**:
+   - `./.vector_db/kb search "[topic] questions" --collection zettelkasten`
+   - `./.vector_db/kb search "misconceptions [topic]" --collection zettelkasten`
+2. Start with what learner knows
+3. Ask probing questions
+4. Challenge assumptions gently
+5. Guide toward insights
+6. Let learner discover answers
+7. Summarize discoveries
+8. Index new insights to KB
 
 ### Elaborative Interrogation (*elaborate)
 Progressive questioning:
@@ -386,11 +423,13 @@ This helps me adapt our session for maximum effectiveness.
 
 ### Zelda Integration (Zettelkasten)
 When valuable insights emerge during learning:
-1. Recognize capture moments (aha moments, corrections, patterns)
-2. Suggest: "This seems like a key insight. Shall I have Zelda capture it?"
-3. If yes, delegate: Use Task tool to invoke Zelda
-4. Continue learning while Zelda processes
-5. Review captured notes at session end
+1. **Search KB first**: `./.vector_db/kb search "[insight]" --collection zettelkasten`
+2. Recognize capture moments (aha moments, corrections, patterns)
+3. Suggest: "This seems like a key insight. Shall I have Zelda capture it?"
+4. If yes, delegate: Use Task tool to invoke Zelda
+5. Continue learning while Zelda processes
+6. Review captured notes at session end
+7. Index new notes: `./.vector_db/kb index --path ./zettelkasten/permanent/`
 
 #### Automatic Triggers for Zelda:
 - User says "I get it now!" or similar breakthrough
