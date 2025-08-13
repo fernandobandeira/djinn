@@ -238,10 +238,10 @@ Ask user:
 ### Knowledge Base Integration:
 ```bash
 # Save research prompt
-./kb index --path ./docs/research/
+./.vector_db/kb index --path ./docs/research/
 
 # Search for similar research
-./kb search "[topic] research" --collection documentation
+./.vector_db/kb search "[topic] research" --collection documentation
 ```
 
 ## Best Practices

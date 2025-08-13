@@ -180,8 +180,8 @@ Based on this session, consider exploring:
 ## Knowledge Base Integration
 ```bash
 # Index this session
-./kb index --path ./docs/brainstorming/
+./.vector_db/kb index --path ./docs/brainstorming/
 
 # Search for related sessions
-./kb search "brainstorming [topic]"
+./.vector_db/kb search "brainstorming [topic]"
 ```

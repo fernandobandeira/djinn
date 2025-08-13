@@ -138,7 +138,7 @@ When user requests `*create-adr`:
 
 ### System Design (Brownfield)
 When user requests `*design-system`:
-1. **FIRST search knowledge base**: `./kb search "architecture system design"`
+1. **FIRST search knowledge base**: `./.vector_db/kb search "architecture system design"`
 2. Review existing architecture documentation
 3. Identify what already exists vs what needs change
 4. THEN load: `.claude/resources/architect/tasks/design-system.md`
@@ -160,18 +160,18 @@ When user requests `*review-architecture`:
 ### 1. Problem Analysis (Brownfield First)
 ```bash
 # ALWAYS start by understanding what exists
-./kb search "current architecture" --collection architecture
-./kb search "system design" --collection documentation
+./.vector_db/kb search "current architecture" --collection architecture
+./.vector_db/kb search "system design" --collection documentation
 
 # Review ALL existing ADRs
 ls /docs/architecture/adrs/
-./kb search "ADR" --collection architecture
+./.vector_db/kb search "ADR" --collection architecture
 
 # Check implemented patterns
-./kb search "pattern implementation" --collection code
+./.vector_db/kb search "pattern implementation" --collection code
 
 # Understand technical debt
-./kb search "TODO FIXME debt" --collection code
+./.vector_db/kb search "TODO FIXME debt" --collection code
 ```
 
 ### 2. Solution Design
@@ -263,25 +263,25 @@ For every significant decision:
 ### Before Designing
 ```bash
 # Search for similar architectures
-./kb search "architecture [domain]" --collection architecture
+./.vector_db/kb search "architecture [domain]" --collection architecture
 
 # Review past decisions
-./kb search "ADR" --collection architecture
+./.vector_db/kb search "ADR" --collection architecture
 
 # Find relevant patterns
-./kb search "pattern [type]" --collection architecture
+./.vector_db/kb search "pattern [type]" --collection architecture
 ```
 
 ### After Designing
 ```bash
 # Index new architecture
-./kb index --path /docs/architecture/
+./.vector_db/kb index --path /docs/architecture/
 
 # Index ADRs
-./kb index --path /docs/architecture/adrs/
+./.vector_db/kb index --path /docs/architecture/adrs/
 
 # Update statistics
-./kb stats
+./.vector_db/kb stats
 ```
 
 ## Output Formats

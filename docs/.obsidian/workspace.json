@@ -1,24 +1,20 @@
 {
   "main": {
-    "id": "86712513476e67b3",
+    "id": "e49128a2a4215f02",
     "type": "split",
     "children": [
       {
-        "id": "6ed11658557fdef1",
+        "id": "fe0a90183d483e28",
         "type": "tabs",
         "children": [
           {
-            "id": "49d970ab87fd1828",
+            "id": "8f27a871e6ff638b",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "KNOWLEDGE_BASE.md",
-                "mode": "preview",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "KNOWLEDGE_BASE"
+              "title": "New tab"
             }
           }
         ]
@@ -27,15 +23,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "60b8ec43556b57c4",
+    "id": "c3a6dd388de274a3",
     "type": "split",
     "children": [
       {
-        "id": "e21614076ff2072e",
+        "id": "e5d3e44a6ad97f67",
         "type": "tabs",
         "children": [
           {
-            "id": "5b125191a5c18d2f",
+            "id": "c2c57177077b534a",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -48,7 +44,7 @@
             }
           },
           {
-            "id": "a43a7166e433ebc3",
+            "id": "bb628b719d7b8f40",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -65,7 +61,7 @@
             }
           },
           {
-            "id": "49aff36b6ef7f150",
+            "id": "67ae88a3ea32a5b6",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -81,20 +77,19 @@
     "width": 300
   },
   "right": {
-    "id": "5d946f3d8e5920c3",
+    "id": "1fe3afaffac15e5a",
     "type": "split",
     "children": [
       {
-        "id": "a4cfceae12c04c34",
+        "id": "a2841373fdf86d4d",
         "type": "tabs",
         "children": [
           {
-            "id": "9f724d8a18203c7c",
+            "id": "4e90a38165828617",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "architecture/system-architecture.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,25 +99,24 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for system-architecture"
+              "title": "Backlinks"
             }
           },
           {
-            "id": "2e7798c227286232",
+            "id": "5615822e8588250e",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "architecture/system-architecture.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from system-architecture"
+              "title": "Outgoing links"
             }
           },
           {
-            "id": "8e66497bda3fe995",
+            "id": "0e729c4e4cf9caa7",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -137,32 +131,17 @@
             }
           },
           {
-            "id": "83c29ceb4e318d51",
-            "type": "leaf",
-            "state": {
-              "type": "all-properties",
-              "state": {
-                "sortOrder": "frequency",
-                "showSearch": false,
-                "searchQuery": ""
-              },
-              "icon": "lucide-archive",
-              "title": "All properties"
-            }
-          },
-          {
-            "id": "299b250513e814ef",
+            "id": "012d7c39224f2e0c",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "architecture/system-architecture.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of system-architecture"
+              "title": "Outline"
             }
           }
         ]
@@ -177,57 +156,11 @@
       "switcher:Open quick switcher": false,
       "graph:Open graph view": false,
       "canvas:Create new canvas": false,
-      "command-palette:Open command palette": false,
-      "obsidian-excalidraw-plugin:New drawing": false
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
     }
   },
-  "active": "49d970ab87fd1828",
-  "lastOpenFiles": [
-    "architecture/README.md",
-    "KNOWLEDGE_BASE.md",
-    "architecture/diagrams/01-system-overview.md",
-    "architecture/diagrams/02-data-flow.md",
-    "architecture/diagrams/03-database-schema.md",
-    "architecture/diagrams/04-temporal-workflow.md",
-    "architecture/diagrams/05-component-interaction.md",
-    "architecture/diagrams/06-deployment.md",
-    "architecture/diagrams/07-security-layers.md",
-    "architecture/diagrams/08-monitoring.md",
-    "architecture/diagrams/README.md",
-    "architecture/diagrams/README.md.tmp.7263.1755020664771",
-    "architecture/diagrams/01-system-overview.md.tmp.7263.1755020636500",
-    "architecture/diagrams/03-database-schema.md.tmp.7263.1755020591056",
-    "architecture/diagrams/02-data-flow.md.tmp.7263.1755020585550",
-    "architecture/diagrams/01-system-overview.svg",
-    "architecture/diagrams/01-system-overview.md.tmp.7263.1755020580360",
-    "architecture/diagrams/03-database-schema.md.tmp.7263.1755020383483",
-    "architecture/diagrams/02-data-flow.md.tmp.7263.1755020371837",
-    "architecture/diagrams/01-system-overview.md.tmp.7263.1755020363003",
-    "architecture/diagrams/01-system-overview.excalidraw.json",
-    "architecture/diagrams/node_modules/puppeteer-core/README.md",
-    "architecture/diagrams/node_modules/chromium-bidi/README.md",
-    "architecture/diagrams/node_modules/puppeteer-core/src/node/util/fs.ts",
-    "architecture/diagrams/node_modules/puppeteer-core/src/bidi/core/README.md",
-    "architecture/diagrams/node_modules/puppeteer-core/src/templates/README.md",
-    "architecture/diagrams/node_modules/puppeteer-core/src/injected/README.md",
-    "architecture/diagrams/node_modules/zod/README.md",
-    "architecture/diagrams/node_modules/@puppeteer/browsers/README.md",
-    "architecture/diagrams/node_modules/puppeteer/README.md",
-    "architecture/diagrams/node_modules/devtools-protocol/README.md",
-    "architecture/diagrams/node_modules/@tootallnate/quickjs-emscripten/README.md",
-    "architecture/diagrams/node_modules/bare-fs/README.md",
-    "architecture/diagrams/node_modules/bare-os/README.md",
-    "architecture/diagrams/node_modules/yargs/README.md",
-    "architecture/diagrams/node_modules/semver/README.md",
-    "architecture/diagrams/node_modules/js-yaml/README.md",
-    "architecture/diagrams/08-monitoring.svg",
-    "architecture/diagrams/07-security-layers.svg",
-    "architecture/diagrams/06-deployment.svg",
-    "architecture/diagrams/05-component-interaction.svg",
-    "architecture/diagrams/04-temporal-workflow.svg",
-    "architecture/diagrams/03-database-schema.svg",
-    "architecture/diagrams/02-data-flow.svg",
-    "architecture/diagrams/node_modules/layout-base/layout-schema.png",
-    "architecture/diagrams/node_modules/non-layered-tidy-tree-layout/screenshots/1.png"
-  ]
+  "active": "8f27a871e6ff638b",
+  "lastOpenFiles": []
 }

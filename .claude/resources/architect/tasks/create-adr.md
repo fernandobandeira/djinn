@@ -167,7 +167,7 @@ Examples:
 
 1. **Update Status**: Start as "Proposed", move to "Accepted" after review
 2. **Communicate**: Share with team via appropriate channels
-3. **Index in KB**: Run `./kb index --path /docs/architecture/adrs/`
+3. **Index in KB**: Run `./.vector_db/kb index --path /docs/architecture/adrs/`
 4. **Link References**: Update related documentation
 5. **Track Implementation**: Create tickets if needed
 
@@ -239,7 +239,7 @@ When replacing an existing ADR:
 ### Before Creating:
 ```bash
 # Search for related decisions
-./kb search "topic" --collection architecture
+./.vector_db/kb search "topic" --collection architecture
 
 # Check existing ADRs
 ls /docs/architecture/adrs/ | grep -i "keyword"
@@ -248,10 +248,10 @@ ls /docs/architecture/adrs/ | grep -i "keyword"
 ### After Creating:
 ```bash
 # Index the new ADR
-./kb index --path /docs/architecture/adrs/ADR-YYYYMMDD-title.md
+./.vector_db/kb index --path /docs/architecture/adrs/ADR-YYYYMMDD-title.md
 
 # Verify indexing
-./kb search "decision topic"
+./.vector_db/kb search "decision topic"
 ```
 
 ## Example ADR Creation Session

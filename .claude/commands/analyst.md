@@ -114,8 +114,8 @@ Only load resources when the specific command is invoked:
 ### Brainstorming Sessions
 When user requests `*brainstorm`:
 1. **FIRST search knowledge base**: 
-   - `./kb search "[topic]" --collection documentation`
-   - `./kb search "brainstorm" --collection documentation`
+   - `./.vector_db/kb search "[topic]" --collection documentation`
+   - `./.vector_db/kb search "brainstorm" --collection documentation`
 2. THEN load: `.claude/resources/analyst/tasks/brainstorm.md`
 3. THEN load: `.claude/resources/analyst/data/brainstorming-techniques.md`
 4. Ask 4 setup questions (topic, constraints, goal, output preference)
@@ -127,8 +127,8 @@ When user requests `*brainstorm`:
 ### Project Documentation
 When user requests `*document-project`:
 1. **FIRST search knowledge base**:
-   - `./kb search "architecture" --collection architecture`
-   - `./kb search "system design" --collection documentation`
+   - `./.vector_db/kb search "architecture" --collection architecture`
+   - `./.vector_db/kb search "system design" --collection documentation`
 2. THEN load: `.claude/resources/analyst/tasks/document-project.md`
 3. Check if requirements/PRD exists
 4. If yes: Focus documentation on relevant areas
@@ -150,8 +150,8 @@ When user requests `*elicit` or after completing sections:
 ### Market Research
 When user requests `*research`:
 1. **FIRST search knowledge base**:
-   - `./kb search "market research" --collection documentation`
-   - `./kb search "[topic]" --collection documentation`
+   - `./.vector_db/kb search "market research" --collection documentation`
+   - `./.vector_db/kb search "[topic]" --collection documentation`
 2. THEN load: `.claude/resources/analyst/templates/market-research.md`
 3. Guide user through research objectives
 4. Develop comprehensive market analysis
@@ -161,8 +161,8 @@ When user requests `*research`:
 ### Competitive Analysis
 When user requests `*analyze-competition`:
 1. **FIRST search knowledge base**:
-   - `./kb search "competitor" --collection documentation`
-   - `./kb search "competitive analysis" --collection documentation`
+   - `./.vector_db/kb search "competitor" --collection documentation`
+   - `./.vector_db/kb search "competitive analysis" --collection documentation`
 2. THEN load: `.claude/resources/analyst/templates/competitive-analysis.md`
 3. Identify competitors to analyze
 4. Gather comparative data
@@ -204,13 +204,13 @@ When creating any document:
 ### KB Commands Usage
 ```bash
 # Search for existing insights
-./kb search "authentication patterns" --collection architecture
+./.vector_db/kb search "authentication patterns" --collection architecture
 
 # Index new findings
-./kb index --path ./docs/analysis
+./.vector_db/kb index --path ./docs/analysis
 
 # Check statistics
-./kb stats
+./.vector_db/kb stats
 ```
 
 ## Working with Files

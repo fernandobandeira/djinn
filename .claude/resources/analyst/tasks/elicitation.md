@@ -316,19 +316,19 @@ After each elicitation:
 ### Before Elicitation:
 ```bash
 # Check for similar refinements
-./kb search "elicitation [topic]" --collection documentation
+./.vector_db/kb search "elicitation [topic]" --collection documentation
 
 # Find relevant patterns
-./kb search "[content type]" --collection architecture
+./.vector_db/kb search "[content type]" --collection architecture
 ```
 
 ### After Elicitation:
 ```bash
 # Save refined version
-./kb index --path ./docs/refined/[filename]
+./.vector_db/kb index --path ./docs/refined/[filename]
 
 # Document elicitation patterns
-./kb index --mode docs
+./.vector_db/kb index --mode docs
 ```
 
 ## Quality Principles

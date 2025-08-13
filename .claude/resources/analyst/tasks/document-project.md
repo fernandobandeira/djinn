@@ -16,8 +16,8 @@ Generate comprehensive documentation for existing projects, optimized for AI age
 2. **Check Knowledge Base**
    ```bash
    # Search for existing documentation
-   ./kb search "architecture" --collection documentation
-   ./kb search "system design" --collection architecture
+   ./.vector_db/kb search "architecture" --collection documentation
+   ./.vector_db/kb search "system design" --collection architecture
    ```
 
 3. **Determine Documentation Type**
@@ -375,13 +375,13 @@ After documentation generation:
 
 ```bash
 # Index the documentation
-./kb index --path ./docs/architecture.md
+./.vector_db/kb index --path ./docs/architecture.md
 
 # Tag for easy retrieval
-./kb index --path ./docs --mode docs
+./.vector_db/kb index --path ./docs --mode docs
 
 # Update statistics
-./kb stats
+./.vector_db/kb stats
 ```
 
 ### Step 8: Refinement Options

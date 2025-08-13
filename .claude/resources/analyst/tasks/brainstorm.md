@@ -279,19 +279,19 @@ Process each hat sequentially:
 ### During Session:
 ```bash
 # Search for similar brainstorming sessions
-./kb search "brainstorming [topic]" --collection documentation
+./.vector_db/kb search "brainstorming [topic]" --collection documentation
 
 # Check for existing patterns
-./kb search "[relevant concept]" --collection architecture
+./.vector_db/kb search "[relevant concept]" --collection architecture
 ```
 
 ### After Session:
 ```bash
 # Index the session results
-./kb index --path ./docs/brainstorming/session-[date].md
+./.vector_db/kb index --path ./docs/brainstorming/session-[date].md
 
 # Update knowledge base
-./kb index --force
+./.vector_db/kb index --force
 ```
 
 ## Facilitation Best Practices

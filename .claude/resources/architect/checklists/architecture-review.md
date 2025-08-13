@@ -289,19 +289,19 @@ Overall Health: [Excellent | Good | Fair | Poor]
 ### Before Review:
 ```bash
 # Search for similar systems
-./kb search "architecture review" --collection architecture
+./.vector_db/kb search "architecture review" --collection architecture
 
 # Find relevant patterns
-./kb search "bottleneck" --collection architecture
+./.vector_db/kb search "bottleneck" --collection architecture
 ```
 
 ### After Review:
 ```bash
 # Index review findings
-./kb index --path /docs/architecture/reviews/
+./.vector_db/kb index --path /docs/architecture/reviews/
 
 # Create ADRs for decisions
-./kb index --path /docs/architecture/adrs/
+./.vector_db/kb index --path /docs/architecture/adrs/
 ```
 
 ## Remember

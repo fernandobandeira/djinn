@@ -10,14 +10,14 @@ Guide the evolution of existing system architectures, understanding current stat
 #### Search Knowledge Base First:
 ```bash
 # Understand what exists
-./kb search "architecture" --collection architecture
-./kb search "system design" --collection documentation
-./kb search "database schema" --collection code
-./kb search "API endpoints" --collection api
+./.vector_db/kb search "architecture" --collection architecture
+./.vector_db/kb search "system design" --collection documentation
+./.vector_db/kb search "database schema" --collection code
+./.vector_db/kb search "API endpoints" --collection api
 
 # Review existing decisions
 ls /docs/architecture/adrs/
-./kb search "ADR" --collection architecture
+./.vector_db/kb search "ADR" --collection architecture
 ```
 
 #### Document Current State:

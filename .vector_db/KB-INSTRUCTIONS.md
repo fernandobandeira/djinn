@@ -16,9 +16,9 @@ The knowledge base is a unified vector database that intelligently organizes and
 **How to Search:**
 ```bash
 # Find architectural decisions
-./kb search "database selection" --collection architecture
-./kb search "ADR microservices" --collection architecture
-./kb search "system design" --collection architecture
+./.vector_db/kb search "database selection" --collection architecture
+./.vector_db/kb search "ADR microservices" --collection architecture
+./.vector_db/kb search "system design" --collection architecture
 ```
 
 ### 2. `documentation` Collection
@@ -34,10 +34,10 @@ The knowledge base is a unified vector database that intelligently organizes and
 **How to Search:**
 ```bash
 # Find business decisions and research
-./kb search "brainstorm features" --collection documentation
-./kb search "market analysis" --collection documentation
-./kb search "competitor pricing" --collection documentation
-./kb search "user requirements" --collection documentation
+./.vector_db/kb search "brainstorm features" --collection documentation
+./.vector_db/kb search "market analysis" --collection documentation
+./.vector_db/kb search "competitor pricing" --collection documentation
+./.vector_db/kb search "user requirements" --collection documentation
 ```
 
 ### 3. `code` Collection
@@ -51,9 +51,9 @@ The knowledge base is a unified vector database that intelligently organizes and
 **How to Search:**
 ```bash
 # Find code implementations
-./kb search "authentication implementation" --collection code
-./kb search "TODO" --collection code
-./kb search "class UserService" --collection code
+./.vector_db/kb search "authentication implementation" --collection code
+./.vector_db/kb search "TODO" --collection code
+./.vector_db/kb search "class UserService" --collection code
 ```
 
 ### 4. `api` Collection
@@ -67,9 +67,9 @@ The knowledge base is a unified vector database that intelligently organizes and
 **How to Search:**
 ```bash
 # Find API information
-./kb search "POST /users" --collection api
-./kb search "authentication endpoint" --collection api
-./kb search "GraphQL mutation" --collection api
+./.vector_db/kb search "POST /users" --collection api
+./.vector_db/kb search "authentication endpoint" --collection api
+./.vector_db/kb search "GraphQL mutation" --collection api
 ```
 
 ### 5. `tests` Collection
@@ -81,8 +81,8 @@ The knowledge base is a unified vector database that intelligently organizes and
 **How to Search:**
 ```bash
 # Find test information
-./kb search "unit test user" --collection tests
-./kb search "integration test" --collection tests
+./.vector_db/kb search "unit test user" --collection tests
+./.vector_db/kb search "integration test" --collection tests
 ```
 
 ### 6. `config` Collection
@@ -95,8 +95,8 @@ The knowledge base is a unified vector database that intelligently organizes and
 **How to Search:**
 ```bash
 # Find configuration
-./kb search "database config" --collection config
-./kb search "environment variables" --collection config
+./.vector_db/kb search "database config" --collection config
+./.vector_db/kb search "environment variables" --collection config
 ```
 
 ## Cross-Domain Search Patterns
@@ -104,41 +104,41 @@ The knowledge base is a unified vector database that intelligently organizes and
 ### For Architects (Archie)
 ```bash
 # Before designing anything, understand what exists
-./kb search "current architecture"  # Search all collections
-./kb search "technical debt" --collection code
-./kb search "ADR" --collection architecture
-./kb search "system constraints" --collection documentation
+./.vector_db/kb search "current architecture"  # Search all collections
+./.vector_db/kb search "technical debt" --collection code
+./.vector_db/kb search "ADR" --collection architecture
+./.vector_db/kb search "system constraints" --collection documentation
 
 # Find related business context
-./kb search "requirements" --collection documentation
-./kb search "user stories" --collection documentation
+./.vector_db/kb search "requirements" --collection documentation
+./.vector_db/kb search "user stories" --collection documentation
 ```
 
 ### For Analysts (Ana)
 ```bash
 # Before brainstorming, check existing ideas
-./kb search "brainstorm" --collection documentation
-./kb search "feature ideas" --collection documentation
+./.vector_db/kb search "brainstorm" --collection documentation
+./.vector_db/kb search "feature ideas" --collection documentation
 
 # Before market research, check existing analysis
-./kb search "market" --collection documentation
-./kb search "competitor" --collection documentation
+./.vector_db/kb search "market" --collection documentation
+./.vector_db/kb search "competitor" --collection documentation
 
 # Find technical constraints for analysis
-./kb search "limitations" --collection architecture
-./kb search "technology stack" --collection architecture
+./.vector_db/kb search "limitations" --collection architecture
+./.vector_db/kb search "technology stack" --collection architecture
 ```
 
 ### For Product Managers
 ```bash
 # Find all product decisions
-./kb search "PRD" --collection documentation
-./kb search "user story" --collection documentation
-./kb search "requirements" --collection documentation
+./.vector_db/kb search "PRD" --collection documentation
+./.vector_db/kb search "user story" --collection documentation
+./.vector_db/kb search "requirements" --collection documentation
 
 # Check technical feasibility
-./kb search "feasibility" --collection architecture
-./kb search "constraints" --collection architecture
+./.vector_db/kb search "feasibility" --collection architecture
+./.vector_db/kb search "constraints" --collection architecture
 ```
 
 ## Search Best Practices
@@ -146,45 +146,45 @@ The knowledge base is a unified vector database that intelligently organizes and
 ### 1. Start Broad, Then Narrow
 ```bash
 # First: broad search across all collections
-./kb search "authentication"
+./.vector_db/kb search "authentication"
 
 # Then: narrow to specific collection
-./kb search "authentication" --collection architecture
-./kb search "authentication" --collection code
+./.vector_db/kb search "authentication" --collection architecture
+./.vector_db/kb search "authentication" --collection code
 ```
 
 ### 2. Use Multiple Search Terms
 ```bash
 # Try different variations
-./kb search "auth"
-./kb search "authentication"
-./kb search "login"
-./kb search "OAuth"
+./.vector_db/kb search "auth"
+./.vector_db/kb search "authentication"
+./.vector_db/kb search "login"
+./.vector_db/kb search "OAuth"
 ```
 
 ### 3. Search Before Creating
 **ALWAYS search before creating new documents:**
 ```bash
 # Before creating an ADR
-./kb search "[decision topic]" --collection architecture
+./.vector_db/kb search "[decision topic]" --collection architecture
 
 # Before brainstorming
-./kb search "[feature area]" --collection documentation
+./.vector_db/kb search "[feature area]" --collection documentation
 
 # Before writing code
-./kb search "[functionality]" --collection code
+./.vector_db/kb search "[functionality]" --collection code
 ```
 
 ### 4. Cross-Reference Collections
 ```bash
 # Find business context for technical decisions
-./kb search "payment" --collection documentation  # Business requirements
-./kb search "payment" --collection architecture   # Technical design
-./kb search "payment" --collection code          # Implementation
+./.vector_db/kb search "payment" --collection documentation  # Business requirements
+./.vector_db/kb search "payment" --collection architecture   # Technical design
+./.vector_db/kb search "payment" --collection code          # Implementation
 
 # Find technical context for business decisions
-./kb search "scalability" --collection documentation  # Business needs
-./kb search "scalability" --collection architecture   # How we scale
+./.vector_db/kb search "scalability" --collection documentation  # Business needs
+./.vector_db/kb search "scalability" --collection architecture   # How we scale
 ```
 
 ## Indexing Guidelines
@@ -198,15 +198,15 @@ The knowledge base is a unified vector database that intelligently organizes and
 ### How to Index
 ```bash
 # Index everything (smart - only changed files)
-./kb index
+./.vector_db/kb index
 
 # Index specific paths
-./kb index --path ./docs/architecture/adrs/
-./kb index --path ./docs/brainstorming/
-./kb index --path ./docs/analysis/
+./.vector_db/kb index --path ./docs/architecture/adrs/
+./.vector_db/kb index --path ./docs/brainstorming/
+./.vector_db/kb index --path ./docs/analysis/
 
 # Force re-index (when needed)
-./kb index --force
+./.vector_db/kb index --force
 ```
 
 ### What Gets Auto-Categorized
@@ -221,28 +221,28 @@ The KB automatically categorizes based on:
 ### Business Analysis Queries
 ```bash
 # Find all business context
-./kb search "business" --collection documentation
-./kb search "market" --collection documentation
-./kb search "user needs" --collection documentation
-./kb search "competitor" --collection documentation
+./.vector_db/kb search "business" --collection documentation
+./.vector_db/kb search "market" --collection documentation
+./.vector_db/kb search "user needs" --collection documentation
+./.vector_db/kb search "competitor" --collection documentation
 ```
 
 ### Technical Architecture Queries
 ```bash
 # Find all technical decisions
-./kb search "architecture" --collection architecture
-./kb search "design pattern" --collection architecture
-./kb search "technology choice" --collection architecture
-./kb search "infrastructure" --collection architecture
+./.vector_db/kb search "architecture" --collection architecture
+./.vector_db/kb search "design pattern" --collection architecture
+./.vector_db/kb search "technology choice" --collection architecture
+./.vector_db/kb search "infrastructure" --collection architecture
 ```
 
 ### Implementation Queries
 ```bash
 # Find code patterns
-./kb search "pattern" --collection code
-./kb search "implementation" --collection code
-./kb search "TODO" --collection code
-./kb search "FIXME" --collection code
+./.vector_db/kb search "pattern" --collection code
+./.vector_db/kb search "implementation" --collection code
+./.vector_db/kb search "TODO" --collection code
+./.vector_db/kb search "FIXME" --collection code
 ```
 
 ## Integration with Agents
