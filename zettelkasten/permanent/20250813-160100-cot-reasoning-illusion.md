@@ -17,7 +17,7 @@ Chain-of-Thought (CoT) prompting may not represent genuine reasoning but rather 
 - Next-token prediction mechanics
 
 ### Related To
-- [[20250813-160200-next-token-prediction-mechanics]]: The underlying mechanism behind apparent reasoning
+- [[20250813-160300-next-token-prediction-mechanics]]: The underlying mechanism behind apparent reasoning
 - Philosophical questions about consciousness and thought
 - The "Chinese Room" argument in AI philosophy
 

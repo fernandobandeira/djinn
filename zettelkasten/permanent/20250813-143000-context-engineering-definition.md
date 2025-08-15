@@ -13,17 +13,17 @@ Context engineering is the deliberate manipulation of available context to fit w
 
 ## Connections
 ### Builds On
-- [To be linked]: Basic understanding of AI token limitations
-- [To be linked]: Prompt engineering concepts
+- [[20250815-163000-LIT-atoms-prompting-foundations]]: Basic prompt engineering concepts
+- [[20250813-145000-innate-context-ambiguity]]: Understanding of token limitations through ambiguity
 
 ### Related To
 - [[20250813-143100-atomic-design-metaphor]]: Component-based thinking applied to context
 - [[20250813-143200-on-demand-loading]]: Dynamic context loading strategies
 
 ### Leads To
-- [To be linked]: Specific context engineering techniques
-- [To be linked]: Context optimization patterns
-- [To be linked]: Advanced prompt architecture
+- [[20250813-145300-context-as-constraint]]: Specific context engineering techniques
+- [[20250815-160100-multi-agent-constraint-orchestration]]: Context optimization patterns
+- [[20250815-163300-LIT-organs-applications-constraint-orchestration]]: Advanced prompt architecture
 
 ## Evidence & Examples
 ### Concrete Example

@@ -148,6 +148,18 @@ graph TD
 
 ---
 
+## Connections
+
+### Related Permanent Notes
+- [[20250813-160100-cot-reasoning-illusion]]: Chain-of-thought as reasoning illusion insight
+- [[20250813-160300-next-token-prediction-mechanics]]: Technical foundation of pattern matching
+- [[20250813-160000-overfitting-constraint-paradox]]: Constraint optimization principles
+- [[20250813-160200-context-design-implications]]: How this changes context design
+- [[20250813-160400-llm-reasoning-paradigm-synthesis]]: Synthesized understanding
+
+### Hub Connections
+- [[context-engineering-foundations]]: Main knowledge hub
+
 **Last Updated**: 2025-08-13 16:06  
 **Review Schedule**: Daily for one week, then weekly  
 **Next Actions**: Begin pattern-based prompt experiments

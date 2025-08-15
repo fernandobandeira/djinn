@@ -13,17 +13,17 @@ Rather than front-loading all potentially relevant context, effective context en
 
 ## Connections
 ### Builds On
-- [To be linked]: Lazy loading patterns from software engineering
-- [To be linked]: Just-in-time compilation concepts
+- [[20250815-163200-LIT-cells-memory-constraint-architecture]]: Lazy loading as selective constraint application
+- [[20250815-163100-LIT-molecules-context-breakthrough]]: Just-in-time pattern activation
 
 ### Related To
 - [[20250813-143000-context-engineering-definition]]: Core optimization strategy
 - [[20250813-143100-atomic-design-metaphor]]: How components enable selective loading
 
 ### Leads To
-- [To be linked]: Context caching strategies
-- [To be linked]: Dynamic prompt architecture
-- [To be linked]: Context dependency mapping
+- [[20250815-160500-shared-constraint-space-architecture]]: Context caching as shared constraint validation
+- [[20250815-160100-multi-agent-constraint-orchestration]]: Dynamic prompt architecture through orchestrated constraint application
+- [[20250815-160200-memory-types-constraint-patterns]]: Context dependency mapping through constraint pattern relationships
 
 ## Evidence & Examples
 ### Concrete Example

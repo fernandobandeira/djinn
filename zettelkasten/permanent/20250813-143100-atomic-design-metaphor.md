@@ -13,17 +13,17 @@ Context engineering follows atomic design principles from design systems: buildi
 
 ## Connections
 ### Builds On
-- [To be linked]: Atomic design methodology from design systems
-- [To be linked]: Component-based architecture principles
+- [[20250815-163000-LIT-atoms-prompting-foundations]]: Atomic units as baseline patterns
+- [[20250815-163300-LIT-organs-applications-constraint-orchestration]]: Component composition in multi-agent systems
 
 ### Related To
 - [[20250813-143000-context-engineering-definition]]: Core context engineering concept
 - [[20250813-143200-on-demand-loading]]: How components get loaded dynamically
 
 ### Leads To
-- [To be linked]: Context component libraries
-- [To be linked]: Prompt template systems
-- [To be linked]: Reusable context patterns
+- [[20250815-163100-LIT-molecules-context-breakthrough]]: Context component libraries through molecular constraint patterns
+- [[20250815-163200-LIT-cells-memory-constraint-architecture]]: Prompt template systems through memory constraint architectures
+- [[20250815-163300-LIT-organs-applications-constraint-orchestration]]: Reusable context patterns through organ specialization
 
 ## Evidence & Examples
 ### Concrete Example

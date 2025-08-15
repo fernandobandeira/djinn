@@ -13,17 +13,17 @@ Having limited experience with traditional prompting approaches can be an advant
 
 ## Connections
 ### Builds On
-- [To be linked]: Beginner's mind concept from learning theory
-- [To be linked]: Path dependency in skill development
+- [[20250813-143000-context-engineering-definition]]: Foundation for advanced understanding
+- [[20250815-163400-complete-constraint-architecture-framework]]: Path from simple to sophisticated
 
 ### Related To
 - [[20250813-143000-context-engineering-definition]]: Advanced approach to prompting
-- [To be linked]: Learning progression from simple to sophisticated
+- [[20250815-163400-complete-constraint-architecture-framework]]: Complete learning progression achieved
 
 ### Leads To
-- [To be linked]: Context engineering best practices
-- [To be linked]: Advanced prompt architecture patterns
-- [To be linked]: Systematic approach to prompt development
+- [[20250815-163300-LIT-organs-applications-constraint-orchestration]]: Context engineering best practices through organ patterns
+- [[20250815-160100-multi-agent-constraint-orchestration]]: Advanced prompt architecture through constraint orchestration
+- [[20250813-184000-molecular-context-constraint-framework]]: Systematic approach through constraint-based design
 
 ## Evidence & Examples
 ### Concrete Example

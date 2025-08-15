@@ -1,13 +1,42 @@
 {
   "collapse-filter": false,
   "search": "path:zettelkasten  ",
-  "showTags": true,
+  "showTags": false,
   "showAttachments": false,
   "hideUnresolved": false,
   "showOrphans": true,
   "collapse-color-groups": false,
-  "colorGroups": [],
-  "collapse-display": false,
+  "colorGroups": [
+    {
+      "query": "path:zettelkasten/maps  ",
+      "color": {
+        "a": 1,
+        "rgb": 14701138
+      }
+    },
+    {
+      "query": "path:zettelkasten/literature  ",
+      "color": {
+        "a": 1,
+        "rgb": 14725458
+      }
+    },
+    {
+      "query": "path:zettelkasten/permanent  ",
+      "color": {
+        "a": 1,
+        "rgb": 11657298
+      }
+    },
+    {
+      "query": "path:zettelkasten/hubs  ",
+      "color": {
+        "a": 1,
+        "rgb": 5397472
+      }
+    }
+  ],
+  "collapse-display": true,
   "showArrow": false,
   "textFadeMultiplier": 0,
   "nodeSizeMultiplier": 1,
@@ -17,6 +46,6 @@
   "repelStrength": 10,
   "linkStrength": 1,
   "linkDistance": 250,
-  "scale": 1,
+  "scale": 1.8371173070873836,
   "close": false
 }
