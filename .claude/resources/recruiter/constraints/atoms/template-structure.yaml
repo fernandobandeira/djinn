@@ -1,0 +1,61 @@
+# Atomic Constraint: Template Structure
+# Defines structural constraints for agent output templates
+
+constraint:
+  name: template-structure
+  type: output-format
+  severity: important
+
+sub_agent_template:
+  structure:
+    - frontmatter_block
+    - system_prompt
+    - core_purpose
+    - constraints_section
+    - output_specification
+    
+  frontmatter_constraints:
+    - Must have name field
+    - Must have description with triggers
+    - Tools comma-separated
+    - Model optional (defaults to sonnet)
+    
+  system_prompt_constraints:
+    - Clear role definition
+    - Specific expertise area
+    - Bounded scope
+    - No interactive elements
+
+command_template:
+  structure:
+    - header_with_nickname
+    - activation_section
+    - core_configuration_yaml
+    - commands_list
+    - interaction_protocol
+    - task_execution
+    
+  configuration_constraints:
+    - Agent metadata (name, role, icon, style)
+    - Persona definition
+    - Core principles list
+    - Resource file mappings
+    
+  interaction_constraints:
+    - Commands use * prefix
+    - Numbered options for choices
+    - Clear dialogue patterns
+    - State management approach
+
+shared_constraints:
+  - Clear section headers
+  - Consistent formatting
+  - Lazy loading references
+  - Knowledge base integration
+  - Constraint documentation
+
+validation:
+  - Check all required sections present
+  - Verify constraint documentation
+  - Ensure proper structure hierarchy
+  - Validate resource references

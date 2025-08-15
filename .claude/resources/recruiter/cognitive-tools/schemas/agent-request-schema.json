@@ -1,0 +1,154 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Agent Creation Request Schema",
+  "description": "Standardized format for agent creation requests in Rita",
+  "type": "object",
+  "required": ["name", "type", "purpose"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Agent identifier (lowercase, alphanumeric with hyphens)"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["sub-agent", "command"],
+      "description": "Agent type classification"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Clear description of what the agent does"
+    },
+    "trigger_conditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "When the agent should activate (for sub-agents)"
+    },
+    "interaction_model": {
+      "type": "object",
+      "properties": {
+        "style": {
+          "type": "string",
+          "enum": ["none", "dialogue", "guided", "exploratory"],
+          "description": "How the agent interacts"
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^\\*[a-z][a-z-]*$"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "Available commands (for command agents)"
+        }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "properties": {
+        "required_tools": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["Read", "Write", "Edit", "MultiEdit", "Bash", "Grep", "Glob", "LS", "WebSearch", "WebFetch", "Task"]
+          },
+          "description": "Minimal tool set needed"
+        },
+        "model_preference": {
+          "type": "string",
+          "enum": ["haiku", "sonnet", "opus"],
+          "default": "sonnet",
+          "description": "Preferred model based on complexity"
+        }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "security": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Security constraints to apply"
+        },
+        "scope": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Scope limitations"
+        },
+        "output_format": {
+          "type": "string",
+          "description": "Expected output format"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "created_by": {
+          "type": "string",
+          "default": "Rita"
+        },
+        "creation_date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "name": "code-security-reviewer",
+      "type": "sub-agent",
+      "purpose": "Review code changes for security vulnerabilities",
+      "trigger_conditions": ["PR creation", "security review request"],
+      "capabilities": {
+        "required_tools": ["Read", "Grep", "Glob"],
+        "model_preference": "sonnet"
+      },
+      "constraints": {
+        "scope": ["security analysis only", "no code modification"],
+        "output_format": "structured security report with severity levels"
+      }
+    },
+    {
+      "name": "analyst",
+      "type": "command",
+      "purpose": "Facilitate brainstorming and analysis sessions",
+      "interaction_model": {
+        "style": "dialogue",
+        "commands": [
+          {"name": "*brainstorm", "description": "Start brainstorming session"},
+          {"name": "*analyze", "description": "Analyze requirements"}
+        ]
+      },
+      "capabilities": {
+        "required_tools": ["Read", "Write", "Edit"],
+        "model_preference": "opus"
+      }
+    }
+  ]
+}
