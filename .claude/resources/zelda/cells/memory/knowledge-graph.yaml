@@ -1,0 +1,182 @@
+# Cellular Memory: Knowledge Graph
+# This maintains persistent constraint patterns for knowledge network architecture
+
+memory_type: cellular
+constraint_category: graph_architecture
+persistence: permanent
+
+graph_architecture_patterns:
+  node_constraints:
+    atomic_notes:
+      - Each node represents single, complete concept
+      - Unique temporal identifier for unambiguous reference
+      - Self-contained understanding unit with context
+      - Defined boundaries and scope limitations
+      - Quality-validated content ensuring reliability
+    
+    hub_nodes:
+      - Central organizing concepts connecting multiple notes
+      - High-value connection points for knowledge clusters
+      - Topic overview and navigation functionality
+      - Emergence indicators for knowledge density areas
+      - Entry points for systematic exploration
+
+  edge_constraints:
+    bidirectional_links:
+      - All connections must work in both directions
+      - Semantic relationship explicitly defined
+      - Connection strength appropriately calibrated
+      - Mutual enhancement of connected concepts
+      - Consistency maintained across link traversal
+    
+    relationship_types:
+      builds_on: "Prerequisite and foundation relationships"
+      enables: "Capability and application relationships"
+      contrasts_with: "Difference and boundary relationships"
+      exemplifies: "Abstract to concrete relationships"
+      generalizes: "Specific to general relationships"
+      analogous_to: "Pattern similarity relationships"
+
+graph_evolution_patterns:
+  organic_growth:
+    note_accumulation:
+      - New notes added based on learning progression
+      - Connection density increases with understanding depth
+      - Clusters emerge around knowledge domains
+      - Hub formation follows concept centrality
+    
+    connection_strengthening:
+      - Link quality improves through validation
+      - Connection frequency indicates importance
+      - Cross-references multiply with usage
+      - Network coherence increases over time
+    
+    cluster_formation:
+      - Related concepts naturally group together
+      - Domain boundaries emerge through connection patterns
+      - Knowledge islands merge through bridge concepts
+      - Hierarchical structure develops organically
+
+  adaptive_reorganization:
+    understanding_evolution:
+      - Misconception corrections update connection patterns
+      - Deeper understanding refines relationship precision
+      - Transfer insights create cross-domain bridges
+      - Advanced learning adds complexity layers
+    
+    structural_optimization:
+      - Hub consolidation improves navigation efficiency
+      - Redundant connections pruned for clarity
+      - Missing links identified and established
+      - Path optimization for learning progressions
+
+graph_constraint_validation:
+  coherence_checks:
+    semantic_consistency:
+      - All connections have meaningful relationships
+      - Contradictory links identified and resolved
+      - Concept definitions remain internally consistent
+      - Cross-references support rather than confuse
+    
+    structural_integrity:
+      - No orphaned nodes without meaningful connections
+      - Hub nodes properly connected to relevant concepts
+      - Bidirectional consistency maintained throughout
+      - Hierarchical relationships respect dependencies
+    
+    quality_assurance:
+      - Notes meet atomicity and completeness standards
+      - Connections enhance rather than dilute understanding
+      - Temporal consistency preserved in chronological order
+      - Validation evidence supports all knowledge claims
+
+graph_utilization_patterns:
+  knowledge_discovery:
+    traversal_strategies:
+      - Follow connection chains for concept exploration
+      - Use hub nodes for domain overviews
+      - Cross-domain bridges for transfer insights
+      - Temporal pathways for learning journey review
+    
+    search_optimization:
+      - Semantic search leverages connection semantics
+      - Graph structure guides relevance ranking
+      - Connection types filter relationship focus
+      - Temporal metadata enables chronological search
+    
+    learning_pathway_generation:
+      - Prerequisite chains create learning sequences
+      - Difficulty progression guides skill building
+      - Alternative pathways accommodate learning styles
+      - Convergence points indicate integration opportunities
+
+graph_maintenance_protocols:
+  routine_maintenance:
+    connection_validation:
+      - Regular review of link quality and accuracy
+      - Update connection descriptions for clarity
+      - Strengthen weak connections through elaboration
+      - Remove or modify outdated relationships
+    
+    structure_optimization:
+      - Identify and create missing hub nodes
+      - Consolidate redundant concept representations
+      - Optimize connection density for navigation
+      - Balance depth and breadth for usability
+    
+    quality_improvement:
+      - Enhance note completeness and clarity
+      - Improve connection semantic descriptions
+      - Validate temporal organization accuracy
+      - Update validation evidence and confidence
+
+  adaptive_evolution:
+    understanding_integration:
+      - Incorporate new insights into existing structure
+      - Refine connections based on deeper understanding
+      - Create new relationship types as needed
+      - Evolve organizational patterns naturally
+    
+    learning_optimization:
+      - Track usage patterns for structure improvement
+      - Identify high-value connection opportunities
+      - Optimize pathways for effective learning
+      - Adapt organization to learning preferences
+
+memory_operations:
+  store_graph_state:
+    - Record current graph structure and statistics
+    - Note connection patterns and cluster formations
+    - Track hub node development and effectiveness
+    - Store validation evidence and quality metrics
+    
+  retrieve_graph_context:
+    - Load relevant subgraph for current learning context
+    - Access connection patterns for insight discovery
+    - Review cluster structure for domain understanding
+    - Query temporal organization for progression analysis
+    
+  update_graph_evolution:
+    - Integrate new notes into existing structure
+    - Strengthen connections through usage validation
+    - Evolve organization based on understanding development
+    - Optimize structure for learning effectiveness
+
+constraint_satisfaction_through_architecture:
+  learning_support:
+    - Graph structure facilitates concept discovery
+    - Connection patterns guide learning progression
+    - Hub nodes provide orientation and overview
+    - Temporal organization preserves learning journey
+    
+  knowledge_integrity:
+    - Validation constraints ensure quality maintenance
+    - Connection semantics preserve relationship accuracy
+    - Structural constraints prevent architectural degradation
+    - Evolution patterns maintain coherence over time
+    
+  transfer_enablement:
+    - Cross-domain connections enable knowledge transfer
+    - Analogical patterns support reasoning by similarity
+    - Abstract-concrete relationships facilitate application
+    - Pattern recognition develops through structural exposure

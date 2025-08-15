@@ -1,0 +1,118 @@
+# Atomic Constraint: Capture Triggers
+# This defines the irreducible constraint for identifying knowledge capture moments
+
+constraint:
+  name: capture-triggers
+  type: behavioral
+  severity: high
+  
+rules:
+  - id: constraint-satisfaction-moments
+    description: Capture when learning constraints are newly satisfied
+    triggers:
+      understanding_breakthrough: "I get it now!", "That makes sense!", "Oh!"
+      misconception_correction: "Wait, so it's NOT...", "I was wrong about..."
+      pattern_recognition: "I see the pattern!", "This is like...", "The connection is..."
+      boundary_insight: "This doesn't work when...", "The limitation is..."
+      transfer_recognition: "I could use this for...", "This applies to..."
+    
+  - id: learning_constraint_validation
+    description: Capture when constraint understanding is validated
+    validation_triggers:
+      feynman_success: Clear explanation in own words
+      socratic_breakthrough: Independent discovery through questioning
+      problem_solution: Novel approach or solution discovered
+      analogy_creation: Spontaneous analogy or metaphor generation
+      teaching_moment: Ability to explain to others demonstrated
+    
+  - id: knowledge_constraint_formation
+    description: Capture when new knowledge constraints emerge
+    formation_patterns:
+      mental_model_creation: "The way I think about this is..."
+      strategy_discovery: "My approach is...", "I figured out how to..."
+      principle_articulation: "The key insight is...", "What matters is..."
+      exception_recognition: "Except when...", "But if..."
+      synthesis_achievement: "Putting it together...", "The big picture is..."
+    
+  - id: emotional_learning_indicators
+    description: Capture when emotional indicators signal significant learning
+    emotional_triggers:
+      surprise: "I didn't expect that!", "That's surprising!"
+      relief: "Now I understand why I was confused"
+      excitement: "This is really cool!", "I love how this works!"
+      confidence: "I'm confident about this now"
+      curiosity: "What if...", "I wonder whether..."
+    
+  - id: metacognitive_awareness_signals
+    description: Capture when learner demonstrates learning awareness
+    metacognitive_triggers:
+      process_recognition: "I realize I was approaching this wrong"
+      strategy_awareness: "What helped me was...", "The trick is..."
+      understanding_calibration: "I thought I knew this, but..."
+      learning_reflection: "I learn this best when...", "This reminds me of..."
+      knowledge_organization: "This fits with...", "This changes how I see..."
+
+trigger_priority_levels:
+  critical: 
+    - Major breakthrough with complete understanding shift
+    - Significant misconception correction with new framework
+    - Cross-domain transfer with validated application
+    - Boundary insight preventing dangerous overgeneralization
+    
+  high:
+    - Pattern recognition connecting multiple concepts
+    - Strategy discovery with general applicability
+    - Mental model formation with explanatory power
+    - Teaching moment with confirmed understanding
+    
+  medium:
+    - Incremental understanding improvement
+    - Context-specific application discovery
+    - Analogical connection to familiar concepts
+    - Process awareness and strategy recognition
+    
+  low:
+    - Routine application without new insight
+    - Confirmation of existing understanding
+    - Minor clarification or detail addition
+    - Practice success without strategy development
+
+capture_timing_constraints:
+  immediate_capture:
+    - Learning momentum allows brief pause
+    - Insight is complete and well-formed
+    - Learner recognizes value of discovery
+    - Context is rich and available
+    
+  queued_capture:
+    - Learning flow too intense for interruption
+    - Insight still developing or incomplete
+    - Multiple insights accumulating
+    - Session approaching natural break
+    
+  batch_capture:
+    - Session ending with multiple insights
+    - Comprehensive session review needed
+    - Integration across multiple discoveries
+    - Planning next session building on insights
+
+validation:
+  - Check trigger authenticity (genuine vs. performed)
+  - Verify learning constraint satisfaction
+  - Assess knowledge constraint formation
+  - Validate timing appropriateness
+  - Confirm capture value and completeness
+
+error_messages:
+  false_trigger: "Signal appears performed rather than genuine"
+  premature_capture: "Understanding still developing - wait for completion"
+  missed_opportunity: "Significant learning moment not recognized"
+  poor_timing: "Capture disrupts optimal learning flow"
+  insufficient_context: "Lack context for meaningful capture"
+
+trigger_assessment_framework:
+  authenticity: Is the learning moment genuine?
+  completeness: Is the understanding sufficiently developed?
+  value: Does the insight warrant knowledge capture?
+  timing: Is now optimal for capture process?
+  context: Is sufficient context available for rich capture?

@@ -1,0 +1,228 @@
+# Cellular Memory: Session Continuity
+# This maintains persistent constraint patterns for seamless learning flow
+
+memory_type: cellular
+constraint_category: continuity
+persistence: cross-session
+
+session_state_tracking:
+  current_session:
+    learning_context:
+      - Topic being explored
+      - Learning methodology in use
+      - Current understanding level
+      - Recent breakthroughs or struggles
+      - Active mental models
+    
+    interaction_patterns:
+      - Effective questioning approaches
+      - Successful explanation styles
+      - Learner's current engagement level
+      - Pacing preferences observed
+      - Response patterns noted
+    
+    constraint_satisfaction:
+      - Which constraints are being met
+      - Areas needing reinforcement
+      - Progress toward learning objectives
+      - Emerging knowledge gaps
+      - Transfer opportunities identified
+  
+  cross_session_memory:
+    learning_trajectory:
+      - Previous session endpoints
+      - Cumulative understanding built
+      - Long-term learning patterns
+      - Persistent strengths and challenges
+      - Evolution of understanding
+    
+    relationship_continuity:
+      - Trust and rapport established
+      - Communication preferences
+      - Effective motivational approaches
+      - Individual learning quirks
+      - Collaboration patterns
+
+session_transitions:
+  session_endings:
+    capture_patterns:
+      - Current understanding state
+      - Key insights achieved
+      - Remaining questions
+      - Next logical learning steps
+      - Momentum and energy level
+    
+    constraint_validation:
+      - Learning objectives met
+      - Understanding constraints satisfied
+      - Knowledge gaps identified
+      - Transfer readiness assessed
+      - Confidence levels noted
+    
+    preparation_for_next:
+      - Optimal starting points
+      - Review needs identified
+      - Extension opportunities
+      - Potential difficulties predicted
+      - Motivation maintenance strategies
+  
+  session_beginnings:
+    context_restoration:
+      - Recall previous session outcomes
+      - Restore mental model context
+      - Re-establish learning momentum
+      - Validate retained understanding
+      - Connect to ongoing trajectory
+    
+    continuity_establishment:
+      - Brief progress review
+      - Confidence check
+      - Motivation assessment
+      - Context bridging
+      - Forward momentum building
+
+learning_momentum_preservation:
+  breakthrough_capture:
+    insight_documentation:
+      - Record breakthrough moments
+      - Note effective trigger methods
+      - Capture exact explanations used
+      - Document learner's eureka response
+      - Preserve momentum-building factors
+    
+    momentum_maintenance:
+      - Build on recent successes
+      - Reference previous insights
+      - Connect to growing understanding
+      - Maintain confidence levels
+      - Leverage positive associations
+  
+  struggle_management:
+    difficulty_tracking:
+      - Persistent confusion points
+      - Repeated error patterns
+      - Frustration triggers
+      - Ineffective approaches tried
+      - Support strategies needed
+    
+    resilience_building:
+      - Normalize struggle as learning
+      - Celebrate persistence efforts
+      - Connect to eventual breakthroughs
+      - Maintain growth mindset
+      - Provide appropriate support
+
+knowledge_integration:
+  concept_connection_memory:
+    linkage_patterns:
+      - How concepts connect for this learner
+      - Effective analogy bridges used
+      - Transfer pathways discovered
+      - Cross-domain connections made
+      - Mental model evolution tracked
+    
+    integration_support:
+      - Reinforce successful connections
+      - Build on established linkages
+      - Strengthen weak connections
+      - Identify integration opportunities
+      - Support coherent understanding
+  
+  application_readiness:
+    transfer_preparation:
+      - Contexts where learning applies
+      - Real-world connection points
+      - Practice opportunities identified
+      - Implementation confidence level
+      - Support needed for application
+    
+    capability_building:
+      - Independent problem-solving ability
+      - Teaching others readiness
+      - Creative application potential
+      - Constraint recognition skill
+      - Adaptation capability
+
+constraint_persistence:
+  learning_constraint_memory:
+    effective_patterns:
+      - Constraint patterns that work
+      - Individual constraint preferences
+      - Constraint violation responses
+      - Constraint satisfaction celebrations
+      - Constraint evolution over time
+    
+    adaptation_tracking:
+      - How constraints need adjustment
+      - Individual learning constraint needs
+      - Context-specific constraint variations
+      - Constraint negotiation successes
+      - Emerging constraint patterns
+  
+  validation_continuity:
+    assessment_patterns:
+      - Effective validation methods
+      - Individual assessment preferences
+      - Confidence building approaches
+      - Error correction responses
+      - Progress recognition methods
+    
+    feedback_optimization:
+      - Feedback timing preferences
+      - Feedback style effectiveness
+      - Motivation impact patterns
+      - Correction acceptance methods
+      - Encouragement response patterns
+
+memory_operations:
+  store_continuity:
+    - Capture session state completely
+    - Record transition information
+    - Note momentum factors
+    - Document constraint patterns
+    - Track relationship development
+    
+  retrieve_context:
+    - Restore previous session state
+    - Load effective interaction patterns
+    - Recall constraint preferences
+    - Access relationship context
+    - Review learning trajectory
+    
+  update_continuity:
+    - Refine session transition methods
+    - Improve momentum preservation
+    - Update constraint effectiveness
+    - Enhance relationship patterns
+    - Optimize learning flow
+
+temporal_constraint_patterns:
+  short_term_memory:
+    within_session:
+      - Track conversation flow
+      - Maintain topic coherence
+      - Build understanding progressively
+      - Connect related points
+      - Preserve working context
+    
+    immediate_recall:
+      - Recent examples used
+      - Current understanding level
+      - Active mental models
+      - Ongoing questions
+      - Current engagement state
+  
+  long_term_memory:
+    across_sessions:
+      - Cumulative learning progress
+      - Established relationship patterns
+      - Long-term learning goals
+      - Persistent learning preferences
+      - Evolution of understanding
+    
+    deep_patterns:
+      - Individual learning signature
+      - Effective teaching approaches
+      - Constraint satisfaction methods
+      - Growth trajectory patterns
+      - Relationship characteristics

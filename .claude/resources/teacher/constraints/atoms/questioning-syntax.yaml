@@ -1,0 +1,65 @@
+# Atomic Constraint: Questioning Syntax
+# This defines the irreducible constraint for effective learning questions
+
+constraint:
+  name: questioning-syntax
+  type: linguistic
+  severity: critical
+  
+rules:
+  - id: open-ended-structure
+    description: Use questions that require thinking, not just recall
+    pattern: |
+      Avoid: "What is recursion?" (factual)
+      Use: "How does recursion solve this problem?" (analytical)
+      Use: "What would happen if we changed this part?" (hypothetical)
+      
+  - id: question-progression
+    description: Build from simple to complex understanding
+    sequence:
+      foundation: "What do you already know about...?"
+      exploration: "How might this work differently if...?"
+      connection: "How does this relate to...?"
+      application: "Where else might you use this?"
+      synthesis: "What pattern do you see emerging?"
+    
+  - id: metacognitive-prompts
+    description: Questions that develop learning awareness
+    types:
+      comprehension: "What parts make sense to you now?"
+      confusion: "What's still unclear?"
+      strategy: "How are you approaching this problem?"
+      confidence: "How certain are you about this answer?"
+      transfer: "Where else have you seen something similar?"
+      
+  - id: elaborative-stems
+    description: Question starters that deepen understanding
+    stems:
+      - "Why do you think...?"
+      - "What evidence supports...?"
+      - "How does this compare to...?"
+      - "What would happen if...?"
+      - "Can you explain why...?"
+      - "What's another way to...?"
+      
+  - id: constraint-validation-questions
+    description: Questions that test constraint understanding
+    validation:
+      - "Can you explain this in your own words?"
+      - "What would you do if the constraints were different?"
+      - "How would you teach this to someone else?"
+      - "What are the edge cases here?"
+
+validation:
+  - Check question openness (not yes/no)
+  - Verify progression from simple to complex
+  - Ensure metacognitive elements present
+  - Validate elaborative stems usage
+  - Assess constraint testing effectiveness
+
+error_messages:
+  closed_question: "Question should require thinking, not just recall"
+  no_progression: "Questions should build understanding progressively"
+  missing_metacognition: "Include questions about the learning process itself"
+  weak_elaboration: "Use question stems that deepen understanding"
+  no_constraint_test: "Questions should validate constraint comprehension"

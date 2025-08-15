@@ -1,0 +1,144 @@
+# Cellular Memory: Misconception Patterns
+# This maintains persistent constraint patterns for error correction and prevention
+
+memory_type: cellular
+constraint_category: error_correction
+persistence: domain-based
+
+common_misconceptions:
+  recursion:
+    pattern: "Recursion means calling a function from itself"
+    correct_constraint: "Recursion is a problem-solving pattern where solutions build from smaller versions"
+    correction_strategy:
+      - Show non-function recursion examples (fractals, definitions)
+      - Emphasize problem decomposition aspect
+      - Practice identifying recursive structure in problems
+    prevention:
+      - Start with mathematical/visual recursion
+      - Delay function syntax until pattern is clear
+      - Use "smaller version" language consistently
+      
+  object_oriented:
+    pattern: "Objects are just data containers"
+    correct_constraint: "Objects encapsulate both data and behavior with defined interfaces"
+    correction_strategy:
+      - Demonstrate behavior-driven design
+      - Show data without behavior limitations
+      - Practice method design before attribute design
+    prevention:
+      - Start with behavior, add data
+      - Use action-oriented examples
+      - Emphasize responsibilities over storage
+      
+  algorithms:
+    pattern: "Algorithms are about memorizing steps"
+    correct_constraint: "Algorithms are systematic approaches to problem-solving patterns"
+    correction_strategy:
+      - Focus on problem analysis first
+      - Derive steps from understanding
+      - Practice adapting algorithms to variations
+    prevention:
+      - Start with problem understanding
+      - Derive solutions together
+      - Emphasize adaptability over memorization
+
+misconception_detection:
+  verbal_indicators:
+    confusion_signals:
+      - "I don't understand why..."
+      - "This doesn't make sense because..."
+      - "But I thought..."
+      - "Isn't this the same as..."
+    error_patterns:
+      - Overgeneralization from examples
+      - Conflation of similar concepts
+      - Surface-level analogies
+      - Backwards causation
+      
+  behavioral_indicators:
+    application_errors:
+      - Correct syntax, wrong concept
+      - Mechanical following without understanding
+      - Inappropriate pattern application
+      - Resistance to variations
+    explanation_errors:
+      - Circular reasoning
+      - Missing essential elements
+      - Focus on irrelevant details
+      - Inconsistent explanations
+
+constraint_correction_protocols:
+  immediate_response:
+    - Don't say "no" or "wrong" directly
+    - Ask questions to reveal thinking
+    - Find the grain of truth in misconception
+    - Build correct understanding incrementally
+    
+  diagnosis_questions:
+    - "Walk me through your thinking..."
+    - "What makes you say that?"
+    - "How does this connect to...?"
+    - "What would happen if...?"
+    
+  reconstruction_strategy:
+    - Identify correct partial understanding
+    - Build bridge from known to unknown
+    - Provide counterexample when ready
+    - Reconstruct correct constraint pattern
+    
+  validation_checks:
+    - Test understanding with variations
+    - Ask for explanation in own words
+    - Apply to novel context
+    - Check for persistent confusion
+
+memory_operations:
+  store_misconceptions:
+    - Record specific misconception pattern
+    - Note correction strategy used
+    - Track success of intervention
+    - Document individual learner patterns
+    
+  retrieve_patterns:
+    - Check for known misconception indicators
+    - Load appropriate correction protocols
+    - Review learner's previous error patterns
+    - Prepare prevention strategies
+    
+  update_corrections:
+    - Refine correction approaches based on success
+    - Add new misconception patterns discovered
+    - Update detection indicators
+    - Improve prevention strategies
+
+prevention_constraints:
+  conceptual_introduction:
+    - Present core constraint pattern clearly
+    - Use multiple representations
+    - Address likely confusions proactively
+    - Build strong foundational examples
+    
+  progressive_complexity:
+    - Start with simple, clear cases
+    - Add complexity only after foundation solid
+    - Explicitly contrast with similar concepts
+    - Reinforce correct patterns repeatedly
+    
+  active_monitoring:
+    - Watch for early misconception signs
+    - Test understanding frequently
+    - Address confusion immediately
+    - Strengthen correct constraint patterns
+
+learner_specific_patterns:
+  individual_tendencies:
+    - Track common error types per learner
+    - Note effective correction approaches
+    - Remember persistent misconceptions
+    - Adapt prevention strategies accordingly
+    
+  context_sensitivity:
+    - Misconceptions vary by domain
+    - Error patterns change with fatigue
+    - Some concepts more prone to confusion
+    - Individual learning styles affect errors

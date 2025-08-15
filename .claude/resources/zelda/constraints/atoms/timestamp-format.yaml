@@ -1,0 +1,160 @@
+# Atomic Constraint: Timestamp Format
+# This defines the irreducible constraint for temporal organization and unique identification
+
+constraint:
+  name: timestamp-format
+  type: organizational
+  severity: high
+  
+rules:
+  - id: unique-identifier-format
+    description: Every note must have unique temporal identifier
+    format_pattern: "YYYYMMDD-HHMMSS-concept-title"
+    components:
+      year: "YYYY - Four digit year"
+      month: "MM - Two digit month (01-12)"
+      day: "DD - Two digit day (01-31)"
+      hour: "HH - Two digit hour (00-23)"
+      minute: "MM - Two digit minute (00-59)"
+      second: "SS - Two digit second (00-59)"
+      separator: "- hyphen separator between components"
+      title: "concept-title - descriptive kebab-case title"
+    
+  - id: chronological-ordering
+    description: Timestamps enable natural chronological ordering
+    ordering_benefits:
+      learning_progression: Notes automatically ordered by learning sequence
+      session_reconstruction: Can reconstruct learning session flow
+      temporal_context: Understanding development timeline preserved
+      review_scheduling: Natural progression for spaced repetition
+      knowledge_evolution: Track how understanding changes over time
+    
+  - id: title-convention
+    description: Concept titles follow consistent naming patterns
+    title_requirements:
+      descriptive: Clearly indicates note content
+      specific: Precise enough to distinguish from related concepts
+      concise: Brief enough for easy reference and linking
+      consistent: Follows established naming patterns
+      searchable: Contains key terms for discovery
+    
+    title_patterns:
+      concept_definition: "recursion-base-case-pattern"
+      insight_capture: "debugging-systematic-approach-insight"
+      connection_note: "recursion-fractal-analogy-connection"
+      application_discovery: "recursion-tree-traversal-application"
+      boundary_recognition: "recursion-stack-overflow-limitation"
+    
+  - id: temporal-metadata
+    description: Timestamps preserve learning context and enable temporal analysis
+    metadata_purposes:
+      session_context: When learning occurred relative to other learning
+      retention_tracking: How long knowledge has been retained
+      review_intervals: Optimal spacing for reinforcement
+      learning_velocity: Rate of knowledge acquisition
+      temporal_connections: What was learned before/after
+    
+  - id: uniqueness-guarantee
+    description: Format ensures no duplicate identifiers
+    uniqueness_mechanisms:
+      temporal_precision: Second-level precision prevents collision
+      immediate_capture: Capture at moment of insight prevents duplicates
+      sequential_creation: Notes created in learning sequence
+      validation_check: Verify uniqueness before finalizing
+      collision_resolution: Protocol for handling rare collisions
+
+timestamp_validation:
+  format_checking:
+    - Verify YYYYMMDD-HHMMSS-title pattern
+    - Check component validity (valid dates/times)
+    - Ensure separator consistency
+    - Validate title format compliance
+    
+  uniqueness_verification:
+    - Check against existing note identifiers
+    - Verify no timestamp collisions
+    - Confirm title uniqueness within timeframe
+    - Handle collision resolution if needed
+    
+  temporal_consistency:
+    - Ensure timestamps reflect actual learning sequence
+    - Verify session temporal coherence
+    - Check for reasonable temporal intervals
+    - Validate against session timeline
+
+temporal_organization_benefits:
+  learning_archaeology:
+    - Reconstruct learning journey from timestamps
+    - Identify learning pattern and rhythm
+    - Understand knowledge building sequence
+    - Analyze learning session effectiveness
+    
+  knowledge_evolution:
+    - Track how understanding develops over time
+    - Identify knowledge refinement patterns
+    - Monitor conceptual growth progression
+    - Document insight development process
+    
+  review_optimization:
+    - Schedule reviews based on learning timestamps
+    - Implement spaced repetition algorithms
+    - Optimize retention through temporal patterns
+    - Adapt review frequency to forgetting curves
+    
+  connection_discovery:
+    - Find temporally related concepts
+    - Identify learning session themes
+    - Discover knowledge building patterns
+    - Connect simultaneous insights
+
+validation:
+  - Check timestamp format compliance
+  - Verify temporal uniqueness
+  - Validate title conventions
+  - Ensure chronological consistency
+  - Confirm metadata utility
+
+error_messages:
+  invalid_format: "Timestamp doesn't follow YYYYMMDD-HHMMSS-title pattern"
+  duplicate_identifier: "Timestamp identifier already exists"
+  invalid_datetime: "Date or time components are invalid"
+  poor_title: "Title doesn't follow naming conventions"
+  temporal_inconsistency: "Timestamp doesn't match learning sequence"
+
+special_considerations:
+  session_boundaries:
+    - Notes within session should show temporal progression
+    - Session breaks should be reflected in timestamp gaps
+    - Multi-day learning should span multiple date prefixes
+    - Session themes may cluster temporally
+    
+  cross_timezone_handling:
+    - Use consistent timezone for all timestamps
+    - Document timezone if relevant for collaboration
+    - Handle daylight saving time transitions
+    - Maintain temporal ordering across timezone changes
+    
+  bulk_import_scenarios:
+    - Preserve original learning sequence when possible
+    - Use estimated timestamps for historical notes
+    - Maintain relative temporal ordering
+    - Document uncertainty in timestamp accuracy
+    
+  collaborative_knowledge:
+    - Include creator identification if needed
+    - Handle multiple learners in same timeframe
+    - Distinguish individual vs. collaborative insights
+    - Manage temporal coordination across learners
+
+timestamp_as_constraint_enabler:
+  temporal_constraint_satisfaction:
+    - Knowledge building follows natural learning progression
+    - Review scheduling respects learning timeline
+    - Connection discovery leverages temporal proximity
+    - Understanding evolution tracked through time
+    
+  organizational_constraint_satisfaction:
+    - Unique identification prevents knowledge conflicts
+    - Chronological ordering supports learning flow
+    - Temporal metadata enables optimization
+    - Format consistency supports tool integration

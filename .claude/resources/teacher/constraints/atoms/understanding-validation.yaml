@@ -1,0 +1,62 @@
+# Atomic Constraint: Understanding Validation
+# This defines the irreducible constraint for verifying learning constraint satisfaction
+
+constraint:
+  name: understanding-validation
+  type: assessment
+  severity: critical
+  
+rules:
+  - id: feynman-test
+    description: Learner can explain simply without jargon
+    criteria:
+      - Uses own words, not memorized definitions
+      - Explains to beginner level successfully
+      - Identifies and fills knowledge gaps
+      - Uses analogies and examples spontaneously
+      
+  - id: transfer-validation
+    description: Can apply learning to new contexts
+    tests:
+      - Different problem with same principles
+      - Changed parameters or constraints
+      - Novel scenario requiring adaptation
+      - Cross-domain application
+      
+  - id: pattern-recognition
+    description: Identifies underlying structures and connections
+    indicators:
+      - Connects to previously learned concepts
+      - Recognizes similar patterns in different contexts
+      - Predicts outcomes based on patterns
+      - Generalizes beyond specific examples
+      
+  - id: constraint-boundary-testing
+    description: Understanding of limits and edge cases
+    validation:
+      - "When would this approach fail?"
+      - "What assumptions are we making?"
+      - "What are the boundaries of this concept?"
+      - "How would you modify this for different constraints?"
+      
+  - id: metacognitive-awareness
+    description: Learner aware of their understanding state
+    checks:
+      confidence: "How confident are you in this explanation?"
+      gaps: "What parts are you still unsure about?"
+      strategies: "How did you figure this out?"
+      transfer: "Where else might this apply?"
+
+validation:
+  - Test explanation clarity and accuracy
+  - Verify transfer to new contexts
+  - Check pattern recognition ability
+  - Assess boundary understanding
+  - Validate metacognitive awareness
+
+error_messages:
+  surface_understanding: "Explanation suggests memorization, not comprehension"
+  no_transfer: "Cannot apply learning to new contexts"
+  missing_patterns: "Doesn't recognize underlying structures"
+  unclear_boundaries: "Uncertain about concept limits and edge cases"
+  low_metacognition: "Limited awareness of own understanding state"

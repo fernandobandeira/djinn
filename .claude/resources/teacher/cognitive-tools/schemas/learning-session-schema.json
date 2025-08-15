@@ -1,0 +1,374 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Learning Session Schema",
+  "description": "Schema for Teacher agent learning session data structures",
+  "type": "object",
+  
+  "definitions": {
+    "constraint_state": {
+      "type": "string",
+      "enum": ["well-constrained", "under-constrained", "over-constrained"]
+    },
+    
+    "understanding_level": {
+      "type": "string", 
+      "enum": ["novice", "developing", "proficient", "expert"]
+    },
+    
+    "validation_confidence": {
+      "type": "string",
+      "enum": ["low", "moderate", "high", "very-high"]
+    },
+    
+    "cognitive_load": {
+      "type": "string",
+      "enum": ["underload", "optimal", "overload"]
+    },
+    
+    "engagement_level": {
+      "type": "string",
+      "enum": ["disengaged", "passive", "active", "highly-engaged"]
+    }
+  },
+  
+  "properties": {
+    "session_metadata": {
+      "type": "object",
+      "required": ["session_id", "timestamp", "topic", "duration"],
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "description": "Unique identifier for learning session"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Session start time"
+        },
+        "topic": {
+          "type": "string",
+          "description": "Main subject being learned"
+        },
+        "duration": {
+          "type": "integer",
+          "description": "Session duration in minutes",
+          "minimum": 1
+        },
+        "continuation_of": {
+          "type": "string",
+          "description": "Previous session ID if continuing topic"
+        }
+      }
+    },
+    
+    "learner_state": {
+      "type": "object",
+      "required": ["understanding_level", "constraint_state", "engagement_level"],
+      "properties": {
+        "understanding_level": {
+          "$ref": "#/definitions/understanding_level"
+        },
+        "constraint_state": {
+          "$ref": "#/definitions/constraint_state"
+        },
+        "engagement_level": {
+          "$ref": "#/definitions/engagement_level"
+        },
+        "cognitive_load": {
+          "$ref": "#/definitions/cognitive_load"
+        },
+        "confidence_level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Learner's self-reported confidence (1-10)"
+        },
+        "energy_level": {
+          "type": "string",
+          "enum": ["low", "moderate", "high"],
+          "description": "Learner's energy and focus level"
+        },
+        "prior_knowledge": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Concepts learner already understands"
+        },
+        "misconceptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "concept": {"type": "string"},
+              "misconception": {"type": "string"},
+              "corrected": {"type": "boolean"}
+            }
+          }
+        }
+      }
+    },
+    
+    "methodology_selection": {
+      "type": "object",
+      "required": ["primary_methodology", "selection_rationale"],
+      "properties": {
+        "primary_methodology": {
+          "type": "string",
+          "enum": [
+            "feynman", "socratic", "elaborative", "analogical", 
+            "problem_based", "worked_examples", "retrieval", 
+            "interleaving", "generation", "dual_coding", "case_method"
+          ]
+        },
+        "secondary_methodologies": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "feynman", "socratic", "elaborative", "analogical", 
+              "problem_based", "worked_examples", "retrieval", 
+              "interleaving", "generation", "dual_coding", "case_method"
+            ]
+          }
+        },
+        "selection_rationale": {
+          "type": "string",
+          "description": "Why this methodology was chosen"
+        },
+        "adaptation_triggers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "trigger": {"type": "string"},
+              "adaptation": {"type": "string"},
+              "timestamp": {"type": "string", "format": "time"}
+            }
+          }
+        }
+      }
+    },
+    
+    "constraint_satisfaction": {
+      "type": "object",
+      "properties": {
+        "atomic_constraints": {
+          "type": "object",
+          "properties": {
+            "dialogue_patterns": {
+              "type": "object",
+              "properties": {
+                "satisfied": {"type": "boolean"},
+                "evidence": {"type": "string"},
+                "adjustments_needed": {"type": "array", "items": {"type": "string"}}
+              }
+            },
+            "questioning_syntax": {
+              "type": "object",
+              "properties": {
+                "satisfied": {"type": "boolean"},
+                "evidence": {"type": "string"},
+                "adjustments_needed": {"type": "array", "items": {"type": "string"}}
+              }
+            },
+            "understanding_validation": {
+              "type": "object",
+              "properties": {
+                "satisfied": {"type": "boolean"},
+                "evidence": {"type": "string"},
+                "validation_confidence": {"$ref": "#/definitions/validation_confidence"}
+              }
+            },
+            "pacing_control": {
+              "type": "object",
+              "properties": {
+                "satisfied": {"type": "boolean"},
+                "current_pace": {"type": "string", "enum": ["too-slow", "optimal", "too-fast"]},
+                "adjustments_made": {"type": "array", "items": {"type": "string"}}
+              }
+            },
+            "metacognitive_triggers": {
+              "type": "object",
+              "properties": {
+                "satisfied": {"type": "boolean"},
+                "awareness_level": {"type": "string", "enum": ["low", "developing", "high"]},
+                "trigger_effectiveness": {"type": "array", "items": {"type": "string"}}
+              }
+            }
+          }
+        },
+        
+        "molecular_protocols": {
+          "type": "object",
+          "properties": {
+            "protocol_adherence": {
+              "type": "boolean",
+              "description": "Whether methodology protocol was followed"
+            },
+            "protocol_effectiveness": {
+              "type": "string",
+              "enum": ["ineffective", "partially-effective", "effective", "highly-effective"]
+            },
+            "protocol_adaptations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "original_step": {"type": "string"},
+                  "adaptation": {"type": "string"},
+                  "reason": {"type": "string"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    
+    "learning_outcomes": {
+      "type": "object",
+      "required": ["objectives_met", "understanding_achieved"],
+      "properties": {
+        "objectives_met": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "objective": {"type": "string"},
+              "achievement_level": {"type": "string", "enum": ["not-met", "partially-met", "met", "exceeded"]},
+              "validation_evidence": {"type": "string"}
+            }
+          }
+        },
+        "understanding_achieved": {
+          "type": "object",
+          "properties": {
+            "conceptual": {"$ref": "#/definitions/understanding_level"},
+            "procedural": {"$ref": "#/definitions/understanding_level"},
+            "strategic": {"$ref": "#/definitions/understanding_level"},
+            "transfer": {"$ref": "#/definitions/understanding_level"}
+          }
+        },
+        "breakthrough_moments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "timestamp": {"type": "string", "format": "time"},
+              "insight": {"type": "string"},
+              "trigger": {"type": "string"},
+              "constraint_satisfaction": {"type": "string"}
+            }
+          }
+        },
+        "misconceptions_corrected": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "misconception": {"type": "string"},
+              "correction_method": {"type": "string"},
+              "success_level": {"type": "string", "enum": ["unsuccessful", "partial", "successful", "complete"]}
+            }
+          }
+        }
+      }
+    },
+    
+    "zelda_coordination": {
+      "type": "object",
+      "properties": {
+        "capture_events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "timestamp": {"type": "string", "format": "time"},
+              "trigger_type": {"type": "string", "enum": ["breakthrough", "correction", "connection", "boundary"]},
+              "insight_content": {"type": "string"},
+              "capture_priority": {"type": "string", "enum": ["low", "medium", "high"]},
+              "coordination_method": {"type": "string", "enum": ["immediate", "queued", "batch", "none"]},
+              "success": {"type": "boolean"}
+            }
+          }
+        },
+        "knowledge_integration": {
+          "type": "object",
+          "properties": {
+            "notes_created": {"type": "integer", "minimum": 0},
+            "connections_made": {"type": "integer", "minimum": 0},
+            "review_scheduled": {"type": "boolean"},
+            "knowledge_gaps_identified": {"type": "array", "items": {"type": "string"}}
+          }
+        }
+      }
+    },
+    
+    "session_flow": {
+      "type": "object",
+      "properties": {
+        "phases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "phase_name": {"type": "string"},
+              "start_time": {"type": "string", "format": "time"},
+              "duration": {"type": "integer", "minimum": 1},
+              "methodology": {"type": "string"},
+              "objectives": {"type": "array", "items": {"type": "string"}},
+              "outcomes": {"type": "array", "items": {"type": "string"}},
+              "adaptations": {"type": "array", "items": {"type": "string"}}
+            }
+          }
+        },
+        "transition_points": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "from_phase": {"type": "string"},
+              "to_phase": {"type": "string"},
+              "transition_reason": {"type": "string"},
+              "learner_readiness": {"type": "boolean"}
+            }
+          }
+        }
+      }
+    },
+    
+    "next_session_planning": {
+      "type": "object",
+      "properties": {
+        "continuation_points": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Topics or skills to continue working on"
+        },
+        "prerequisite_review": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Concepts that may need review"
+        },
+        "extension_opportunities": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Areas ready for advancement"
+        },
+        "methodology_recommendations": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Suggested approaches for next session"
+        },
+        "learner_preferences_noted": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Learning preferences observed"
+        }
+      }
+    }
+  },
+  
+  "required": ["session_metadata", "learner_state", "methodology_selection", "learning_outcomes"]
+}

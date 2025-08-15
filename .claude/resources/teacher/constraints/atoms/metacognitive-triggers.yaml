@@ -1,0 +1,75 @@
+# Atomic Constraint: Metacognitive Triggers
+# This defines the irreducible constraint for developing learning awareness
+
+constraint:
+  name: metacognitive-triggers
+  type: cognitive
+  severity: high
+  
+rules:
+  - id: reflection-prompts
+    description: Automatic triggers for self-reflection
+    triggers:
+      after_explanation: "How confident do you feel about that explanation?"
+      after_mistake: "What can we learn from this error?"
+      before_problem: "What strategy will you use to approach this?"
+      after_success: "What made that approach work well?"
+      during_confusion: "What specifically is unclear right now?"
+      
+  - id: strategy-awareness
+    description: Help learner recognize their thinking processes
+    prompts:
+      - "How did you decide to approach it that way?"
+      - "What steps are you following in your mind?"
+      - "Which parts require the most mental effort?"
+      - "What similar problems have you solved before?"
+      - "What would you do differently next time?"
+      
+  - id: knowledge-monitoring
+    description: Build awareness of understanding state
+    checkpoints:
+      comprehension: "What parts make complete sense now?"
+      confusion: "What pieces are still fuzzy?"
+      connections: "How does this fit with what you already know?"
+      gaps: "What do you still need to learn?"
+      confidence: "Rate your confidence: 1-10"
+      
+  - id: learning-transfer-awareness
+    description: Recognize when and how to apply knowledge
+    questions:
+      - "Where else might you use this approach?"
+      - "What other contexts could this apply to?"
+      - "How is this similar to problems you've solved?"
+      - "What makes this different from related concepts?"
+      
+  - id: constraint-recognition
+    description: Awareness of learning constraints and boundaries
+    awareness:
+      - "What assumptions are we making here?"
+      - "When would this approach not work?"
+      - "What are the limits of this concept?"
+      - "How would changing constraints affect the solution?"
+      
+  - id: progress-tracking
+    description: Monitor learning journey and growth
+    tracking:
+      - "How has your understanding evolved?"
+      - "What was hardest to learn initially?"
+      - "What breakthrough moments have you had?"
+      - "How would you rate your progress?"
+
+validation:
+  - Check for regular reflection prompts
+  - Verify strategy awareness development
+  - Monitor knowledge state discussions
+  - Assess transfer awareness building
+  - Validate constraint recognition
+  - Track progress conversations
+
+error_messages:
+  missing_reflection: "Should prompt for self-reflection regularly"
+  no_strategy_awareness: "Learner not aware of thinking processes"
+  poor_monitoring: "Insufficient knowledge state awareness"
+  weak_transfer: "Limited recognition of application contexts"
+  no_constraint_awareness: "Missing understanding of concept boundaries"
+  no_progress_tracking: "Not monitoring learning journey"

@@ -1,0 +1,78 @@
+# Atomic Constraint: Note Atomicity
+# This defines the irreducible constraint for atomic knowledge capture
+
+constraint:
+  name: note-atomicity
+  type: structural
+  severity: critical
+  
+rules:
+  - id: single-concept-focus
+    description: Each note contains exactly one atomic concept or insight
+    pattern: |
+      One idea per note - no compound concepts
+      Self-contained understanding unit
+      Complete thought that stands alone
+      Focused scope with clear boundaries
+    
+  - id: conceptual-completeness
+    description: Note contains everything needed to understand the concept
+    requirements:
+      - Core insight clearly expressed
+      - Context for understanding provided
+      - Examples or applications included
+      - Connections to related concepts noted
+      - Boundaries and limitations identified
+    
+  - id: independence-constraint
+    description: Note makes sense without requiring other notes
+    validation:
+      - Can be understood in isolation
+      - Contains necessary background
+      - Defines key terms used
+      - Stands as complete unit of knowledge
+      
+  - id: conceptual-precision
+    description: Concept boundaries are precisely defined
+    criteria:
+      - Clear scope definition
+      - Edge cases addressed
+      - Limitations acknowledged
+      - Context dependencies noted
+      - Transfer boundaries identified
+    
+  - id: insight-authenticity
+    description: Note captures genuine understanding, not mere information
+    indicators:
+      - Personal understanding expression
+      - Learning moment captured
+      - Insight development traced
+      - Understanding evolution documented
+      - Connection patterns revealed
+
+validation:
+  - Check single concept focus
+  - Verify conceptual completeness
+  - Test independence understanding
+  - Validate precision boundaries
+  - Confirm insight authenticity
+
+error_messages:
+  multiple_concepts: "Note contains multiple distinct concepts - split into atomic units"
+  incomplete_concept: "Note lacks essential elements for understanding"
+  dependency_required: "Note requires other notes to make sense"
+  imprecise_boundaries: "Concept boundaries unclear or undefined"
+  surface_information: "Note captures information rather than understanding insight"
+
+atomicity_levels:
+  ideal: "Single insight, complete, independent, precise, authentic"
+  acceptable: "Single concept with minor completeness gaps"
+  needs_work: "Multiple concepts or significant dependencies"
+  unusable: "Unclear focus, incomplete, or information-only"
+
+constraint_satisfaction_evidence:
+  - Note addresses exactly one learning question
+  - Understanding can be validated independently
+  - Concept applies to multiple contexts appropriately
+  - Boundaries prevent overgeneralization
+  - Insight represents genuine comprehension breakthrough

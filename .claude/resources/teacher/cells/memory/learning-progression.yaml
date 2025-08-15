@@ -1,0 +1,146 @@
+# Cellular Memory: Learning Progression
+# This maintains persistent constraint patterns for learning advancement
+
+memory_type: cellular
+constraint_category: progression
+persistence: session-based
+
+progression_stages:
+  novice:
+    characteristics:
+      - Surface-level understanding
+      - Relies on examples and templates
+      - Needs step-by-step guidance
+      - Limited pattern recognition
+      - Focuses on syntax over concepts
+    constraint_patterns:
+      - Provide concrete examples first
+      - Use analogies to familiar concepts
+      - Break down into small steps
+      - Validate each step before advancing
+      - Avoid abstract discussions
+    validation_criteria:
+      - Can follow guided examples
+      - Recognizes basic patterns
+      - Asks clarification questions
+      - Shows engagement with material
+      
+  developing:
+    characteristics:
+      - Growing conceptual understanding
+      - Begins to see patterns
+      - Can modify examples
+      - Makes connections to prior knowledge
+      - Questions underlying principles
+    constraint_patterns:
+      - Introduce variations on examples
+      - Ask "what if" questions
+      - Connect to related concepts
+      - Encourage experimentation
+      - Provide moderate scaffolding
+    validation_criteria:
+      - Explains concepts in own words
+      - Adapts solutions to new contexts
+      - Identifies patterns across examples
+      - Shows curiosity about exceptions
+      
+  proficient:
+    characteristics:
+      - Solid conceptual foundation
+      - Recognizes patterns reliably
+      - Can solve novel problems
+      - Explains reasoning clearly
+      - Transfers knowledge across domains
+    constraint_patterns:
+      - Present complex scenarios
+      - Ask for multiple approaches
+      - Explore edge cases together
+      - Discuss trade-offs and limitations
+      - Minimal scaffolding needed
+    validation_criteria:
+      - Solves problems independently
+      - Explains multiple approaches
+      - Recognizes when rules don't apply
+      - Makes sophisticated connections
+      
+  expert:
+    characteristics:
+      - Deep intuitive understanding
+      - Creates novel solutions
+      - Teaches others effectively
+      - Critiques existing approaches
+      - Innovates within domain
+    constraint_patterns:
+      - Pose open-ended challenges
+      - Discuss cutting-edge applications
+      - Explore philosophical implications
+      - Encourage teaching others
+      - Challenge assumptions
+    validation_criteria:
+      - Creates original examples
+      - Identifies flaws in reasoning
+      - Generates new insights
+      - Teaches concepts to others
+
+constraint_transitions:
+  novice_to_developing:
+    triggers:
+      - Successfully modifies example independently
+      - Asks "why" questions about principles
+      - Recognizes pattern in new context
+    constraints:
+      - Reduce explicit guidance
+      - Increase exploration opportunities
+      - Introduce complexity gradually
+      
+  developing_to_proficient:
+    triggers:
+      - Solves novel problem without help
+      - Explains concept to imaginary learner
+      - Connects to distant domains
+    constraints:
+      - Shift to problem-based learning
+      - Introduce competing approaches
+      - Explore practical applications
+      
+  proficient_to_expert:
+    triggers:
+      - Critiques existing solutions
+      - Proposes alternative approaches
+      - Demonstrates teaching ability
+    constraints:
+      - Pose ill-defined problems
+      - Explore cutting-edge research
+      - Encourage knowledge creation
+
+memory_operations:
+  store_progression:
+    - Track current stage for each concept
+    - Record transition triggers observed
+    - Note constraint patterns that worked
+    - Store validation evidence
+    
+  retrieve_progression:
+    - Check current learner stage
+    - Load appropriate constraint patterns
+    - Review recent progression evidence
+    - Adapt to individual learning path
+    
+  update_progression:
+    - Advance stage when criteria met
+    - Adjust constraint patterns based on response
+    - Record successful transitions
+    - Note individual variations
+
+persistence_patterns:
+  session_continuity:
+    - Store learner's current stage
+    - Remember recent breakthroughs
+    - Track which concepts need review
+    - Maintain progression momentum
+    
+  cross_session_memory:
+    - Recall previous session endpoints
+    - Remember successful teaching approaches
+    - Track long-term learning patterns
+    - Identify consistent strengths/weaknesses

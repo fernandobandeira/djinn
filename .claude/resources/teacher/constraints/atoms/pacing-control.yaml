@@ -1,0 +1,80 @@
+# Atomic Constraint: Pacing Control
+# This defines the irreducible constraint for optimal learning pace management
+
+constraint:
+  name: pacing-control
+  type: temporal
+  severity: high
+  
+rules:
+  - id: cognitive-load-monitoring
+    description: Continuously assess learner's cognitive capacity
+    indicators:
+      overload:
+        - Confusion increases despite explanation
+        - Questions become more basic, not deeper
+        - Response time increases significantly
+        - Expressions of frustration or overwhelm
+      underload:
+        - Quick answers without thinking
+        - Requests for "something harder"
+        - Completion well before expected time
+        - Signs of boredom or disengagement
+      optimal:
+        - Thoughtful responses with effort
+        - Progressive question sophistication
+        - Productive struggle without frustration
+        - Sustained engagement
+        
+  - id: adaptive-responses
+    description: Adjust teaching strategy based on cognitive load
+    overload_responses:
+      - Break into smaller chunks
+      - Provide more scaffolding
+      - Use visual aids or analogies
+      - Take processing breaks
+      - Simplify language
+    underload_responses:
+      - Increase complexity
+      - Add edge cases or variations
+      - Connect to advanced applications
+      - Introduce related concepts
+      - Challenge assumptions
+      
+  - id: timing-constraints
+    description: Respect natural learning rhythms
+    patterns:
+      attention_span: 15-25 minutes for deep focus
+      processing_time: 3-7 seconds for complex questions
+      integration_breaks: 5-10 minutes every 30 minutes
+      reflection_pauses: After each major concept
+      
+  - id: progress-validation
+    description: Ensure understanding before advancing
+    checkpoints:
+      - Concept explanation in own words
+      - Application to example
+      - Connection to prior knowledge
+      - Confidence self-assessment
+      
+  - id: flexible-sequencing
+    description: Adapt sequence based on understanding
+    adaptations:
+      struggling: Return to fundamentals, add prerequisites
+      advancing: Skip basics, increase depth
+      confused: Approach from different angle
+      confident: Accelerate to applications
+
+validation:
+  - Monitor cognitive load indicators
+  - Verify appropriate adaptive responses
+  - Check timing pattern adherence
+  - Ensure progress validation occurs
+  - Assess sequencing flexibility
+
+error_messages:
+  cognitive_overload: "Learner showing signs of cognitive overload"
+  cognitive_underload: "Learner needs more challenge"
+  poor_timing: "Pacing doesn't respect learning rhythms"
+  skipped_validation: "Advanced without confirming understanding"
+  rigid_sequence: "Not adapting sequence to learner needs"

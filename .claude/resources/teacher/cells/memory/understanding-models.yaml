@@ -1,0 +1,195 @@
+# Cellular Memory: Understanding Models
+# This maintains persistent constraint patterns for different types of understanding
+
+memory_type: cellular
+constraint_category: comprehension_models
+persistence: concept-based
+
+understanding_types:
+  procedural:
+    description: "How to perform steps and operations"
+    characteristics:
+      - Can execute steps correctly
+      - Follows algorithms accurately
+      - Applies procedures to standard problems
+      - May lack deep conceptual insight
+    constraint_patterns:
+      - Provide clear step-by-step guides
+      - Practice with multiple examples
+      - Focus on accurate execution
+      - Build pattern recognition
+    assessment_methods:
+      - Performance on similar problems
+      - Speed and accuracy of execution
+      - Ability to detect procedural errors
+      - Recognition of when procedure applies
+    
+  conceptual:
+    description: "Why things work and underlying principles"
+    characteristics:
+      - Explains reasons behind procedures
+      - Connects concepts across domains
+      - Adapts approaches to new situations
+      - Understands constraints and limitations
+    constraint_patterns:
+      - Explore underlying principles
+      - Make connections explicit
+      - Use multiple representations
+      - Discuss edge cases and exceptions
+    assessment_methods:
+      - Explanation in own words
+      - Application to novel contexts
+      - Identification of underlying patterns
+      - Reasoning about constraints
+    
+  strategic:
+    description: "When and why to use different approaches"
+    characteristics:
+      - Chooses appropriate methods
+      - Adapts strategies to context
+      - Monitors progress and adjusts
+      - Plans approaches before executing
+    constraint_patterns:
+      - Present diverse problems
+      - Compare multiple approaches
+      - Discuss trade-offs explicitly
+      - Practice strategy selection
+    assessment_methods:
+      - Justification of approach choice
+      - Adaptation to changing constraints
+      - Recognition of strategy limitations
+      - Planning before implementation
+
+understanding_development:
+  procedural_to_conceptual:
+    transition_patterns:
+      - Start noticing when procedures fail
+      - Ask "why" questions about steps
+      - Connect procedures to concepts
+      - Seek explanations beyond steps
+    constraint_adjustments:
+      - Introduce variations to procedures
+      - Explore exceptions to rules
+      - Connect to underlying principles
+      - Encourage questioning of steps
+      
+  conceptual_to_strategic:
+    transition_patterns:
+      - Compare different approaches
+      - Consider efficiency and elegance
+      - Adapt concepts to new domains
+      - Evaluate constraint trade-offs
+    constraint_adjustments:
+      - Present choice situations
+      - Discuss optimization criteria
+      - Explore domain-specific adaptations
+      - Practice decision-making
+
+mental_models:
+  analogical:
+    description: "Understanding through similarity to familiar concepts"
+    effective_analogies:
+      - Share structural similarities
+      - Highlight relevant features
+      - Acknowledge limitations explicitly
+      - Support progressive refinement
+    constraint_patterns:
+      - Start with familiar domain
+      - Map features systematically
+      - Test analogy boundaries
+      - Refine based on feedback
+      
+  visual_spatial:
+    description: "Understanding through visual and spatial representations"
+    effective_visualizations:
+      - Show structure and relationships
+      - Support dynamic interaction
+      - Highlight key features
+      - Connect to abstract concepts
+    constraint_patterns:
+      - Use diagrams and animations
+      - Encourage drawing and sketching
+      - Connect visual to symbolic
+      - Build spatial intuitions
+      
+  mathematical:
+    description: "Understanding through formal relationships and equations"
+    effective_formalizations:
+      - Start with concrete examples
+      - Build to general principles
+      - Connect symbols to meaning
+      - Validate with applications
+    constraint_patterns:
+      - Ground abstractions in examples
+      - Build formalism gradually
+      - Maintain meaning connections
+      - Practice translation both ways
+
+individual_preferences:
+  learning_style_indicators:
+    visual:
+      - Requests diagrams and pictures
+      - Draws while thinking
+      - Describes spatial relationships
+      - Benefits from visual analogies
+    auditory:
+      - Prefers verbal explanations
+      - Talks through problems
+      - Uses rhythm and patterns
+      - Benefits from discussion
+    kinesthetic:
+      - Needs hands-on practice
+      - Uses physical metaphors
+      - Learns through doing
+      - Benefits from manipulation
+      
+  adaptation_strategies:
+    multi_modal:
+      - Present information multiple ways
+      - Let learner choose preferred mode
+      - Strengthen weaker modalities gradually
+      - Use preferred mode as bridge
+
+understanding_assessment:
+  depth_indicators:
+    surface:
+      - Recalls facts accurately
+      - Follows procedures correctly
+      - Recognizes familiar patterns
+      - Limited transfer ability
+    deep:
+      - Explains underlying principles
+      - Adapts to novel situations
+      - Connects across domains
+      - Creates new examples
+      
+  breadth_indicators:
+    narrow:
+      - Limited to taught examples
+      - Struggles with variations
+      - Context-dependent understanding
+      - Few connections made
+    broad:
+      - Applies across contexts
+      - Handles novel variations
+      - Makes unexpected connections
+      - Generalizes principles
+
+memory_operations:
+  store_understanding:
+    - Record understanding type achieved
+    - Note effective mental models used
+    - Track individual preferences
+    - Document successful transitions
+    
+  retrieve_models:
+    - Check current understanding type
+    - Load appropriate constraint patterns
+    - Review effective mental models
+    - Adapt to individual preferences
+    
+  update_models:
+    - Refine understanding assessments
+    - Improve transition support
+    - Update mental model effectiveness
+    - Adapt to individual patterns

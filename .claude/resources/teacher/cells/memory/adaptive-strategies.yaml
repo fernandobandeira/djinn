@@ -1,0 +1,236 @@
+# Cellular Memory: Adaptive Strategies
+# This maintains persistent constraint patterns for teaching adaptation
+
+memory_type: cellular
+constraint_category: adaptation
+persistence: learner-based
+
+adaptation_dimensions:
+  cognitive_load:
+    high_load_indicators:
+      - Longer response times
+      - Increased error rates
+      - Expressions of confusion
+      - Requests for repetition
+    adaptation_strategies:
+      - Reduce information density
+      - Break into smaller chunks
+      - Provide more scaffolding
+      - Use visual aids
+      - Slow down pace
+    constraint_adjustments:
+      - Lower complexity temporarily
+      - Increase support structures
+      - Focus on fewer concepts
+      - Build confidence first
+      
+  motivation_level:
+    low_motivation_indicators:
+      - Minimal responses
+      - Passive participation
+      - Clock-watching behavior
+      - Avoidance of challenges
+    adaptation_strategies:
+      - Connect to personal interests
+      - Use engaging examples
+      - Increase interaction
+      - Celebrate small wins
+      - Show practical value
+    constraint_adjustments:
+      - Make content more relevant
+      - Increase agency and choice
+      - Reduce perceived difficulty
+      - Emphasize progress made
+      
+  prior_knowledge:
+    insufficient_background:
+      - Struggles with basic terms
+      - Missing prerequisite concepts
+      - Cannot make expected connections
+      - Needs extensive context
+    adaptation_strategies:
+      - Fill knowledge gaps first
+      - Build prerequisite understanding
+      - Use simpler analogies
+      - Provide more background
+    constraint_adjustments:
+      - Lower starting point
+      - Build foundation systematically
+      - Check assumptions frequently
+      - Connect to existing knowledge
+      
+  learning_preference:
+    concrete_sequential:
+      - Prefers step-by-step approach
+      - Wants clear structure
+      - Likes detailed examples
+      - Avoids ambiguity
+    adaptation_strategies:
+      - Provide explicit structure
+      - Use detailed procedures
+      - Give concrete examples
+      - Build systematically
+    constraint_adjustments:
+      - Increase structure and clarity
+      - Provide explicit roadmaps
+      - Use concrete before abstract
+      - Minimize ambiguity
+
+strategy_selection:
+  assessment_triggers:
+    - Initial interaction assessment
+    - Confusion or struggle points
+    - Change in engagement level
+    - Request for different approach
+    - Performance inconsistencies
+    
+  selection_criteria:
+    effectiveness:
+      - Historical success with this learner
+      - Success with similar learners
+      - Research-based evidence
+      - Alignment with learning goals
+    feasibility:
+      - Available time and resources
+      - Learner's current state
+      - Context constraints
+      - Implementation complexity
+      
+  implementation_monitoring:
+    - Track response to adaptations
+    - Monitor engagement changes
+    - Assess comprehension improvement
+    - Note learner feedback
+    - Adjust based on results
+
+individual_learner_profiles:
+  learning_patterns:
+    fast_processor:
+      characteristics:
+        - Quick comprehension
+        - Impatient with repetition
+        - Wants challenging material
+        - Self-directed learning
+      adaptations:
+        - Accelerate pace appropriately
+        - Provide extension activities
+        - Allow exploration time
+        - Increase complexity faster
+        
+    careful_processor:
+      characteristics:
+        - Thoughtful responses
+        - Wants time to process
+        - Prefers thoroughness
+        - Builds understanding slowly
+      adaptations:
+        - Allow processing time
+        - Don't rush responses
+        - Build step by step
+        - Validate frequently
+        
+    interactive_learner:
+      characteristics:
+        - Learns through discussion
+        - Asks many questions
+        - Thinks out loud
+        - Enjoys collaboration
+      adaptations:
+        - Encourage questions
+        - Use dialogue frequently
+        - Think together
+        - Provide interaction opportunities
+        
+    independent_learner:
+      characteristics:
+        - Prefers self-discovery
+        - Minimal guidance needed
+        - Self-motivated
+        - Likes challenges
+      adaptations:
+        - Provide resources
+        - Step back when appropriate
+        - Offer challenging problems
+        - Support exploration
+
+constraint_adaptation_patterns:
+  scaffolding_adjustment:
+    high_support:
+      - Detailed step-by-step guidance
+      - Frequent check-ins
+      - Multiple examples
+      - Error prevention focus
+    moderate_support:
+      - General direction with specifics
+      - Periodic validation
+      - Selected examples
+      - Error correction guidance
+    low_support:
+      - Minimal guidance
+      - Self-directed exploration
+      - Resources on demand
+      - Independent problem solving
+      
+  feedback_timing:
+    immediate:
+      - For foundational concepts
+      - When learner is struggling
+      - During skill building
+      - For confidence building
+    delayed:
+      - For independent thinking
+      - When learner is confident
+      - For self-assessment practice
+      - For transfer activities
+      
+  complexity_progression:
+    gradual:
+      - Small incremental steps
+      - Build confidence systematically
+      - Multiple practice opportunities
+      - Solid foundation before advancing
+    accelerated:
+      - Larger complexity jumps
+      - Challenge-based learning
+      - Fewer examples needed
+      - Fast progression to applications
+
+memory_operations:
+  store_adaptations:
+    - Record adaptation triggers
+    - Note strategy effectiveness
+    - Track learner responses
+    - Document successful patterns
+    
+  retrieve_strategies:
+    - Check learner profile
+    - Load effective adaptations
+    - Review recent adjustments
+    - Consider current context
+    
+  update_adaptations:
+    - Refine strategy selection
+    - Update effectiveness ratings
+    - Add new adaptation patterns
+    - Improve trigger recognition
+
+effectiveness_tracking:
+  success_indicators:
+    - Improved comprehension
+    - Increased engagement
+    - Reduced confusion
+    - Enhanced confidence
+    - Better performance
+    
+  failure_indicators:
+    - Continued struggle
+    - Decreased motivation
+    - Increased confusion
+    - Frustration signs
+    - Performance decline
+    
+  adaptation_refinement:
+    - Adjust strategies based on results
+    - Try alternative approaches
+    - Combine multiple strategies
+    - Seek learner feedback

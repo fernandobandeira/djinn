@@ -1,0 +1,126 @@
+# Atomic Constraint: Constraint Precision
+# Defines constraints for precise and well-defined agent constraints
+
+constraint:
+  name: constraint-precision
+  type: quality-assurance
+  severity: critical
+  
+principles:
+  - Constraints must be specific and measurable
+  - Avoid vague or ambiguous constraint definitions
+  - Each constraint should have clear success criteria
+  - Constraints should be independently verifiable
+  - Balance constraint strength to avoid over/under-constraint
+
+precision_levels:
+  high_precision:
+    - Specific tool sets with clear justification
+    - Defined input/output formats
+    - Clear behavioral boundaries
+    - Measurable success criteria
+    
+  medium_precision:
+    - General behavioral guidelines
+    - Flexible tool requirements
+    - Contextual adaptation allowed
+    - Qualitative success indicators
+    
+  low_precision:
+    - Broad operational guidelines
+    - Tool selection flexibility
+    - Context-dependent behavior
+    - Subjective success measures
+
+constraint_categories:
+  behavioral:
+    - description: "How the agent should interact and respond"
+    - examples:
+      - "Always greet user upon activation"
+      - "Wait for user response before proceeding"
+      - "Provide numbered options for user choices"
+    
+  functional:
+    - description: "What the agent should accomplish"
+    - examples:
+      - "Create atomic notes with single concepts"
+      - "Validate code syntax before suggesting changes"
+      - "Search knowledge base before creating new content"
+    
+  technical:
+    - description: "How the agent should operate technically"
+    - examples:
+      - "Use Read tool before Edit tool"
+      - "Index content after creation"
+      - "Follow specific file naming conventions"
+
+precision_validation:
+  success_criteria:
+    - Constraint can be verified objectively
+    - Agent behavior is predictable within constraint boundaries
+    - Constraint enables rather than restricts agent effectiveness
+    - User can understand constraint purpose and effect
+    
+  failure_indicators:
+    - Agent behavior unpredictable despite constraints
+    - Constraints conflict with each other
+    - Constraints prevent agent from accomplishing core purpose
+    - Constraints are too complex for implementation
+
+constraint_balance:
+  well_constrained:
+    score_range: "7.5-8.5"
+    characteristics:
+      - Clear behavioral boundaries
+      - Sufficient flexibility for task completion
+      - Consistent and predictable operation
+      - User needs effectively met
+    
+  under_constrained:
+    score_range: "< 6.0"
+    characteristics:
+      - Unpredictable behavior
+      - Unclear operational boundaries
+      - Inconsistent user experience
+      - Potential for undesired actions
+    
+  over_constrained:
+    score_range: "> 9.0"
+    characteristics:
+      - Rigid, inflexible operation
+      - Cannot adapt to context variations
+      - User frustration with limitations
+      - Reduced agent effectiveness
+
+optimization_strategies:
+  tighten_constraints:
+    - Add specific behavioral requirements
+    - Define clearer success criteria
+    - Establish stricter operational boundaries
+    - Increase validation requirements
+    
+  relax_constraints:
+    - Allow contextual adaptation
+    - Provide flexibility in tool usage
+    - Enable user preference accommodation
+    - Reduce rigid procedural requirements
+
+measurement_techniques:
+  quantitative:
+    - Success rate metrics
+    - Response time measurements
+    - User satisfaction scores
+    - Error frequency tracking
+    
+  qualitative:
+    - User feedback assessment
+    - Agent behavior observation
+    - Context adaptation evaluation
+    - Goal achievement analysis
+
+validation:
+  - Check constraint specificity and clarity
+  - Verify constraint measurability
+  - Ensure constraint balance (not over/under-constrained)
+  - Validate constraint independence and non-conflict
+  - Test constraint effectiveness in practice

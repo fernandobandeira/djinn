@@ -1,0 +1,119 @@
+# Atomic Constraint: Linking Syntax
+# This defines the irreducible constraint for knowledge connection patterns
+
+constraint:
+  name: linking-syntax
+  type: structural
+  severity: critical
+  
+rules:
+  - id: bidirectional-linking
+    description: All connections must be bidirectional and semantically meaningful
+    pattern: |
+      Forward link: [[target-note]] - relationship description
+      Backward link: [[source-note]] - reverse relationship description
+      Semantic meaning: Why these concepts connect
+      Connection strength: How strongly they relate
+    
+  - id: relationship-specificity
+    description: Links must specify the nature of the relationship
+    relationship_types:
+      builds_on: "This concept builds on [[foundation-concept]]"
+      enables: "This insight enables understanding of [[advanced-concept]]"
+      contrasts_with: "This differs from [[contrasting-concept]] in that..."
+      applies_to: "This principle applies to [[application-domain]]"
+      exemplified_by: "This abstract concept is exemplified by [[concrete-example]]"
+      generalizes: "This specific case generalizes to [[broader-principle]]"
+      causes: "This factor causes [[effect-concept]]"
+      solves: "This approach solves [[problem-concept]]"
+      analogous_to: "This concept is analogous to [[similar-concept]]"
+      composed_of: "This complex concept is composed of [[component-concepts]]"
+    
+  - id: link-validation-criteria
+    description: Links must satisfy connection validity constraints
+    validation_requirements:
+      semantic_coherence: Connection makes conceptual sense
+      mutual_reinforcement: Both notes benefit from connection
+      non_trivial_relationship: Connection adds understanding value
+      appropriate_strength: Connection strength matches relationship
+      context_preservation: Link works across different contexts
+    
+  - id: connection-hierarchy
+    description: Links must respect conceptual hierarchy and dependency
+    hierarchy_patterns:
+      prerequisite_links: Foundational concepts linked before advanced
+      dependency_chains: Clear prerequisite sequences maintained
+      abstraction_levels: Concrete to abstract connections explicit
+      domain_bridges: Cross-domain connections carefully validated
+      emergence_patterns: How simple concepts combine into complex ones
+    
+  - id: link-syntax-format
+    description: Consistent format for link representation and metadata
+    format_requirements:
+      note_references: "[[YYYYMMDD-HHMMSS-concept-title]]"
+      relationship_labels: Clear, specific relationship description
+      connection_context: Why connection matters for understanding
+      bidirectional_consistency: Forward and reverse links align
+      metadata_inclusion: Connection strength, context, validation date
+
+connection_strength_levels:
+  essential: "Cannot understand one concept without the other"
+  strong: "Concepts significantly enhance each other's understanding"
+  moderate: "Concepts provide useful context for each other"
+  weak: "Concepts share some common elements or applications"
+  exploratory: "Potential connection worth investigating further"
+
+link_quality_indicators:
+  high_quality:
+    - Relationship enhances understanding of both concepts
+    - Connection is non-obvious but illuminating
+    - Link enables transfer between domains
+    - Relationship withstands scrutiny and questioning
+    - Connection generates further insights
+    
+  moderate_quality:
+    - Relationship is clear and accurate
+    - Connection provides useful context
+    - Link supports learning progression
+    - Relationship is stable over time
+    - Connection aids in recall and application
+    
+  low_quality:
+    - Relationship is superficial or trivial
+    - Connection based on surface similarities
+    - Link doesn't enhance understanding
+    - Relationship may be coincidental
+    - Connection doesn't aid learning
+
+validation:
+  - Check bidirectional consistency
+  - Verify relationship specificity
+  - Validate semantic coherence
+  - Assess hierarchy appropriateness
+  - Confirm syntax format compliance
+
+error_messages:
+  unidirectional_link: "Link exists in only one direction - create bidirectional connection"
+  vague_relationship: "Relationship description too generic - specify connection nature"
+  invalid_semantics: "Connection doesn't make conceptual sense"
+  hierarchy_violation: "Link violates prerequisite or dependency relationships"
+  format_inconsistency: "Link format doesn't follow established syntax patterns"
+
+connection_patterns:
+  concept_clusters:
+    - Related concepts form coherent knowledge networks
+    - Cluster boundaries reflect conceptual domains
+    - Inter-cluster links represent transfer opportunities
+    - Cluster evolution reflects learning progression
+    
+  learning_pathways:
+    - Prerequisite chains enable systematic learning
+    - Difficulty progressions support skill building
+    - Alternative pathways accommodate different learning styles
+    - Pathway convergence shows conceptual integration
+    
+  cross_domain_bridges:
+    - Analogical connections enable transfer
+    - Principle applications span multiple domains
+    - Abstract patterns connect concrete examples
+    - Innovation emerges from unexpected connections

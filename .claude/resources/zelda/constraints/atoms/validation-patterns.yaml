@@ -1,0 +1,171 @@
+# Atomic Constraint: Validation Patterns
+# This defines the irreducible constraint for knowledge validation and quality assurance
+
+constraint:
+  name: validation-patterns
+  type: quality_assurance
+  severity: critical
+  
+rules:
+  - id: understanding-authenticity
+    description: Validate that captured knowledge represents genuine understanding
+    authenticity_criteria:
+      personal_expression: Knowledge expressed in learner's own words and style
+      insight_development: Clear progression from confusion to understanding
+      application_readiness: Knowledge ready for transfer and application
+      explanation_capability: Can be explained to others at appropriate level
+      boundary_awareness: Understanding includes limitations and edge cases
+    
+  - id: knowledge-completeness
+    description: Validate that captured knowledge is sufficiently complete
+    completeness_requirements:
+      core_concept: Central idea clearly articulated
+      supporting_context: Sufficient background for understanding
+      examples_applications: Concrete illustrations of abstract concepts
+      connections_identified: Links to related knowledge established
+      constraints_boundaries: Limitations and scope clearly defined
+    
+  - id: conceptual-accuracy
+    description: Validate that captured knowledge is factually and conceptually correct
+    accuracy_validation:
+      fact_checking: Verifiable claims are accurate
+      logical_consistency: Reasoning follows valid logical patterns
+      expert_knowledge_alignment: Consistent with established domain knowledge
+      misconception_absence: Free from common or dangerous misconceptions
+      precision_appropriateness: Level of precision matches context and purpose
+    
+  - id: transfer-readiness
+    description: Validate that knowledge is prepared for transfer and application
+    transfer_criteria:
+      context_independence: Understanding works across appropriate contexts
+      pattern_recognition: Underlying patterns identified and extractable
+      application_guidance: Clear indicators for when/how to apply
+      adaptation_capability: Can be modified for new contexts appropriately
+      integration_potential: Compatible with existing knowledge systems
+    
+  - id: capture-timing-validation
+    description: Validate that capture timing optimized learning and understanding
+    timing_assessment:
+      learning_momentum_preserved: Capture didn't disrupt optimal learning flow
+      understanding_maturity: Knowledge sufficiently developed for capture
+      context_richness: Sufficient context available for meaningful capture
+      integration_readiness: Appropriate time for knowledge base integration
+      review_scheduling: Optimal timing for future review and reinforcement
+
+validation_methods:
+  explanation_test:
+    description: "Can learner explain concept clearly to appropriate audience?"
+    validation_criteria:
+      - Clear articulation without jargon
+      - Logical flow and organization
+      - Appropriate examples and analogies
+      - Response to clarifying questions
+      - Adaptation to audience level
+    
+  application_test:
+    description: "Can learner apply knowledge to novel but appropriate contexts?"
+    validation_criteria:
+      - Successful transfer to new situations
+      - Appropriate boundary recognition
+      - Adaptation to context constraints
+      - Problem-solving effectiveness
+      - Creative yet valid applications
+    
+  teaching_test:
+    description: "Can learner teach concept to others effectively?"
+    validation_criteria:
+      - Scaffolding for learner's level
+      - Misconception prevention
+      - Question handling capability
+      - Engagement and clarity
+      - Assessment of others' understanding
+    
+  integration_test:
+    description: "Does knowledge integrate well with existing knowledge base?"
+    validation_criteria:
+      - Coherent connections to existing concepts
+      - No conflicts with established knowledge
+      - Enhancement of existing understanding
+      - Gap-filling contribution
+      - Network strengthening effect
+    
+  persistence_test:
+    description: "Does understanding maintain over time and across contexts?"
+    validation_criteria:
+      - Retention without immediate reinforcement
+      - Robustness under questioning
+      - Stability across mood and energy states
+      - Consistency across different contexts
+      - Growth and development over time
+
+quality_assurance_levels:
+  validated: "Knowledge passes all relevant validation tests"
+  provisional: "Knowledge shows promise but needs further validation"
+  questionable: "Knowledge has significant gaps or concerns"
+  rejected: "Knowledge fails validation criteria"
+
+validation_failure_patterns:
+  surface_understanding:
+    indicators:
+      - Memorized definitions without comprehension
+      - Cannot explain in own words
+      - Fails on novel applications
+      - Breaks down under questioning
+    response: "Return to learning phase with deeper exploration"
+    
+  incomplete_capture:
+    indicators:
+      - Missing essential context
+      - Gaps in logical flow
+      - Insufficient examples
+      - Unclear boundaries
+    response: "Enhance capture with missing elements"
+    
+  premature_capture:
+    indicators:
+      - Understanding still developing
+      - Cannot handle variations
+      - Requires constant scaffolding
+      - Low confidence appropriately calibrated
+    response: "Defer capture until understanding matures"
+    
+  misconception_presence:
+    indicators:
+      - Conflicts with established knowledge
+      - Dangerous overgeneralization
+      - Logical inconsistencies
+      - Expert knowledge contradictions
+    response: "Address misconceptions before capturing"
+
+validation:
+  - Test understanding authenticity
+  - Verify knowledge completeness
+  - Check conceptual accuracy
+  - Assess transfer readiness
+  - Validate capture timing
+
+error_messages:
+  inauthentic_understanding: "Knowledge appears memorized rather than understood"
+  incomplete_knowledge: "Captured knowledge lacks essential elements"
+  inaccurate_content: "Knowledge contains factual or conceptual errors"
+  poor_transfer_readiness: "Knowledge not prepared for application or transfer"
+  suboptimal_timing: "Capture timing disrupted learning or missed optimal moment"
+
+continuous_validation:
+  during_capture:
+    - Monitor understanding indicators throughout capture process
+    - Check for authenticity signals vs. performance signals
+    - Validate completeness as capture develops
+    - Assess accuracy through cross-referencing
+    
+  after_capture:
+    - Test captured knowledge through various validation methods
+    - Integration check with existing knowledge base
+    - Transfer readiness assessment
+    - Quality assurance review
+    
+  longitudinal_validation:
+    - Review understanding persistence over time
+    - Check for knowledge evolution and refinement
+    - Monitor connection strengthening
+    - Assess long-term transfer success
