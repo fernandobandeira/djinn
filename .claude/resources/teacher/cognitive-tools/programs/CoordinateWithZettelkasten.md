@@ -1,8 +1,8 @@
-# Cognitive Tool Program: Coordinate With Zelda
-# Structured reasoning program for constraint orchestration between Teacher and Zelda
+# Cognitive Tool Program: Coordinate With Zettelkasten Guide
+# Structured reasoning program for constraint orchestration between Teacher and Zettelkasten Guide
 
 ## Program Purpose
-This prompt program guides seamless coordination with Zelda for knowledge capture during learning sessions, implementing shared constraint spaces without coordination overhead.
+This prompt program guides seamless coordination with Zettelkasten Guide for knowledge capture during learning sessions, implementing shared constraint spaces without coordination overhead.
 
 ## Input Schema
 ```yaml
@@ -82,9 +82,9 @@ ELSE IF session ending with solid insights:
 ```markdown
 1. RECOGNIZE trigger moment
 2. ACKNOWLEDGE insight value to learner
-3. BRIEFLY explain Zelda coordination
+3. BRIEFLY explain Zettelkasten Guide coordination
 4. DELEGATE using Task tool with context
-5. CONTINUE learning while Zelda processes
+5. CONTINUE learning while Zettelkasten Guide processes
 6. INTEGRATE captured knowledge when complete
 ```
 
@@ -109,10 +109,10 @@ ELSE IF session ending with solid insights:
 
 ## Delegation Context Template
 
-When using Task tool to delegate to Zelda:
+When using Task tool to delegate to Zettelkasten Guide:
 
 ```
-I'm delegating to Zelda for knowledge capture during our learning session.
+I'm delegating to Zettelkasten Guide for knowledge capture during our learning session.
 
 CONSTRAINT SATISFACTION CONTEXT:
 - Learning constraint type: {breakthrough|correction|connection|boundary}
@@ -142,7 +142,7 @@ COORDINATION STATE:
 
 ### No Coordination Overhead
 - **Teacher Focus**: Learning constraint satisfaction and progression
-- **Zelda Focus**: Knowledge constraint validation and capture
+- **Zettelkasten Guide Focus**: Knowledge constraint validation and capture
 - **Shared Space**: Knowledge base as constraint validation medium
 - **Clean Boundaries**: Each agent optimizes within domain
 
@@ -155,7 +155,7 @@ teacher_constraints:
   - Misconception correction
   - Progress tracking
 
-zelda_constraints:
+zettelkasten-guide_constraints:
   - Knowledge atomicity
   - Connection validation
   - Capture timing
@@ -172,7 +172,7 @@ zelda_constraints:
 ## Program Output Template
 
 ```markdown
-## Zelda Coordination Decision
+## Zettelkasten Guide Coordination Decision
 
 ### Coordination Trigger: {High|Medium|Low|None}
 
@@ -218,7 +218,7 @@ zelda_constraints:
 ### Cellular Memory Coordination
 - Update learning progression with capture events
 - Note coordination patterns that work
-- Track Zelda collaboration effectiveness
+- Track Zettelkasten Guide collaboration effectiveness
 - Record constraint satisfaction celebrations
 
 ### Organ-Level Orchestration
@@ -235,7 +235,7 @@ zelda_constraints:
 - **If learner wants to focus**: Queue for later, maintain learning flow
 
 ### Technical Coordination Issues
-- **If Zelda unavailable**: Continue learning, capture manually later
+- **If Zettelkasten Guide unavailable**: Continue learning, capture manually later
 - **If delegation fails**: Note insights for end-of-session review
 - **If timing disrupts flow**: Adjust coordination method
 
@@ -249,4 +249,4 @@ zelda_constraints:
 - **Extended sessions**: Regular coordination checkpoints
 - **Follow-up sessions**: Build on previously captured knowledge
 
-This program ensures optimal constraint orchestration between Teacher and Zelda while maintaining learning flow and maximizing knowledge capture value.
+This program ensures optimal constraint orchestration between Teacher and Zettelkasten Guide while maintaining learning flow and maximizing knowledge capture value.

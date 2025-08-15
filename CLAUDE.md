@@ -6,11 +6,11 @@
 ### Custom Commands
 - **analyst**: Use `/analyst` to invoke Ana the business analyst
 - **architect**: Use `/architect` to invoke Archie the system architect
-- **teacher**: Use `/teacher` to invoke Tina the deep learning tutor
-- **recruiter**: Use `/recruiter` to invoke Rita the command recruiter
+- **teacher**: Use `/teacher` to invoke Tina the teacher
+- **recruiter**: Use `/recruiter` to invoke Rita the recruiter
 
 ### Sub-Agents
-- **zelda**: Zettelkasten knowledge capture specialist (auto-delegated during learning sessions)
+- **zettelkasten-guide**: Zettelkasten knowledge capture specialist (auto-delegated during learning sessions under Teacher)
 
 ## Documentation Structure
 

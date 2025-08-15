@@ -1,8 +1,8 @@
-# Molecular Protocol: Zelda Coordination
+# Molecular Protocol: Zettelkasten Coordination
 # Structured constraint protocol for seamless knowledge capture orchestration
 
 ## Protocol Purpose
-This molecular protocol orchestrates atomic constraints to achieve seamless coordination with Zelda during learning sessions, implementing shared constraint spaces for knowledge capture without disrupting learning flow.
+This molecular protocol orchestrates atomic constraints to achieve seamless coordination with Zettelkasten Guide during learning sessions, implementing shared constraint spaces for knowledge capture without disrupting learning flow.
 
 ## Constraint Architecture Integration
 
@@ -14,7 +14,7 @@ This molecular protocol orchestrates atomic constraints to achieve seamless coor
 - **Metacognitive Triggers**: Make knowledge capture process visible and valuable
 
 ### Molecular Constraint Orchestration
-This protocol coordinates atomic constraints with Zelda's knowledge constraints to create shared constraint spaces where learning validation and knowledge capture reinforce each other without coordination overhead.
+This protocol coordinates atomic constraints with Zettelkasten Guide's knowledge constraints to create shared constraint spaces where learning validation and knowledge capture reinforce each other without coordination overhead.
 
 ## Protocol Phases
 
@@ -60,13 +60,13 @@ Coordination Constraint Protocol:
 
 Coordination Messaging:
 - "That insight is worth capturing for your knowledge base"
-- "Let me have Zelda create a note while we continue exploring"
+- "Let me have Zettelkasten Guide create a note while we continue exploring"
 - "This connects to several other concepts in your knowledge system"
 - "We can build on this captured knowledge in future sessions"
 
 Shared Constraint Space Establishment:
 - Teacher Constraints: Continue learning validation and progression
-- Zelda Constraints: Capture atomic insight with full context
+- Zettelkasten Guide Constraints: Capture atomic insight with full context
 - Shared Validation: Both agents confirm value of insight
 - Clean Boundaries: No overlap in constraint responsibilities
 ```
@@ -107,7 +107,7 @@ COORDINATION STATE:
 
 Flow Maintenance Actions:
 - Acknowledge insight value to learner
-- Delegate to Zelda with full context
+- Delegate to Zettelkasten Guide with full context
 - Continue learning seamlessly
 - Integrate capture results when complete
 ```
@@ -153,7 +153,7 @@ Meta-Learning Opportunities:
 **Protocol**:
 - Immediate acknowledgment of insight value
 - Quick delegation with rich context
-- Continued learning while Zelda processes
+- Continued learning while Zettelkasten Guide processes
 - Integration celebration at natural break
 
 ### Medium-Priority Coordination (Queued Capture)
@@ -192,7 +192,7 @@ Teacher Constraint Domain:
 - Methodology selection and adaptation
 - Real-time learning support
 
-Zelda Constraint Domain:
+Zettelkasten Guide Constraint Domain:
 - Knowledge atomicity and quality
 - Connection validation and establishment
 - Capture timing and appropriateness
@@ -209,7 +209,7 @@ Shared Constraint Validation:
 ```markdown
 Individual Optimization:
 - Teacher optimizes learning constraint satisfaction
-- Zelda optimizes knowledge constraint satisfaction
+- Zettelkasten Guide optimizes knowledge constraint satisfaction
 - Each agent perfects within domain boundaries
 
 Collective Capability:
@@ -271,4 +271,4 @@ Scalable Architecture:
 - Transfer and application accelerate
 - Understanding and retention improve
 
-This molecular protocol ensures optimal constraint orchestration between Teacher and Zelda while maintaining clean domain boundaries and maximizing collective intelligence through shared constraint space validation.
+This molecular protocol ensures optimal constraint orchestration between Teacher and Zettelkasten Guide while maintaining clean domain boundaries and maximizing collective intelligence through shared constraint space validation.
