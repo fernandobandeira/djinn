@@ -1,0 +1,48 @@
+version: 1.0
+workflow_states:
+  development:
+    stages:
+      - requirements_analysis
+      - test_design
+      - implementation
+      - refactoring
+      - testing
+      - review
+    transitions:
+      requirements_analysis → test_design: 
+        conditions:
+          - all_requirements_understood
+          - acceptance_criteria_defined
+      test_design → implementation:
+        conditions:
+          - tests_created
+          - test_coverage_planned
+      implementation → refactoring:
+        conditions:
+          - minimal_implementation_complete
+          - tests_passing
+      refactoring → testing:
+        conditions:
+          - code_quality_improved
+          - no_additional_complexity
+      testing → review:
+        conditions:
+          - full_test_coverage
+          - all_tests_passing
+          - performance_requirements_met
+
+  global_constraints:
+    max_complexity_score: 7
+    min_test_coverage: 90%
+    max_cyclomatic_complexity: 10
+    linting_errors_allowed: 0
+
+  observability:
+    metrics:
+      - test_coverage
+      - complexity_score
+      - time_spent_per_stage
+      - review_iterations
+    logging:
+      enabled: true
+      verbosity: detailed
