@@ -1,0 +1,31 @@
+version: 1.0
+search_strategies:
+  broad_to_narrow:
+    description: Start with broad search, then narrow to specific collections
+    steps:
+      - initial_search: search across all collections
+      - refine_by_collection: target specific collections
+      - use_multiple_terms: try different search variations
+  
+  cross_collection_correlation:
+    description: Search and correlate results across multiple collections
+    steps:
+      - search_multiple_collections: 
+          - zettelkasten
+          - documentation
+          - architecture
+      - identify_connections: link insights between collections
+      - generate_comprehensive_view: synthesize cross-collection results
+
+  context_expansion:
+    description: Expand search context by exploring related terms and concepts
+    steps:
+      - initial_query: perform base search
+      - synonym_expansion: include related terms
+      - conceptual_linking: find broader and narrower related concepts
+
+best_practices:
+  - always_search_before_creating
+  - use_collection_filters
+  - log_search_attempts
+  - continuously_improve_search_strategies
