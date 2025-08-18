@@ -1,6 +1,7 @@
 # Constraint Learning Memory Cell
 # Tracks how constraint application improves through experience and feedback
 # Based on cellular constraint architecture from Zettelkasten insights
+---
 
 metadata:
   type: cellular-memory
@@ -12,7 +13,7 @@ constraint_learning_patterns:
   description: |
     Tracks how constraint application strategies improve through experience.
     Learns which constraint combinations work best for different agent types.
-  
+
   atomic_constraint_effectiveness:
     tool_selection:
       success_indicators:
@@ -27,7 +28,7 @@ constraint_learning_patterns:
         - "Validators need only Read, Grep"
         - "Creators benefit from Write, Edit, MultiEdit"
         - "Researchers require WebSearch, WebFetch"
-    
+
     delegation_triggers:
       success_indicators:
         - "Accurate agent selection for tasks"
@@ -45,7 +46,7 @@ constraint_learning_patterns:
 molecular_constraint_combinations:
   description: |
     Learn which molecular protocol combinations produce best results
-  
+
   successful_combinations:
     - protocol_set: ["agent_discovery", "pattern_extraction", "constraint_validation"]
       use_case: "Creating new agents with precedent"
@@ -54,14 +55,14 @@ molecular_constraint_combinations:
         - "Discovery prevents duplication"
         - "Pattern extraction provides templates"
         - "Validation ensures quality"
-    
+
     - protocol_set: ["recursive_improvement", "constraint_orchestration"]
       use_case: "Enhancing existing agents"
       success_rate: 0.88
       key_factors:
         - "Improvement targets specific weaknesses"
         - "Orchestration maintains architecture integrity"
-    
+
     - protocol_set: ["constraint_negotiation", "pattern_extraction"]
       use_case: "Resolving constraint conflicts"
       success_rate: 0.85
@@ -72,7 +73,7 @@ molecular_constraint_combinations:
 cellular_constraint_insights:
   description: |
     Higher-level learning about constraint architecture effectiveness
-  
+
   architecture_patterns:
     well_balanced_agents:
       characteristics:
@@ -84,7 +85,7 @@ cellular_constraint_insights:
         - "Ana: Analysis specialist with focused constraints"
         - "Archie: Architecture specialist with decision protocols"
         - "Tina: Teaching specialist with methodology protocols"
-    
+
     improvement_opportunities:
       under_constrained:
         symptoms:
@@ -95,7 +96,7 @@ cellular_constraint_insights:
           - "Add specific behavioral constraints"
           - "Define clear success criteria"
           - "Establish operational boundaries"
-      
+
       over_constrained:
         symptoms:
           - "Rigid operation"
@@ -109,7 +110,7 @@ cellular_constraint_insights:
 learning_feedback_loops:
   description: |
     Mechanisms for continuous constraint learning improvement
-  
+
   immediate_feedback:
     sources:
       - "Agent creation success/failure"
@@ -120,7 +121,7 @@ learning_feedback_loops:
       - "Update constraint effectiveness ratings"
       - "Adjust combination recommendations"
       - "Refine pattern templates"
-  
+
   delayed_feedback:
     sources:
       - "Long-term agent usage patterns"
@@ -135,20 +136,20 @@ learning_feedback_loops:
 constraint_adaptation_strategies:
   description: |
     Strategies for adapting constraints based on learning
-  
+
   context_specific_adaptation:
     - context: "First-time agent creation"
       strategy: "Use conservative, well-proven constraints"
       reasoning: "Minimize risk, ensure basic functionality"
-    
+
     - context: "Experienced user with specific needs"
       strategy: "Allow more flexible, customized constraints"
       reasoning: "User can handle complexity, wants optimization"
-    
+
     - context: "High-stakes or production environment"
       strategy: "Use extensively validated constraint patterns"
       reasoning: "Reliability and predictability paramount"
-  
+
   progressive_constraint_application:
     phase_1: "Basic functional constraints"
     phase_2: "Behavioral and interaction constraints"
@@ -158,23 +159,23 @@ constraint_adaptation_strategies:
 learning_metrics:
   description: |
     Metrics to measure constraint learning effectiveness
-  
+
   quantitative_metrics:
     - metric: "constraint_accuracy"
       description: "Percentage of agents created with optimal constraint balance"
       current_value: 0.78
       target_value: 0.90
-    
+
     - metric: "first_attempt_success"
       description: "Percentage of agents that work correctly on first try"
       current_value: 0.72
       target_value: 0.85
-    
+
     - metric: "constraint_conflict_rate"
       description: "Frequency of constraint conflicts requiring resolution"
       current_value: 0.15
       target_value: 0.05
-  
+
   qualitative_indicators:
     - "User satisfaction with agent behavior"
     - "Consistency of agent operation across contexts"
@@ -184,17 +185,17 @@ learning_metrics:
 knowledge_integration:
   description: |
     How constraint learning integrates with broader system knowledge
-  
+
   with_pattern_evolution:
     - "Successful constraint applications become pattern templates"
     - "Failed constraints inform pattern mutation strategies"
     - "Learning insights guide pattern repository organization"
-  
+
   with_agent_genealogy:
     - "Track constraint inheritance across agent families"
     - "Identify successful constraint lineages"
     - "Learn from constraint evolution paths"
-  
+
   with_effectiveness_tracking:
     - "Constraint learning informed by agent performance data"
     - "Effectiveness metrics guide constraint optimization"
@@ -203,20 +204,20 @@ knowledge_integration:
 constraint_learning_rules:
   description: |
     Rules governing how constraint learning operates
-  
+
   rules:
     - rule: "Learn from both success and failure"
       description: "Failed constraints provide valuable negative examples"
-      
+
     - rule: "Context matters"
       description: "Same constraints may work differently in different contexts"
-      
+
     - rule: "Gradual adaptation"
       description: "Make incremental constraint adjustments based on evidence"
-      
+
     - rule: "Preserve proven patterns"
       description: "Don't modify constraints that consistently work well"
-      
+
     - rule: "Validate before applying"
       description: "Test new constraint insights before widespread adoption"
 
@@ -226,12 +227,12 @@ integration_points:
     - "Automatic constraint optimization suggestions"
     - "Context-aware constraint adaptation"
     - "Learning feedback from agent creation outcomes"
-  
+
   with_constraint_validation:
     - "Provide learned best practices for validation"
     - "Inform constraint balance assessment"
     - "Guide constraint conflict resolution"
-  
+
   with_recursive_improvement:
     - "Suggest constraint improvements based on learning"
     - "Provide optimization strategies"

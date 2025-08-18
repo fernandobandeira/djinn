@@ -1,11 +1,12 @@
 # Atomic Constraint: Tool Selection
 # Defines constraints for minimal and appropriate tool selection
+---
 
 constraint:
   name: tool-selection
   type: optimization
   severity: important
-  
+
 principles:
   - Minimal tool set for the task
   - Read-only agents shouldn't have write tools
@@ -19,36 +20,36 @@ tool_categories:
     - Grep
     - Glob
     - LS
-    
+
   write_capable:
     - Write
     - Edit
     - MultiEdit
-    
+
   execution:
     - Bash
     - Task
-    
+
   search:
     - WebSearch
     - WebFetch
-    
+
 common_combinations:
   analyzer: "Read, Grep, Glob"
   validator: "Read, Grep"
   creator: "Read, Write, Edit"
   tester: "Read, Bash"
   researcher: "Read, WebSearch, WebFetch"
-  
+
 anti_patterns:
   - description: "Giving all tools to simple validators"
     bad: "Read, Write, Edit, Bash, WebSearch, WebFetch, Task"
     good: "Read, Grep"
-    
+
   - description: "Write tools for read-only operations"
-    bad: "Read, Write, Edit" # for a validator
+    bad: "Read, Write, Edit"  # for a validator
     good: "Read, Grep"
-    
+
 validation:
   - Check tools match agent purpose
   - Verify no unnecessary tools included

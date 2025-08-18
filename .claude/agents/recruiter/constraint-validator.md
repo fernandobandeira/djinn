@@ -56,6 +56,39 @@ description: "IMPORTANT reviews code for security vulnerabilities during PR crea
 tools: Read, Grep, Glob  # Minimal but sufficient
 ```
 
+## Resource Loading Protocol
+
+When validating constraints, load relevant resources:
+
+### For Validation Protocols
+```bash
+# Load validation and negotiation protocols
+Read .claude/resources/recruiter/protocols/molecules/constraint-validation.md
+Read .claude/resources/recruiter/protocols/molecules/constraint-negotiation.md
+# Load advanced negotiation for complex conflicts
+Read .claude/resources/recruiter/protocols/molecules/advanced-constraint-negotiation.md
+```
+
+### For Conflict Resolution
+```bash
+# Load conflict patterns and learning insights
+Read .claude/resources/recruiter/cells/memory/constraint-conflicts.yaml
+Read .claude/resources/recruiter/cells/memory/constraint-learning.yaml
+Read .claude/resources/recruiter/cells/memory/constraint-relationship-matrix.yaml
+```
+
+### For Precision Rules
+```bash
+# Load constraint precision guidelines
+Read .claude/resources/recruiter/constraints/atoms/constraint-precision.yaml
+```
+
+### For Cross-Agent Learning
+```bash
+# Load shared constraint learning system for collective improvement
+Read .claude/resources/shared/constraint-learning-system.md
+```
+
 ## Validation Process
 
 1. **Analyze Description**

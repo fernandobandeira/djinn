@@ -68,7 +68,7 @@ When similar agents found, extract:
 
 ## Integration Points
 - Search `/docs/agent-patterns/` for learned patterns
-- Delegate to `recruiter-pattern-learner` for extraction
+- Delegate to `pattern-extractor` for extraction
 - Update Rita's KB with findings
 
 ## Output Schema

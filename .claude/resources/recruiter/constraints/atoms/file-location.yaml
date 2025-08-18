@@ -1,11 +1,12 @@
 # Atomic Constraint: File Location
 # Defines where different agent types must be stored
+---
 
 constraint:
-  name: file-location  
+  name: file-location
   type: structural
   severity: critical
-  
+
 locations:
   sub_agents:
     path: ".claude/agents/"
@@ -13,14 +14,14 @@ locations:
     naming: "{agent-name}.md"
     subdirs_allowed: true
     example: ".claude/agents/code-reviewer.md"
-    
+
   command_agents:
     path: ".claude/commands/"
     description: "Interactive dialogue agents"
     naming: "{command-name}.md"
     subdirs_allowed: false
     example: ".claude/commands/analyst.md"
-    
+
   agent_resources:
     path: ".claude/resources/{agent-name}/"
     description: "Resources for specific agents"
@@ -36,12 +37,12 @@ hierarchy:
     root: ".claude/"
     priority: high
     description: "Project-specific agents"
-    
+
   user_level:
     root: "~/.claude/"
     priority: low
     description: "User's global agents"
-    
+
 conflict_resolution: "Project-level overrides user-level"
 
 validation:

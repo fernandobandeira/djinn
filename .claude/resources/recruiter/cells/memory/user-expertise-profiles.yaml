@@ -1,0 +1,260 @@
+# User Expertise Profiles - Cellular Memory
+---
+
+# Adaptive profiling system to tailor agent creation guidance
+# Based on user's demonstrated expertise level and preferences
+
+profiles:
+  beginner:
+    guidance_level: "high"
+    example_depth: "detailed"
+    error_tolerance: "high"
+    explanation_style: "step-by-step with rationale"
+
+    characteristics:
+      - "Asks basic questions about agents"
+      - "Unfamiliar with constraint architecture"
+      - "Needs examples for most concepts"
+      - "May confuse sub-agents and commands"
+      - "Benefits from explicit validation"
+
+    preferred_patterns:
+      - "simple"
+      - "well-documented"
+      - "heavily-commented"
+      - "single-purpose"
+      - "minimal-dependencies"
+
+    guidance_approach:
+      - "Explain every decision"
+      - "Provide multiple examples"
+      - "Use analogies frequently"
+      - "Check understanding often"
+      - "Suggest safest options"
+      - "Automate complex tasks"
+
+    constraint_preferences:
+      target_score: 7.5  # Slightly under-constrained for flexibility
+      complexity: "low"
+      validation_detail: "verbose"
+
+  intermediate:
+    guidance_level: "medium"
+    example_depth: "moderate"
+    error_tolerance: "medium"
+    explanation_style: "key concepts with context"
+
+    characteristics:
+      - "Understands agent basics"
+      - "Some experience with constraint patterns"
+      - "Can modify existing agents"
+      - "Asks specific technical questions"
+      - "Comfortable with most tools"
+
+    preferred_patterns:
+      - "efficient"
+      - "reusable"
+      - "modular"
+      - "documented"
+      - "extensible"
+
+    guidance_approach:
+      - "Explain non-obvious decisions"
+      - "Provide examples for complex patterns"
+      - "Focus on best practices"
+      - "Suggest optimizations"
+      - "Encourage exploration"
+
+    constraint_preferences:
+      target_score: 8.2  # Optimal balance
+      complexity: "medium"
+      validation_detail: "balanced"
+
+  expert:
+    guidance_level: "minimal"
+    example_depth: "reference"
+    error_tolerance: "low"
+    explanation_style: "concise technical notes"
+
+    characteristics:
+      - "Deep understanding of architecture"
+      - "Creates complex multi-agent systems"
+      - "Optimizes constraint patterns"
+      - "Contributes patterns back"
+      - "Pushes system boundaries"
+
+    preferred_patterns:
+      - "advanced"
+      - "optimized"
+      - "composable"
+      - "innovative"
+      - "emergent"
+
+    guidance_approach:
+      - "Provide options, not prescriptions"
+      - "Share cutting-edge patterns"
+      - "Enable experimentation"
+      - "Document discoveries"
+      - "Co-create improvements"
+
+    constraint_preferences:
+      target_score: 8.5  # Pushing optimal boundaries
+      complexity: "high"
+      validation_detail: "summary"
+
+# Profile detection signals
+detection_signals:
+  beginner_indicators:
+    - "what is a sub-agent"
+    - "how do I start"
+    - "can you explain"
+    - "I'm confused about"
+    - "why did that fail"
+    - "what does this mean"
+    - "help me understand"
+
+  intermediate_indicators:
+    - "how can I optimize"
+    - "what's the best way to"
+    - "can we refactor"
+    - "I want to extend"
+    - "how do constraints interact"
+    - "what pattern should I use"
+
+  expert_indicators:
+    - "let's push the boundaries"
+    - "I've discovered a pattern"
+    - "can we meta-program"
+    - "emergent behavior"
+    - "constraint orchestration"
+    - "recursive improvement"
+    - "cross-agent learning"
+
+# Adaptive responses based on profile
+adaptive_responses:
+  beginner:
+    greeting: |
+      Welcome! I'll guide you through agent creation step-by-step.
+      Don't worry if things seem complex - I'll explain everything as we go.
+
+    error_handling: |
+      That's okay! This is a common issue. Let me explain what happened:
+      [Detailed explanation with solution]
+      Would you like me to fix this for you?
+
+    success_message: |
+      Excellent work! Your agent is ready. Here's what we created:
+      [Detailed summary with learning points]
+
+  intermediate:
+    greeting: |
+      Ready to create an agent? I'll help you build something robust.
+      Feel free to customize any patterns I suggest.
+
+    error_handling: |
+      Issue detected: [Concise explanation]
+      Suggested fix: [Solution with rationale]
+
+    success_message: |
+      Agent created successfully. Consider these optimizations:
+      [List of potential improvements]
+
+  expert:
+    greeting: |
+      Let's build something interesting. Any specific patterns in mind?
+
+    error_handling: |
+      [Technical error details]
+      [Multiple solution options]
+
+    success_message: |
+      Done. Extracted patterns stored for future use.
+      [Metrics and performance analysis]
+
+# Learning from interactions
+interaction_learning:
+  profile_evolution:
+    - "Track question complexity over time"
+    - "Monitor successful pattern applications"
+    - "Note debugging independence"
+    - "Measure constraint understanding"
+    - "Observe innovation frequency"
+
+  profile_transitions:
+    beginner_to_intermediate:
+      signals:
+        - "Fewer basic questions"
+        - "Successful agent modifications"
+        - "Understanding constraint relationships"
+        - "Asking about optimization"
+
+      transition_support:
+        - "Gradually reduce explanations"
+        - "Introduce advanced concepts"
+        - "Encourage experimentation"
+
+    intermediate_to_expert:
+      signals:
+        - "Creating complex agents independently"
+        - "Contributing patterns"
+        - "Optimizing constraints"
+        - "Teaching others"
+
+      transition_support:
+        - "Share experimental features"
+        - "Collaborate on improvements"
+        - "Document innovations"
+
+# Personalization memory
+user_preferences:
+  # Stored per user session/context
+  remembered_preferences:
+    - preferred_tools: []
+    - favorite_patterns: []
+    - common_agent_types: []
+    - typical_complexity: ""
+    - learning_style: ""
+
+  # Adaptive adjustments
+  dynamic_adjustments:
+    - "If user consistently skips explanations, reduce verbosity"
+    - "If user frequently asks for examples, provide more upfront"
+    - "If user creates similar agents, suggest templates"
+    - "If user experiments often, enable advanced features"
+
+# Profile-based optimizations
+optimizations:
+  beginner:
+    - "Pre-validate common errors"
+    - "Auto-complete routine tasks"
+    - "Provide templates for common agents"
+    - "Include extra comments in generated code"
+
+  intermediate:
+    - "Suggest pattern combinations"
+    - "Enable batch operations"
+    - "Provide performance metrics"
+    - "Show constraint trade-offs"
+
+  expert:
+    - "Enable experimental features"
+    - "Provide direct access to internals"
+    - "Allow meta-programming"
+    - "Support recursive improvements"
+
+# Integration with other systems
+integrations:
+  progressive_planner:
+    - "Adjust decomposition granularity based on profile"
+    - "Vary explanation depth per profile"
+    - "Customize validation verbosity"
+
+  coherence_verification:
+    - "Detailed reports for beginners"
+    - "Summary reports for experts"
+    - "Focus areas based on profile"
+
+  constraint_validation:
+    - "More forgiving for beginners"
+    - "Stricter for experts"
+    - "Educational feedback for all levels"

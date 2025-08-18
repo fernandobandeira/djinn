@@ -1,6 +1,7 @@
 # Pattern Evolution Memory Cell
 # Tracks how agent creation patterns improve over time through constraint optimization
 # Based on cellular constraint architecture from Zettelkasten insights
+---
 
 metadata:
   type: cellular-memory
@@ -12,7 +13,7 @@ evolution_tracking:
   description: |
     Tracks how patterns evolve through usage and refinement.
     Each pattern has a lineage showing its improvement over time.
-  
+
   pattern_lineage:
     sub_agent_patterns:
       - pattern_id: "sa_001"
@@ -24,7 +25,7 @@ evolution_tracking:
         iterations: 1
         improvements:
           - "Initial pattern from Ana/Archie examples"
-        
+
       - pattern_id: "sa_002"
         name: "enhanced_reviewer"
         creation_date: "2025-08-15"
@@ -36,7 +37,7 @@ evolution_tracking:
           - "Added IMPORTANT trigger keyword"
           - "Reduced tool set to minimal"
           - "Clarified output format"
-    
+
     command_patterns:
       - pattern_id: "cmd_001"
         name: "interactive_assistant"
@@ -51,23 +52,23 @@ evolution_tracking:
 effectiveness_metrics:
   description: |
     Metrics to measure pattern effectiveness and guide evolution
-  
+
   metrics:
     - metric: "constraint_balance"
       description: "Score from constraint analyzer (0-10)"
       weight: 0.3
       optimal_range: [7.5, 8.5]
-    
+
     - metric: "delegation_success"
       description: "Rate of successful delegations"
       weight: 0.25
       optimal_range: [0.85, 1.0]
-    
+
     - metric: "user_satisfaction"
       description: "Implicit from rework requests"
       weight: 0.25
       optimal_range: [0.8, 1.0]
-    
+
     - metric: "resource_efficiency"
       description: "Minimal tool usage"
       weight: 0.2
@@ -76,7 +77,7 @@ effectiveness_metrics:
 pattern_mutations:
   description: |
     Controlled variations to test pattern improvements
-  
+
   mutation_strategies:
     - type: "constraint_tightening"
       description: "Add more specific constraints when under-constrained"
@@ -85,7 +86,7 @@ pattern_mutations:
         - "Add trigger keywords"
         - "Define output format"
         - "Specify scope boundaries"
-    
+
     - type: "constraint_relaxation"
       description: "Remove overly specific constraints"
       trigger: "constraint_score > 9"
@@ -93,7 +94,7 @@ pattern_mutations:
         - "Generalize conditions"
         - "Allow format flexibility"
         - "Broaden applicability"
-    
+
     - type: "tool_optimization"
       description: "Minimize tool set"
       trigger: "resource_efficiency < 0.7"
@@ -105,13 +106,13 @@ pattern_mutations:
 learning_signals:
   description: |
     Signals that trigger pattern learning and evolution
-  
+
   positive_signals:
     - "Agent works on first try"
     - "No rework requested"
     - "Pattern reused successfully"
     - "High constraint balance score"
-  
+
   negative_signals:
     - "Rework requested"
     - "Delegation failure"
@@ -121,23 +122,23 @@ learning_signals:
 pattern_repository:
   description: |
     Storage for successful patterns that can be reused
-  
+
   categories:
     analysis_patterns:
       count: 3
       average_score: 8.2
       best_pattern: "structured_research_analyst"
-    
+
     automation_patterns:
       count: 5
       average_score: 7.8
       best_pattern: "test_runner_with_fixes"
-    
+
     documentation_patterns:
       count: 2
       average_score: 7.5
       best_pattern: "adr_generator"
-    
+
     utility_patterns:
       count: 4
       average_score: 8.0
@@ -146,20 +147,20 @@ pattern_repository:
 evolution_rules:
   description: |
     Rules governing how patterns evolve
-  
+
   rules:
     - rule: "Preserve successful constraints"
       description: "Don't modify constraints that work well"
-      
+
     - rule: "Incremental changes"
       description: "Make one change at a time to isolate effects"
-      
+
     - rule: "Test before promotion"
       description: "New patterns must prove effectiveness before becoming primary"
-      
+
     - rule: "Maintain lineage"
       description: "Always track parent patterns for rollback"
-      
+
     - rule: "Learn from failures"
       description: "Failed patterns provide valuable negative examples"
 
@@ -169,12 +170,12 @@ integration_points:
     - "Automatic evolution suggestions"
     - "Constraint score feedback"
     - "Success tracking"
-  
+
   with_kb:
     - "Store successful patterns in vector DB"
     - "Search for similar patterns"
     - "Extract patterns from existing agents"
-  
+
   with_diagnostics:
     - "Constraint analyzer provides scores"
     - "Conflict resolver identifies issues"

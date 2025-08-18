@@ -1,0 +1,194 @@
+# Constraint Relationship Matrix - Cellular Memory
+---
+
+# This matrix defines how different constraints interact with each other
+# Used for intelligent constraint orchestration and conflict resolution
+
+relationship_matrix:
+  # Atomic constraint relationships
+  atomic_constraints:
+    frontmatter_syntax:
+      tool_selection: "dependent"  # Syntax affects how tools are listed
+      file_location: "independent"  # Syntax doesn't affect where files go
+      constraint_precision: "synergistic"  # Good syntax enables precise constraints
+      delegation_triggers: "dependent"  # Syntax includes trigger definitions
+      agent_autonomy: "independent"  # Syntax doesn't affect autonomy level
+      template_structure: "synergistic"  # Syntax and templates work together
+
+    tool_selection:
+      frontmatter_syntax: "dependent"  # Must follow syntax for tool lists
+      file_location: "independent"  # Tools don't determine file location
+      constraint_precision: "synergistic"  # Right tools enable precision
+      delegation_triggers: "synergistic"  # Tools enhance trigger capabilities
+      agent_autonomy: "dependent"  # Tool access affects autonomy
+      template_structure: "independent"  # Tools don't affect templates
+
+    file_location:
+      frontmatter_syntax: "independent"  # Location doesn't affect syntax
+      tool_selection: "independent"  # Location doesn't determine tools
+      constraint_precision: "independent"  # Location doesn't affect precision
+      delegation_triggers: "dependent"  # Location affects how delegation works
+      agent_autonomy: "independent"  # Location doesn't affect autonomy
+      template_structure: "synergistic"  # Location and structure align
+
+    constraint_precision:
+      frontmatter_syntax: "synergistic"  # Good syntax enables precision
+      tool_selection: "synergistic"  # Right tools enable precision
+      file_location: "independent"  # Location doesn't affect precision
+      delegation_triggers: "synergistic"  # Precise constraints improve triggers
+      agent_autonomy: "conflicting"  # Too precise can limit autonomy
+      template_structure: "dependent"  # Precision requires good templates
+
+    delegation_triggers:
+      frontmatter_syntax: "dependent"  # Triggers defined in frontmatter
+      tool_selection: "synergistic"  # Tools enhance trigger capabilities
+      file_location: "dependent"  # Location affects delegation
+      constraint_precision: "synergistic"  # Precise triggers work better
+      agent_autonomy: "conflicting"  # Triggers can limit autonomy
+      template_structure: "independent"  # Triggers don't affect templates
+
+    agent_autonomy:
+      frontmatter_syntax: "independent"  # Syntax doesn't limit autonomy
+      tool_selection: "dependent"  # Tools determine capabilities
+      file_location: "independent"  # Location doesn't affect autonomy
+      constraint_precision: "conflicting"  # Precision can limit autonomy
+      delegation_triggers: "conflicting"  # Triggers can limit autonomy
+      template_structure: "independent"  # Templates don't affect autonomy
+
+  # Interaction type definitions
+  interaction_types:
+    dependent:
+      description: "A requires B to function correctly"
+      resolution: "Must satisfy both together"
+      priority: "high"
+
+    independent:
+      description: "A and B don't interact"
+      resolution: "Can be satisfied separately"
+      priority: "low"
+
+    conflicting:
+      description: "A opposes B"
+      resolution: "Need negotiation protocol"
+      priority: "critical"
+
+    synergistic:
+      description: "A enhances B"
+      resolution: "Should be grouped together"
+      priority: "medium"
+
+  # Resolution rules for different interaction types
+  resolution_rules:
+    - rule: "Dependent constraints must be satisfied together"
+      applies_to: "dependent"
+      strategy: "batch_validation"
+
+    - rule: "Independent constraints can be validated separately"
+      applies_to: "independent"
+      strategy: "parallel_validation"
+
+    - rule: "Conflicting constraints need negotiation protocol"
+      applies_to: "conflicting"
+      strategy: "negotiation_protocol"
+
+    - rule: "Synergistic constraints should be optimized together"
+      applies_to: "synergistic"
+      strategy: "joint_optimization"
+
+# Molecular-level constraint relationships
+molecular_relationships:
+  protocols:
+    sub_agent_creation:
+      command_creation: "mutually_exclusive"  # Can't be both
+      constraint_validation: "dependent"  # Must validate
+      agent_discovery: "dependent"  # Must discover first
+      pattern_extraction: "synergistic"  # Learn from creation
+
+    command_creation:
+      sub_agent_creation: "mutually_exclusive"  # Can't be both
+      constraint_validation: "dependent"  # Must validate
+      agent_discovery: "dependent"  # Must discover first
+      pattern_extraction: "synergistic"  # Learn from creation
+
+    constraint_validation:
+      all_protocols: "required"  # All protocols need validation
+
+    agent_discovery:
+      all_creation: "prerequisite"  # Must run before any creation
+
+# Cellular-level memory relationships
+cellular_relationships:
+  memory_systems:
+    pattern_evolution:
+      constraint_conflicts: "monitors"  # Tracks conflict patterns
+      agent_genealogy: "influences"  # Patterns pass through lineage
+      constraint_learning: "feeds"  # Evolution feeds learning
+
+    constraint_conflicts:
+      pattern_evolution: "informs"  # Conflicts inform evolution
+      improvement_tracking: "triggers"  # Conflicts trigger improvements
+
+    agent_genealogy:
+      pattern_evolution: "inherits"  # Children inherit patterns
+      agent_effectiveness: "correlates"  # Lineage affects effectiveness
+
+# Conflict resolution strategies
+conflict_resolution:
+  strategies:
+    hierarchical:
+      description: "Higher priority constraint wins"
+      when_to_use: "Clear priority difference"
+
+    mutual:
+      description: "Find middle ground"
+      when_to_use: "Similar priority constraints"
+
+    synthesis:
+      description: "Create new constraint combining both"
+      when_to_use: "Constraints can be merged"
+
+    sequencing:
+      description: "Apply constraints in sequence"
+      when_to_use: "Temporal separation possible"
+
+# Dynamic relationship learning
+learned_relationships:
+  # This section gets updated as Rita learns new patterns
+  discovered_patterns:
+    - pattern: "Heavy tool usage conflicts with simple agents"
+      relationship: "conflicting"
+      resolution: "Minimize tool selection for simple agents"
+      confidence: 0.92
+
+    - pattern: "Delegation triggers synergize with clear personas"
+      relationship: "synergistic"
+      resolution: "Define persona before triggers"
+      confidence: 0.87
+
+    - pattern: "File location affects discovery efficiency"
+      relationship: "dependent"
+      resolution: "Use consistent location patterns"
+      confidence: 0.95
+
+# Relationship strength metrics
+relationship_strengths:
+  # Strength from 0.0 (no relationship) to 1.0 (completely dependent)
+  measurement_criteria:
+    - "Frequency of co-occurrence"
+    - "Impact when modified together"
+    - "Failure correlation"
+    - "Success correlation"
+
+  current_measurements:
+    frontmatter_tool: 0.95  # Almost always related
+    location_autonomy: 0.15  # Rarely related
+    precision_autonomy: 0.75  # Often in tension
+    triggers_precision: 0.82  # Usually enhance each other
+
+# Meta-constraints (constraints about constraints)
+meta_constraints:
+  - "No more than 3 conflicting constraints per agent"
+  - "At least 2 synergistic constraint pairs per agent"
+  - "All dependent constraints must be documented"
+  - "Conflict resolution must complete in <5 iterations"
+  - "Relationship matrix must be updated after each agent creation"

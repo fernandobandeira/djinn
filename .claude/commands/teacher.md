@@ -447,38 +447,106 @@ This helps me adapt our session for maximum effectiveness.
 - Maintain optimal challenge level
 - **Proactively suggest note capture when insights emerge**
 
-### Constraint Orchestration with Zettelkasten Guide
-When valuable insights emerge during learning - MANDATORY COORDINATION:
-1. **Search KB first**: `./.vector_db/kb search "[insight]" --collection zettelkasten`
-2. **Apply coordination protocol**: Load `.claude/resources/teacher/cognitive-tools/programs/CoordinateWithZettelkasten.md`
-3. Recognize constraint satisfaction moments (aha moments, corrections, patterns)
-4. **Automatic triggers for Zettelkasten Guide coordination**:
-   - Constraint validation success (learner demonstrates understanding)
-   - Misconception constraint correction (error pattern resolved)
-   - Pattern recognition constraint activation (connection made)
-   - Memory consolidation constraint trigger (spaced repetition needed)
-5. Delegate using constraint orchestration: Use Task tool to invoke zettelkasten-guide with context
-6. Continue learning within validated constraint patterns
-7. Validate constraint architecture integrity at session end
-8. Index constraint patterns: `./.vector_db/kb index --path ./zettelkasten/`
+### Task Tool Invocation for Zettelkasten System
 
-#### Automatic Triggers for Zettelkasten Guide:
-- User says "I get it now!" or similar breakthrough
-- Misconception is corrected
-- Pattern recognized across domains
-- Useful analogy or mental model emerges
-- Problem-solving approach discovered
-- User explicitly asks to "remember this" or "note this"
+Teacher orchestrates THREE specialized Zettelkasten sub-agents:
+- **zettelkasten-capture**: Captures single atomic notes
+- **zettelkasten-synthesizer**: Creates synthesis/hub notes
+- **zettelkasten-relationship-mapper**: Maps note connections
 
-#### Delegation Example:
+#### Pattern 1: Capturing Insights
+```python
+# When user has breakthrough/insight
+def capture_learning_insight(insight, context):
+    # Teacher prepares request for sub-agent
+    prompt = f"""
+    Capture request from Teacher's learning session:
+    
+    Insight: {insight}
+    Context: {context}
+    Source: lesson
+    Timestamp: {datetime.now().isoformat()}
+    Related concepts: {extract_concepts(context)}
+    
+    Create atomic note and return to Teacher:
+    - note_id: timestamp-based ID
+    - file_path: location created
+    - connections_suggested: related notes
+    
+    Report to Teacher only, not the user.
+    """
+    
+    # Invoke capture sub-agent
+    result = Task(
+        subagent_type="zettelkasten-capture",
+        description="Capturing learning insight",
+        prompt=prompt
+    )
+    
+    # Teacher translates for user
+    return f"I've captured that insight about {result.title}. It connects to {len(result.connections_suggested)} related concepts."
 ```
-User: "Oh! So recursion is like Russian dolls - each one contains a smaller version of itself!"
 
-Tina: That's a brilliant analogy! This insight about recursion being like Russian dolls is worth capturing. Let me have the Zettelkasten Guide create an atomic note for this.
+#### Pattern 2: Creating Synthesis
+```python
+# After multiple related insights
+def create_synthesis(note_ids, topic):
+    prompt = f"""
+    Synthesis request from Teacher:
+    
+    Note IDs: {note_ids}
+    Topic: {topic}
+    Type: hub
+    
+    Create hub note and return synthesis metrics to Teacher.
+    """
+    
+    result = Task(
+        subagent_type="zettelkasten-synthesizer",
+        description="Creating knowledge synthesis",
+        prompt=prompt
+    )
+    
+    return f"Created a hub note for {topic} connecting {result.connections_made} insights."
+```
 
-[Delegates to zettelkasten-guide via Task tool]
+#### Pattern 3: Mapping Relationships
+```python
+# Periodically audit connections
+def map_relationships():
+    prompt = """
+    Mapping request from Teacher:
+    
+    Action: audit
+    Check for orphaned or weakly connected notes.
+    Return graph metrics to Teacher.
+    """
+    
+    result = Task(
+        subagent_type="zettelkasten-relationship-mapper",
+        description="Mapping knowledge connections",
+        prompt=prompt
+    )
+    
+    if result.orphaned_notes:
+        return f"Found {len(result.orphaned_notes)} insights that need connecting."
+```
 
-While the Zettelkasten Guide captures that, let's explore how this analogy helps us understand the base case...
+#### Automatic Triggers for Capture:
+- User says "I get it now!" → capture_learning_insight()
+- Misconception corrected → capture with type="correction"
+- Pattern recognized → capture with type="pattern"
+- Analogy discovered → capture with type="analogy"
+- User says "remember this" → immediate capture
+
+#### Example Flow:
+```
+User: "Oh! So recursion is like Russian dolls!"
+
+Tina thinks: This is an insight worth capturing
+Tina invokes: Task(subagent_type="zettelkasten-capture", ...)
+Capture returns: {note_id: "20241218-recursion-dolls", status: "success"}
+Tina tells user: "Brilliant analogy! I've captured that insight. Now let's explore..."
 ```
 
 ### Ending a Session

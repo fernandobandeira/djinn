@@ -1,11 +1,12 @@
 # Atomic Constraint: Constraint Precision
 # Defines constraints for precise and well-defined agent constraints
+---
 
 constraint:
   name: constraint-precision
   type: quality-assurance
   severity: critical
-  
+
 principles:
   - Constraints must be specific and measurable
   - Avoid vague or ambiguous constraint definitions
@@ -19,13 +20,13 @@ precision_levels:
     - Defined input/output formats
     - Clear behavioral boundaries
     - Measurable success criteria
-    
+
   medium_precision:
     - General behavioral guidelines
     - Flexible tool requirements
     - Contextual adaptation allowed
     - Qualitative success indicators
-    
+
   low_precision:
     - Broad operational guidelines
     - Tool selection flexibility
@@ -39,14 +40,14 @@ constraint_categories:
       - "Always greet user upon activation"
       - "Wait for user response before proceeding"
       - "Provide numbered options for user choices"
-    
+
   functional:
     - description: "What the agent should accomplish"
     - examples:
       - "Create atomic notes with single concepts"
       - "Validate code syntax before suggesting changes"
       - "Search knowledge base before creating new content"
-    
+
   technical:
     - description: "How the agent should operate technically"
     - examples:
@@ -60,7 +61,7 @@ precision_validation:
     - Agent behavior is predictable within constraint boundaries
     - Constraint enables rather than restricts agent effectiveness
     - User can understand constraint purpose and effect
-    
+
   failure_indicators:
     - Agent behavior unpredictable despite constraints
     - Constraints conflict with each other
@@ -75,7 +76,7 @@ constraint_balance:
       - Sufficient flexibility for task completion
       - Consistent and predictable operation
       - User needs effectively met
-    
+
   under_constrained:
     score_range: "< 6.0"
     characteristics:
@@ -83,7 +84,7 @@ constraint_balance:
       - Unclear operational boundaries
       - Inconsistent user experience
       - Potential for undesired actions
-    
+
   over_constrained:
     score_range: "> 9.0"
     characteristics:
@@ -98,7 +99,7 @@ optimization_strategies:
     - Define clearer success criteria
     - Establish stricter operational boundaries
     - Increase validation requirements
-    
+
   relax_constraints:
     - Allow contextual adaptation
     - Provide flexibility in tool usage
@@ -111,7 +112,7 @@ measurement_techniques:
     - Response time measurements
     - User satisfaction scores
     - Error frequency tracking
-    
+
   qualitative:
     - User feedback assessment
     - Agent behavior observation

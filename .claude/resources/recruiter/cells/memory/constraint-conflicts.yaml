@@ -1,6 +1,7 @@
 # Constraint Conflicts Memory Cell
 # Records and resolves constraint conflicts discovered during agent creation
 # Implements bidirectional constraint negotiation from Zettelkasten insights
+---
 
 metadata:
   type: cellular-memory
@@ -11,26 +12,26 @@ metadata:
 conflict_types:
   description: |
     Categories of constraint conflicts and their characteristics
-  
+
   categories:
     tool_scope_mismatch:
       description: "Tools don't match the agent's scope"
       frequency: high
       example: "Global search tools for local file task"
       resolution_strategy: "Minimize to essential tools only"
-    
+
     trigger_overlap:
       description: "Multiple agents could trigger on same condition"
       frequency: medium
       example: "Both 'reviewer' and 'analyzer' trigger on code changes"
       resolution_strategy: "Add specificity to trigger conditions"
-    
+
     output_format_conflict:
       description: "Output format conflicts with tool capabilities"
       frequency: low
       example: "Requires JSON but only has Read tool"
       resolution_strategy: "Either add tool or adjust format expectation"
-    
+
     scope_boundary_violation:
       description: "Agent scope exceeds defined boundaries"
       frequency: medium
@@ -40,7 +41,7 @@ conflict_types:
 conflict_history:
   description: |
     Historical record of conflicts and their resolutions
-  
+
   resolved_conflicts:
     - conflict_id: "cf_001"
       date: "2025-08-15"
@@ -50,7 +51,7 @@ conflict_history:
         issue: "Had Write and Edit tools but only needs Read and Bash"
         resolution: "Removed unnecessary tools"
         outcome: "Improved efficiency by 40%"
-      
+
     - conflict_id: "cf_002"
       date: "2025-08-15"
       agent: "doc-generator"
@@ -59,7 +60,7 @@ conflict_history:
         issue: "Triggered on same conditions as analyst"
         resolution: "Added 'documentation' keyword requirement"
         outcome: "Eliminated false triggers"
-    
+
     - conflict_id: "cf_003"
       date: "2025-08-15"
       agent: "code-reviewer"
@@ -72,30 +73,30 @@ conflict_history:
 negotiation_protocols:
   description: |
     Protocols for resolving conflicts between constraints
-  
+
   priority_hierarchy:
     1: "Safety constraints (never compromise)"
     2: "Core functionality (preserve agent purpose)"
     3: "Efficiency constraints (optimize resources)"
     4: "User experience (improve interaction)"
     5: "Nice-to-have features (can be relaxed)"
-  
+
   negotiation_strategies:
     mutual_relaxation:
       description: "Both constraints relax slightly"
       when_applicable: "Neither constraint is critical"
       example: "Scope vs tools - slightly broader scope with minimal tools"
-    
+
     hierarchical_override:
       description: "Higher priority constraint wins"
       when_applicable: "Clear priority difference"
       example: "Safety always overrides efficiency"
-    
+
     creative_synthesis:
       description: "Find novel solution satisfying both"
       when_applicable: "Constraints seem incompatible but aren't"
       example: "Use delegation instead of direct tool access"
-    
+
     temporal_sequencing:
       description: "Apply constraints at different times"
       when_applicable: "Constraints conflict only when simultaneous"
@@ -104,29 +105,29 @@ negotiation_protocols:
 conflict_patterns:
   description: |
     Common patterns in constraint conflicts
-  
+
   anti_patterns:
     kitchen_sink:
       description: "Agent has every tool 'just in case'"
       symptoms: ["Too many tools", "Unclear purpose", "Slow execution"]
       fix: "Define specific purpose, minimize tools"
-    
+
     overly_specific:
       description: "Agent only works in exact scenarios"
       symptoms: ["Brittle to input changes", "Rarely triggers", "Many edge cases"]
       fix: "Generalize constraints while maintaining purpose"
-    
+
     ambiguous_boundaries:
       description: "Unclear where agent responsibilities end"
       symptoms: ["Scope creep", "Overlapping agents", "Unpredictable behavior"]
       fix: "Define clear boundaries and enforce them"
-  
+
   success_patterns:
     minimal_sufficient:
       description: "Just enough constraints for consistency"
       characteristics: ["Clear purpose", "Minimal tools", "Flexible execution"]
       example: "Test runner with Read and Bash only"
-    
+
     complementary_agents:
       description: "Agents with non-overlapping constraints"
       characteristics: ["Clear separation", "Can compose", "No conflicts"]
@@ -135,24 +136,24 @@ conflict_patterns:
 resolution_rules:
   description: |
     Rules for automatic conflict resolution
-  
+
   automatic_resolutions:
     - rule: "Remove redundant tools"
       trigger: "Tool never used in agent logic"
       action: "Remove from tool list"
-      
+
     - rule: "Add missing trigger keywords"
       trigger: "Under-constrained delegation"
       action: "Add IMPORTANT or Proactively"
-      
+
     - rule: "Clarify vague descriptions"
       trigger: "Description lacks specificity"
       action: "Add specific verbs and contexts"
-      
+
     - rule: "Enforce tool minimalism"
       trigger: "More than 5 tools"
       action: "Prompt for justification or reduction"
-  
+
   manual_review_required:
     - "Safety constraint violations"
     - "Core functionality changes"
@@ -162,13 +163,13 @@ resolution_rules:
 learning_integration:
   description: |
     How conflict resolution integrates with learning
-  
+
   feedback_loops:
     - "Successful resolutions become patterns"
     - "Failed resolutions trigger investigation"
     - "Repeated conflicts indicate systemic issues"
     - "Novel resolutions expand resolution strategies"
-  
+
   kb_integration:
     - "Store conflict patterns in vector DB"
     - "Search for similar conflicts before resolution"
@@ -178,23 +179,23 @@ learning_integration:
 metrics:
   description: |
     Metrics for conflict resolution effectiveness
-  
+
   tracked_metrics:
     conflict_frequency:
       current: 0.15  # conflicts per agent creation
       target: 0.05
       trend: decreasing
-    
+
     resolution_success_rate:
       current: 0.92
       target: 0.95
       trend: stable
-    
+
     time_to_resolution:
       current: "2.5 minutes"
       target: "1 minute"
       trend: improving
-    
+
     recurrence_rate:
       current: 0.08  # same conflict type recurring
       target: 0.02

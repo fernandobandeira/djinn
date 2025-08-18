@@ -1,40 +1,41 @@
 # Atomic Constraint: Delegation Triggers
 # Defines how to write descriptions that trigger automatic delegation
+---
 
 constraint:
   name: delegation-triggers
   type: behavioral
   severity: important
-  
+
 keywords:
   proactive:
     - "IMPORTANT"
     - "Proactively"
     - "MUST BE USED"
     - "Use proactively"
-    
+
   conditional:
     - "when"
     - "after"
     - "during"
     - "before"
-    
+
 patterns:
   strong_delegation:
     template: "IMPORTANT {action} during {context}"
     example: "IMPORTANT validates syntax during agent creation"
     strength: high
-    
+
   proactive_delegation:
     template: "Use proactively to {action}"
     example: "Use proactively to run tests and fix failures"
     strength: high
-    
+
   conditional_delegation:
     template: "Use when {condition}"
     example: "Use when code review is needed"
     strength: medium
-    
+
   must_use:
     template: "MUST BE USED when {trigger}"
     example: "MUST BE USED when creating new agents"
@@ -51,11 +52,11 @@ anti_patterns:
   - description: "Vague triggers"
     bad: "Helps with stuff"
     good: "IMPORTANT reviews code for security issues"
-    
+
   - description: "Missing keywords"
     bad: "Reviews code when needed"
     good: "Use proactively to review code changes"
-    
+
   - description: "Passive voice"
     bad: "Code is reviewed by this agent"
     good: "IMPORTANT reviews code during PR creation"

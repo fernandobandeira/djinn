@@ -10,7 +10,20 @@
 - **recruiter**: Use `/recruiter` to invoke Rita the recruiter
 
 ### Sub-Agents
-- **zettelkasten-guide**: Zettelkasten knowledge capture specialist (auto-delegated during learning sessions under Teacher)
+
+#### Rita's Sub-Agents (Agent Creation & Analysis)
+- **agent-planner**: Plans agent architecture with systematic decomposition
+- **agent-builder**: Creates agent files and resource structures
+- **pattern-extractor**: Extracts and learns patterns from successful agents
+- **architecture-analyst**: Performs deep architectural analysis and improvement suggestions
+- **coherence-verifier**: Verifies component coherence across architecture levels
+- **constraint-validator**: Validates agent constraint balance during creation
+- **resource-validator**: Validates resource references and file existence
+
+#### Teacher's Sub-Agents (Zettelkasten System)
+- **zettelkasten-capture**: Captures single atomic notes from learning insights
+- **zettelkasten-synthesizer**: Generates synthesis notes from note clusters
+- **zettelkasten-relationship-mapper**: Analyzes and establishes note relationships
 
 ## Documentation Structure
 

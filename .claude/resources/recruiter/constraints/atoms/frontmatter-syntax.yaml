@@ -1,11 +1,12 @@
 # Atomic Constraint: Frontmatter Syntax
 # This defines the irreducible constraint for valid Claude Code agent frontmatter
+---
 
 constraint:
   name: frontmatter-syntax
   type: structural
   severity: critical
-  
+
 rules:
   - id: yaml-format
     description: Must be valid YAML between --- markers
@@ -13,21 +14,21 @@ rules:
       ---
       name: [agent-name]
       description: [when to use]
-      tools: [comma-separated list] # optional
-      model: [haiku|sonnet|opus] # optional, defaults to sonnet
+      tools: [comma-separated list]  # optional
+      model: [haiku|sonnet|opus]  # optional, defaults to sonnet
       ---
-    
+
   - id: required-fields
     description: Name and description are mandatory
     fields:
       - name: string, unique identifier
       - description: string, delegation trigger
-    
+
   - id: tool-format
     description: Tools must be comma-separated, not array
     valid: "Read, Write, Edit"
     invalid: "[Read, Write, Edit]"
-    
+
   - id: keyword-triggers
     description: Use IMPORTANT or Proactively for automatic delegation
     examples:
