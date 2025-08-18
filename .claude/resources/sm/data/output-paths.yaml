@@ -1,12 +1,20 @@
-outputs:
-  stories: /docs/stories/
-  sprints: /docs/sprints/
-  backlog: /docs/backlog/backlog.md
-  retrospectives: /docs/sprints/retrospectives/
-
-# Additional Configuration
-config:
-  story_naming_convention: "{epic}.{story_number}"
-  story_file_extension: ".md"
-  indexing_enabled: true
-  quality_review: true
+version: 1.0
+output_configuration:
+  stories:
+    base_path: /docs/stories/
+    formats:
+      - markdown
+      - yaml
+  sprint_documents:
+    base_path: /docs/sprints/
+    formats:
+      - markdown
+  retrospectives:
+    base_path: /docs/retrospectives/
+    formats:
+      - markdown
+  change_proposals:
+    base_path: /docs/changes/
+    formats:
+      - markdown
+      - yaml

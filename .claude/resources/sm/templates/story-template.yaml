@@ -1,31 +1,40 @@
-version: "1.0"
-story_structure:
-  epic: ""
-  title: ""
-  description: ""
-  type: ["feature", "bug", "enhancement", "technical-debt"]
-  priority: ["low", "medium", "high", "critical"]
-  complexity: 
-    points: 0  # Story points
-    estimated_hours: 0
-
-bmad_format:
-  behavior:
-    given: ""  # Initial context
-    when: ""   # Action or event
-    then: ""   # Expected outcome
-
-acceptance_criteria:
-  - criteria: ""
-    type: ["functional", "non-functional", "performance"]
-
-technical_details:
-  components_impacted: []
-  dependencies: []
-  potential_risks: []
-
-metadata:
-  created_by: ""
-  created_at: ""
-  last_updated: ""
-  sprint_target: ""
+version: 1.0
+story_template:
+  status:
+    - Draft
+    - Approved
+    - InProgress
+    - Review
+    - Done
+  sections:
+    narrative:
+      format: "As a [role], I want [feature] so that [benefit]"
+    acceptance_criteria:
+      type: numbered_list
+      validation_rules:
+        - Must be measurable
+        - Must be testable
+    tasks:
+      attributes:
+        - linked_ac
+        - estimated_effort
+        - assignee
+    dev_notes:
+      required_context:
+        - architecture_references
+        - technical_constraints
+        - integration_points
+    testing_requirements:
+      types:
+        - unit
+        - integration
+        - acceptance
+    change_log:
+      tracking:
+        - date
+        - author
+        - description
+    dev_agent_record:
+      metadata:
+        - generation_timestamp
+        - source_documents
