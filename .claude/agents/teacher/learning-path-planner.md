@@ -1,5 +1,6 @@
 ---
 name: learning-path-planner
+type: subagent
 description: IMPORTANT generates optimal learning sequences based on prerequisites
 tools: Read, Grep, Glob
 model: haiku

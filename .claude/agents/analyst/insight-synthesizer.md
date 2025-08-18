@@ -1,5 +1,6 @@
 ---
 name: insight-synthesizer
+type: subagent
 description: Extracts patterns and synthesizes insights from data and discussions
 tools: Read, Grep, Glob
 model: haiku

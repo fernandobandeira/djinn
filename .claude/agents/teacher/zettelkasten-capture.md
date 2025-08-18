@@ -1,5 +1,6 @@
 ---
 name: zettelkasten-capture
+type: subagent
 description: IMPORTANT captures single atomic notes from learning insights during teaching sessions
 tools: Read, Write, Grep, LS
 model: haiku

@@ -1,5 +1,6 @@
 ---
 name: assessment-generator
+type: subagent
 description: IMPORTANT creates assessment questions matching learning objectives
 tools: Read
 model: haiku

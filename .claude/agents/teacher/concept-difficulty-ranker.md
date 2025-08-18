@@ -1,5 +1,6 @@
 ---
 name: concept-difficulty-ranker
+type: subagent
 description: IMPORTANT ranks concepts by difficulty and prerequisite complexity
 tools: Read, Glob
 model: haiku

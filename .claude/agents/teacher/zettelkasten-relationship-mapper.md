@@ -1,5 +1,6 @@
 ---
 name: zettelkasten-relationship-mapper
+type: subagent
 description: IMPORTANT analyzes and establishes relationships between Zettelkasten notes
 tools: Read, Grep, Glob, MultiEdit
 model: haiku

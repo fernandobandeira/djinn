@@ -1,5 +1,6 @@
 ---
 name: zettelkasten-synthesizer
+type: subagent
 description: IMPORTANT generates synthesis notes from clusters of related Zettelkasten notes
 tools: Read, Write, Grep, Glob
 model: sonnet

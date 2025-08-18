@@ -1,5 +1,6 @@
 ---
 name: competitive-analyzer
+type: subagent
 description: Performs comprehensive competitive analysis and positioning assessment
 tools: Read, Write, WebSearch, WebFetch, Grep
 model: sonnet

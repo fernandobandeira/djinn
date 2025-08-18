@@ -1,5 +1,6 @@
 ---
 name: misconception-detector
+type: subagent
 description: IMPORTANT detects and categorizes misconceptions in learner responses
 tools: Read, Grep
 model: haiku
