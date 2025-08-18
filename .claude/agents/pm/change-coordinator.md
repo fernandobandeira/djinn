@@ -3,7 +3,7 @@ name: change-coordinator
 type: subagent
 description: IMPORTANT Specialized agent for handling systematic change management and course corrections in product development
 tools: Read, Write, Grep, Glob
-model: haiku
+model: opus
 ---
 
 # Change Coordinator Agent

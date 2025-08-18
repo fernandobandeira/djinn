@@ -3,7 +3,7 @@ name: stakeholder-coordinator
 type: subagent
 description: IMPORTANT manages stakeholder communications and progress updates
 tools: [Read, Write, Grep, Glob]
-model: haiku
+model: sonnet
 ---
 
 # Stakeholder Coordinator Agent

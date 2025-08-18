@@ -3,7 +3,7 @@ name: user-researcher
 type: subagent
 description: Conducts comprehensive user research using advanced elicitation methods and structured approaches
 tools: [Read, Grep, Glob, Write, Task, MultiEdit]
-model: haiku
+model: sonnet
 ---
 
 # User Research Sub-Agent

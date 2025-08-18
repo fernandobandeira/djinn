@@ -1,5 +1,6 @@
 ---
 name: coherence-verifier
+type: subagent
 description: IMPORTANT verifies component coherence across agent architecture levels during creation
 tools: Read, Grep, Glob
 model: haiku

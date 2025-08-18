@@ -1,5 +1,6 @@
 ---
 name: pattern-extractor
+type: subagent
 description: IMPORTANT extracts and learns patterns from successful agent creations for Rita's knowledge base
 tools: Read, Grep, Glob, Write, Bash
 model: sonnet

@@ -3,7 +3,7 @@ name: qa-reviewer
 type: subagent
 description: IMPORTANT Universal Quality Assurance operations for code review, testing, and validation
 tools: Read, Grep, Bash, Write
-model: haiku
+model: sonnet
 ---
 
 # QA Reviewer: Shared Utility Sub-Agent

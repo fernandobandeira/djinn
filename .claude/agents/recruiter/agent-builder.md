@@ -1,5 +1,6 @@
 ---
 name: agent-builder
+type: subagent
 description: IMPORTANT creates agent files and resource structures during agent creation workflow
 tools: Read, Write, MultiEdit, Bash, LS
 model: haiku
@@ -88,6 +89,16 @@ Read .claude/resources/recruiter/constraints/atoms/file-location.yaml
 Read .claude/resources/recruiter/cognitive-tools/schemas/agent-request-schema.json
 ```
 
+### For Model and Syntax Knowledge
+```bash
+# Load model selection criteria for choosing appropriate models
+Read .claude/resources/recruiter/data/model-selection-guide.md
+# Load special syntax keywords for Claude Code agent discovery
+Read .claude/resources/recruiter/data/special-syntax-keywords.md
+# Load thinking mode triggers for critical task handling
+Read .claude/resources/recruiter/data/thinking-mode-triggers.md
+```
+
 ## File Creation Templates
 
 ### Sub-Agent Template
@@ -96,7 +107,7 @@ Read .claude/resources/recruiter/cognitive-tools/schemas/agent-request-schema.js
 name: {name}
 description: {description}
 tools: {tools}
-model: {model}
+model: sonnet
 ---
 
 {system_prompt}

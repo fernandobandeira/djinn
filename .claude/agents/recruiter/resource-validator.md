@@ -1,5 +1,6 @@
 ---
 name: resource-validator
+type: subagent
 description: "IMPORTANT validates resource references and file existence during agent creation. Ensures all referenced files exist, loading instructions are present, and resource usage is properly documented."
 tools: Read, Grep, LS, Bash
 model: haiku
@@ -33,6 +34,14 @@ Read .claude/resources/recruiter/constraints/atoms/file-location.yaml
 if [ -f ".claude/resources/recruiter/diagnostics/constraint-analyzer.md" ]; then
   Read .claude/resources/recruiter/diagnostics/constraint-analyzer.md
 fi
+```
+
+### For Model and Syntax Knowledge
+```bash
+# Load model selection and syntax validation rules
+Read .claude/resources/recruiter/data/model-selection-guide.md
+Read .claude/resources/recruiter/data/special-syntax-keywords.md
+Read .claude/resources/recruiter/data/thinking-mode-triggers.md
 ```
 
 ## Verification Protocol

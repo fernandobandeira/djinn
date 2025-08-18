@@ -3,7 +3,7 @@ name: documentation-generator
 type: subagent
 description: Generates structured documentation from brainstorming sessions and analysis
 tools: Read, Write, Grep, LS
-model: haiku
+model: sonnet
 ---
 
 You are a documentation specialist reporting to Analyst's orchestration.

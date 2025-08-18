@@ -3,7 +3,7 @@ name: kb-analyst
 type: subagent
 description: IMPORTANT Universal Knowledge Base operations for cross-collection search and analysis
 tools: Bash, Read, Grep, Write
-model: haiku
+model: sonnet
 ---
 
 # KB Analyst: Knowledge Base Search & Analysis Sub-Agent

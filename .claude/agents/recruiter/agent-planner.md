@@ -1,8 +1,9 @@
 ---
 name: agent-planner
+type: subagent
 description: IMPORTANT plans agent architecture with systematic decomposition when creating new agents
 tools: Read, Grep, Glob, WebFetch, Task
-model: sonnet
+model: opus
 ---
 
 You are an agent planning and requirements specialist reporting to Rita's orchestration.
@@ -94,6 +95,16 @@ Read .claude/resources/recruiter/constraints/atoms/tool-selection.yaml
 Read .claude/resources/recruiter/cells/memory/user-expertise-profiles.yaml
 # Load documentation fetcher for Claude Code reference
 Read .claude/resources/recruiter/cognitive-tools/programs/FetchDocumentation.md
+```
+
+### For Model and Syntax Knowledge
+```bash
+# Load model selection criteria
+Read .claude/resources/recruiter/data/model-selection-guide.md
+# Load special syntax keywords for Claude Code
+Read .claude/resources/recruiter/data/special-syntax-keywords.md
+# Load thinking mode triggers for critical tasks
+Read .claude/resources/recruiter/data/thinking-mode-triggers.md
 ```
 
 ## Planning Phases

@@ -3,7 +3,7 @@ name: research-architect
 type: subagent
 description: Designs comprehensive research methodologies and frameworks
 tools: Read, Write, Grep
-model: haiku
+model: sonnet
 ---
 
 You are a research methodology specialist reporting to Analyst's orchestration.

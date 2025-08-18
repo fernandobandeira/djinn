@@ -3,7 +3,7 @@ name: frontend-specifier
 type: subagent
 description: Generates comprehensive frontend specifications and AI tool prompts for implementation
 tools: [Read, Write, Grep, MultiEdit, Task]
-model: haiku
+model: sonnet
 ---
 
 # Frontend Specifier Sub-Agent

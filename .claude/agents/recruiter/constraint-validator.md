@@ -1,5 +1,6 @@
 ---
 name: constraint-validator
+type: subagent
 description: IMPORTANT validates agent constraint balance during Rita's agent creation process
 tools: Read, Grep
 model: haiku

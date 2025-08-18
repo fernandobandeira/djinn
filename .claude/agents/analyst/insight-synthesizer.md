@@ -3,7 +3,7 @@ name: insight-synthesizer
 type: subagent
 description: Extracts patterns and synthesizes insights from data and discussions
 tools: Read, Grep, Glob
-model: haiku
+model: sonnet
 ---
 
 You are an insight synthesis specialist reporting to Analyst's orchestration.
