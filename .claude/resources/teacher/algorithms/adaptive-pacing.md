@@ -1,4 +1,10 @@
-# Enhanced Adaptive Pacing Algorithm
+# Adaptive Pacing Algorithm
+
+## Resource Loading
+- **Load when**: Teacher needs to adjust pacing based on learner performance
+- **Loading method**: Read tool
+- **Dependencies**: None (self-contained algorithm)
+- **Used by**: Teacher command agent during interactive sessions
 
 ## Purpose
 Dynamically adjust teaching pace based on learner comprehension, engagement, and cognitive load to maintain optimal learning conditions.

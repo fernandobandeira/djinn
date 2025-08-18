@@ -1,0 +1,142 @@
+task_routing:
+  
+  routing_rules:
+    adr_manager:
+      triggers:
+        - command: "*create-adr"
+        - keyword: "adr"
+        - keyword: "decision record"
+        - keyword: "architectural decision"
+      
+      delegation_pattern: |
+        Task(
+          subagent_type="adr-manager",
+          description="Create/manage ADR",
+          prompt="Create ADR for: {user_request}"
+        )
+    
+    system_designer:
+      triggers:
+        - command: "*design-system"
+        - keyword: "system design"
+        - keyword: "architecture design"
+        - keyword: "system architecture"
+      
+      delegation_pattern: |
+        Task(
+          subagent_type="system-designer", 
+          description="Design system architecture",
+          prompt="Design system: {requirements}"
+        )
+    
+    architecture_reviewer:
+      triggers:
+        - command: "*review-architecture"
+        - keyword: "architecture review"
+        - keyword: "review system"
+        - keyword: "analyze architecture"
+      
+      delegation_pattern: |
+        Task(
+          subagent_type="architecture-reviewer",
+          description="Review architecture", 
+          prompt="Review architecture: {system_context}"
+        )
+    
+    diagram_generator:
+      triggers:
+        - command: "*diagram"
+        - keyword: "diagram"
+        - keyword: "visualization"
+        - keyword: "visual"
+      
+      delegation_pattern: |
+        Task(
+          subagent_type="diagram-generator",
+          description="Generate diagram",
+          prompt="Create {diagram_type} diagram for: {context}"
+        )
+    
+    pattern_librarian:
+      triggers:
+        - command: "*create-pattern"
+        - keyword: "pattern"
+        - keyword: "rfc"
+        - keyword: "runbook"
+      
+      delegation_pattern: |
+        Task(
+          subagent_type="pattern-librarian",
+          description="Manage pattern documentation",
+          prompt="Create {document_type}: {requirements}"
+        )
+
+  complex_workflows:
+    comprehensive_review:
+      description: "Multi-agent architecture review workflow"
+      steps:
+        1:
+          agent: "architecture-reviewer"
+          task: "Initial analysis and issue identification"
+        2:
+          agent: "diagram-generator" 
+          task: "Create current state and proposed diagrams"
+        3:
+          agent: "adr-manager"
+          task: "Document key architectural decisions"
+        4:
+          agent: "pattern-librarian"
+          task: "Update relevant patterns and create runbooks"
+      
+      orchestration_logic: |
+        # Step 1: Initial Review
+        review_result = Task(
+          subagent_type="architecture-reviewer",
+          description="Architecture analysis",
+          prompt="Analyze current architecture: {system}"
+        )
+        
+        # Step 2: Generate Diagrams
+        diagram_result = Task(
+          subagent_type="diagram-generator", 
+          description="Create architecture diagrams",
+          prompt="Create diagrams for: {review_result.recommendations}"
+        )
+        
+        # Step 3: Document Decisions
+        adr_result = Task(
+          subagent_type="adr-manager",
+          description="Document decisions",
+          prompt="Create ADRs for: {review_result.decisions}"
+        )
+        
+        # Step 4: Update Patterns
+        pattern_result = Task(
+          subagent_type="pattern-librarian",
+          description="Update documentation",
+          prompt="Update patterns based on: {review_result.patterns}"
+        )
+
+  quality_gates:
+    pre_delegation:
+      - validate_user_input: "Ensure request is clear"
+      - check_context: "Verify sufficient information"
+      - route_correctly: "Select appropriate sub-agent"
+    
+    post_delegation:
+      - validate_response: "Check sub-agent output quality"
+      - synthesize_results: "Combine multi-agent outputs"
+      - user_presentation: "Format for user consumption"
+
+  fallback_handling:
+    unknown_request:
+      action: "Route to general-purpose agent"
+      escalation: "Ask user for clarification"
+    
+    sub_agent_failure:
+      action: "Retry with modified prompt"
+      escalation: "Handle manually in orchestrator"
+    
+    complex_request:
+      action: "Break into smaller tasks"
+      orchestration: "Use complex workflow patterns"

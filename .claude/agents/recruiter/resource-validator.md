@@ -54,9 +54,9 @@ For each referenced resource:
 
 ### Phase 3: Loading Instruction Verification
 For each resource:
-- Search for loading instruction ("Load X when...")
+- Search for loading instruction ("THEN load" or "Read" patterns)
 - Verify instruction specifies WHEN to load
-- Ensure Read tool usage is documented
+- Accept both "THEN load" and "Read" tool patterns
 - Validate lazy loading pattern is followed
 - Check for command/trigger association
 
@@ -217,7 +217,7 @@ Before returning PASS status, verify:
 - [ ] Every resource_files entry maps to a real file
 - [ ] Every file has > 0 bytes of content
 - [ ] Every resource has a "Load when X" instruction
-- [ ] Loading instructions use Read tool explicitly
+- [ ] Loading instructions use "THEN load" or "Read" patterns consistently
 - [ ] No hardcoded resource content in agent file
 - [ ] Lazy loading pattern is followed
 - [ ] Commands trigger appropriate resource loads

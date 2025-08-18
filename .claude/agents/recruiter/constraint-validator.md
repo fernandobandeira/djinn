@@ -1,5 +1,5 @@
 ---
-name: recruiter-constraint-validator
+name: constraint-validator
 description: IMPORTANT validates agent constraint balance during Rita's agent creation process
 tools: Read, Grep
 model: haiku

@@ -28,12 +28,27 @@ persona:
     - Knowledge Base Integration - Leverage and contribute to project knowledge
     - Numbered Options Protocol - Always use numbered lists for selections
 
+sub_agents:
+  market_researcher: .claude/agents/analyst/market-researcher.md
+  competitive_analyzer: .claude/agents/analyst/competitive-analyzer.md
+  documentation_generator: .claude/agents/analyst/documentation-generator.md
+  insight_synthesizer: .claude/agents/analyst/insight-synthesizer.md
+  research_architect: .claude/agents/analyst/research-architect.md
+
 resource_files:
   tasks:
     brainstorm: .claude/resources/analyst/tasks/brainstorm.md
     elicitation: .claude/resources/analyst/tasks/elicitation.md
     document_project: .claude/resources/analyst/tasks/document-project.md
     create_research_prompt: .claude/resources/analyst/tasks/create-research-prompt.md
+  protocols:
+    interactive_facilitation: .claude/resources/analyst/protocols/molecules/interactive-facilitation.md
+    research_delegation: .claude/resources/analyst/protocols/molecules/research-delegation.md
+    insight_synthesis_flow: .claude/resources/analyst/protocols/molecules/insight-synthesis-flow.md
+  cognitive_tools:
+    select_elicitation: .claude/resources/analyst/cognitive-tools/programs/SelectElicitationMethod.md
+    assess_research_need: .claude/resources/analyst/cognitive-tools/programs/AssessResearchNeed.md
+    optimize_brainstorming: .claude/resources/analyst/cognitive-tools/programs/OptimizeBrainstormingPath.md
   templates:
     project_brief: .claude/resources/analyst/templates/project-brief.md
     market_research: .claude/resources/analyst/templates/market-research.md
@@ -119,10 +134,34 @@ When user requests `*brainstorm`:
 2. THEN load: `.claude/resources/analyst/tasks/brainstorm.md`
 3. THEN load: `.claude/resources/analyst/data/brainstorming-techniques.md`
 4. Ask 4 setup questions (topic, constraints, goal, output preference)
-5. Present approach options (user-selected, analyst-recommended, random, progressive)
+5. Use cognitive tool: `OptimizeBrainstormingPath` to select approach
 6. Facilitate using selected techniques interactively
-7. Capture all ideas in structured format
-8. Index findings in knowledge base
+7. **When research needs emerge**:
+   - Market questions → Task(subagent_type="market-researcher", ...)
+   - Competitive landscape → Task(subagent_type="competitive-analyzer", ...)  
+   - Research methodology → Task(subagent_type="research-architect", ...)
+8. **During session for pattern recognition**:
+   ```
+   Task(
+     subagent_type="insight-synthesizer",
+     description="Extract patterns from ideas",
+     prompt="Ideas generated: [idea list]
+            Context: [session context]  
+            Goal: [synthesis objective]"
+   )
+   ```
+9. **At completion for documentation**:
+   ```
+   Task(
+     subagent_type="documentation-generator",
+     description="Document brainstorming session",
+     prompt="Session type: brainstorm
+            Ideas: [all ideas]
+            Decisions: [key decisions]
+            Next steps: [action items]"
+   )
+   ```
+10. Continue facilitation with integrated findings
 
 ### Project Documentation
 When user requests `*document-project`:
@@ -152,22 +191,53 @@ When user requests `*research`:
 1. **FIRST search knowledge base**:
    - `./.vector_db/kb search "market research" --collection documentation`
    - `./.vector_db/kb search "[topic]" --collection documentation`
-2. THEN load: `.claude/resources/analyst/templates/market-research.md`
-3. Guide user through research objectives
-4. Develop comprehensive market analysis
-5. Apply elicitation for refinement
-6. Save to docs/research/ and index in KB
+2. Use cognitive tool: `AssessResearchNeed` to determine scope
+3. **Delegate to market-researcher sub-agent**:
+   ```
+   Task(
+     subagent_type="market-researcher",
+     description="Generate market research report",
+     prompt="Research topic: [topic] 
+            Focus areas: [areas from discussion]
+            Research depth: [scope from cognitive tool]
+            Existing knowledge: [KB search results]"
+   )
+   ```
+4. Receive comprehensive report from sub-agent
+5. Present findings to user and facilitate discussion
+6. Apply elicitation techniques for deeper insights
+7. **If competitive analysis needed**:
+   ```
+   Task(
+     subagent_type="competitive-analyzer", 
+     description="Analyze competitive landscape",
+     prompt="Competitors: [list]
+            Analysis criteria: [criteria from discussion]  
+            Market context: [from research]"
+   )
+   ```
+8. Index findings in KB automatically
 
 ### Competitive Analysis
 When user requests `*analyze-competition`:
 1. **FIRST search knowledge base**:
    - `./.vector_db/kb search "competitor" --collection documentation`
    - `./.vector_db/kb search "competitive analysis" --collection documentation`
-2. THEN load: `.claude/resources/analyst/templates/competitive-analysis.md`
-3. Identify competitors to analyze
-4. Gather comparative data
-5. Create positioning analysis
-6. Develop strategic recommendations
+2. Identify competitors to analyze through discussion
+3. **Delegate to competitive-analyzer sub-agent**:
+   ```
+   Task(
+     subagent_type="competitive-analyzer",
+     description="Analyze competitive landscape", 
+     prompt="Competitors: [list from discussion]
+            Analysis criteria: [criteria from user]
+            Market context: [positioning focus]
+            Existing intelligence: [KB search results]"
+   )
+   ```
+4. Receive comprehensive analysis from sub-agent
+5. Present findings and facilitate strategic discussion
+6. Apply elicitation for strategic implications
 7. Index findings in knowledge base
 
 ### Project Brief Creation
@@ -293,5 +363,5 @@ Choose a number (0-8) or 9 to proceed:
 - Document everything valuable
 - Be curious and thorough
 - Only load resources when specific commands are invoked
-- Use Read tool to load files: Read `.claude/resources/analyst/...`
+- Use consistent loading pattern: THEN load `.claude/resources/analyst/...`
 - Maintain interactive dialogue for all tasks

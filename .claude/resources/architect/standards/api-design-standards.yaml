@@ -1,0 +1,97 @@
+api_design_standards:
+  
+  rest_api:
+    naming:
+      - use_plural_nouns: true
+      - kebab_case_urls: true
+      - version_in_path: "/v1/users"
+    
+    http_methods:
+      GET: "Retrieve resources"
+      POST: "Create new resources"
+      PUT: "Replace entire resource"
+      PATCH: "Partial resource update"
+      DELETE: "Remove resource"
+    
+    status_codes:
+      success:
+        - 200: "OK - successful GET, PUT, PATCH"
+        - 201: "Created - successful POST"
+        - 204: "No Content - successful DELETE"
+      client_errors:
+        - 400: "Bad Request - invalid syntax"
+        - 401: "Unauthorized - authentication required"
+        - 403: "Forbidden - insufficient permissions"
+        - 404: "Not Found - resource doesn't exist"
+        - 409: "Conflict - resource state conflict"
+      server_errors:
+        - 500: "Internal Server Error"
+        - 503: "Service Unavailable"
+    
+    headers:
+      required:
+        - "Content-Type: application/json"
+        - "Authorization: Bearer <token>"
+      optional:
+        - "X-Request-ID: <uuid>"
+        - "Accept-Language: en-US"
+
+  graphql:
+    schema_design:
+      - single_endpoint: "/graphql"
+      - type_definitions: "Use strong typing"
+      - nullable_fields: "Mark optional fields as nullable"
+    
+    query_design:
+      - descriptive_names: true
+      - limit_nesting: "Maximum 10 levels"
+      - pagination: "Use cursor-based pagination"
+    
+    error_handling:
+      - structured_errors: true
+      - error_codes: "Include custom error codes"
+      - partial_responses: "Support partial data with errors"
+
+  authentication:
+    oauth2:
+      flows: ["authorization_code", "client_credentials"]
+      scopes: ["read", "write", "admin"]
+      token_expiry: 3600
+    
+    jwt:
+      algorithm: "RS256"
+      claims: ["sub", "iat", "exp", "aud"]
+      refresh_strategy: "sliding_window"
+
+  documentation:
+    openapi:
+      version: "3.0.3"
+      required_fields: ["title", "version", "description"]
+      examples: "Include request/response examples"
+    
+    endpoints:
+      description: "Clear purpose and usage"
+      parameters: "Document all query/path/body parameters"
+      responses: "Document all possible responses"
+
+  security:
+    input_validation:
+      - sanitize_inputs: true
+      - parameter_validation: "Validate all inputs"
+      - size_limits: "Enforce request size limits"
+    
+    rate_limiting:
+      default_rate: "1000 requests/hour"
+      burst_allowance: "100 requests/minute"
+      headers: ["X-RateLimit-Limit", "X-RateLimit-Remaining"]
+
+  performance:
+    caching:
+      strategy: "Cache-Control headers"
+      etag_support: true
+      conditional_requests: "Support If-Modified-Since"
+    
+    pagination:
+      default_page_size: 20
+      max_page_size: 100
+      cursor_based: "Preferred for large datasets"

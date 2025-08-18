@@ -1,0 +1,251 @@
+database_design_standards:
+
+  general_principles:
+    normalization:
+      target_level: "third_normal_form"
+      denormalization: "only_for_performance_with_justification"
+      foreign_keys: "always_enforce_referential_integrity"
+    
+    naming_conventions:
+      tables: "plural_snake_case"  # users, order_items
+      columns: "singular_snake_case"  # user_id, created_at
+      indexes: "idx_table_column"  # idx_users_email
+      constraints: "type_table_column"  # fk_users_company_id
+      
+    data_types:
+      ids: "bigint_auto_increment_or_uuid"
+      timestamps: "timestamp_with_timezone" 
+      currency: "decimal_precision_4"
+      text: "varchar_with_appropriate_length"
+      booleans: "boolean_not_tinyint"
+
+  sql_databases:
+    postgresql:
+      recommended_version: "15+"
+      connection_pooling: "pgbouncer_or_builtin"
+      
+      performance:
+        indexing:
+          - "index_foreign_keys"
+          - "index_frequently_queried_columns"
+          - "composite_indexes_for_multi_column_queries"
+          - "partial_indexes_for_filtered_queries"
+        
+        partitioning:
+          - "partition_large_tables_by_date"
+          - "consider_hash_partitioning_for_even_distribution"
+          - "monitor_partition_pruning_effectiveness"
+        
+        query_optimization:
+          - "use_explain_analyze_for_slow_queries"
+          - "avoid_select_star_in_production"
+          - "use_prepared_statements"
+          - "limit_result_sets_appropriately"
+      
+      data_types:
+        json: "jsonb_preferred_over_json"
+        arrays: "use_postgresql_arrays_for_simple_lists"
+        enums: "use_check_constraints_for_flexibility"
+        full_text_search: "use_gin_indexes_with_tsvector"
+    
+    mysql:
+      recommended_version: "8.0+"
+      storage_engine: "innodb_only"
+      
+      performance:
+        indexing:
+          - "innodb_buffer_pool_sizing_critical"
+          - "use_covering_indexes_when_possible"
+          - "monitor_index_cardinality"
+        
+        configuration:
+          innodb_buffer_pool_size: "70_percent_of_available_ram"
+          query_cache: "disabled_in_mysql_8"
+          slow_query_log: "enabled_with_appropriate_threshold"
+
+  nosql_databases:
+    mongodb:
+      recommended_version: "6.0+"
+      
+      schema_design:
+        document_structure:
+          - "embed_frequently_accessed_together"
+          - "reference_when_documents_grow_large"
+          - "denormalize_for_read_performance"
+          - "normalize_for_write_consistency"
+        
+        indexing:
+          - "create_indexes_for_query_patterns"
+          - "use_compound_indexes_for_multiple_fields"
+          - "monitor_index_usage_with_explain"
+          - "consider_partial_indexes_for_sparse_data"
+      
+      performance:
+        sharding:
+          shard_key_selection: "high_cardinality_evenly_distributed"
+          chunk_size: "default_64mb_unless_specific_needs"
+          balancer: "enable_during_low_traffic_periods"
+        
+        replication:
+          read_preference: "secondary_for_analytics_primary_for_transactions"
+          write_concern: "majority_for_critical_data"
+          read_concern: "majority_for_consistent_reads"
+    
+    redis:
+      recommended_version: "7.0+"
+      
+      usage_patterns:
+        caching:
+          - "use_appropriate_eviction_policies"
+          - "set_ttl_for_cached_data"
+          - "monitor_cache_hit_ratios"
+          - "implement_cache_warming_strategies"
+        
+        session_storage:
+          - "use_json_serialization_for_complex_objects"
+          - "implement_session_cleanup"
+          - "consider_redis_cluster_for_ha"
+        
+        pub_sub:
+          - "use_redis_streams_for_message_durability"
+          - "implement_consumer_groups_for_scalability"
+          - "monitor_memory_usage_with_pub_sub"
+
+  data_modeling:
+    common_patterns:
+      audit_trails:
+        approach: "separate_audit_table_or_event_sourcing"
+        required_fields: ["user_id", "action", "timestamp", "old_values", "new_values"]
+        retention: "define_clear_retention_policies"
+      
+      soft_deletes:
+        implementation: "deleted_at_timestamp_column"
+        indexing: "include_in_unique_constraints"
+        queries: "always_filter_deleted_records"
+      
+      timestamps:
+        required_fields: ["created_at", "updated_at"]
+        timezone: "always_store_utc"
+        precision: "microsecond_precision_if_needed"
+      
+      versioning:
+        approach: "version_number_or_optimistic_locking"
+        conflict_resolution: "define_clear_conflict_resolution"
+        history: "consider_separate_history_table"
+
+  security:
+    access_control:
+      authentication:
+        - "use_database_specific_authentication"
+        - "implement_connection_encryption"
+        - "rotate_credentials_regularly"
+        - "use_least_privilege_principle"
+      
+      authorization:
+        - "create_role_based_access_control"
+        - "separate_read_write_users"
+        - "limit_admin_access"
+        - "audit_permission_changes"
+    
+    data_protection:
+      encryption:
+        at_rest: "enable_database_encryption"
+        in_transit: "use_tls_for_all_connections"
+        application_level: "encrypt_sensitive_fields_in_application"
+      
+      masking:
+        - "implement_data_masking_for_non_production"
+        - "anonymize_personal_data_for_analytics"
+        - "use_tokenization_for_sensitive_data"
+
+  backup_and_recovery:
+    backup_strategy:
+      frequency:
+        full_backup: "weekly"
+        incremental_backup: "daily"
+        transaction_log_backup: "every_15_minutes"
+      
+      retention:
+        short_term: "30_days_for_operational_recovery"
+        long_term: "7_years_for_compliance_if_required"
+        testing: "monthly_restore_testing"
+      
+      storage:
+        location: "geographically_distributed"
+        encryption: "encrypt_all_backups"
+        verification: "verify_backup_integrity"
+    
+    disaster_recovery:
+      rto: "define_recovery_time_objectives"
+      rpo: "define_recovery_point_objectives" 
+      procedures: "document_and_test_recovery_procedures"
+      communication: "establish_incident_communication_plan"
+
+  monitoring_and_maintenance:
+    performance_monitoring:
+      metrics:
+        - "query_execution_time"
+        - "connection_pool_utilization"
+        - "disk_io_and_cpu_usage"
+        - "memory_usage_and_cache_hit_ratios"
+      
+      alerting:
+        - "slow_query_alerts"
+        - "high_connection_usage"
+        - "disk_space_warnings"
+        - "replication_lag_alerts"
+    
+    maintenance_tasks:
+      regular_tasks:
+        - "update_table_statistics"
+        - "rebuild_fragmented_indexes"
+        - "clean_up_old_data"
+        - "review_and_optimize_queries"
+      
+      capacity_planning:
+        - "monitor_growth_trends"
+        - "plan_storage_expansion"
+        - "review_performance_scalability"
+        - "assess_hardware_upgrade_needs"
+
+  migration_and_versioning:
+    schema_migrations:
+      principles:
+        - "migrations_must_be_reversible"
+        - "test_migrations_on_copy_of_production_data"
+        - "perform_migrations_during_maintenance_windows"
+        - "communicate_migration_plans_to_stakeholders"
+      
+      best_practices:
+        - "use_migration_tools_not_manual_scripts"
+        - "version_control_all_schema_changes"
+        - "document_migration_reasoning"
+        - "coordinate_application_and_schema_deployments"
+    
+    data_migrations:
+      validation:
+        - "verify_data_integrity_before_and_after"
+        - "implement_checksum_verification"
+        - "test_with_subset_of_production_data"
+        - "have_rollback_plan_for_data_changes"
+
+  compliance_and_governance:
+    data_governance:
+      classification:
+        - "classify_data_by_sensitivity_level"
+        - "implement_appropriate_controls_per_classification"
+        - "document_data_lineage"
+        - "maintain_data_catalog"
+      
+      privacy:
+        - "implement_gdpr_right_to_be_forgotten"
+        - "provide_data_export_capabilities"
+        - "anonymize_data_for_analytics"
+        - "obtain_consent_for_data_processing"
+    
+    regulatory_compliance:
+      requirements:
+        - "understand_applicable_regulations"
+        - "implement_required_controls"
+        - "maintain_audit_trails"
+        - "perform_regular_compliance_assessments"

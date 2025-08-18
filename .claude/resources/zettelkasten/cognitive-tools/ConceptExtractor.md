@@ -1,4 +1,10 @@
-# Concept Extractor - Cognitive Tool for Zettelkasten
+# Concept Extractor
+
+## Resource Loading
+- **Load when**: Processing new sources for concept extraction
+- **Loading method**: Read tool
+- **Dependencies**: None (self-contained extractor)
+- **Used by**: zettelkasten-capture, zettelkasten-synthesizer
 
 ## Purpose
 Systematically extract, structure, and score concepts from various sources for atomic note creation.

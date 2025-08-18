@@ -1,4 +1,10 @@
-# Knowledge Synthesizer - Cognitive Tool for Teacher
+# Knowledge Synthesizer
+
+## Resource Loading
+- **Load when**: End of teaching session, need to synthesize learnings
+- **Loading method**: Read tool
+- **Dependencies**: Zettelkasten sub-agents for note creation
+- **Used by**: Teacher command agent, zettelkasten-synthesizer
 
 ## Purpose
 Extract, organize, and synthesize knowledge from learning sessions to create structured understanding and actionable next steps.
