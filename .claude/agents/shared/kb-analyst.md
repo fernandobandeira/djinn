@@ -1,10 +1,9 @@
 ---
 name: kb-analyst
-description: Universal Knowledge Base operations for cross-collection search and analysis
-tools: [Bash, Read, Grep, Write]
-model: sonnet
-shared: true
-purpose: Comprehensive search and indexing across Knowledge Base collections
+type: subagent
+description: IMPORTANT Universal Knowledge Base operations for cross-collection search and analysis
+tools: Bash, Read, Grep, Write
+model: haiku
 ---
 
 # KB Analyst: Knowledge Base Search & Analysis Sub-Agent

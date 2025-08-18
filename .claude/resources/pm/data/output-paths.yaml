@@ -1,0 +1,5 @@
+outputs:
+  prd: /docs/requirements/prd.md
+  epics: /docs/requirements/epics/
+  roadmap: /docs/requirements/roadmap.md
+  strategy: /docs/requirements/strategy/

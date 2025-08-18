@@ -1,0 +1,168 @@
+template:
+  id: prd-advanced-v1
+  name: Product Requirements Document (Advanced)
+  version: 1.0
+  output:
+    format: markdown
+    filename: /docs/requirements/prd.md
+    title: "{{project_name}} Product Requirements Document (PRD)"
+
+workflow:
+  mode: interactive
+  elicitation: advanced
+
+sections:
+  - id: goals-context
+    title: Goals and Background Context
+    instruction: |
+      Check for Project Brief in /docs/requirements/project-brief.md
+      If no brief exists, recommend creating one first.
+      Use brief to populate goals and background context.
+    sections:
+      - id: goals
+        title: Goals
+        type: bullet-list
+        instruction: Desired outcomes the PRD will deliver
+      - id: background
+        title: Background Context
+        type: paragraphs
+        instruction: 1-2 paragraphs on problem and solution context
+      - id: changelog
+        title: Change Log
+        type: table
+        columns: [Date, Version, Description, Author]
+
+  - id: requirements
+    title: Requirements
+    instruction: |
+      Define functional and non-functional requirements
+    elicit: true
+    sections:
+      - id: functional
+        title: Functional Requirements
+        type: numbered-list
+        prefix: FR
+        examples:
+          - "FR1: System shall support user authentication via OAuth 2.0"
+          - "FR2: Users shall be able to create, edit, and delete tasks"
+      - id: non-functional
+        title: Non-Functional Requirements
+        type: numbered-list
+        prefix: NFR
+        examples:
+          - "NFR1: System shall respond within 200ms for 95% of requests"
+          - "NFR2: Application shall support 1000 concurrent users"
+
+  - id: ui-goals
+    title: User Interface Design Goals
+    condition: Has UI/UX requirements
+    instruction: |
+      Capture high-level UI/UX vision to guide design.
+      This is NOT detailed UI spec - focus on product vision.
+    elicit: true
+    sections:
+      - id: ux-vision
+        title: Overall UX Vision
+      - id: interaction-paradigms
+        title: Key Interaction Paradigms
+      - id: core-screens
+        title: Core Screens and Views
+        type: bullet-list
+      - id: accessibility
+        title: Accessibility Requirements
+        choices: [None, WCAG AA, WCAG AAA]
+      - id: branding
+        title: Branding Guidelines
+      - id: target-platforms
+        title: Target Platforms
+        choices: [Web Responsive, Mobile Only, Desktop Only, Cross-Platform]
+
+  - id: technical-assumptions
+    title: Technical Assumptions
+    instruction: |
+      Document technical decisions to guide architecture.
+      Check for technical-preferences.yaml in resources.
+    elicit: true
+    sections:
+      - id: repository-structure
+        title: Repository Structure
+        choices: [Monorepo, Polyrepo, Multi-repo]
+      - id: service-architecture
+        title: Service Architecture
+        choices: [Monolith, Microservices, Serverless]
+      - id: testing-requirements
+        title: Testing Requirements
+        choices: [Unit Only, Unit + Integration, Full Pyramid]
+      - id: additional-assumptions
+        title: Additional Technical Assumptions
+        type: bullet-list
+
+  - id: epic-list
+    title: Epic List
+    instruction: |
+      Present high-level list of all epics.
+      Each epic = significant, deployable functionality increment.
+      Epic 1 must establish foundation + initial functionality.
+      Epics must be logically sequential.
+    elicit: true
+    examples:
+      - "Epic 1: Foundation & Core Infrastructure"
+      - "Epic 2: Core Business Entities"
+      - "Epic 3: User Workflows & Interactions"
+
+  - id: epic-details
+    title: Epic Details
+    repeatable: true
+    instruction: |
+      For each epic, detail stories and acceptance criteria.
+      Stories must be:
+      - Logically sequential
+      - Vertical slices of functionality
+      - Sized for single AI agent session (2-4 hours)
+      - Focused on "what" not "how"
+    elicit: true
+    sections:
+      - id: epic-goal
+        title: "Epic {{epic_number}}: {{epic_title}}"
+        template: "{{2-3 sentences describing objective and value}}"
+      - id: stories
+        title: Stories
+        repeatable: true
+        sections:
+          - id: story
+            title: "Story {{epic_number}}.{{story_number}}: {{story_title}}"
+            template: |
+              As a {{user_type}},
+              I want {{action}},
+              So that {{benefit}}.
+          - id: acceptance-criteria
+            title: Acceptance Criteria
+            type: numbered-list
+            instruction: |
+              Clear, testable criteria defining "done"
+              Include functional and critical non-functional requirements
+
+  - id: validation
+    title: Validation & Review
+    sections:
+      - id: checklist-results
+        title: PM Checklist Results
+        instruction: Run PM checklist and document results
+      - id: stakeholder-review
+        title: Stakeholder Review Status
+        type: table
+        columns: [Stakeholder, Status, Comments, Date]
+
+  - id: next-steps
+    title: Next Steps
+    sections:
+      - id: ux-handoff
+        title: UX Design Handoff
+        content: |
+          Review PRD section {{ui-goals}} for design requirements.
+          Create wireframes and design specifications.
+      - id: architect-handoff
+        title: Architecture Handoff
+        content: |
+          Review complete PRD for technical requirements.
+          Create architecture document and ADRs as needed.

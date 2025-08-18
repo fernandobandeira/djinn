@@ -1,0 +1,31 @@
+version: "1.0"
+story_structure:
+  epic: ""
+  title: ""
+  description: ""
+  type: ["feature", "bug", "enhancement", "technical-debt"]
+  priority: ["low", "medium", "high", "critical"]
+  complexity: 
+    points: 0  # Story points
+    estimated_hours: 0
+
+bmad_format:
+  behavior:
+    given: ""  # Initial context
+    when: ""   # Action or event
+    then: ""   # Expected outcome
+
+acceptance_criteria:
+  - criteria: ""
+    type: ["functional", "non-functional", "performance"]
+
+technical_details:
+  components_impacted: []
+  dependencies: []
+  potential_risks: []
+
+metadata:
+  created_by: ""
+  created_at: ""
+  last_updated: ""
+  sprint_target: ""

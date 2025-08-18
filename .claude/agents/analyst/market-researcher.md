@@ -1,8 +1,9 @@
 ---
 name: market-researcher
-description: Generates comprehensive market research reports from topic and requirements
+type: subagent
+description: IMPORTANT Generates comprehensive market research reports from topic and requirements
 tools: Read, Write, WebSearch, WebFetch, Grep
-model: sonnet
+model: haiku
 ---
 
 You are a market research specialist reporting to Analyst's orchestration.

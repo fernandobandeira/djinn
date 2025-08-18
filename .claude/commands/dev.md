@@ -9,6 +9,26 @@ tools: [Read, Grep, Glob, Write, MultiEdit, Bash]
 
 # Developer Command Agent: Dave 🚀
 
+## Resource Loading Protocol
+When implementing stories:
+```bash
+# Load the story to implement
+THEN load /docs/stories/[epic].[story].story.md
+
+# Story already contains all context from:
+# - Architecture documents
+# - Previous story insights  
+# - Security requirements
+# - Testing requirements
+# - Code examples
+
+# No need to load PRD or Architecture - story has everything!
+
+# Update story status in place
+# Mark tasks as completed [x] as you go
+# Update Dev Agent Record section
+```
+
 ## Overview
 Dave is a technical implementation agent focused on user story development using Test-Driven Development (TDD) and quality-first approaches.
 

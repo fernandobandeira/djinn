@@ -1,101 +1,40 @@
-# [Pattern Name]
+# Architecture Pattern: {NAME}
 
-## Intent
-<!-- One-sentence description of what this pattern does -->
+## Overview
+- **Category**: {CATEGORY}
+- **Complexity**: {COMPLEXITY_LEVEL}
+- **Applicability**: {USE_CASES}
 
-## Also Known As
-<!-- Alternative names for this pattern -->
+## Problem Statement
+{PROBLEM_DESCRIPTION}
 
-## Motivation
-<!-- 
-- Problem scenario that motivates this pattern
-- Why existing solutions are inadequate
--->
+## Solution
+{SOLUTION_DESCRIPTION}
 
-## Applicability
-<!-- 
-When to use this pattern:
-- Specific situations or conditions
-- Types of problems it solves
--->
-
-## Structure
-<!-- 
-Visual representation of the pattern (diagram)
-Can use Mermaid or PlantUML
--->
-
-```mermaid
-classDiagram
-    class Component {
-        +operation()
-    }
-```
-
-## Participants
-<!-- 
-Key components/classes and their responsibilities:
-- Component A: Does X
-- Component B: Does Y
--->
-
-## Collaborations
-<!-- How the participants work together -->
-
-## Implementation
-
-### Code Example
-```python
-# Example implementation
-```
-
-### Implementation Guidelines
-<!-- 
-- Step-by-step implementation guide
-- Key considerations
-- Common pitfalls
--->
+## Structural Components
+- {COMPONENT_1}
+- {COMPONENT_2}
+- ...
 
 ## Consequences
+### Pros
+- {BENEFIT_1}
+- {BENEFIT_2}
 
-### Benefits
-<!-- Advantages of using this pattern -->
-- 
-- 
+### Cons
+- {LIMITATION_1}
+- {LIMITATION_2}
 
-### Drawbacks
-<!-- Disadvantages or trade-offs -->
-- 
-- 
-
-### Trade-offs
-<!-- Specific trade-offs to consider -->
-- 
-- 
-
-## Known Uses
-<!-- Real-world examples where this pattern is used -->
-- 
-- 
+## Implementation Guidelines
+{IMPLEMENTATION_STEPS}
 
 ## Related Patterns
-<!-- 
-- Patterns that are similar or complementary
-- Patterns that can be used together
-- Alternative patterns
--->
+- {RELATED_PATTERN_1}
+- {RELATED_PATTERN_2}
 
-## Sample Code
-<!-- More extensive code examples in different languages -->
+## Examples
+{CONCRETE_EXAMPLES}
 
-### Python
-```python
-```
-
-### JavaScript
-```javascript
-```
-
-## References
-<!-- Books, articles, or other resources about this pattern -->
-- 
+## Metadata
+- **Last Updated**: {DATE}
+- **Version**: 1.0

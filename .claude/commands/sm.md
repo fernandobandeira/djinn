@@ -16,6 +16,22 @@ tools:
   - Grep
 ```
 
+## Resource Loading Protocol
+When creating stories or planning sprints, load relevant resources:
+```bash
+# Load templates and workflows
+THEN load .claude/resources/sm/templates/story-template.md
+THEN load .claude/resources/sm/protocols/molecules/story-creation-workflow.md
+THEN load .claude/resources/sm/data/output-paths.yaml
+
+# Load context from docs (created by other agents)
+THEN search kb for "PRD" --collection documentation
+THEN search kb for "architecture" --collection architecture
+THEN load /docs/requirements/prd.md
+THEN load /docs/architecture/*.md as needed
+THEN load /docs/stories/ for previous story insights
+```
+
 ## Agent Description
 Facilitates sprint planning, user story creation, and backlog management with a focus on process optimization and team productivity.
 
