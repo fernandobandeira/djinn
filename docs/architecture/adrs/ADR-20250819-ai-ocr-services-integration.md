@@ -57,20 +57,20 @@ Djinn's core value proposition relies on two critical AI-powered capabilities:
 
 ### Cost-Optimized AI Strategy for MVP
 
-#### MVP Phase: OpenRouter Free Models
-- **Primary Model**: OpenAI GPT-OSS-20B (completely free)
-- **Capabilities**: 131K context, function calling, structured outputs
-- **Backup Options**: Baidu ERNIE 4.5 21B ($0.0007/10K tokens)
-- **Cost**: $0.00 for primary model
+#### MVP Phase: DeepSeek R1 Free (OpenRouter)
+- **Primary Model**: DeepSeek R1 (671B params, 37B active)
+- **Capabilities**: 163K context, reasoning model, on par with GPT-4/Claude
+- **Limits**: 50 req/day free (1000 req/day with $10 credits)
+- **Cost**: $0.00 per token (just pay for higher rate limits)
 - **Integration**: OpenRouter unified API
-- **Quality**: Production-ready for financial advice
+- **Quality**: State-of-the-art reasoning for financial advice
 
-#### Production Phase: Tiered AI Strategy
-- **Standard**: Continue GPT-OSS-20B (free) if quality sufficient
-- **Premium Users**: GPT-5 Nano ($0.0045/10K tokens) or GPT-5 Mini ($0.0025/10K input)
-- **Alternative**: Together AI with Llama 3.1 70B (pay-per-use)
-- **Decision Factor**: User feedback on free model quality
-- **Fallback**: OpenRouter handles provider switching automatically
+#### Production Phase: Premium Feature Strategy
+- **Early Growth**: Continue DeepSeek R1 with purchased credits
+- **Premium Tier**: AI advice as paid feature ($4.99/month)
+- **Scale Options**: Upgrade to GPT-4o-mini or Claude Haiku if needed
+- **Cost Structure**: ~$0.20-0.50/user for premium AI models
+- **Margin**: 90-95% on premium subscriptions
 - **Use case**: When Claude unavailable or specific features needed
 
 ### Architecture Integration
@@ -127,24 +127,27 @@ class HybridOCRService implements OCRService {
 - **User consent**: Explicit opt-in for cloud processing features
 - **Data deletion**: 30-day retention maximum
 
-### MVP Cost Optimization Strategy
+### Realistic Cost Progression Strategy
 
-#### MVP Phase (All Users - Free)
-- **OCR**: Google ML Kit on-device (unlimited scans, $0)
-- **AI**: OpenRouter free models or Groq test credits
-- **Estimated cost**: $0.00/user/month
-- **Goal**: Validate product-market fit without costs
+#### MVP Validation (10-50 users)
+- **OCR**: Google ML Kit on-device ($0)
+- **AI**: DeepSeek R1 free tier (50 req/day)
+- **Total cost**: $0-10/month (just for rate limit upgrade)
+- **Goal**: Validate AI adds value to users
 
-#### Premium Tier (Post-Validation)
+#### Early Growth (100-500 users)
 - **OCR**: Continue ML Kit on-device ($0)
-- **AI**: Groq Llama 3 or GPT-4o-mini (~100 queries/month)
-- **Pricing**: $4.99/month (90%+ gross margin)
-- **Estimated cost**: $0.50/user/month
+- **AI**: DeepSeek R1 with credits (~20% of users active)
+- **Revenue**: Premium tier at $4.99/month
+- **Cost**: ~$20-50/month for API credits
+- **Margin**: 90%+ on premium subscriptions
 
-#### Scale Phase (When Profitable)
-- **OCR**: Add cloud OCR only if users demand >95% accuracy
-- **AI**: Volume pricing negotiations with providers
-- **Target**: Maintain 80%+ gross margins
+#### Production Scale (500+ users)
+- **OCR**: ML Kit + cloud fallback for premium
+- **AI**: Mix of DeepSeek R1 and premium models
+- **Revenue**: $2,500+/month from premium users
+- **Cost**: ~$100-200/month for APIs
+- **Margin**: 92-96%
 
 ## Consequences
 
@@ -208,9 +211,9 @@ class HybridOCRService implements OCRService {
 3. **Receipt data models**: Structured data representation and validation
 4. **Basic UI**: Camera capture, processing indicators, results display
 
-#### OpenRouter Configuration
+#### OpenRouter Configuration with DeepSeek R1
 ```dart
-// OpenRouter client setup
+// OpenRouter client setup for DeepSeek R1
 final openRouterClient = http.Client();
 const openRouterUrl = 'https://openrouter.ai/api/v1/chat/completions';
 
@@ -223,9 +226,10 @@ Future<String> callAI(String prompt) async {
       'X-Title': 'Djinn Finance App', // Optional
     },
     body: jsonEncode({
-      'model': 'openai/gpt-oss-20b:free', // Free model
+      'model': 'deepseek/deepseek-r1:free', // 671B reasoning model
       'messages': [{'role': 'user', 'content': prompt}],
       'temperature': 0.1, // Low for financial accuracy
+      'max_tokens': 4096, // Reasonable limit for responses
     }),
   );
   return response.body;

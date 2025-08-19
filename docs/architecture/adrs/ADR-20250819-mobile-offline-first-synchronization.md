@@ -72,7 +72,7 @@ We will implement a **hybrid Event Sourcing with Last-Write-Wins (LWW) conflict 
 ### Positive
 - **Seamless offline experience**: Users can perform all core operations without connectivity
 - **Simple conflict resolution**: LWW is predictable and easy to understand for users
-- **Leverages existing tech stack**: Builds on Ferry, Riverpod, and Drift investments
+- **Leverages existing tech stack**: Builds on Ferry's HiveStore and Riverpod investments
 - **Background synchronization**: Automatic data sync without user intervention
 - **Complete audit trail**: Event sourcing provides full history of all changes
 - **Performance optimized**: Batch operations reduce API calls and improve battery life
@@ -120,7 +120,7 @@ We will implement a **hybrid Event Sourcing with Last-Write-Wins (LWW) conflict 
 ## Implementation Notes
 
 ### Phase 1: Event Store Foundation (2 weeks)
-- Implement local event store schema in Drift
+- Implement local event store using Ferry's normalized cache with HiveStore persistence
 - Create event types for all financial data operations
 - Build event serialization and persistence layer
 - Unit tests for event store operations
@@ -173,7 +173,8 @@ We will implement a **hybrid Event Sourcing with Last-Write-Wins (LWW) conflict 
 
 ## References
 - [Ferry GraphQL Client Documentation](https://ferrygraphql.com/)
-- [Drift Database Documentation](https://drift.simonbinder.eu/)
+- [Ferry GraphQL Client Documentation](https://ferrygraphql.com/)
+- [Hive Database Documentation](https://docs.hivedb.dev/)
 - [Flutter Background Processing Guidelines](https://flutter.dev/docs/development/packages-and-plugins/background-processes)
 - [Event Sourcing Patterns by Martin Fowler](https://martinfowler.com/eaaDev/EventSourcing.html)
 - [Offline-First Architecture Patterns](https://offlinefirst.org/patterns/)
