@@ -6,20 +6,20 @@ Accepted
 ## Context
 The Djinn personal finance application requires a robust data architecture to handle:
 - Multi-user financial data with strict isolation
-- Complex financial entities (accounts, transactions, budgets, receipts with items)
+- Import and categorization of existing bank transactions (read-only financial data)
 - High precision monetary calculations without floating-point errors
-- Receipt itemization for granular spending insights
-- Double-entry bookkeeping for data integrity
+- Receipt itemization for granular spending insights (killer feature)
+- Transaction-receipt correlation for detailed expense tracking
 - Offline-first mobile synchronization
-- GDPR/CCPA compliance for personal financial data
+- Basic privacy compliance (data export, deletion)
 - Scale to 100K+ users with millions of transactions
 
 ### Constraints
 - PostgreSQL 16+ as the primary database (decided in tech stack ADR)
 - GraphQL API requiring efficient query patterns
 - Mobile clients need offline support with eventual consistency
-- Financial regulations require audit trails and data retention
-- PII must be encrypted and properly isolated
+- OAuth-only authentication (Google/Apple Sign-In)
+- Import-only transactions (no financial transaction creation)
 - MVP timeline requires pragmatic choices over perfection
 
 ## Decision
@@ -29,19 +29,116 @@ The Djinn personal finance application requires a robust data architecture to ha
 #### 1. Entity Hierarchy
 ```
 Users (root tenant)
-├── Accounts (checking, savings, credit cards, investments)
+├── Institutions (banks, credit unions, brokerages)
+│   └── Accounts (checking, savings, credit cards, investments)
 ├── Categories (hierarchical, user-customizable)
 ├── Budgets (monthly/weekly/custom periods)
-├── Rules (auto-categorization, alerts)
+├── Rules (auto-categorization)
 ├── Receipts (images + OCR data)
 └── Merchants (shared but user-enrichable)
 
-Transactions (financial events)
-├── Ledger Journal (atomic financial events)
-├── Ledger Entries (double-entry records)
-├── Receipt Items (itemized purchases)
-└── Attachments (receipts, documents)
+Institutions (shared + user-customizable)
+├── System institutions (pre-populated: Chase, BofA, etc.)
+├── User custom institutions (manual entries)
+└── Plaid institutions (auto-imported)
+
+Transactions (imported financial records)
+├── Bank/Card transactions (from Plaid/manual import)
+├── Receipt correlation (bi-directional matching)
+└── Receipt Items (granular purchase details)
 ```
+
+#### Credit Card Complexity Model
+
+Credit cards operate on **two distinct levels** that we must track:
+
+##### 1. Transaction Level (Individual Purchases)
+- **Each purchase** creates a transaction (increases balance owed)
+- **Receipts match** to individual credit card transactions (NOT to statements)
+- **Categories apply** to each transaction for budgeting
+- **Same as debit cards** from a tracking perspective
+
+##### 2. Statement/Liability Level (Monthly Bills)
+- **Monthly statement** aggregates all transactions in billing cycle
+- **Minimum payment** calculated by issuer
+- **Due date** for payment (critical for notifications)
+- **Interest charges** if carrying balance
+- **APR variations** (purchase, cash advance, balance transfer)
+
+##### 3. Payment Flow (Critical Distinction)
+
+```
+Individual CC Purchases          vs.        CC Payment from Checking
+├── $50 Restaurant                          ├── $500 payment
+├── $100 Gas                                ├── Applied to STATEMENT balance
+├── $75 Groceries                           ├── NOT linked to specific purchases
+└── Each has receipt potential              └── Could be minimum, full, or partial
+```
+
+**Key Insights:**
+- **CC Payments reduce statement balance**, not specific transactions
+- **Minimum payment** calculated by issuer (e.g., 2% of balance + interest)
+- **Payment allocation** follows issuer rules (highest APR first, etc.)
+- **You can't track** which specific purchase a payment "covers"
+
+**Payment Transaction Modeling:**
+```sql
+Checking Account Transaction:
+- amount: -$500 (debit from checking)
+- type: 'payment'
+- transfer_account_id: [credit_card_account_id]
+- description: "Payment to Chase Visa"
+
+Credit Card Account Transaction:
+- amount: +$500 (credit to reduce balance)
+- type: 'payment'
+- transfer_account_id: [checking_account_id]
+- description: "Payment received"
+- is_statement_payment: true  -- Key flag!
+```
+
+##### 4. Data Sources & Manual Entry
+
+**Automated Import:**
+- **Plaid Transactions API**: Individual purchases and payments
+- **Plaid Liabilities API**: Statement data, APR, minimum payments
+- **CSV/OFX Import**: Bank statement downloads
+
+**Manual Entry Support:**
+- **Manual Credit Card Account**: User creates card with institution, credit limit
+- **Manual Transactions**: User enters individual purchases (amount, merchant, date)
+- **Manual Statement Info**: User enters minimum payment, due date each month
+- **Manual Payment Recording**: User records when they pay the card
+- **Receipt Upload**: Works same as automated transactions
+
+**Use Cases for Manual Entry:**
+- Store credit cards (Target RedCard, Macy's, etc.)
+- Unsupported regional banks
+- International credit cards
+- Users preferring privacy (no account linking)
+- Historical data before Plaid connection
+
+#### Receipt-Transaction Matching Strategy
+
+The system supports **bi-directional matching** since receipts and transactions arrive independently:
+
+1. **Receipt First**: User uploads receipt → OCR processing → Wait for matching transaction
+2. **Transaction First**: Bank import → Look for existing unmatched receipts
+3. **Matching Algorithm**:
+   - **Amount matching** (40% weight): Exact match or within 1%
+   - **Date matching** (30% weight): Same day preferred, ±3 days acceptable
+   - **Merchant matching** (30% weight): Fuzzy text matching using pg_trgm
+4. **Confidence Levels**:
+   - **≥80%**: Auto-match and link
+   - **50-79%**: Suggest to user for confirmation
+   - **<50%**: Keep unmatched, await manual linking
+5. **Match History**: All potential matches stored for audit and ML training
+
+**Critical Relationships**:
+- **Receipts** → Individual CC transactions (for itemization and categorization)
+- **CC Payments** → Statement balance (NOT individual transactions)
+- **Statement** → Aggregates all transactions in billing period
+- **Minimum Payment** → Calculated by issuer, not tied to specific purchases
 
 #### 2. PostgreSQL Schema Design
 
@@ -52,8 +149,8 @@ Transactions (financial events)
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),  -- UUIDv7 when available
     firebase_uid TEXT UNIQUE NOT NULL,              -- Firebase Auth UID
-    email TEXT NOT NULL,
-    email_verified BOOLEAN DEFAULT FALSE,
+    email TEXT NOT NULL,                            -- From OAuth provider
+    auth_provider TEXT NOT NULL,                    -- 'google' or 'apple'
     display_name TEXT,
     avatar_url TEXT,
     subscription_tier TEXT DEFAULT 'free',           -- free, premium, premium_plus
@@ -62,23 +159,55 @@ CREATE TABLE users (
     metadata JSONB DEFAULT '{}',                    -- Analytics, features flags
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    deleted_at TIMESTAMPTZ,                         -- Soft delete for GDPR
+    deleted_at TIMESTAMPTZ,                         -- Soft delete for privacy
     
-    CONSTRAINT valid_email CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$'),
+    CONSTRAINT valid_auth_provider CHECK (auth_provider IN ('google', 'apple')),
     CONSTRAINT valid_subscription CHECK (subscription_tier IN ('free', 'premium', 'premium_plus'))
 );
 
 CREATE INDEX idx_users_firebase_uid ON users(firebase_uid) WHERE deleted_at IS NULL;
 CREATE INDEX idx_users_email ON users(email) WHERE deleted_at IS NULL;
 
--- Financial Accounts
+-- Financial Institutions (shared across users)
+CREATE TABLE institutions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    plaid_institution_id TEXT UNIQUE,               -- Plaid's institution ID
+    name TEXT NOT NULL,
+    display_name TEXT NOT NULL,
+    logo_url TEXT,
+    website_url TEXT,
+    routing_numbers TEXT[],                         -- Array of routing numbers
+    primary_color TEXT,                             -- Brand color for UI
+    country_code CHAR(2) DEFAULT 'US',
+    is_system BOOLEAN DEFAULT FALSE,                -- Pre-populated vs user-created
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_institutions_plaid ON institutions(plaid_institution_id) WHERE plaid_institution_id IS NOT NULL;
+CREATE INDEX idx_institutions_name ON institutions(lower(name));
+
+-- User institution overrides (similar to merchant overrides)
+CREATE TABLE user_institution_settings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    institution_id UUID NOT NULL REFERENCES institutions(id) ON DELETE CASCADE,
+    custom_name TEXT,                               -- User's nickname for institution
+    custom_color TEXT,                              -- User's preferred color
+    notes TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    
+    CONSTRAINT unique_user_institution UNIQUE(user_id, institution_id)
+);
+
+-- Financial Accounts (now linked to institutions)
 CREATE TABLE accounts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    institution_id UUID NOT NULL REFERENCES institutions(id) ON DELETE RESTRICT,
     plaid_account_id TEXT,                          -- External ID from Plaid
     account_type TEXT NOT NULL,                     -- checking, savings, credit, investment
-    institution_name TEXT,
-    account_name TEXT NOT NULL,
+    account_name TEXT NOT NULL,                     -- User's name for account
     account_number_mask TEXT,                       -- Last 4 digits only
     currency CHAR(3) NOT NULL DEFAULT 'USD',
     current_balance_minor BIGINT NOT NULL DEFAULT 0, -- In cents/minor units
@@ -88,7 +217,7 @@ CREATE TABLE accounts (
     is_manual BOOLEAN DEFAULT FALSE,                -- Manual vs connected account
     sync_status TEXT DEFAULT 'pending',             -- pending, syncing, ready, error
     last_synced_at TIMESTAMPTZ,
-    metadata JSONB DEFAULT '{}',
+    metadata JSONB DEFAULT '{}',                    -- Plaid metadata, features, etc.
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     
@@ -98,7 +227,42 @@ CREATE TABLE accounts (
 );
 
 CREATE INDEX idx_accounts_user_id ON accounts(user_id) WHERE is_active = TRUE;
+CREATE INDEX idx_accounts_institution ON accounts(institution_id);
 CREATE INDEX idx_accounts_plaid_id ON accounts(plaid_account_id) WHERE plaid_account_id IS NOT NULL;
+CREATE INDEX idx_accounts_type ON accounts(account_type, user_id);
+
+-- Credit Card Liabilities (from Plaid Liabilities API)
+CREATE TABLE credit_card_liabilities (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    account_id UUID NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+    -- APR Information
+    apr_percentage_purchase DECIMAL(5,2),           -- Purchase APR
+    apr_percentage_cash_advance DECIMAL(5,2),       -- Cash advance APR
+    apr_percentage_balance_transfer DECIMAL(5,2),   -- Balance transfer APR
+    balance_subject_to_apr_minor BIGINT,            -- Amount subject to interest
+    interest_charge_amount_minor BIGINT,            -- Last interest charge
+    -- Statement Information
+    last_statement_date DATE,
+    last_statement_balance_minor BIGINT,
+    statement_close_date DATE,                      -- Next statement close
+    -- Payment Information
+    minimum_payment_amount_minor BIGINT,
+    next_payment_due_date DATE,
+    last_payment_date DATE,
+    last_payment_amount_minor BIGINT,
+    is_overdue BOOLEAN DEFAULT FALSE,
+    days_overdue INTEGER DEFAULT 0,
+    -- Metadata
+    plaid_updated_at TIMESTAMPTZ,                   -- When Plaid last updated
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    
+    CONSTRAINT unique_account_liability UNIQUE(account_id)
+);
+
+CREATE INDEX idx_liabilities_account ON credit_card_liabilities(account_id);
+CREATE INDEX idx_liabilities_due_date ON credit_card_liabilities(next_payment_due_date) 
+    WHERE next_payment_due_date IS NOT NULL;
 
 -- Categories (hierarchical)
 CREATE TABLE categories (
@@ -130,66 +294,51 @@ CREATE INDEX idx_categories_user_id ON categories(user_id);
 CREATE INDEX idx_categories_parent_id ON categories(parent_id);
 CREATE INDEX idx_categories_system ON categories(is_system) WHERE is_system = TRUE;
 
--- Double-Entry Ledger Journal (groups related entries)
-CREATE TABLE ledger_journals (
+-- Transactions (imported from banks/cards)
+CREATE TABLE transactions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    transaction_type TEXT NOT NULL,                 -- purchase, transfer, income, adjustment
+    account_id UUID NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+    external_id TEXT,                               -- Plaid transaction ID (for deduplication)
+    transaction_type TEXT NOT NULL,                 -- purchase, payment, transfer, income, fee, interest
+    amount_minor BIGINT NOT NULL,                   -- In cents/minor units (negative for debits)
+    currency CHAR(3) NOT NULL DEFAULT 'USD',
     description TEXT NOT NULL,
     merchant_id UUID REFERENCES merchants(id),
+    merchant_name_raw TEXT,                         -- Original merchant name from bank
+    category_id UUID REFERENCES categories(id),
+    -- Transfer/Payment fields
+    transfer_account_id UUID REFERENCES accounts(id), -- For transfers between accounts
+    transfer_transaction_id UUID REFERENCES transactions(id), -- Linked transaction on other account
+    is_statement_payment BOOLEAN DEFAULT FALSE,     -- True for CC statement payments (not linked to purchases)
+    -- Timing fields
     occurred_at TIMESTAMPTZ NOT NULL,
-    idempotency_key UUID UNIQUE,                   -- Client-generated for deduplication
-    external_id TEXT,                              -- Plaid transaction ID
-    metadata JSONB DEFAULT '{}',                   -- Additional transaction data
+    pending BOOLEAN DEFAULT FALSE,                  -- Pending vs posted
+    -- Receipt matching
+    has_receipt BOOLEAN DEFAULT FALSE,              -- Quick lookup for receipt existence
+    -- Import tracking
+    import_source TEXT NOT NULL,                    -- 'plaid', 'manual', 'csv'
+    notes TEXT,
+    metadata JSONB DEFAULT '{}',                    -- Additional data from import
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     
-    CONSTRAINT valid_transaction_type CHECK (transaction_type IN ('purchase', 'transfer', 'income', 'fee', 'adjustment', 'interest'))
+    CONSTRAINT valid_transaction_type CHECK (transaction_type IN ('purchase', 'payment', 'transfer', 'income', 'fee', 'adjustment', 'interest')),
+    CONSTRAINT valid_currency CHECK (currency ~ '^[A-Z]{3}$'),
+    CONSTRAINT valid_import_source CHECK (import_source IN ('plaid', 'manual', 'csv', 'ofx'))
 );
 
-CREATE INDEX idx_journals_user_date ON ledger_journals(user_id, occurred_at DESC);
-CREATE INDEX idx_journals_external_id ON ledger_journals(external_id) WHERE external_id IS NOT NULL;
-CREATE INDEX idx_journals_idempotency ON ledger_journals(idempotency_key) WHERE idempotency_key IS NOT NULL;
+CREATE INDEX idx_transactions_user_date ON transactions(user_id, occurred_at DESC);
+CREATE INDEX idx_transactions_account ON transactions(account_id, occurred_at DESC);
+CREATE INDEX idx_transactions_category ON transactions(category_id) WHERE category_id IS NOT NULL;
+CREATE INDEX idx_transactions_merchant ON transactions(merchant_id) WHERE merchant_id IS NOT NULL;
+CREATE INDEX idx_transactions_no_receipt ON transactions(user_id, occurred_at) WHERE has_receipt = FALSE;
+CREATE INDEX idx_transactions_matching ON transactions(user_id, amount_minor, occurred_at::date) WHERE has_receipt = FALSE;
 
--- Double-Entry Ledger Entries (must balance to zero per journal)
-CREATE TABLE ledger_entries (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    journal_id UUID NOT NULL REFERENCES ledger_journals(id) ON DELETE CASCADE,
-    account_id UUID NOT NULL REFERENCES accounts(id) ON DELETE RESTRICT,
-    entry_type TEXT NOT NULL,                      -- debit or credit
-    amount_minor BIGINT NOT NULL,                  -- Always positive, type determines sign
-    currency CHAR(3) NOT NULL DEFAULT 'USD',
-    category_id UUID REFERENCES categories(id),
-    notes TEXT,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    
-    CONSTRAINT valid_entry_type CHECK (entry_type IN ('debit', 'credit')),
-    CONSTRAINT positive_amount CHECK (amount_minor > 0),
-    CONSTRAINT valid_currency CHECK (currency ~ '^[A-Z]{3}$')
-);
-
-CREATE INDEX idx_entries_journal_id ON ledger_entries(journal_id);
-CREATE INDEX idx_entries_account_id ON ledger_entries(account_id);
-CREATE INDEX idx_entries_category_id ON ledger_entries(category_id) WHERE category_id IS NOT NULL;
-
--- Enforce double-entry balance
-CREATE OR REPLACE FUNCTION check_journal_balance() RETURNS TRIGGER AS $$
-BEGIN
-    IF (
-        SELECT SUM(CASE WHEN entry_type = 'debit' THEN amount_minor ELSE -amount_minor END)
-        FROM ledger_entries
-        WHERE journal_id = NEW.journal_id
-    ) != 0 THEN
-        RAISE EXCEPTION 'Journal entries must balance to zero';
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE CONSTRAINT TRIGGER enforce_journal_balance
-    AFTER INSERT OR UPDATE ON ledger_entries
-    DEFERRABLE INITIALLY DEFERRED
-    FOR EACH ROW EXECUTE FUNCTION check_journal_balance();
+-- Prevent duplicate imports from Plaid
+CREATE UNIQUE INDEX idx_prevent_duplicate_imports 
+    ON transactions(account_id, external_id) 
+    WHERE external_id IS NOT NULL;
 
 -- Merchants (shared across users but enrichable)
 CREATE TABLE merchants (
@@ -220,11 +369,11 @@ CREATE TABLE user_merchant_overrides (
     CONSTRAINT unique_user_merchant UNIQUE(user_id, merchant_id)
 );
 
--- Receipts and OCR data
+-- Receipts and OCR data (can exist before or after transactions)
 CREATE TABLE receipts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    journal_id UUID REFERENCES ledger_journals(id) ON DELETE CASCADE,
+    transaction_id UUID REFERENCES transactions(id) ON DELETE SET NULL,  -- Nullable, matched later
     image_url TEXT NOT NULL,                       -- S3/GCS URL
     thumbnail_url TEXT,
     ocr_status TEXT DEFAULT 'pending',             -- pending, processing, completed, failed
@@ -233,21 +382,26 @@ CREATE TABLE receipts (
     merchant_name TEXT,
     merchant_address TEXT,
     receipt_date DATE,
+    receipt_time TIME,                             -- For precise matching
     total_amount_minor BIGINT,
     tax_amount_minor BIGINT,
     currency CHAR(3) DEFAULT 'USD',
     confidence_score DECIMAL(3,2),                 -- 0.00 to 1.00
+    match_status TEXT DEFAULT 'unmatched',         -- unmatched, auto_matched, manual_matched
+    match_confidence DECIMAL(3,2),                 -- Confidence of transaction match
     user_verified BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     processed_at TIMESTAMPTZ,
     
     CONSTRAINT valid_ocr_status CHECK (ocr_status IN ('pending', 'processing', 'completed', 'failed')),
+    CONSTRAINT valid_match_status CHECK (match_status IN ('unmatched', 'auto_matched', 'manual_matched')),
     CONSTRAINT valid_confidence CHECK (confidence_score >= 0 AND confidence_score <= 1)
 );
 
 CREATE INDEX idx_receipts_user_id ON receipts(user_id);
-CREATE INDEX idx_receipts_journal_id ON receipts(journal_id) WHERE journal_id IS NOT NULL;
-CREATE INDEX idx_receipts_status ON receipts(ocr_status) WHERE ocr_status IN ('pending', 'processing');
+CREATE INDEX idx_receipts_transaction_id ON receipts(transaction_id) WHERE transaction_id IS NOT NULL;
+CREATE INDEX idx_receipts_unmatched ON receipts(user_id, receipt_date) WHERE match_status = 'unmatched';
+CREATE INDEX idx_receipts_matching ON receipts(user_id, total_amount_minor, receipt_date) WHERE match_status = 'unmatched';
 
 -- Receipt line items (the killer feature)
 CREATE TABLE receipt_items (
@@ -271,6 +425,27 @@ CREATE TABLE receipt_items (
 
 CREATE INDEX idx_receipt_items_receipt_id ON receipt_items(receipt_id);
 CREATE INDEX idx_receipt_items_category_id ON receipt_items(category_id) WHERE category_id IS NOT NULL;
+
+-- Receipt-Transaction Matching Table (for matching candidates and history)
+CREATE TABLE receipt_transaction_matches (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    receipt_id UUID NOT NULL REFERENCES receipts(id) ON DELETE CASCADE,
+    transaction_id UUID NOT NULL REFERENCES transactions(id) ON DELETE CASCADE,
+    match_score DECIMAL(3,2) NOT NULL,             -- 0.00 to 1.00
+    match_factors JSONB NOT NULL,                  -- What matched: amount, date, merchant, etc.
+    match_type TEXT NOT NULL,                      -- 'auto', 'manual', 'suggested'
+    is_active BOOLEAN DEFAULT FALSE,               -- Currently selected match
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    created_by TEXT,                               -- 'system' or user_id
+    
+    CONSTRAINT valid_match_type CHECK (match_type IN ('auto', 'manual', 'suggested')),
+    CONSTRAINT valid_match_score CHECK (match_score >= 0 AND match_score <= 1),
+    CONSTRAINT unique_active_match UNIQUE(receipt_id, is_active) WHERE is_active = TRUE
+);
+
+CREATE INDEX idx_match_receipt ON receipt_transaction_matches(receipt_id);
+CREATE INDEX idx_match_transaction ON receipt_transaction_matches(transaction_id);
+CREATE INDEX idx_match_active ON receipt_transaction_matches(receipt_id) WHERE is_active = TRUE;
 
 -- Budgets
 CREATE TABLE budgets (
@@ -363,40 +538,288 @@ CREATE INDEX idx_sync_queue_status ON sync_queue(sync_status) WHERE sync_status 
 
 #### 3. Data Integrity Rules
 
-##### Business Rules Enforcement
+##### Receipt-Transaction Matching Logic
 ```sql
--- Ensure account balances match ledger entries
-CREATE OR REPLACE FUNCTION update_account_balance() RETURNS TRIGGER AS $$
+-- Automatic matching when a new transaction arrives
+CREATE OR REPLACE FUNCTION match_transaction_to_receipts() RETURNS TRIGGER AS $$
 DECLARE
-    v_balance BIGINT;
+    v_match_score DECIMAL(3,2);
+    v_receipt RECORD;
 BEGIN
-    SELECT COALESCE(SUM(
-        CASE 
-            WHEN le.entry_type = 'debit' AND a.account_type IN ('checking', 'savings') THEN le.amount_minor
-            WHEN le.entry_type = 'credit' AND a.account_type IN ('checking', 'savings') THEN -le.amount_minor
-            WHEN le.entry_type = 'credit' AND a.account_type = 'credit' THEN le.amount_minor
-            WHEN le.entry_type = 'debit' AND a.account_type = 'credit' THEN -le.amount_minor
-            ELSE 0
-        END
-    ), 0) INTO v_balance
-    FROM ledger_entries le
-    JOIN accounts a ON a.id = le.account_id
-    WHERE le.account_id = NEW.account_id;
+    -- Only match purchase transactions
+    IF NEW.transaction_type != 'purchase' THEN
+        RETURN NEW;
+    END IF;
     
-    UPDATE accounts 
-    SET current_balance_minor = v_balance,
-        updated_at = NOW()
-    WHERE id = NEW.account_id;
+    -- Look for unmatched receipts within a date range
+    FOR v_receipt IN 
+        SELECT * FROM receipts 
+        WHERE user_id = NEW.user_id
+          AND match_status = 'unmatched'
+          AND receipt_date BETWEEN (NEW.occurred_at::date - INTERVAL '3 days') 
+                               AND (NEW.occurred_at::date + INTERVAL '1 day')
+          AND ABS(total_amount_minor - ABS(NEW.amount_minor)) < (ABS(NEW.amount_minor) * 0.01) -- Within 1%
+    LOOP
+        -- Calculate match score based on multiple factors
+        v_match_score := 0;
+        
+        -- Amount match (40% weight)
+        IF v_receipt.total_amount_minor = ABS(NEW.amount_minor) THEN
+            v_match_score := v_match_score + 0.40;
+        ELSIF ABS(v_receipt.total_amount_minor - ABS(NEW.amount_minor)) < 100 THEN -- Within $1
+            v_match_score := v_match_score + 0.30;
+        END IF;
+        
+        -- Date match (30% weight)
+        IF v_receipt.receipt_date = NEW.occurred_at::date THEN
+            v_match_score := v_match_score + 0.30;
+        ELSIF ABS(v_receipt.receipt_date - NEW.occurred_at::date) <= 1 THEN
+            v_match_score := v_match_score + 0.20;
+        END IF;
+        
+        -- Merchant name similarity (30% weight)
+        IF v_receipt.merchant_name IS NOT NULL AND NEW.merchant_name_raw IS NOT NULL THEN
+            IF similarity(lower(v_receipt.merchant_name), lower(NEW.merchant_name_raw)) > 0.7 THEN
+                v_match_score := v_match_score + 0.30;
+            ELSIF similarity(lower(v_receipt.merchant_name), lower(NEW.merchant_name_raw)) > 0.5 THEN
+                v_match_score := v_match_score + 0.15;
+            END IF;
+        END IF;
+        
+        -- Record match candidate
+        INSERT INTO receipt_transaction_matches (
+            receipt_id, transaction_id, match_score, 
+            match_factors, match_type, is_active
+        ) VALUES (
+            v_receipt.id, NEW.id, v_match_score,
+            jsonb_build_object(
+                'amount_diff', ABS(v_receipt.total_amount_minor - ABS(NEW.amount_minor)),
+                'date_diff', ABS(v_receipt.receipt_date - NEW.occurred_at::date),
+                'merchant_similarity', similarity(lower(v_receipt.merchant_name), lower(NEW.merchant_name_raw))
+            ),
+            CASE WHEN v_match_score >= 0.80 THEN 'auto' ELSE 'suggested' END,
+            v_match_score >= 0.80  -- Auto-activate high confidence matches
+        );
+        
+        -- If high confidence auto-match, update both records
+        IF v_match_score >= 0.80 THEN
+            UPDATE receipts 
+            SET transaction_id = NEW.id,
+                match_status = 'auto_matched',
+                match_confidence = v_match_score
+            WHERE id = v_receipt.id;
+            
+            UPDATE transactions
+            SET has_receipt = TRUE
+            WHERE id = NEW.id;
+            
+            EXIT; -- Stop after first high-confidence match
+        END IF;
+    END LOOP;
     
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER update_balance_on_entry
-    AFTER INSERT OR UPDATE OR DELETE ON ledger_entries
+CREATE TRIGGER match_new_transaction
+    AFTER INSERT ON transactions
+    FOR EACH ROW EXECUTE FUNCTION match_transaction_to_receipts();
+
+-- Automatic matching when a receipt is processed
+CREATE OR REPLACE FUNCTION match_receipt_to_transactions() RETURNS TRIGGER AS $$
+DECLARE
+    v_match_score DECIMAL(3,2);
+    v_transaction RECORD;
+BEGIN
+    -- Only process completed OCR receipts
+    IF NEW.ocr_status != 'completed' OR NEW.total_amount_minor IS NULL THEN
+        RETURN NEW;
+    END IF;
+    
+    -- Look for unmatched transactions
+    FOR v_transaction IN 
+        SELECT * FROM transactions 
+        WHERE user_id = NEW.user_id
+          AND has_receipt = FALSE
+          AND transaction_type = 'purchase'
+          AND occurred_at::date BETWEEN (NEW.receipt_date - INTERVAL '1 day') 
+                                    AND (NEW.receipt_date + INTERVAL '3 days')
+          AND ABS(ABS(amount_minor) - NEW.total_amount_minor) < (NEW.total_amount_minor * 0.01)
+    LOOP
+        -- Calculate match score (similar logic as above)
+        -- ... (same scoring logic)
+        
+        -- Record match and update if high confidence
+        -- ... (similar to above)
+    END LOOP;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER match_new_receipt
+    AFTER UPDATE OF ocr_status ON receipts
+    FOR EACH ROW 
+    WHEN (NEW.ocr_status = 'completed' AND OLD.ocr_status != 'completed')
+    EXECUTE FUNCTION match_receipt_to_transactions();
+
+-- Enable fuzzy text matching
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+##### Institution Management
+```sql
+-- Find or create institution when importing from Plaid
+CREATE OR REPLACE FUNCTION find_or_create_institution(
+    p_plaid_id TEXT,
+    p_name TEXT,
+    p_user_id UUID DEFAULT NULL
+) RETURNS UUID AS $$
+DECLARE
+    v_institution_id UUID;
+BEGIN
+    -- First, check if Plaid institution exists
+    IF p_plaid_id IS NOT NULL THEN
+        SELECT id INTO v_institution_id
+        FROM institutions
+        WHERE plaid_institution_id = p_plaid_id;
+        
+        IF v_institution_id IS NOT NULL THEN
+            RETURN v_institution_id;
+        END IF;
+    END IF;
+    
+    -- Check for system institution by name (fuzzy match)
+    SELECT id INTO v_institution_id
+    FROM institutions
+    WHERE is_system = TRUE
+      AND similarity(lower(name), lower(p_name)) > 0.8
+    ORDER BY similarity(lower(name), lower(p_name)) DESC
+    LIMIT 1;
+    
+    IF v_institution_id IS NOT NULL THEN
+        RETURN v_institution_id;
+    END IF;
+    
+    -- Create new institution (user-specific if p_user_id provided)
+    INSERT INTO institutions (
+        plaid_institution_id, name, display_name, is_system
+    ) VALUES (
+        p_plaid_id, p_name, p_name, FALSE
+    ) RETURNING id INTO v_institution_id;
+    
+    RETURN v_institution_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Pre-populate common institutions (including store cards)
+INSERT INTO institutions (name, display_name, logo_url, website_url, is_system) VALUES
+    -- Major Banks
+    ('Chase Bank', 'Chase', 'https://logos/chase.png', 'https://chase.com', TRUE),
+    ('Bank of America', 'Bank of America', 'https://logos/bofa.png', 'https://bankofamerica.com', TRUE),
+    ('Wells Fargo', 'Wells Fargo', 'https://logos/wellsfargo.png', 'https://wellsfargo.com', TRUE),
+    ('Citi', 'Citi', 'https://logos/citi.png', 'https://citi.com', TRUE),
+    ('Capital One', 'Capital One', 'https://logos/capitalone.png', 'https://capitalone.com', TRUE),
+    -- Credit Card Companies
+    ('American Express', 'American Express', 'https://logos/amex.png', 'https://americanexpress.com', TRUE),
+    ('Discover', 'Discover', 'https://logos/discover.png', 'https://discover.com', TRUE),
+    -- Store Cards
+    ('Target', 'Target RedCard', 'https://logos/target.png', 'https://target.com', TRUE),
+    ('Amazon', 'Amazon Store Card', 'https://logos/amazon.png', 'https://amazon.com', TRUE),
+    ('Walmart', 'Walmart Card', 'https://logos/walmart.png', 'https://walmart.com', TRUE),
+    -- Investment
+    ('Charles Schwab', 'Schwab', 'https://logos/schwab.png', 'https://schwab.com', TRUE),
+    ('Fidelity', 'Fidelity', 'https://logos/fidelity.png', 'https://fidelity.com', TRUE),
+    ('Vanguard', 'Vanguard', 'https://logos/vanguard.png', 'https://vanguard.com', TRUE)
+ON CONFLICT DO NOTHING;
+
+-- Manual credit card statement update
+CREATE OR REPLACE FUNCTION update_manual_credit_statement(
+    p_account_id UUID,
+    p_statement_date DATE,
+    p_balance_minor BIGINT,
+    p_minimum_payment_minor BIGINT,
+    p_due_date DATE
+) RETURNS VOID AS $$
+BEGIN
+    INSERT INTO credit_card_liabilities (
+        account_id,
+        last_statement_date,
+        last_statement_balance_minor,
+        minimum_payment_amount_minor,
+        next_payment_due_date,
+        updated_at
+    ) VALUES (
+        p_account_id,
+        p_statement_date,
+        p_balance_minor,
+        p_minimum_payment_minor,
+        p_due_date,
+        NOW()
+    )
+    ON CONFLICT (account_id) DO UPDATE SET
+        last_statement_date = EXCLUDED.last_statement_date,
+        last_statement_balance_minor = EXCLUDED.last_statement_balance_minor,
+        minimum_payment_amount_minor = EXCLUDED.minimum_payment_amount_minor,
+        next_payment_due_date = EXCLUDED.next_payment_due_date,
+        updated_at = NOW();
+        
+    -- Update account balance
+    UPDATE accounts 
+    SET current_balance_minor = p_balance_minor,
+        updated_at = NOW()
+    WHERE id = p_account_id;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+##### Business Rules Enforcement
+```sql
+-- Update account balance from transactions
+CREATE OR REPLACE FUNCTION update_account_balance() RETURNS TRIGGER AS $$
+DECLARE
+    v_balance BIGINT;
+    v_account_type TEXT;
+BEGIN
+    -- Get account type
+    SELECT account_type INTO v_account_type
+    FROM accounts
+    WHERE id = COALESCE(NEW.account_id, OLD.account_id);
+    
+    -- Calculate balance differently for credit cards vs bank accounts
+    IF v_account_type = 'credit' THEN
+        -- Credit card: sum of all transactions (purchases increase debt, payments decrease it)
+        SELECT COALESCE(SUM(
+            CASE 
+                WHEN transaction_type IN ('purchase', 'fee', 'interest') THEN ABS(amount_minor)  -- Increases balance
+                WHEN transaction_type = 'payment' THEN -ABS(amount_minor)  -- Decreases balance
+                ELSE amount_minor
+            END
+        ), 0) INTO v_balance
+        FROM transactions
+        WHERE account_id = COALESCE(NEW.account_id, OLD.account_id)
+          AND NOT pending;
+    ELSE
+        -- Bank account: simple sum (deposits positive, withdrawals negative)
+        SELECT COALESCE(SUM(amount_minor), 0) INTO v_balance
+        FROM transactions
+        WHERE account_id = COALESCE(NEW.account_id, OLD.account_id)
+          AND NOT pending;
+    END IF;
+    
+    UPDATE accounts 
+    SET current_balance_minor = v_balance,
+        updated_at = NOW()
+    WHERE id = COALESCE(NEW.account_id, OLD.account_id);
+    
+    RETURN COALESCE(NEW, OLD);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_balance_on_transaction
+    AFTER INSERT OR UPDATE OR DELETE ON transactions
     FOR EACH ROW EXECUTE FUNCTION update_account_balance();
 
--- Prevent budget overspending (optional enforcement)
+-- Track budget spending (notification only, no blocking)
 CREATE OR REPLACE FUNCTION check_budget_limit() RETURNS TRIGGER AS $$
 DECLARE
     v_spent BIGINT;
@@ -408,12 +831,12 @@ BEGIN
     END IF;
     
     -- Get current period spending
-    SELECT COALESCE(SUM(le.amount_minor), 0) INTO v_spent
-    FROM ledger_entries le
-    JOIN ledger_journals lj ON lj.id = le.journal_id
-    WHERE le.category_id = NEW.category_id
-      AND lj.user_id = NEW.user_id
-      AND DATE_TRUNC('month', lj.occurred_at) = DATE_TRUNC('month', NEW.occurred_at);
+    SELECT COALESCE(SUM(ABS(amount_minor)), 0) INTO v_spent
+    FROM transactions
+    WHERE category_id = NEW.category_id
+      AND user_id = NEW.user_id
+      AND transaction_type = 'purchase'
+      AND DATE_TRUNC('month', occurred_at) = DATE_TRUNC('month', NEW.occurred_at);
     
     -- Get budget limit
     SELECT b.amount_minor INTO v_budget
@@ -423,15 +846,14 @@ BEGIN
       AND b.is_active = TRUE
       AND NEW.occurred_at BETWEEN b.start_date AND COALESCE(b.end_date, '9999-12-31');
     
-    -- This could either RAISE EXCEPTION or just log a warning
-    IF v_budget IS NOT NULL AND (v_spent + NEW.amount_minor) > v_budget THEN
-        -- Log budget exceeded event instead of blocking
-        INSERT INTO audit_log (user_id, event_type, details)
-        VALUES (NEW.user_id, 'budget_exceeded', jsonb_build_object(
-            'category_id', NEW.category_id,
-            'budget_amount', v_budget,
-            'new_total', v_spent + NEW.amount_minor
-        ));
+    -- Log budget alert if exceeded
+    IF v_budget IS NOT NULL AND v_spent > v_budget THEN
+        INSERT INTO budget_alerts (user_id, budget_id, amount_exceeded, created_at)
+        SELECT NEW.user_id, b.id, v_spent - v_budget, NOW()
+        FROM budgets b
+        WHERE b.category_id = NEW.category_id
+          AND b.user_id = NEW.user_id
+          AND b.is_active = TRUE;
     END IF;
     
     RETURN NEW;
@@ -449,6 +871,7 @@ type User {
   displayName: String
   avatarUrl: String
   subscriptionTier: SubscriptionTier!
+  institutions: [Institution!]!
   accounts: [Account!]!
   categories: [Category!]!
   budgets: [Budget!]!
@@ -466,25 +889,66 @@ type User {
   createdAt: DateTime!
 }
 
+type Institution {
+  id: ID!
+  name: String!
+  displayName: String!
+  logoUrl: String
+  websiteUrl: String
+  isSystem: Boolean!
+  accounts: [Account!]!
+  # User customizations
+  customName: String
+  customColor: String
+  totalBalance: Money!
+  accountCount: Int!
+}
+
 type Account {
   id: ID!
+  institution: Institution!
   accountType: AccountType!
-  institutionName: String
   accountName: String!
   accountNumberMask: String
   currency: String!
   currentBalance: Money!
   availableBalance: Money
-  creditLimit: Money
+  creditLimit: Money  # For credit cards
+  # Status fields
   isActive: Boolean!
   isManual: Boolean!
   syncStatus: SyncStatus!
   lastSyncedAt: DateTime
+  # Credit card liability details (null for non-credit accounts)
+  creditCardDetails: CreditCardLiability
   transactions(
     first: Int
     after: String
     filter: TransactionFilter
   ): TransactionConnection!
+}
+
+type CreditCardLiability {
+  # APR Information
+  aprPurchase: Float
+  aprCashAdvance: Float
+  aprBalanceTransfer: Float
+  balanceSubjectToApr: Money
+  interestChargeAmount: Money
+  # Statement Information
+  lastStatementDate: Date
+  lastStatementBalance: Money
+  statementCloseDate: Date
+  # Payment Information
+  minimumPaymentAmount: Money!
+  nextPaymentDueDate: Date!
+  lastPaymentDate: Date
+  lastPaymentAmount: Money
+  isOverdue: Boolean!
+  daysOverdue: Int
+  # Calculated fields
+  utilizationPercentage: Float  # balance / credit limit
+  paymentStatus: PaymentStatus!
 }
 
 type Transaction {
@@ -497,7 +961,9 @@ type Transaction {
   category: Category
   occurredAt: DateTime!
   receipt: Receipt
-  entries: [LedgerEntry!]!
+  receiptItems: [ReceiptItem!]!  # Direct access to itemized details
+  pending: Boolean!
+  importSource: ImportSource!
   notes: String
   metadata: JSON
 }
@@ -523,12 +989,23 @@ type Receipt {
   merchantName: String
   merchantAddress: String
   receiptDate: Date
+  receiptTime: Time
   totalAmount: Money
   taxAmount: Money
   items: [ReceiptItem!]!
   confidence: Float
+  matchStatus: MatchStatus!
+  matchConfidence: Float
+  transaction: Transaction  # Current matched transaction
+  suggestedMatches: [TransactionMatch!]!  # Potential matches
   userVerified: Boolean!
-  transaction: Transaction
+}
+
+type TransactionMatch {
+  transaction: Transaction!
+  matchScore: Float!
+  matchFactors: JSON!
+  matchType: MatchType!
 }
 
 type ReceiptItem {
@@ -617,6 +1094,25 @@ enum OCRStatus {
   FAILED
 }
 
+enum ImportSource {
+  PLAID
+  MANUAL
+  CSV
+  OFX
+}
+
+enum MatchStatus {
+  UNMATCHED
+  AUTO_MATCHED
+  MANUAL_MATCHED
+}
+
+enum MatchType {
+  AUTO
+  MANUAL
+  SUGGESTED
+}
+
 enum BudgetType {
   CATEGORY
   TOTAL
@@ -644,7 +1140,7 @@ input TransactionFilter {
   hasReceipt: Boolean
 }
 
-input CreateTransactionInput {
+input CreateManualTransactionInput {
   accountId: ID!
   amount: Float!
   type: TransactionType!
@@ -653,6 +1149,13 @@ input CreateTransactionInput {
   categoryId: ID
   occurredAt: DateTime!
   notes: String
+  idempotencyKey: ID!
+}
+
+input ImportTransactionsInput {
+  accountId: ID!
+  source: ImportSource!
+  transactions: [TransactionData!]!
   idempotencyKey: ID!
 }
 
@@ -665,13 +1168,32 @@ input UpdateTransactionInput {
 
 # Mutations
 type Mutation {
+  # Institutions
+  createCustomInstitution(input: CreateInstitutionInput!): Institution!
+  updateInstitutionSettings(input: UpdateInstitutionSettingsInput!): Institution!
+  
+  # Accounts
+  connectPlaidAccount(input: ConnectPlaidAccountInput!): [Account!]!  # May create multiple accounts
+  createManualAccount(input: CreateManualAccountInput!): Account!
+  updateAccount(input: UpdateAccountInput!): Account!
+  syncAccount(id: ID!): Account!
+  disconnectAccount(id: ID!): Boolean!
+  
+  # Credit Card Management
+  updateCreditCardStatement(input: UpdateCreditCardStatementInput!): CreditCardLiability!
+  recordCreditCardPayment(input: RecordPaymentInput!): Transaction!
+  
   # Transactions
-  createTransaction(input: CreateTransactionInput!): Transaction!
+  createManualTransaction(input: CreateManualTransactionInput!): Transaction!
+  importTransactions(input: ImportTransactionsInput!): [Transaction!]!
   updateTransaction(input: UpdateTransactionInput!): Transaction!
   deleteTransaction(id: ID!): Boolean!
   
   # Receipts
   uploadReceipt(transactionId: ID, image: Upload!): Receipt!
+  matchReceiptToTransaction(receiptId: ID!, transactionId: ID!): Receipt!
+  unmatchReceipt(receiptId: ID!): Receipt!
+  acceptSuggestedMatch(receiptId: ID!, transactionId: ID!): Receipt!
   verifyReceiptItem(itemId: ID!, verified: Boolean!): ReceiptItem!
   
   # Categories
@@ -683,12 +1205,6 @@ type Mutation {
   createBudget(input: CreateBudgetInput!): Budget!
   updateBudget(input: UpdateBudgetInput!): Budget!
   deleteBudget(id: ID!): Boolean!
-  
-  # Accounts
-  connectAccount(input: ConnectAccountInput!): Account!
-  updateAccount(input: UpdateAccountInput!): Account!
-  syncAccount(id: ID!): Account!
-  disconnectAccount(id: ID!): Boolean!
 }
 
 # Queries
@@ -696,9 +1212,15 @@ type Query {
   # User
   me: User!
   
+  # Institutions
+  institutions: [Institution!]!
+  institution(id: ID!): Institution
+  searchInstitutions(query: String!): [Institution!]!
+  
   # Accounts
   account(id: ID!): Account
   accounts(filter: AccountFilter): [Account!]!
+  accountsByInstitution(institutionId: ID!): [Account!]!
   
   # Transactions
   transaction(id: ID!): Transaction
@@ -747,53 +1269,45 @@ type Subscription {
 
 #### 5. Data Privacy & Security
 
-##### PII Handling
+##### Simplified Security Model
 ```sql
--- Encryption at rest via PostgreSQL TDE (Transparent Data Encryption)
--- Configure pgcrypto for sensitive fields
+-- PostgreSQL Row-Level Security for multi-tenancy
+-- No email encryption needed (OAuth providers handle authentication)
+-- Focus on financial data protection
 
--- Create encrypted email storage
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-
-ALTER TABLE users 
-  ADD COLUMN email_encrypted BYTEA,
-  ADD COLUMN email_hash TEXT GENERATED ALWAYS AS (
-    encode(digest(lower(email), 'sha256'), 'hex')
-  ) STORED;
-
--- Function to encrypt PII
-CREATE OR REPLACE FUNCTION encrypt_pii(plain_text TEXT, key_id TEXT) 
-RETURNS BYTEA AS $$
-DECLARE
-    encryption_key BYTEA;
-BEGIN
-    -- In production, retrieve key from AWS KMS or similar
-    SELECT key_data INTO encryption_key 
-    FROM encryption_keys 
-    WHERE id = key_id AND is_active = true;
-    
-    RETURN pgp_sym_encrypt(plain_text, encryption_key::text);
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-```
-
-##### Data Isolation
-```sql
--- Row Level Security for multi-tenancy
+-- Enable RLS on all user-scoped tables
 ALTER TABLE accounts ENABLE ROW LEVEL SECURITY;
-ALTER TABLE ledger_journals ENABLE ROW LEVEL SECURITY;
+ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE budgets ENABLE ROW LEVEL SECURITY;
 ALTER TABLE receipts ENABLE ROW LEVEL SECURITY;
 
--- Policy for user data isolation
-CREATE POLICY user_isolation ON accounts
+-- Simple user isolation policy
+CREATE POLICY user_isolation ON transactions
     FOR ALL
     USING (user_id = current_setting('app.current_user')::uuid);
 
-CREATE POLICY user_isolation ON ledger_journals
-    FOR ALL
-    USING (user_id = current_setting('app.current_user')::uuid);
+-- Apply same policy to all tables
+DO $$
+DECLARE
+    t TEXT;
+BEGIN
+    FOR t IN SELECT tablename FROM pg_tables 
+    WHERE schemaname = 'public' 
+    AND tablename IN ('accounts', 'categories', 'budgets', 'receipts')
+    LOOP
+        EXECUTE format('CREATE POLICY user_isolation ON %I FOR ALL USING (user_id = current_setting(''app.current_user'')::uuid)', t);
+    END LOOP;
+END $$;
+```
+
+##### Implementation in API Layer
+```go
+// Set user context for RLS in Go/gqlgen middleware
+func SetUserContext(ctx context.Context, db *sql.DB, userID string) error {
+    _, err := db.ExecContext(ctx, "SET LOCAL app.current_user = $1", userID)
+    return err
+}
 
 -- Audit logging
 CREATE TABLE audit_log (
@@ -813,40 +1327,30 @@ CREATE INDEX idx_audit_user ON audit_log(user_id, created_at DESC);
 CREATE INDEX idx_audit_entity ON audit_log(entity_type, entity_id);
 ```
 
-##### GDPR/CCPA Compliance
+##### Basic Privacy Compliance (MVP)
 ```sql
--- User data export
-CREATE OR REPLACE FUNCTION export_user_data(p_user_id UUID)
-RETURNS JSONB AS $$
-DECLARE
-    result JSONB;
-BEGIN
-    SELECT jsonb_build_object(
-        'user', row_to_json(u.*),
-        'accounts', jsonb_agg(DISTINCT a.*),
-        'transactions', jsonb_agg(DISTINCT t.*),
-        'categories', jsonb_agg(DISTINCT c.*),
-        'budgets', jsonb_agg(DISTINCT b.*),
-        'receipts', jsonb_agg(DISTINCT r.*)
-    ) INTO result
-    FROM users u
-    LEFT JOIN accounts a ON a.user_id = u.id
-    LEFT JOIN ledger_journals t ON t.user_id = u.id
-    LEFT JOIN categories c ON c.user_id = u.id
-    LEFT JOIN budgets b ON b.user_id = u.id
-    LEFT JOIN receipts r ON r.user_id = u.id
-    WHERE u.id = p_user_id
-    GROUP BY u.id;
-    
-    RETURN result;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+-- Simple user data export
+CREATE VIEW user_data_export AS
+SELECT 
+    u.id,
+    u.email,
+    u.display_name,
+    json_agg(DISTINCT a.*) as accounts,
+    json_agg(DISTINCT t.*) as transactions,
+    json_agg(DISTINCT c.*) as categories,
+    json_agg(DISTINCT r.*) as receipts
+FROM users u
+LEFT JOIN accounts a ON a.user_id = u.id
+LEFT JOIN transactions t ON t.user_id = u.id
+LEFT JOIN categories c ON c.user_id = u.id
+LEFT JOIN receipts r ON r.user_id = u.id
+GROUP BY u.id;
 
--- User data deletion (right to be forgotten)
-CREATE OR REPLACE FUNCTION delete_user_data(p_user_id UUID)
+-- Simple account deletion (soft delete)
+CREATE OR REPLACE FUNCTION delete_user_account(p_user_id UUID)
 RETURNS BOOLEAN AS $$
 BEGIN
-    -- Soft delete with anonymization
+    -- Soft delete user
     UPDATE users 
     SET email = concat('deleted_', id, '@deleted.com'),
         display_name = 'Deleted User',
@@ -854,15 +1358,11 @@ BEGIN
         deleted_at = NOW()
     WHERE id = p_user_id;
     
-    -- Remove PII from related tables
-    DELETE FROM receipts WHERE user_id = p_user_id;
-    DELETE FROM receipt_items WHERE receipt_id IN (
-        SELECT id FROM receipts WHERE user_id = p_user_id
-    );
-    
-    -- Anonymize financial data (keep for regulatory requirements)
-    UPDATE ledger_journals 
+    -- Cascade will handle related data due to ON DELETE CASCADE
+    -- Or keep data for analytics by anonymizing:
+    UPDATE transactions 
     SET description = 'Anonymized',
+        notes = NULL,
         metadata = '{}'
     WHERE user_id = p_user_id;
     
@@ -874,34 +1374,35 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ## Consequences
 
 ### Positive
-- **Data Integrity**: Double-entry bookkeeping ensures financial accuracy
+- **Simplicity**: Straightforward transaction model for imported data
 - **Performance**: UUIDv7 provides time-ordered keys improving index performance
-- **Scalability**: Partitioning strategy ready for millions of transactions
+- **Scalability**: Simple schema scales easily to millions of transactions
 - **Privacy**: Row-level security ensures complete user data isolation
 - **Flexibility**: JSONB fields allow schema evolution without migrations
-- **Audit Trail**: Complete history with soft deletes and audit logging
-- **Offline Support**: Sync queue enables robust offline-first mobile experience
+- **Deduplication**: External IDs prevent duplicate imports automatically
+- **Receipt Correlation**: Clean relationship between transactions and itemized receipts
 - **Type Safety**: GraphQL schema provides strong typing across stack
+- **OAuth Simplicity**: No email verification or password management needed
 
 ### Negative
-- **Complexity**: Double-entry ledger adds complexity vs simple transaction table
-- **Storage**: Storing both journal and entries increases storage requirements
-- **Learning Curve**: Team needs to understand double-entry accounting principles
-- **Migration Effort**: Complex schema requires careful data migration planning
+- **Limited Financial Features**: No support for creating transactions (import-only)
+- **Receipt Dependency**: Full value requires OCR processing for receipts
+- **No Transfer Tracking**: Simplified model makes internal transfers less explicit
+- **Basic Compliance**: MVP-level privacy features only
 
 ### Risks
-- **Performance**: Complex joins between ledger tables may need optimization
-- **Consistency**: Offline sync conflicts need careful resolution strategies
-- **Encryption Overhead**: PII encryption may impact query performance
-- **Schema Evolution**: Some changes may require complex migrations
+- **Import Accuracy**: Dependent on quality of bank/Plaid data
+- **Receipt Matching**: Correlating receipts to transactions may require manual intervention
+- **Privacy Evolution**: May need to add GDPR/CCPA features post-MVP
+- **RLS Performance**: Row-level security adds small overhead to queries
 
 ## Alternatives Considered
 
-### Option A: Single Transaction Table
-- **Description**: Simple transactions table without double-entry
-- **Pros**: Simpler to implement, easier to understand
-- **Cons**: No built-in integrity checks, harder to track transfers
-- **Reason for not choosing**: Financial integrity is critical for user trust
+### Option A: Double-Entry Ledger System
+- **Description**: Full accounting system with journals and entries
+- **Pros**: Complete financial integrity, supports transaction creation
+- **Cons**: Over-engineered for import-only system, complex implementation
+- **Reason for not choosing**: Unnecessary complexity for read-only transaction data
 
 ### Option B: NoSQL (MongoDB)
 - **Description**: Document database for flexibility
@@ -909,11 +1410,11 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 - **Cons**: No ACID guarantees, complex aggregations, poor GraphQL integration
 - **Reason for not choosing**: Financial data requires strong consistency
 
-### Option C: Event Sourcing
-- **Description**: Store all changes as events
-- **Pros**: Complete audit trail, temporal queries, event replay
-- **Cons**: Complex implementation, eventual consistency, steep learning curve
-- **Reason for not choosing**: Over-engineered for MVP timeline
+### Option C: Email/Password Authentication
+- **Description**: Traditional email verification and password management
+- **Pros**: Familiar pattern, works offline, no OAuth dependency
+- **Cons**: Security burden, email verification complexity, password resets
+- **Reason for not choosing**: OAuth providers handle security better, simpler UX
 
 ## Implementation Notes
 

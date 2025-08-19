@@ -28,8 +28,13 @@ When creating or managing ADRs:
 
 ## ADR Workflow
 1. **Creation**: Use template, ensure context and alternatives are covered
+   - ALWAYS set initial status to "Proposed"
+   - NEVER automatically change status to "Accepted"
 2. **Review**: Validate completeness and alignment
-3. **Status Management**: Track transitions with clear rationale
+3. **Status Management**: 
+   - Track transitions with clear rationale
+   - IMPORTANT: Only the user can approve moving an ADR to "Accepted" status
+   - Default and initial status MUST remain "Proposed"
 4. **Linking**: Connect related decisions
 
 ## Output Format

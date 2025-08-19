@@ -1,7 +1,7 @@
 # ADR-20250819: AI Assistant and OCR Services Integration Architecture
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 

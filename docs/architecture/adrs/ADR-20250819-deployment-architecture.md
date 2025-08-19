@@ -1,7 +1,7 @@
 # ADR-20250819: Deployment Architecture
 
 ## Status
-Accepted
+Proposed
 
 ## Context
 Djinn requires a deployment architecture that balances:

@@ -31,7 +31,7 @@ Building a personal finance application requiring:
 - **Schema Management**: Atlas HCL-first (declarative, safe migrations)
 - **Query Builder**: sqlc with pgx/v5 driver (compile-time SQL verification)
 - **Workflow Engine**: Temporal (durable execution, perfect for financial workflows)
-- **Authentication**: Firebase Auth (removes complexity, good SDKs)
+- **Authentication**: Firebase Auth with OAuth only (Google/Apple Sign-In, no email/password)
 - **Logging**: log/slog (stdlib, Temporal native integration)
 - **UUID**: gofrs/uuid/v5 (UUIDv7 support)
 - **Config**: envconfig (12-factor app compliant)
@@ -42,7 +42,8 @@ Building a personal finance application requiring:
 #### Mobile (Flutter)
 - **Framework**: Flutter (single codebase, strong typing)
 - **GraphQL Client**: Ferry (code generation, normalized cache)
-- **Local Database**: Drift (SQL with compile-time safety)
+- **Local Database**: ~~Drift~~ **SUPERSEDED** - See ADR-20250819-mobile-offline-first-synchronization
+- **Cache Persistence**: Ferry HiveStore (persistent offline storage)
 - **State Management**: Riverpod 2.0 (reactive, less boilerplate)
 - **Navigation**: go_router (official, declarative)
 - **HTTP Client**: built-in http package (Ferry handles GraphQL)
@@ -59,7 +60,7 @@ Building a personal finance application requiring:
 #### 1. Data Integrity
 - **UUIDv7 for all IDs**: Time-ordered, better index performance, natural audit trail
 - **Money as BIGINT minor units**: Never use floating point for money
-- **Double-entry ledger**: Every transaction must balance to zero
+- **Import deduplication**: External IDs prevent duplicate transaction imports
 - **Idempotency keys**: Client-generated UUIDv7 for all mutations
 
 #### 2. API Design
@@ -83,11 +84,12 @@ CREATE TABLE accounts (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Money stored as minor units
-CREATE TABLE ledger_entries (
+-- Transactions stored as minor units
+CREATE TABLE transactions (
     id UUID PRIMARY KEY DEFAULT gen_uuid_v7(),
-    journal_id UUID NOT NULL,
+    user_id UUID NOT NULL,
     account_id UUID NOT NULL REFERENCES accounts(id),
+    external_id TEXT UNIQUE,  -- Plaid/bank transaction ID
     amount_minor BIGINT NOT NULL,  -- Cents, pence, etc
     currency CHAR(3) NOT NULL,
     occurred_at TIMESTAMPTZ NOT NULL,

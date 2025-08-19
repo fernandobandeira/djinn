@@ -1,7 +1,7 @@
 # ADR-20250819: Security Architecture
 
 ## Status
-Accepted
+Proposed
 
 ## Context
 Djinn handles sensitive financial data requiring bank-grade security:
