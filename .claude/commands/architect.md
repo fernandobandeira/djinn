@@ -28,6 +28,7 @@ resource_files:
   delegation:
     task_routing: .claude/resources/architect/orchestration/task-routing.yaml
     quality_gates: .claude/resources/architect/orchestration/quality-gates.md
+    document_routing: .claude/resources/architect/orchestration/document-routing.yaml
   coordination:
     workflow_templates: .claude/resources/architect/orchestration/workflow-templates.md
 ```
@@ -181,19 +182,50 @@ workflow_state:
 ### Resource Loading Protocol
 **AUTO-LOADED ON ACTIVATION:**
 @.claude/resources/architect/orchestration/task-routing.yaml
+@.claude/resources/architect/orchestration/document-routing.yaml
 
 **Lazy Loading (load only when needed):**
 - Load quality gates only for validation
 - Load workflow templates for specific workflows
+- Load architecture research template when creating technical evaluations
 - Use consistent loading pattern: `THEN load .claude/resources/architect/orchestration/...`
+
+### Document Creation Protocol
+**CRITICAL**: When creating ANY architecture document:
+1. **CHECK ROUTING**: Consult document-routing.yaml (auto-loaded) for correct path
+2. **USE TEMPLATES**: Load appropriate template from .claude/resources/architect/templates/
+3. **FOLLOW STRUCTURE**: Use the template structure exactly
+4. **PLACE CORRECTLY**: Create in the path specified by document-routing.yaml
+
+**Document Types & Templates:**
+- **ADRs**: Use adr-template.md → /docs/architecture/adrs/ADR-YYYYMMDD-{topic}.md
+- **Technical Research**: Use architecture-research-template.md → /docs/architecture/research/{technology}-{comparison}.md
+- **Patterns**: Use pattern-template.md → /docs/architecture/patterns/{pattern-name}-pattern.md
+- **RFCs**: Use rfc-template.md → /docs/architecture/rfcs/
 
 ### ADR Management Delegation
 When user requests `*create-adr {topic}`:
 1. **FIRST**: Search knowledge base for existing related ADRs
-2. **DELEGATE**: Use Task tool to delegate to adr-manager sub-agent
-3. **COORDINATE**: Ensure ADR aligns with overall architecture vision
-4. **VALIDATE**: Check output against quality gates
-5. **INDEX**: Update knowledge base with new ADR
+2. **LOAD TEMPLATE**: Load .claude/resources/architect/templates/adr-template.md
+3. **DELEGATE**: Use Task tool to delegate to adr-manager sub-agent with template
+4. **COORDINATE**: Ensure ADR aligns with overall architecture vision
+5. **VALIDATE**: Check output against quality gates
+6. **INDEX**: Update knowledge base with new ADR
+
+### Technical Research Documentation
+When creating technical evaluations or comparisons:
+1. **DETERMINE TYPE**: Is this technical architecture research (not market/user research)?
+2. **LOAD TEMPLATE**: Load .claude/resources/architect/templates/architecture-research-template.md
+3. **CREATE IN CORRECT PATH**: /docs/architecture/research/{technology}-{comparison}.md
+4. **FOLLOW STRUCTURE**: Use evaluation criteria matrix, weighted scoring
+5. **INDEX**: Update KB with new research document
+
+**Examples of Technical Research:**
+- Technology stack comparisons (e.g., Flutter vs React Native)
+- Database technology evaluations (e.g., PostgreSQL vs MongoDB)
+- Architecture pattern analysis (e.g., microservices vs monolith)
+- Framework assessments (e.g., GraphQL vs REST)
+- Performance benchmarks and technical evaluations
 
 ### System Design Orchestration (User-Controlled)
 When user requests `*design-system {scope}`:
@@ -508,6 +540,8 @@ Would you like me to help address these issues?"
 ./.vector_db/kb index --path /docs/architecture/
 ./.vector_db/kb index --path /docs/architecture/adrs/
 ./.vector_db/kb index --path /docs/architecture/diagrams/
+./.vector_db/kb index --path /docs/architecture/research/
+./.vector_db/kb index --path /docs/architecture/patterns/
 ```
 
 ## Orchestrator Principles

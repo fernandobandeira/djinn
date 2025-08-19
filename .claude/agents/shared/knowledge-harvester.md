@@ -347,15 +347,19 @@ The harvester automatically:
 
 ### Actual Harvesting Execution
 
-When invoked, the knowledge-harvester executes the harvest_and_store.py module:
+When invoked, the knowledge-harvester uses the harvest CLI command directly:
 
 ```bash
-# The harvester calls the harvest CLI with parameters
+# CORRECT: Use the harvest CLI with parameters
 ./.vector_db/harvest \
     --url "URL_TO_HARVEST" \
     --topic "TOPIC_NAME" \
     --profile "PROFILE_NAME" \
     --agent "AGENT_CONTEXT"
+
+# INCORRECT: Never do this!
+# python -c "from harvest_and_store import main..."  # WRONG!
+# cd .vector_db && python harvest_and_store.py  # WRONG!
 ```
 
 ### Response Protocol for Sub-Agent
@@ -371,12 +375,13 @@ When invoked via Task(), the knowledge-harvester:
 ```yaml
 execution_steps:
   1_parse_request:
-    - Extract URL from prompt
-    - Determine appropriate profile
-    - Get agent context
+    - Extract URL from prompt or determine from topic
+    - Determine appropriate profile (deep_research, quick_reference, etc.)
+    - Get agent context from request
     
   2_execute_harvest:
-    - Run harvest_and_store.py via Bash
+    - Construct harvest CLI command with proper arguments
+    - Execute via Bash tool: ./.vector_db/harvest --url "..." --topic "..." etc.
     - Capture output and status
     - Handle any errors
     
@@ -386,23 +391,64 @@ execution_steps:
     - Include metadata and status
 ```
 
+### Correct Command Construction
+
+When processing a research request, construct the command like this:
+
+```python
+# Example: Research Ferry GraphQL offline capabilities
+url = "https://ferrygraphql.com/docs"  # Or search for appropriate URL
+topic = "Ferry GraphQL Offline Capabilities"
+profile = "deep_research"  # or quick_reference, code_examples, etc.
+agent = "architect"  # The calling agent context
+
+# Execute via Bash tool:
+command = f'./.vector_db/harvest --url "{url}" --topic "{topic}" --profile "{profile}" --agent "{agent}"'
+```
+
+### Specific Example: Ferry GraphQL Research
+
+When receiving a request about Ferry GraphQL offline capabilities:
+
+```bash
+# Step 1: Determine the best URL for the topic
+# Could be: https://ferrygraphql.com/docs/offline
+#      or: https://ferrygraphql.com/docs
+#      or: https://github.com/gql-dart/ferry
+
+# Step 2: Execute the harvest command properly
+./.vector_db/harvest \
+    --url "https://ferrygraphql.com/docs" \
+    --topic "Ferry GraphQL Offline Capabilities" \
+    --profile "deep_research" \
+    --agent "architect"
+
+# This will:
+# - Crawl the documentation site
+# - Extract relevant information about offline capabilities
+# - Save to /harvested/ directory with proper metadata
+# - Index in the knowledge base
+# - Return results for the architect agent
+```
+
 ### Example Internal Execution
 
 When the harvester receives a request, it executes:
 ```bash
-# Example command constructed internally
+# The correct command format to use
 ./.vector_db/harvest \
     --url "${URL}" \
     --topic "${TOPIC}" \
     --profile "${PROFILE}" \
-    --agent "${AGENT}" \
-    --json  # For structured output
+    --agent "${AGENT}"
 ```
 
 The harvest CLI:
 - Uses crawl4ai (6x faster than traditional crawlers)
 - Saves to /harvested/ with metadata
 - Immediately indexes in KB
-- Returns JSON results for parsing
+- Returns results for parsing
 
-This streamlined knowledge-harvester leverages crawl4ai's power through the harvest_and_store module, automatically saving and indexing all harvested content.
+**IMPORTANT**: Always use the `./.vector_db/harvest` CLI command with proper arguments. Never try to import Python modules directly or use `python -c` with imports.
+
+This streamlined knowledge-harvester leverages crawl4ai's power through the harvest CLI, automatically saving and indexing all harvested content.

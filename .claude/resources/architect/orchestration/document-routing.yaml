@@ -1,0 +1,105 @@
+# Document Routing Guidelines for Architect Agent
+# This file defines where different types of documents should be created
+
+document_types:
+  # Architecture-specific documents (under /docs/architecture/)
+  architecture:
+    adrs:
+      path: /docs/architecture/adrs/
+      naming: ADR-YYYYMMDD-{topic}.md
+      template: .claude/resources/architect/templates/adr-template.md
+      description: Architecture Decision Records for formal decisions
+    
+    patterns:
+      path: /docs/architecture/patterns/
+      naming: {pattern-name}-pattern.md
+      template: .claude/resources/architect/templates/pattern-template.md
+      description: Reusable architectural patterns
+    
+    diagrams:
+      path: /docs/architecture/diagrams/
+      naming: {sequence}-{diagram-type}.md
+      description: Architecture diagrams (Mermaid, PlantUML)
+    
+    technical_research:
+      path: /docs/architecture/research/
+      naming: {technology}-{comparison-type}.md
+      template: .claude/resources/architect/templates/architecture-research-template.md
+      description: |
+        Technical architecture evaluations including:
+        - Technology comparisons
+        - Solution architecture assessments
+        - Pattern analysis
+        - Performance benchmarks
+        - Framework evaluations
+        - Integration studies
+    
+    standards:
+      path: /docs/architecture/standards/
+      naming: {standard-type}-standard.md
+      description: Coding and architecture standards
+    
+    reviews:
+      path: /docs/architecture/reviews/
+      naming: {project}-architecture-review.md
+      description: Architecture review documents
+
+  # Business/User research (NOT created by architect)
+  business_research:
+    competitive:
+      path: /docs/research/competitive/
+      owner: analyst
+      description: Competitive analysis (created by Ana)
+    
+    industry:
+      path: /docs/research/industry/
+      owner: analyst
+      description: Market and industry trends (created by Ana)
+    
+    user:
+      path: /docs/research/user/
+      owner: ux
+      description: User research findings (created by Ulysses)
+
+routing_rules:
+  - rule: "If evaluating technologies for architecture"
+    action: "Create in /docs/architecture/research/"
+    example: "Flutter offline patterns comparison"
+  
+  - rule: "If documenting an architecture decision"
+    action: "Create ADR in /docs/architecture/adrs/"
+    example: "Choosing between REST and GraphQL"
+  
+  - rule: "If defining a reusable pattern"
+    action: "Create in /docs/architecture/patterns/"
+    example: "Event sourcing pattern"
+  
+  - rule: "If analyzing market or competitors"
+    action: "Delegate to analyst for /docs/research/competitive/"
+    example: "Competitor feature analysis"
+  
+  - rule: "If researching user needs"
+    action: "Delegate to UX for /docs/research/user/"
+    example: "User journey mapping"
+
+validation:
+  before_creation:
+    - Check if document already exists
+    - Verify correct path based on document type
+    - Load appropriate template
+    - Confirm architect is the right agent for this document
+  
+  after_creation:
+    - Index with knowledge base
+    - Update architecture documentation index
+    - Link from relevant ADRs if applicable
+
+kb_indexing:
+  paths:
+    - /docs/architecture/
+    - /docs/architecture/adrs/
+    - /docs/architecture/patterns/
+    - /docs/architecture/diagrams/
+    - /docs/architecture/research/  # Technical research
+    - /docs/architecture/standards/
+    - /docs/architecture/reviews/
