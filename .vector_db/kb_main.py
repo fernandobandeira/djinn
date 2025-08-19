@@ -62,7 +62,7 @@ def search(query, collection=None, limit=5, force_vector=False):
                 print(f"⚠️ Enhanced GraphRAG error: {e}, falling back to vector search")
     
     # Fallback to vector search
-    kb_script = ["python", str(Path(__file__).parent / "kb.py")]
+    kb_script = ["uv", "run", "python", str(Path(__file__).parent / "kb.py")]
     
     # Build KB command
     cmd = kb_script + ["search", query]
@@ -108,7 +108,7 @@ def build_graph():
 
 def show_stats():
     """Show comprehensive statistics."""
-    kb_script = ["python", str(Path(__file__).parent / "kb.py")]
+    kb_script = ["uv", "run", "python", str(Path(__file__).parent / "kb.py")]
     
     # Vector search stats
     try:
@@ -200,9 +200,9 @@ def main():
     
     elif command in ["index", "clear"]:
         # Pass through to original KB
-        kb_script = ["python", str(Path(__file__).parent / "kb.py")]
+        kb_script = ["uv", "run", "python", str(Path(__file__).parent / "kb.py")]
         try:
-            subprocess.run([str(kb_script)] + sys.argv[1:])
+            subprocess.run(kb_script + sys.argv[1:])
         except Exception as e:
             print(f"Error: {e}")
     
