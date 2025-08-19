@@ -1,0 +1,207 @@
+# Harvesting Profiles Configuration
+# Used by knowledge-harvester agent with crawl4ai
+
+profiles:
+  quick_reference:
+    name: "Quick Reference"
+    description: "Single page, fast extraction for immediate answers"
+    config:
+      max_depth: 1
+      timeout: 30000  # 30 seconds
+      cache_mode: "ENABLED"
+      wait_until: "domcontentloaded"
+      extraction: "markdown"
+      scan_full_page: false
+      delay_before_return: 0.3
+    use_cases:
+      - "API reference lookup"
+      - "Single documentation page"
+      - "Quick fact check"
+      - "Definition search"
+    
+  deep_research:
+    name: "Deep Research"
+    description: "Multi-page comprehensive research with adaptive depth"
+    config:
+      adaptive: true
+      max_depth: 5
+      timeout: 120000  # 2 minutes
+      cache_mode: "BYPASS"  # Fresh content
+      wait_until: "networkidle"
+      extraction: "structured"
+      scan_full_page: true
+      process_iframes: true
+      wait_for_images: false
+    use_cases:
+      - "Full library documentation"
+      - "Architecture pattern research"
+      - "Technology assessment"
+      - "Comprehensive guides"
+    
+  code_examples:
+    name: "Code Examples"
+    description: "Focus on extracting code examples and implementations"
+    config:
+      max_depth: 3
+      timeout: 60000  # 1 minute
+      cache_mode: "ENABLED"
+      wait_until: "domcontentloaded"
+      selectors: ["pre", "code", ".highlight", ".language-*"]
+      preserve_formatting: true
+      exclude_all_images: true
+      extraction: "code_blocks"
+    use_cases:
+      - "Implementation examples"
+      - "Code snippet collection"
+      - "Tutorial code extraction"
+      - "Best practice examples"
+    
+  api_documentation:
+    name: "API Documentation"
+    description: "Structured extraction of API endpoints and parameters"
+    config:
+      max_depth: 4
+      timeout: 90000  # 1.5 minutes
+      cache_mode: "ENABLED"
+      wait_until: "networkidle"
+      extraction: "schema_based"
+      include_tables: true
+      selectors: ["table", ".endpoint", ".api-method", ".parameters"]
+      scan_full_page: true
+    use_cases:
+      - "REST API documentation"
+      - "GraphQL schema extraction"
+      - "SDK reference"
+      - "OpenAPI specifications"
+    
+  troubleshooting:
+    name: "Troubleshooting"
+    description: "Problem-solution pairs from forums and Q&A sites"
+    config:
+      max_depth: 2
+      max_results: 20
+      timeout: 45000  # 45 seconds
+      cache_mode: "ENABLED"
+      extraction: "problem_solution"
+      selectors: [".accepted-answer", ".solution", ".best-answer"]
+      wait_until: "domcontentloaded"
+    sources:
+      - "stackoverflow.com"
+      - "github.com/issues"
+      - "reddit.com"
+      - "discourse.org"
+    use_cases:
+      - "Error message solutions"
+      - "Bug fixes"
+      - "Workarounds"
+      - "Configuration issues"
+    
+  security_advisories:
+    name: "Security Advisories"
+    description: "Extract security vulnerabilities and patches"
+    config:
+      max_depth: 2
+      timeout: 60000
+      cache_mode: "BYPASS"  # Always fresh
+      wait_until: "networkidle"
+      extraction: "structured"
+      priority_selectors: [".severity", ".cve", ".patch", ".workaround"]
+    sources:
+      - "nvd.nist.gov"
+      - "github.com/security"
+      - "cve.mitre.org"
+    use_cases:
+      - "CVE research"
+      - "Vulnerability assessment"
+      - "Security patches"
+      - "Risk evaluation"
+
+# Source Authority Mapping
+# Defines trusted sources for different types of content
+authority_mapping:
+  official_documentation:
+    python: ["docs.python.org", "pypi.org"]
+    javascript: ["developer.mozilla.org", "nodejs.org"]
+    react: ["react.dev", "beta.reactjs.org"]
+    vue: ["vuejs.org", "vitejs.dev"]
+    rust: ["doc.rust-lang.org", "crates.io"]
+    go: ["go.dev", "pkg.go.dev"]
+    
+  architecture_patterns:
+    - "martinfowler.com"
+    - "microservices.io"
+    - "refactoring.guru"
+    - "patterns.dev"
+    
+  cloud_platforms:
+    aws: ["docs.aws.amazon.com", "aws.amazon.com/blogs"]
+    gcp: ["cloud.google.com/docs", "cloud.google.com/blog"]
+    azure: ["docs.microsoft.com/azure", "azure.microsoft.com/blog"]
+    
+  community_trusted:
+    - "stackoverflow.com"
+    - "github.com"
+    - "dev.to"
+    - "medium.com/@trusted_authors"
+
+# Extraction Templates
+# Define structured extraction for different content types
+extraction_templates:
+  api_endpoint:
+    fields:
+      - method: "GET|POST|PUT|DELETE|PATCH"
+      - path: "/api/v1/*"
+      - parameters: "query|body|header"
+      - response: "status|body|headers"
+      - examples: "request|response"
+      
+  design_pattern:
+    fields:
+      - name: "Pattern Name"
+      - problem: "Problem Context"
+      - solution: "Solution Structure"
+      - consequences: "Trade-offs"
+      - examples: "Implementation Examples"
+      - related: "Related Patterns"
+      
+  error_solution:
+    fields:
+      - error_message: "Error Text"
+      - cause: "Root Cause"
+      - solution: "Fix Steps"
+      - prevention: "How to Avoid"
+      - references: "Related Issues"
+
+# Performance Optimization Settings
+performance:
+  parallel_crawling:
+    max_concurrent: 5
+    rate_limit: 10  # requests per second
+    retry_attempts: 3
+    backoff_factor: 2
+    
+  caching:
+    ttl_quick: 3600  # 1 hour for quick references
+    ttl_deep: 86400  # 24 hours for deep research
+    ttl_security: 0  # No cache for security advisories
+    
+  resource_limits:
+    max_page_size: 10485760  # 10MB
+    max_total_size: 104857600  # 100MB per session
+    timeout_default: 60000  # 1 minute default
+
+# Integration Settings
+integration:
+  graphrag:
+    auto_index: true
+    create_relationships: true
+    extract_entities: true
+    
+  command_agents:
+    auto_notify: false  # Don't notify on every harvest
+    batch_updates: true  # Batch knowledge base updates
+    
+  quality_threshold:
+    min_content_length: 100
+    min_confidence: 0.7
+    max_age_days: 90  # For non-security content
