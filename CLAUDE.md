@@ -1,5 +1,12 @@
 # Project Context for Claude Code
 
+## Date and Time Context
+Today's date is provided in the environment context. All agents and sub-agents should:
+- Use the current date (format: YYYY-MM-DD) when creating timestamped files
+- Use the current year when searching for recent documentation or best practices
+- Reference "Today's date: YYYY-MM-DD" from the environment context when needed
+- Example: When creating ADRs, use `ADR-YYYYMMDD-{title}.md` format with actual date
+
 ## Knowledge Base System
 .vector_db/KB-INSTRUCTIONS.md
 
