@@ -62,14 +62,51 @@ class HarvestAndStore:
         subdir = mapping.get(profile, 'web')
         return self.harvested_dir / subdir
     
+    def check_duplicate(self, url: str) -> Optional[Dict]:
+        """Check if URL has already been harvested."""
+        # Check all subdirectories in harvested
+        for subdir in self.harvested_dir.glob("*"):
+            if subdir.is_dir():
+                for file in subdir.glob("*.md"):
+                    try:
+                        with open(file, 'r') as f:
+                            content = f.read()
+                            # Extract metadata from frontmatter
+                            if content.startswith('---'):
+                                metadata_end = content.find('---', 3)
+                                if metadata_end > 0:
+                                    metadata_str = content[3:metadata_end]
+                                    metadata = yaml.safe_load(metadata_str)
+                                    if metadata.get('source') == url:
+                                        return {
+                                            'file': str(file),
+                                            'harvested_at': metadata.get('harvested_at'),
+                                            'topic': metadata.get('topic')
+                                        }
+                    except:
+                        continue
+        return None
+    
     async def harvest_and_save(
         self, 
         url: str,
         topic: str,
         profile: str = 'quick_reference',
-        agent_context: str = 'unknown'
+        agent_context: str = 'unknown',
+        force: bool = False
     ) -> Dict:
         """Harvest content and automatically save/index it."""
+        
+        # Check for duplicates unless forcing
+        if not force:
+            duplicate = self.check_duplicate(url)
+            if duplicate:
+                return {
+                    'status': 'duplicate',
+                    'message': f"Already harvested on {duplicate['harvested_at']}",
+                    'filepath': duplicate['file'],
+                    'original_topic': duplicate['topic']
+                }
         
         # Get profile configuration
         profile_config = self.profiles.get(profile, self.profiles['quick_reference'])
@@ -177,6 +214,7 @@ async def main():
                        help='Harvesting profile to use')
     parser.add_argument('--agent', default='unknown', help='Calling agent context')
     parser.add_argument('--json', action='store_true', help='Output as JSON')
+    parser.add_argument('--force', action='store_true', help='Force re-harvest even if duplicate exists')
     
     args = parser.parse_args()
     
@@ -186,7 +224,8 @@ async def main():
         url=args.url,
         topic=args.topic,
         profile=args.profile,
-        agent_context=args.agent
+        agent_context=args.agent,
+        force=args.force
     )
     
     if args.json:
@@ -197,6 +236,12 @@ async def main():
             print(f"📄 Saved to: {result['filepath']}")
             print(f"📏 Size: {result['content_length']} chars")
             print(f"🔍 Indexed: Yes")
+        elif result['status'] == 'duplicate':
+            print(f"⚠️  Duplicate: {args.url}")
+            print(f"📄 Already harvested: {result['filepath']}")
+            print(f"📅 Original harvest: {result['message']}")
+            print(f"📌 Original topic: {result['original_topic']}")
+            print(f"💡 Use --force to re-harvest")
         else:
             print(f"❌ Failed: {result.get('error', 'Unknown error')}")
 
