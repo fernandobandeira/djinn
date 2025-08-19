@@ -17,7 +17,7 @@ Cognitive tools operate through three complementary mechanisms that mirror human
 - [[20250815-192100-cognitive-tools-vs-external-tools-distinction]]: Internal reasoning constraint types
 
 ### Related To
-- [[context-engineering-foundations]]: Extends biological framework (atoms→molecules→cells→organs→cognition)
+- [[20250813-145700-HUB-context-engineering-foundations]]: Extends biological framework (atoms→molecules→cells→organs→cognition)
 - [[20250815-192200-constraint-application-diagnostic-framework]]: Quality measurement for all three mechanisms
 
 ### Leads To

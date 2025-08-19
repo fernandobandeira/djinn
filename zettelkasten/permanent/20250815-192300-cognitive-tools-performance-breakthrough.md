@@ -18,7 +18,7 @@ Structured prompt templates functioning as "reasoning tool calls" can dramatical
 
 ### Related To
 - [[20250813-145300-context-as-constraint]]: Context as constraint mechanism
-- [[context-engineering-foundations]]: Performance optimization through structure
+- [[20250813-145700-HUB-context-engineering-foundations]]: Performance optimization through structure
 
 ### Leads To
 - Protocol shells as practical implementation

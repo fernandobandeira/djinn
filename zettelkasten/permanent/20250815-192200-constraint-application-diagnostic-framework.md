@@ -18,7 +18,7 @@ Constraint application in cognitive tools can be diagnosed using three states: u
 
 ### Related To
 - [[20250815-172200-cognitive-tools-thinking-models-convergence]]: Both use constraint application
-- [[context-engineering-foundations]]: Quality metrics for context engineering
+- [[20250813-145700-HUB-context-engineering-foundations]]: Quality metrics for context engineering
 
 ### Leads To
 - Protocol shell validation systems

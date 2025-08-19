@@ -17,7 +17,7 @@ Cognitive tools constrain and shape HOW an LLM thinks by applying internal reaso
 - [[20250813-145300-context-as-constraint]]: Context as constraint mechanism
 
 ### Related To
-- [[context-engineering-foundations]]: Extends biological framework with cognitive layer
+- [[20250813-145700-HUB-context-engineering-foundations]]: Extends biological framework with cognitive layer
 - [[20250815-172300-when-to-use-thinking-models-vs-cognitive-tools]]: Decision framework for constraint application
 
 ### Leads To

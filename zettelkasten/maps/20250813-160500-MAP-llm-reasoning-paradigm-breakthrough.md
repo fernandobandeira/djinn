@@ -158,7 +158,7 @@ graph TD
 - [[20250813-160400-llm-reasoning-paradigm-synthesis]]: Synthesized understanding
 
 ### Hub Connections
-- [[context-engineering-foundations]]: Main knowledge hub
+- [[20250813-145700-HUB-context-engineering-foundations]]: Main knowledge hub
 
 **Last Updated**: 2025-08-13 16:06  
 **Review Schedule**: Daily for one week, then weekly  

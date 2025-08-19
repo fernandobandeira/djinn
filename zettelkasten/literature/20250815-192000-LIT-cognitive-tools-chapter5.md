@@ -62,7 +62,7 @@ This reframes my understanding of prompt engineering from information provision 
 
 ### Connections to Existing Knowledge
 - Confirms: [[20250815-172200-cognitive-tools-thinking-models-convergence]] - Both are constraint application mechanisms
-- Extends: [[context-engineering-foundations]] - Adds cognitive layer to biological framework
+- Extends: [[20250813-145700-HUB-context-engineering-foundations]] - Adds cognitive layer to biological framework
 - Connects to: Rita's implementation as practical application of these principles
 
 ## Action Items

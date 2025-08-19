@@ -18,7 +18,7 @@ Rita's transformation from basic command creation to sophisticated AI agent arch
 - [[20250815-192100-cognitive-tools-vs-external-tools-distinction]]: Rita delegates external tools to subagents
 
 ### Related To
-- [[context-engineering-foundations]]: Practical application of context engineering principles
+- [[20250813-145700-HUB-context-engineering-foundations]]: Practical application of context engineering principles
 - [[20250815-192300-cognitive-tools-performance-breakthrough]]: Rita demonstrates performance improvements
 
 ### Leads To

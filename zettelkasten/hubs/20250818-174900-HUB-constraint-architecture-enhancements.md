@@ -18,7 +18,7 @@ This hub connects insights from the major enhancement wave applied to Tina (Teac
 ## Foundation Knowledge
 - [[20250815-163400-complete-constraint-architecture-framework]] - Core constraint architecture principles
 - [[20250815-160100-multi-agent-constraint-orchestration]] - Multi-agent constraint orchestration patterns
-- [[context-engineering-foundations]] - Context Engineering theoretical foundations
+- [[20250813-145700-HUB-context-engineering-foundations]] - Context Engineering theoretical foundations
 
 ## Enhancement Evidence
 This enhancement wave validates several key principles:
