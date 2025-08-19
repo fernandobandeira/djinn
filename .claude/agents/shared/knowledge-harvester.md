@@ -345,33 +345,64 @@ The harvester automatically:
 
 ## Technical Implementation
 
-### Crawl4AI Usage
-```python
-from crawl4ai import AsyncWebCrawler, CrawlerRunConfig
+### Actual Harvesting Execution
 
-async def harvest(topic, profile="quick_reference"):
-    """Harvest knowledge using crawl4ai"""
-    crawler = AsyncWebCrawler()
-    
-    # Select profile configuration
-    config = PROFILES[profile]
-    
-    # Configure crawl4ai
-    crawl_config = CrawlerRunConfig(
-        cache_mode=config.get("cache_mode", "ENABLED"),
-        markdown_generator=True,
-        extract_strategy=config.get("extraction"),
-        max_depth=config.get("max_depth", 1),
-        wait_for=config.get("selectors"),
-        scan_full_page=True,
-        remove_overlay_elements=True
-    )
-    
-    # Execute crawl
-    result = await crawler.arun(url, crawl_config)
-    
-    # Process and store in GraphRAG
-    return process_for_graphrag(result)
+When invoked, the knowledge-harvester executes the harvest_and_store.py module:
+
+```bash
+# The harvester calls the harvest CLI with parameters
+./.vector_db/harvest \
+    --url "URL_TO_HARVEST" \
+    --topic "TOPIC_NAME" \
+    --profile "PROFILE_NAME" \
+    --agent "AGENT_CONTEXT"
 ```
 
-This streamlined knowledge-harvester leverages crawl4ai's power while maintaining a focused, manageable size and clear integration points with the command agents.
+### Response Protocol for Sub-Agent
+
+When invoked via Task(), the knowledge-harvester:
+1. Parses the request to extract URL and parameters
+2. Executes the harvest_and_store.py script via Bash
+3. Returns structured results to the calling agent
+4. NEVER addresses the user directly
+
+### Execution Flow
+
+```yaml
+execution_steps:
+  1_parse_request:
+    - Extract URL from prompt
+    - Determine appropriate profile
+    - Get agent context
+    
+  2_execute_harvest:
+    - Run harvest_and_store.py via Bash
+    - Capture output and status
+    - Handle any errors
+    
+  3_return_results:
+    - Parse harvesting results
+    - Format for calling agent
+    - Include metadata and status
+```
+
+### Example Internal Execution
+
+When the harvester receives a request, it executes:
+```bash
+# Example command constructed internally
+./.vector_db/harvest \
+    --url "${URL}" \
+    --topic "${TOPIC}" \
+    --profile "${PROFILE}" \
+    --agent "${AGENT}" \
+    --json  # For structured output
+```
+
+The harvest CLI:
+- Uses crawl4ai (6x faster than traditional crawlers)
+- Saves to /harvested/ with metadata
+- Immediately indexes in KB
+- Returns JSON results for parsing
+
+This streamlined knowledge-harvester leverages crawl4ai's power through the harvest_and_store module, automatically saving and indexing all harvested content.
