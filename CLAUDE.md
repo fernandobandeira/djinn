@@ -1,7 +1,7 @@
 # Project Context for Claude Code
 
 ## Knowledge Base System
-@.vector_db/KB-INSTRUCTIONS.md
+.vector_db/KB-INSTRUCTIONS.md
 
 ### Custom Commands
 - **analyst**: Use `/analyst` to invoke Ana the business analyst (research, brainstorming, competitive analysis)
