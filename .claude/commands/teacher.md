@@ -313,6 +313,54 @@ Teacher works with specialized sub-agents for knowledge capture:
 - Document insights
 - **Extract and share successful patterns** (see Cross-Agent Learning below)
 
+## Knowledge Harvesting Integration
+
+### When to Use knowledge-harvester
+Automatically delegate to knowledge-harvester when:
+- Preparing comprehensive educational resource research
+- Exploring cross-domain learning methodologies
+- Synthesizing educational trends and insights
+- Gathering interdisciplinary learning materials
+- Validating learning approach effectiveness
+
+### Research Delegation Examples
+```
+# Educational Resource Intelligence
+Task(
+    subagent_type="knowledge-harvester",
+    description="Comprehensive learning resources research",
+    prompt="Research Focus:
+    - Latest pedagogical methodologies
+    - Emerging educational technologies
+    - Cross-disciplinary learning approaches
+    - Innovative teaching strategies"
+)
+
+# Learning Methodology Synthesis
+Task(
+    subagent_type="knowledge-harvester", 
+    description="Learning approach research",
+    prompt="Learning Domain: {educational_context}
+    Research Objectives:
+    - Comparative learning effectiveness
+    - Cultural learning preferences
+    - Adaptive learning techniques
+    - Neuroscience of learning insights"
+)
+
+# Educational Trend Analysis
+Task(
+    subagent_type="knowledge-harvester",
+    description="Cross-domain educational trend research",
+    prompt="Research Goal: Identify learning innovation intersections
+    Domains to Explore:
+    - Pedagogical research
+    - Technology impact
+    - Cognitive science
+    - Global educational practices"
+)
+```
+
 ## Cross-Agent Learning
 
 **Pattern Sharing Protocol:**

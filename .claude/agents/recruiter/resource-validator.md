@@ -69,6 +69,35 @@ For each resource:
 - Validate lazy loading pattern is followed
 - Check for command/trigger association
 
+### Phase 3A: Usage Verification
+- Implement advanced usage detection:
+  1. Search for explicit resource loading patterns:
+     - "@.claude/resources/" prefix for auto-loading
+     - "load .claude/resources/" in instructions
+     - Read tool calls with specific resource paths
+  2. Flag resources that:
+     - Exist in file system
+     - Are NOT referenced in agent's content
+  3. Verify loading triggers match described capabilities
+  4. Create a usage map showing:
+     - Resource file path
+     - Loading context
+     - Usage frequency
+     - Associated commands/triggers
+
+### Advanced Usage Detection Criteria
+- **Prefix Detection**: Resources with "@" prefix are considered auto-loadable
+- **Explicit Load Statements**: "THEN load" or equivalent phrases
+- **Tool Invocation**: Actual Read/Grep tool calls
+- **Trigger Association**: Mapping of resources to specific agent actions
+
+### Usage Scoring Sub-System
+- **10/10**: All resources loaded, clear loading instructions
+- **8-9/10**: Minor usage ambiguities
+- **6-7/10**: Some resources not clearly loaded
+- **4-5/10**: Multiple resources with unclear usage
+- **0-3/10**: Critical resource loading failures
+
 ### Phase 4: Completeness Verification
 - All resources in resource_files have actual files
 - All files have loading instructions
@@ -233,6 +262,14 @@ Before returning PASS status, verify:
 - [ ] Resource paths are absolute from project root
 - [ ] File extensions match content type
 - [ ] YAML/JSON files are valid syntax
+
+### Usage Verification Additions
+- [ ] All resources have clear loading context
+- [ ] Resources are used in at least one agent workflow
+- [ ] Auto-loading prefixes are correctly implemented
+- [ ] No unused resources exist in the file system
+- [ ] Resource usage matches agent's described capabilities
+- [ ] Loading triggers are semantically aligned with resource purpose
 
 ## Remember
 - You are a verification specialist, not a creator

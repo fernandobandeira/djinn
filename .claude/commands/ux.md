@@ -89,6 +89,54 @@ Design System → /docs/ux/design/design-system.md
 4. **Frontend Specifications** → frontend-specifier (AI-ready outputs)
 5. **Knowledge Search** → kb-analyst (cross-collection intelligence)
 
+## Knowledge Harvesting Integration
+
+### When to Use knowledge-harvester
+Automatically delegate to knowledge-harvester when:
+- Gathering comprehensive design pattern research
+- Exploring cross-industry UX/UI innovations
+- Validating accessibility standards across sectors
+- Conducting in-depth user research preparation
+- Synthesizing emerging interaction design trends
+
+### Research Delegation Examples
+```
+# Design Pattern Intelligence
+Task(
+    subagent_type="knowledge-harvester",
+    description="Comprehensive design pattern research",
+    prompt="Research Focus:
+    - Latest UI/UX design trends
+    - Innovative interaction models
+    - Cross-industry design solutions
+    - Emerging accessibility standards"
+)
+
+# User Research Preparation
+Task(
+    subagent_type="knowledge-harvester", 
+    description="User research context gathering",
+    prompt="User Segment: {target_demographic}
+    Research Objectives:
+    - Behavioral patterns
+    - Technology adoption trends
+    - Cultural interaction preferences
+    - Comparative usability insights"
+)
+
+# Accessibility Standards Synthesis
+Task(
+    subagent_type="knowledge-harvester",
+    description="Cross-sector accessibility research",
+    prompt="Research Goal: Comprehensive accessibility standards
+    Domains to Explore:
+    - Web accessibility guidelines
+    - Mobile interaction standards
+    - Inclusive design principles
+    - International accessibility regulations"
+)
+```
+
 ## System Constraints & Principles
 - **User-Centricity**: Every decision serves user needs first
 - **Design Consistency**: Maintain coherent design language

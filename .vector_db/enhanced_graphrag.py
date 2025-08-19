@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run python
 """
 Microsoft GraphRAG Implementation for Djinn KB
 
@@ -17,11 +17,8 @@ import re
 
 # Try to import Microsoft GraphRAG (may not be available without OpenAI key)
 try:
-    from graphrag.config import (
-        GraphRagConfig,
-        create_graphrag_config,
-    )
-    from graphrag.index import create_pipeline_config, run_pipeline
+    from graphrag.config.models.graph_rag_config import GraphRagConfig
+    from graphrag.api import build_index
     MICROSOFT_GRAPHRAG_AVAILABLE = True
 except ImportError as e:
     MICROSOFT_GRAPHRAG_AVAILABLE = False
@@ -32,8 +29,15 @@ except ImportError as e:
 class EnhancedGraphRAG:
     """Enhanced GraphRAG implementation with Microsoft GraphRAG fallback."""
     
-    def __init__(self, kb_path: str = "."):
-        self.kb_path = Path(kb_path)
+    def __init__(self, kb_path: str = None):
+        # Always use .vector_db directory relative to script location
+        if kb_path is None:
+            # Get the directory where this script is located
+            script_dir = Path(__file__).parent
+            self.kb_path = script_dir
+        else:
+            self.kb_path = Path(kb_path)
+        
         self.config_dir = self.kb_path / "graphrag_config"
         self.output_dir = self.kb_path / "graphrag_output"
         self.input_dir = self.kb_path / "graphrag_input"

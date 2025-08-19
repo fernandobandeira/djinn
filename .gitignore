@@ -18,10 +18,11 @@ pip-delete-this-directory.txt
 .vector_db/__pycache__/
 .vector_db/document_hashes.json
 .vector_db/statistics.json
-# GraphRAG temporary files
+# GraphRAG temporary files and generated data
 .vector_db/graphrag_input/
 .vector_db/graphrag_output/
 .vector_db/graphrag_config/
+.vector_db/microsoft_graphrag.json
 # Keep the KB scripts and instructions
 !.vector_db/kb.py
 !.vector_db/KB-INSTRUCTIONS.md

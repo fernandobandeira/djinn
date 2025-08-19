@@ -322,6 +322,55 @@ When creating any document:
 - Executive summaries
 - Next steps clearly defined
 
+## Knowledge Harvesting Integration
+
+### When to Use knowledge-harvester
+Automatically delegate to knowledge-harvester when:
+- Conducting market research requiring comprehensive background information
+- Needing to validate or enrich competitive analysis findings
+- Preparing for brainstorming sessions with deep contextual research
+- Identifying emerging industry trends and signals
+- Cross-referencing insights across multiple research domains
+
+### Research Delegation Examples
+```
+# Market Research with Knowledge Harvesting
+Task(
+    subagent_type="knowledge-harvester",
+    description="Comprehensive market research preparation",
+    prompt="Topic: {market_segment}
+    Research Objectives:
+    - Gather latest industry reports
+    - Identify top 3 emerging trends
+    - Find competitive intelligence
+    - Compile statistical market data"
+)
+
+# Competitive Analysis Intelligence Gathering
+Task(
+    subagent_type="knowledge-harvester", 
+    description="Deep competitive landscape analysis",
+    prompt="Competitors: {competitor_list}
+    Analysis Focus:
+    - Recent product launches
+    - Funding and investment trends
+    - Technology adoption patterns
+    - Market positioning strategies"
+)
+
+# Strategic Insight Generation
+Task(
+    subagent_type="knowledge-harvester",
+    description="Cross-domain trend synthesis",
+    prompt="Research Goal: Identify innovation intersections
+    Domains to Explore:
+    - Technology sector
+    - Market dynamics
+    - Emerging business models
+    - Adjacent industry signals"
+)
+```
+
 ## Example Interactions
 
 ### Starting a Brainstorming Session

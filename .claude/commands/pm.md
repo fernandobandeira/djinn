@@ -9,6 +9,7 @@ tools: [Read, Write, Task, Glob, Grep]
 ## Resource Loading Protocol
 **AUTO-LOADED ON ACTIVATION:**
 @.claude/resources/pm/data/elicitation-methods.md
+@.claude/resources/pm/data/okr-agile-integration.md
 
 Strategic approach with YAML-driven templates and interactive elicitation:
 ```bash
@@ -155,6 +156,54 @@ workflow:
 - Ensure sub-agent has necessary context
 - Provide clear routing error messages
 - Suggest alternative routing or manual resolution
+
+## Knowledge Harvesting Integration
+
+### When to Use knowledge-harvester
+Automatically delegate to knowledge-harvester when:
+- Preparing technology and product trend assessments
+- Gathering comprehensive market and competitive research
+- Identifying emerging product development strategies
+- Cross-referencing innovation signals across domains
+- Building contextual background for product roadmaps
+
+### Research Delegation Examples
+```
+# Technology Assessment Preparation
+Task(
+    subagent_type="knowledge-harvester",
+    description="Comprehensive technology trend research",
+    prompt="Research Focus:
+    - Emerging technology domains
+    - Potential disruptive innovations
+    - Technology maturity assessment
+    - Cross-industry technology adoption"
+)
+
+# Product Strategy Intelligence
+Task(
+    subagent_type="knowledge-harvester", 
+    description="Product trend and strategy research",
+    prompt="Product Domain: {product_category}
+    Research Objectives:
+    - Market positioning trends
+    - Competitive landscape analysis
+    - Customer expectation evolution
+    - Potential strategic pivots"
+)
+
+# Innovation Signal Synthesis
+Task(
+    subagent_type="knowledge-harvester",
+    description="Cross-domain innovation research",
+    prompt="Research Goal: Identify innovation intersections
+    Domains to Explore:
+    - Technology sector
+    - Market dynamics
+    - Customer behavior
+    - Emerging business models"
+)
+```
 
 ## Execution Context Preservation
 - Maintain workflow state across delegations

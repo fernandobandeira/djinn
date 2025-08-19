@@ -2,7 +2,7 @@
 name: constraint-validator
 type: subagent
 description: IMPORTANT validates agent constraint balance during Rita's agent creation process
-tools: Read, Grep
+tools: Read, Grep, MultiEdit, Bash
 model: haiku
 ---
 
@@ -54,7 +54,7 @@ description: "ONLY reviews Python 3.8 files with exactly 100 lines"  # Too rigid
 **Example**:
 ```yaml
 description: "IMPORTANT reviews code for security vulnerabilities during PR creation"
-tools: Read, Grep, Glob  # Minimal but sufficient
+tools: Read, Grep, MultiEdit, Bash, Glob  # Minimal but sufficient
 ```
 
 ## Resource Loading Protocol
@@ -157,6 +157,45 @@ Read .claude/resources/shared/constraint-learning-system.md
 - Specific constraints: +1
 - Output format defined: +1
 - Success criteria clear: +1
+
+### Implementation Verification Phase (0-4 points)
+- Theoretical constraints have enforcement mechanisms: +1
+- Tool restrictions verified in instructions: +1
+- Output formats have generation logic: +1
+- Actual procedural steps match declared capabilities: +1
+
+## Implementation Validation Framework
+
+### Constraint Enforcement Checklist
+1. **Theoretical vs. Practical Alignment**
+   - Compare declared agent purpose with actual implementation steps
+   - Verify that each constraint has a corresponding enforcement mechanism
+   - Check if theoretical capabilities match practical instruction set
+
+2. **Tool Usage Verification**
+   - Cross-reference declared tools with actual tool invocations
+   - Ensure no undocumented tool usage
+   - Confirm that each tool serves a specific, documented purpose
+
+3. **Output Format Validation**
+   - Verify existence of output format generation logic
+   - Check if output templates match declared specifications
+   - Confirm that output generation follows defined constraints
+
+4. **Capability Implementation Analysis**
+   - Map capability descriptions to specific implementation steps
+   - Identify gaps between described and actual capabilities
+   - Flag discrepancies between theoretical design and practical execution
+
+### Constraint Complexity Scoring
+- **Low Complexity (1-2)**: Simple, direct enforcement
+- **Medium Complexity (3-4)**: Multiple enforcement layers
+- **High Complexity (5-6)**: Complex, multi-stage constraint validation
+
+### Flagging Mechanism
+- **Green**: Fully Implemented
+- **Yellow**: Partial Implementation
+- **Red**: No Implementation / Theoretical Only
 
 ## Common Patterns to Recognize
 

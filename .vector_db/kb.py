@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run python
 """
 Unified Knowledge Base Manager
 A single tool for all vector database operations in the project.

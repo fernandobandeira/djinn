@@ -304,17 +304,19 @@ For all sub-agent outputs:
 - **diagram-generator**: System, flow, component, and deployment diagrams
 - **pattern-librarian**: Architectural pattern documentation and pattern library management
 - **plan-validator**: Comprehensive plan validation with GO/NO-GO decisions (shared)
+- **knowledge-harvester**: External research for patterns, ADRs, technology assessments (shared)
 
 ### Delegation Decision Matrix
 
 | User Request | Primary Sub-Agent | Secondary Sub-Agents | Coordination |
 |--------------|-------------------|---------------------|---------------|
-| `*create-adr` | adr-manager | - | Direct delegation |
+| `*create-adr` | adr-manager | knowledge-harvester | Research existing ADRs first |
 | `*design-system` | system-designer | adr-manager, diagram-generator | Sequential coordination |
 | `*review-architecture` | architecture-reviewer | pattern-librarian, adr-manager | Parallel coordination |
-| `*create-pattern` | pattern-librarian | adr-manager | Sequential coordination |
+| `*create-pattern` | pattern-librarian | knowledge-harvester, adr-manager | Research patterns first |
 | `*diagram-*` | diagram-generator | - | Direct delegation |
 | `*validate-architecture` | plan-validator | - | Direct delegation |
+| `*research {topic}` | knowledge-harvester | - | Direct delegation |
 
 ## Orchestration Quality Gates
 
@@ -335,6 +337,52 @@ For all sub-agent outputs:
 2. **Context Sharing**: Ensure sub-agents have shared context
 3. **Output Integration**: Synthesize multiple sub-agent results
 4. **Conflict Resolution**: Address inconsistencies between outputs
+
+## Knowledge Harvesting Integration
+
+### When to Use knowledge-harvester
+Automatically delegate to knowledge-harvester when:
+- User requests research on architectural patterns or technologies
+- Creating ADRs that need industry context
+- Designing systems that require technology assessment
+- Exploring new frameworks or architectural approaches
+- Looking for best practices or implementation examples
+
+### Harvesting Delegation Examples
+```python
+# Research architectural patterns
+Task(
+  subagent_type="knowledge-harvester",
+  description="Research microservices patterns",
+  prompt="""Agent context: architect
+           Research topic: Microservices communication patterns
+           Scope: comprehensive
+           Format preference: comparison
+           Focus areas: event-driven, REST, gRPC, GraphQL"""
+)
+
+# Technology assessment
+Task(
+  subagent_type="knowledge-harvester", 
+  description="Assess Kubernetes adoption",
+  prompt="""Agent context: architect
+           Research topic: Kubernetes adoption for startups
+           Scope: focused
+           Format preference: documentation
+           Key questions: ROI, complexity, alternatives"""
+)
+
+# Find existing ADRs
+Task(
+  subagent_type="knowledge-harvester",
+  description="Research database ADRs",
+  prompt="""Agent context: architect
+           Research topic: Database selection ADRs
+           Scope: quick_reference
+           Format preference: examples
+           Context: E-commerce platform"""
+)
+```
 
 ## Example Orchestration Workflows
 

@@ -16,6 +16,28 @@
 ### Shared Sub-Agents (Available to All Commands)
 - **kb-analyst**: Universal Knowledge Base search and indexing operations across all collections
 - **qa-reviewer**: Quality assurance, TDD support, code review, acceptance criteria generation
+- **knowledge-harvester**: Intelligent documentation harvesting, external research, pattern discovery
+- **plan-validator**: Validates project plans, PRDs, and architectures during planning phase
+
+#### Using Shared Sub-Agents
+Commands delegate to shared sub-agents via the Task tool:
+```
+Task(
+  subagent_type="knowledge-harvester",
+  description="Research [topic]",
+  prompt="Agent context: [your_agent_type]
+         Research topic: [specific_topic]
+         Scope: [comprehensive|focused|quick_reference]
+         Format preference: [documentation|examples|comparison|tutorial]"
+)
+```
+
+#### knowledge-harvester Usage Examples
+- **Architecture Research**: Finding design patterns, ADRs, technology assessments
+- **Code Examples**: Library usage, implementation patterns, troubleshooting guides
+- **Market Intelligence**: Competitive analysis, industry trends, user feedback
+- **Design Patterns**: UI/UX patterns, accessibility standards, design systems
+- **Learning Resources**: Tutorials, documentation, educational materials
 
 ## Documentation Structure
 

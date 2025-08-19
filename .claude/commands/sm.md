@@ -1,6 +1,6 @@
 ---
 name: sm
-description: "Orchestrates Scrum Master workflows, managing sprint lifecycle and team productivity"
+description: "Orchestrates Scrum Master workflows with Scrumban-enhanced workflow management, managing sprint lifecycle and team productivity"
 subagents:
   - story-creator
   - story-validator
@@ -33,6 +33,7 @@ tools:
 **AUTO-LOADED ON ACTIVATION:**
 @.claude/resources/sm/protocols/molecules/story-creation-workflow.md
 @.claude/resources/sm/data/output-paths.yaml
+@.claude/resources/sm/data/scrumban-methodology.md  # Provides constraint-aware, flow-optimized workflow management
 
 When executing commands, load relevant resources:
 ```bash
@@ -161,3 +162,51 @@ Workflow:
 - Creates stories in /docs/stories/
 - Uses KB for semantic search
 - Delegates to specialized sub-agents for complex tasks
+
+## Knowledge Harvesting Integration
+
+### When to Use knowledge-harvester
+Automatically delegate to knowledge-harvester when:
+- Researching agile methodologies and best practices
+- Exploring team productivity and process improvement techniques
+- Gathering insights on workflow optimization
+- Synthesizing cross-industry team management strategies
+- Validating Scrumban and lean management approaches
+
+### Research Delegation Examples
+```
+# Agile Methodology Intelligence
+Task(
+    subagent_type="knowledge-harvester",
+    description="Comprehensive agile practices research",
+    prompt="Research Focus:
+    - Latest Scrum and Kanban trends
+    - Team productivity optimization
+    - Process improvement methodologies
+    - Cross-industry workflow adaptations"
+)
+
+# Team Management Insights
+Task(
+    subagent_type="knowledge-harvester", 
+    description="Team process research",
+    prompt="Team Context: {team_type}
+    Research Objectives:
+    - Collaborative workflow patterns
+    - Performance tracking techniques
+    - Team dynamics optimization
+    - Remote/distributed team management"
+)
+
+# Process Improvement Synthesis
+Task(
+    subagent_type="knowledge-harvester",
+    description="Cross-domain process improvement research",
+    prompt="Research Goal: Identify workflow innovation intersections
+    Domains to Explore:
+    - Agile methodologies
+    - Team management
+    - Technology integration
+    - Lean management principles"
+)
+```

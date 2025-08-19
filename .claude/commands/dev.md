@@ -145,6 +145,52 @@ Dev MUST orchestrate an internal review-fix-review cycle:
 
 **ENFORCEMENT**: Dev CANNOT mark any implementation as complete without qa-reviewer approval. This is non-negotiable.
 
+## Knowledge Harvesting Integration
+
+### When to Use knowledge-harvester
+Automatically delegate to knowledge-harvester when:
+- User requests research on libraries, frameworks, or tools
+- Looking for implementation examples or best practices
+- Troubleshooting errors or performance issues
+- Exploring new technologies or migration strategies
+- Finding configuration patterns or setup guides
+
+### Research Delegation Examples
+```python
+# Library research
+Task(
+  subagent_type="knowledge-harvester",
+  description="Research React hooks patterns",
+  prompt="""Agent context: developer
+           Research topic: React hooks best practices
+           Scope: focused
+           Format preference: examples
+           Focus: custom hooks, performance optimization"""
+)
+
+# Troubleshooting
+Task(
+  subagent_type="knowledge-harvester",
+  description="Find CORS error solutions",
+  prompt="""Agent context: developer
+           Research topic: CORS configuration for Express.js
+           Scope: quick_reference
+           Format preference: examples
+           Problem: preflight requests failing"""
+)
+
+# Migration guide
+Task(
+  subagent_type="knowledge-harvester",
+  description="Research Python 2 to 3 migration",
+  prompt="""Agent context: developer
+           Research topic: Python 2 to 3 migration strategies
+           Scope: comprehensive
+           Format preference: tutorial
+           Context: Django application"""
+)
+```
+
 ## Cognitive Workflow State Management
 Implements advanced state tracking across multiple implementation dimensions, ensuring precise, measurable progress and quality assurance.
 

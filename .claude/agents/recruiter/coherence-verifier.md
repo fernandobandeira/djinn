@@ -158,6 +158,57 @@ coherence_report:
    - Orchestration effective
 
 ### Level 4: Naming Coherence
+
+### Level 5: Connection Validation
+1. **Resource Connection Analysis**
+   - Verify all referenced resources have explicit loading instructions
+   - Check resource loading protocols against actual usage
+   - Validate dynamic resource integration pathways
+
+2. **Sub-Agent Delegation Verification**
+   - Confirm delegation patterns exist
+   - Check if sub-agents have clear invocation mechanisms
+   - Verify cross-agent communication protocols
+
+3. **Data Flow Mapping**
+   - Trace data paths between components
+   - Validate integration points have connection logic
+   - Check for potential data transfer bottlenecks
+
+4. **Connectivity Score Calculation**
+   ```python
+   def calculate_connection_score(components):
+       connectivity_matrix = {
+           'resource_loading': 0.4,
+           'delegation_patterns': 0.3,
+           'data_flow_completeness': 0.3
+       }
+       
+       scores = {
+           'resource_loading': check_resource_connections(),
+           'delegation_patterns': verify_agent_delegations(),
+           'data_flow_completeness': map_data_transfer_paths()
+       }
+       
+       total_connectivity = sum(
+           scores[key] * connectivity_matrix[key] 
+           for key in connectivity_matrix
+       )
+       
+       return round(total_connectivity, 2)
+   ```
+
+5. **Disconnected Component Flagging**
+   - Identify components with no clear connection
+   - Mark potential isolation risks
+   - Generate recommendations for integration
+
+### Connection Validation Checklist
+- [ ] All resources have loading protocols
+- [ ] Sub-agent delegation mechanisms exist
+- [ ] Data flow paths are mapped
+- [ ] No isolated components
+- [ ] Integration points have connection logic
 1. **Consistent Naming**
    - Agent name matches files
    - Resource paths align
@@ -249,17 +300,19 @@ issue:
 ```python
 def calculate_coherence_score():
     weights = {
-        'structural': 0.25,
-        'resource': 0.35,
-        'constraint': 0.25,
-        'naming': 0.15
+        'structural': 0.20,
+        'resource': 0.25,
+        'constraint': 0.20,
+        'naming': 0.15,
+        'connection': 0.20  # New connection validation weight
     }
     
     scores = {
         'structural': check_structure(),
         'resource': check_resources(),
         'constraint': check_constraints(),
-        'naming': check_naming()
+        'naming': check_naming(),
+        'connection': calculate_connection_score()  # New connection score
     }
     
     total = sum(scores[k] * weights[k] for k in weights)
@@ -305,10 +358,16 @@ Fixes:
 ```
 
 ## Quality Thresholds
-- **Excellent**: > 0.90 (ready to use)
-- **Good**: 0.80-0.90 (minor fixes)
-- **Acceptable**: 0.70-0.80 (some issues)
-- **Poor**: < 0.70 (needs rework)
+- **Excellent**: > 0.90 (fully coherent with robust connections)
+- **Good**: 0.80-0.90 (minor connection and integration gaps)
+- **Acceptable**: 0.70-0.80 (significant integration work needed)
+- **Poor**: < 0.70 (major architectural redesign required)
+
+### Connection Quality Sub-Thresholds
+- **Perfect**: 1.00 (all components seamlessly integrated)
+- **Strong**: 0.85-1.00 (minor connection optimizations)
+- **Moderate**: 0.70-0.85 (requires significant integration work)
+- **Weak**: < 0.70 (fundamental connectivity issues)
 
 ## Reporting Format
 ```markdown
