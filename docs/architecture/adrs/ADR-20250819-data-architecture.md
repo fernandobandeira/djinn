@@ -128,10 +128,14 @@ The system supports **bi-directional matching** since receipts and transactions 
    - **Amount matching** (40% weight): Exact match or within 1%
    - **Date matching** (30% weight): Same day preferred, ±3 days acceptable
    - **Merchant matching** (30% weight): Fuzzy text matching using pg_trgm
-4. **Confidence Levels**:
-   - **≥80%**: Auto-match and link
-   - **50-79%**: Suggest to user for confirmation
-   - **<50%**: Keep unmatched, await manual linking
+4. **Confidence Levels & User Interaction**:
+   - **≥80%**: Auto-match and link silently
+   - **50-79%**: Suggest match, require user confirmation
+     - Show side-by-side comparison
+     - User can accept, reject, or select different transaction
+   - **<50%**: Keep unmatched, user manually selects from transaction list
+     - Show nearby transactions by date
+     - Allow skipping (receipt remains unmatched)
 5. **Match History**: All potential matches stored for audit and ML training
 
 **Critical Relationships**:

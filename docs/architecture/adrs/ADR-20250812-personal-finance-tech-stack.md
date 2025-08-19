@@ -42,8 +42,8 @@ Building a personal finance application requiring:
 #### Mobile (Flutter)
 - **Framework**: Flutter (single codebase, strong typing)
 - **GraphQL Client**: Ferry (code generation, normalized cache)
-- **Local Database**: ~~Drift~~ **SUPERSEDED** - See ADR-20250819-mobile-offline-first-synchronization
-- **Cache Persistence**: Ferry HiveStore (persistent offline storage)
+- **Local Database**: Drift (SQLite wrapper with blob support for receipts)
+- **Cache Persistence**: Ferry HiveStore (GraphQL normalized cache) + Drift (structured data & blobs)
 - **State Management**: Riverpod 2.0 (reactive, less boilerplate)
 - **Navigation**: go_router (official, declarative)
 - **HTTP Client**: built-in http package (Ferry handles GraphQL)
