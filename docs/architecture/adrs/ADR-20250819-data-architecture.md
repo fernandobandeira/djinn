@@ -540,179 +540,161 @@ CREATE INDEX idx_sync_queue_user_device ON sync_queue(user_id, device_id) WHERE 
 CREATE INDEX idx_sync_queue_status ON sync_queue(sync_status) WHERE sync_status IN ('pending', 'processing');
 ```
 
-#### 3. Data Integrity Rules
+#### 3. Data Integrity Rules (Application Layer)
 
-##### Receipt-Transaction Matching Logic
-```sql
--- Automatic matching when a new transaction arrives
-CREATE OR REPLACE FUNCTION match_transaction_to_receipts() RETURNS TRIGGER AS $$
-DECLARE
-    v_match_score DECIMAL(3,2);
-    v_receipt RECORD;
-BEGIN
-    -- Only match purchase transactions
-    IF NEW.transaction_type != 'purchase' THEN
-        RETURN NEW;
-    END IF;
+##### Receipt-Transaction Matching Service
+```go
+// Matching service in Go - no database triggers
+type ReceiptMatchingService struct {
+    db *sql.DB
+}
+
+// Match transaction to receipts - called after inserting transaction
+func (m *ReceiptMatchingService) MatchTransactionToReceipts(tx *Transaction) error {
+    // Only match purchase transactions
+    if tx.Type != "purchase" {
+        return nil
+    }
     
-    -- Look for unmatched receipts within a date range
-    FOR v_receipt IN 
-        SELECT * FROM receipts 
-        WHERE user_id = NEW.user_id
+    // Find potential receipt matches
+    rows, err := m.db.Query(`
+        SELECT id, total_amount_minor, receipt_date, merchant_name
+        FROM receipts 
+        WHERE user_id = $1
           AND match_status = 'unmatched'
-          AND receipt_date BETWEEN (NEW.occurred_at::date - INTERVAL '3 days') 
-                               AND (NEW.occurred_at::date + INTERVAL '1 day')
-          AND ABS(total_amount_minor - ABS(NEW.amount_minor)) < (ABS(NEW.amount_minor) * 0.01) -- Within 1%
-    LOOP
-        -- Calculate match score based on multiple factors
-        v_match_score := 0;
-        
-        -- Amount match (40% weight)
-        IF v_receipt.total_amount_minor = ABS(NEW.amount_minor) THEN
-            v_match_score := v_match_score + 0.40;
-        ELSIF ABS(v_receipt.total_amount_minor - ABS(NEW.amount_minor)) < 100 THEN -- Within $1
-            v_match_score := v_match_score + 0.30;
-        END IF;
-        
-        -- Date match (30% weight)
-        IF v_receipt.receipt_date = NEW.occurred_at::date THEN
-            v_match_score := v_match_score + 0.30;
-        ELSIF ABS(v_receipt.receipt_date - NEW.occurred_at::date) <= 1 THEN
-            v_match_score := v_match_score + 0.20;
-        END IF;
-        
-        -- Merchant name similarity (30% weight)
-        IF v_receipt.merchant_name IS NOT NULL AND NEW.merchant_name_raw IS NOT NULL THEN
-            IF similarity(lower(v_receipt.merchant_name), lower(NEW.merchant_name_raw)) > 0.7 THEN
-                v_match_score := v_match_score + 0.30;
-            ELSIF similarity(lower(v_receipt.merchant_name), lower(NEW.merchant_name_raw)) > 0.5 THEN
-                v_match_score := v_match_score + 0.15;
-            END IF;
-        END IF;
-        
-        -- Record match candidate
-        INSERT INTO receipt_transaction_matches (
-            receipt_id, transaction_id, match_score, 
-            match_factors, match_type, is_active
-        ) VALUES (
-            v_receipt.id, NEW.id, v_match_score,
-            jsonb_build_object(
-                'amount_diff', ABS(v_receipt.total_amount_minor - ABS(NEW.amount_minor)),
-                'date_diff', ABS(v_receipt.receipt_date - NEW.occurred_at::date),
-                'merchant_similarity', similarity(lower(v_receipt.merchant_name), lower(NEW.merchant_name_raw))
-            ),
-            CASE WHEN v_match_score >= 0.80 THEN 'auto' ELSE 'suggested' END,
-            v_match_score >= 0.80  -- Auto-activate high confidence matches
-        );
-        
-        -- If high confidence auto-match, update both records
-        IF v_match_score >= 0.80 THEN
-            UPDATE receipts 
-            SET transaction_id = NEW.id,
-                match_status = 'auto_matched',
-                match_confidence = v_match_score
-            WHERE id = v_receipt.id;
-            
-            UPDATE transactions
-            SET has_receipt = TRUE
-            WHERE id = NEW.id;
-            
-            EXIT; -- Stop after first high-confidence match
-        END IF;
-    END LOOP;
+          AND receipt_date BETWEEN $2 AND $3
+          AND ABS(total_amount_minor - $4) < ($4 * 0.01)
+    `, tx.UserID, 
+       tx.OccurredAt.AddDate(0, 0, -3),
+       tx.OccurredAt.AddDate(0, 0, 1),
+       math.Abs(float64(tx.AmountMinor)))
     
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER match_new_transaction
-    AFTER INSERT ON transactions
-    FOR EACH ROW EXECUTE FUNCTION match_transaction_to_receipts();
-
--- Automatic matching when a receipt is processed
-CREATE OR REPLACE FUNCTION match_receipt_to_transactions() RETURNS TRIGGER AS $$
-DECLARE
-    v_match_score DECIMAL(3,2);
-    v_transaction RECORD;
-BEGIN
-    -- Only process completed OCR receipts
-    IF NEW.ocr_status != 'completed' OR NEW.total_amount_minor IS NULL THEN
-        RETURN NEW;
-    END IF;
+    if err != nil {
+        return err
+    }
+    defer rows.Close()
     
-    -- Look for unmatched transactions
-    FOR v_transaction IN 
-        SELECT * FROM transactions 
-        WHERE user_id = NEW.user_id
-          AND has_receipt = FALSE
-          AND transaction_type = 'purchase'
-          AND occurred_at::date BETWEEN (NEW.receipt_date - INTERVAL '1 day') 
-                                    AND (NEW.receipt_date + INTERVAL '3 days')
-          AND ABS(ABS(amount_minor) - NEW.total_amount_minor) < (NEW.total_amount_minor * 0.01)
-    LOOP
-        -- Calculate match score (similar logic as above)
-        -- ... (same scoring logic)
+    for rows.Next() {
+        var receipt Receipt
+        rows.Scan(&receipt.ID, &receipt.TotalAmountMinor, &receipt.Date, &receipt.MerchantName)
         
-        -- Record match and update if high confidence
-        -- ... (similar to above)
-    END LOOP;
+        // Calculate match score
+        score := m.calculateMatchScore(tx, &receipt)
+        
+        // Record match candidate
+        _, err = m.db.Exec(`
+            INSERT INTO receipt_transaction_matches 
+            (receipt_id, transaction_id, match_score, match_factors, match_type, is_active)
+            VALUES ($1, $2, $3, $4, $5, $6)
+        `, receipt.ID, tx.ID, score, 
+           m.getMatchFactors(tx, &receipt),
+           m.getMatchType(score),
+           score >= 0.80)
+        
+        // Auto-match if high confidence
+        if score >= 0.80 {
+            m.applyMatch(receipt.ID, tx.ID, score)
+            break // Stop after first high-confidence match
+        }
+    }
     
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+    return nil
+}
 
-CREATE TRIGGER match_new_receipt
-    AFTER UPDATE OF ocr_status ON receipts
-    FOR EACH ROW 
-    WHEN (NEW.ocr_status = 'completed' AND OLD.ocr_status != 'completed')
-    EXECUTE FUNCTION match_receipt_to_transactions();
+// Match receipt to transactions - called after OCR completes
+func (m *ReceiptMatchingService) MatchReceiptToTransactions(receipt *Receipt) error {
+    // Only process completed OCR receipts
+    if receipt.OCRStatus != "completed" || receipt.TotalAmountMinor == nil {
+        return nil
+    }
+    
+    // Find potential transaction matches
+    // Similar logic to above but reversed
+    // ...
+    
+    return nil
+}
+
+func (m *ReceiptMatchingService) calculateMatchScore(tx *Transaction, receipt *Receipt) float64 {
+    score := 0.0
+    
+    // Amount match (40% weight)
+    if receipt.TotalAmountMinor == int(math.Abs(float64(tx.AmountMinor))) {
+        score += 0.40
+    } else if math.Abs(float64(receipt.TotalAmountMinor-int(math.Abs(float64(tx.AmountMinor))))) < 100 {
+        score += 0.30
+    }
+    
+    // Date match (30% weight)
+    if receipt.Date.Equal(tx.OccurredAt.Truncate(24*time.Hour)) {
+        score += 0.30
+    } else if math.Abs(receipt.Date.Sub(tx.OccurredAt).Hours()) <= 24 {
+        score += 0.20
+    }
+    
+    // Merchant similarity (30% weight)
+    if receipt.MerchantName != "" && tx.MerchantNameRaw != "" {
+        similarity := calculateStringSimilarity(receipt.MerchantName, tx.MerchantNameRaw)
+        if similarity > 0.7 {
+            score += 0.30
+        } else if similarity > 0.5 {
+            score += 0.15
+        }
+    }
+    
+    return score
+}
 
 -- Enable fuzzy text matching
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
-##### Institution Management
-```sql
--- Find or create institution when importing from Plaid
-CREATE OR REPLACE FUNCTION find_or_create_institution(
-    p_plaid_id TEXT,
-    p_name TEXT,
-    p_user_id UUID DEFAULT NULL
-) RETURNS UUID AS $$
-DECLARE
-    v_institution_id UUID;
-BEGIN
-    -- First, check if Plaid institution exists
-    IF p_plaid_id IS NOT NULL THEN
-        SELECT id INTO v_institution_id
-        FROM institutions
-        WHERE plaid_institution_id = p_plaid_id;
+##### Institution Management (Application Layer)
+```go
+// Institution service - find or create institution when importing from Plaid
+type InstitutionService struct {
+    db *sql.DB
+}
+
+func (s *InstitutionService) FindOrCreateInstitution(
+    plaidID string,
+    name string,
+    userID *string,
+) (string, error) {
+    var institutionID string
+    
+    // Check if Plaid institution exists
+    if plaidID != "" {
+        err := s.db.QueryRow(`
+            SELECT id FROM institutions WHERE plaid_institution_id = $1
+        `, plaidID).Scan(&institutionID)
         
-        IF v_institution_id IS NOT NULL THEN
-            RETURN v_institution_id;
-        END IF;
-    END IF;
+        if err == nil {
+            return institutionID, nil
+        }
+    }
     
-    -- Check for system institution by name (fuzzy match)
-    SELECT id INTO v_institution_id
-    FROM institutions
-    WHERE is_system = TRUE
-      AND similarity(lower(name), lower(p_name)) > 0.8
-    ORDER BY similarity(lower(name), lower(p_name)) DESC
-    LIMIT 1;
+    // Check for system institution by name (fuzzy match)
+    err := s.db.QueryRow(`
+        SELECT id FROM institutions
+        WHERE is_system = TRUE
+          AND similarity(lower(name), lower($1)) > 0.8
+        ORDER BY similarity(lower(name), lower($1)) DESC
+        LIMIT 1
+    `, name).Scan(&institutionID)
     
-    IF v_institution_id IS NOT NULL THEN
-        RETURN v_institution_id;
-    END IF;
+    if err == nil {
+        return institutionID, nil
+    }
     
-    -- Create new institution (user-specific if p_user_id provided)
-    INSERT INTO institutions (
-        plaid_institution_id, name, display_name, is_system
-    ) VALUES (
-        p_plaid_id, p_name, p_name, FALSE
-    ) RETURNING id INTO v_institution_id;
+    // Create new institution
+    err = s.db.QueryRow(`
+        INSERT INTO institutions (plaid_institution_id, name, display_name, is_system)
+        VALUES ($1, $2, $2, FALSE)
+        RETURNING id
+    `, plaidID, name).Scan(&institutionID)
     
-    RETURN v_institution_id;
-END;
+    return institutionID, err
+}
 $$ LANGUAGE plpgsql;
 
 -- Pre-populate common institutions (including store cards)
@@ -743,7 +725,7 @@ CREATE OR REPLACE FUNCTION update_manual_credit_statement(
     p_balance_minor BIGINT,
     p_minimum_payment_minor BIGINT,
     p_due_date DATE
-) RETURNS VOID AS $$
+) error {
 BEGIN
     INSERT INTO credit_card_liabilities (
         account_id,
@@ -773,13 +755,13 @@ BEGIN
         updated_at = NOW()
     WHERE id = p_account_id;
 END;
-$$ LANGUAGE plpgsql;
+}
 ```
 
 ##### Business Rules Enforcement
 ```sql
 -- Update account balance from transactions
-CREATE OR REPLACE FUNCTION update_account_balance() RETURNS TRIGGER AS $$
+func (s *BalanceService) UpdateAccountBalance(accountID string) error {
 DECLARE
     v_balance BIGINT;
     v_account_type TEXT;
@@ -819,12 +801,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER update_balance_on_transaction
+// Called after transaction operations
     AFTER INSERT OR UPDATE OR DELETE ON transactions
     FOR EACH ROW EXECUTE FUNCTION update_account_balance();
 
 -- Track budget spending (notification only, no blocking)
-CREATE OR REPLACE FUNCTION check_budget_limit() RETURNS TRIGGER AS $$
+func (s *BudgetService) CheckBudgetLimit(tx *Transaction) error {
 DECLARE
     v_spent BIGINT;
     v_budget BIGINT;
@@ -862,7 +844,7 @@ BEGIN
     
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+}
 ```
 
 #### 4. GraphQL Schema
@@ -1352,7 +1334,7 @@ GROUP BY u.id;
 
 -- Simple account deletion (soft delete)
 CREATE OR REPLACE FUNCTION delete_user_account(p_user_id UUID)
-RETURNS BOOLEAN AS $$
+error {
 BEGIN
     -- Soft delete user
     UPDATE users 

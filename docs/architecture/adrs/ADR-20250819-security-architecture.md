@@ -1,56 +1,103 @@
 # ADR-20250819: Security Architecture
 
 ## Status
-Proposed
+Accepted
 
 ## Context
-Djinn handles sensitive financial data requiring bank-grade security:
-- Personal financial information (PII) and transaction history
-- Bank account credentials and balances
+Djinn handles personal financial data requiring appropriate security measures:
+- Personal financial information (PII) and aggregated transaction history
+- Plaid access tokens for read-only bank connections
 - Receipt images potentially containing sensitive information
 - Budget and spending patterns revealing lifestyle details
-- Multi-user system requiring strict data isolation
+- Personal finance app with single-user data access (users only see own data)
 - Mobile app requiring secure offline/online synchronization
-- Regulatory compliance (GLBA, CCPA/CPRA, PCI DSS for future payments)
-- Target market includes privacy-conscious ex-Mint users
+- Privacy compliance (CCPA/CPRA for US users, GDPR for EU)
+- Target market includes privacy-conscious ex-Mint users seeking data aggregation
+- **Physical device security risk**: Unauthorized access if phone is stolen or borrowed
 
 ### Constraints
 - Firebase Auth already chosen for authentication (tech stack ADR)
 - PostgreSQL with Row Level Security capabilities
-- Mobile-first architecture with offline support
+- Mobile-only architecture with offline support (no web app)
 - Limited initial budget (need cost-effective solutions)
 - Small team (cannot manage complex security infrastructure)
 - Must maintain user trust as core value proposition
+- No payment processing (read-only financial data aggregation)
+- Users only access their own data (no cross-user authorization needed)
 
 ## Decision
 
 ### 1. Authentication Architecture
 
-#### Primary Authentication: Firebase Auth
+#### Primary Authentication: Firebase Auth (Mobile OAuth-Only)
 ```typescript
-// Authentication flow
+// Mobile-only OAuth authentication flow with biometric protection
 interface AuthenticationFlow {
-  // Primary methods
-  methods: {
-    email: "Password with email verification required",
+  // Initial authentication (only required for first login or after logout)
+  initialAuth: {
     google: "OAuth 2.0 via Firebase",
-    apple: "Sign in with Apple via Firebase", 
-    biometric: "FaceID/TouchID/Fingerprint for mobile"
+    apple: "Sign in with Apple via Firebase"
   },
   
-  // Multi-factor authentication
-  mfa: {
-    required: "For premium users and sensitive operations",
-    methods: ["SMS", "TOTP via authenticator apps"],
-    triggers: ["Large transfers", "Account deletion", "Export data"]
+  // Biometric authentication (primary day-to-day access method)
+  biometricAuth: {
+    // Required scenarios
+    alwaysRequired: [
+      "App launch from closed state",
+      "App returns from background after 5+ minutes",
+      "Viewing sensitive data (full account numbers)",
+      "Data export operations",
+      "Deleting data or accounts"
+    ],
+    
+    // Implementation
+    ios: {
+      primary: "Face ID",
+      fallback: "Touch ID",
+      lastResort: "Device passcode"
+    },
+    android: {
+      primary: "BiometricPrompt API (fingerprint/face)",
+      fallback: "Device PIN/pattern"
+    },
+    
+    // User flow
+    userExperience: {
+      appLaunch: "Biometric prompt immediately on open",
+      backgroundReturn: "Biometric if > 5 min, else seamless",
+      timeout: "Biometric re-auth, NOT Google/Apple re-login",
+      failure: "After 3 failed attempts, require device passcode"
+    },
+    
+    // Security rationale
+    threatModel: {
+      scenario: "Phone stolen/borrowed while unlocked",
+      protection: "Biometric gate prevents financial data access",
+      compliance: "Meets financial app industry standards",
+      userTrust: "Similar to banking apps users already trust"
+    }
   },
   
   // Session management
   sessions: {
-    web: "1 hour with refresh tokens (30 days)",
-    mobile: "7 days with biometric re-auth",
-    api: "Short-lived JWT (15 minutes)"
+    firebaseToken: "30 days (refreshed automatically)",
+    biometricGate: "Controls app access, not token validity",
+    backgroundTimer: "5 minutes (resets on foreground)",
+    
+    // Key point: Firebase token remains valid even when biometric times out
+    // User just needs biometric to unlock app, not to re-authenticate
+    tokenPersistence: "Secure storage, survives app restarts"
   }
+}
+
+// Example flow
+const appStateTransitions = {
+  firstTimeUser: "Google/Apple OAuth → Store token → Enable biometric",
+  dailyUse: "Open app → Face ID → Access granted",
+  backgroundShort: "Background 2 min → Foreground → No auth needed",
+  backgroundLong: "Background 10 min → Foreground → Face ID → Access granted",
+  appClosed: "Force close → Open later → Face ID → Access granted",
+  tokenExpired: "After 30 days → Google/Apple re-auth → Enable biometric"
 }
 ```
 
@@ -77,10 +124,7 @@ func ValidateToken(next http.Handler) http.Handler {
             return unauthorized(w, "Invalid token")
         }
         
-        // Check token freshness for sensitive operations
-        if isSensitiveOperation(r) && tokenAge(decoded) > 5*time.Minute {
-            return unauthorized(w, "Token too old for this operation")
-        }
+        // No sensitive operation checks needed for read-only data aggregation
         
         // Set user context for RLS
         ctx = context.WithValue(ctx, "user_id", decoded.UID)
@@ -91,185 +135,374 @@ func ValidateToken(next http.Handler) http.Handler {
 
 ### 2. Authorization Model
 
-#### Role-Based Access Control (RBAC) with Attribute-Based Refinements
+#### Simple Subscription-Based Authorization
 ```sql
--- User roles and permissions
-CREATE TABLE roles (
+-- Users table with subscription tier
+CREATE TABLE users (
     id UUID PRIMARY KEY,
-    name TEXT UNIQUE NOT NULL, -- free_user, premium_user, premium_plus_user, admin
-    permissions JSONB NOT NULL DEFAULT '[]'
+    firebase_uid TEXT UNIQUE NOT NULL,
+    email TEXT,
+    subscription_tier TEXT DEFAULT 'free' CHECK (subscription_tier IN ('free', 'premium')),
+    subscription_expires_at TIMESTAMPTZ, -- NULL for free users
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE user_roles (
-    user_id UUID REFERENCES users(id),
-    role_id UUID REFERENCES roles(id),
-    granted_at TIMESTAMPTZ DEFAULT NOW(),
-    granted_by UUID REFERENCES users(id),
-    expires_at TIMESTAMPTZ,
-    PRIMARY KEY (user_id, role_id)
-);
+-- No feature flags table needed - using PostHog or similar service
 
--- Feature flags for gradual rollout
-CREATE TABLE feature_flags (
-    id UUID PRIMARY KEY,
-    feature_name TEXT UNIQUE NOT NULL,
-    enabled_for_roles TEXT[] DEFAULT '{}',
-    enabled_for_users UUID[] DEFAULT '{}',
-    percentage_rollout INTEGER DEFAULT 0,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- No database functions - all logic in application layer
 ```
 
-#### GraphQL Authorization Directives
-```graphql
-directive @auth(requires: Role = USER) on FIELD_DEFINITION
-directive @owner on FIELD_DEFINITION  
-directive @premium on FIELD_DEFINITION
-directive @rateLimit(max: Int!, window: String!) on FIELD_DEFINITION
+#### Feature Flag Management (PostHog)
+```go
+// Feature flag implementation using PostHog
+package features
 
-type Query {
-  # Public endpoints
-  publicStats: PublicStats! 
-  
-  # Authenticated endpoints
-  me: User! @auth
-  myAccounts: [Account!]! @auth @owner
-  
-  # Premium features
-  advancedAnalytics: Analytics! @auth @premium
-  ocrReceipt(id: ID!): Receipt! @auth @premium @rateLimit(max: 100, window: "1h")
-  
-  # Admin only
-  systemMetrics: SystemMetrics! @auth(requires: ADMIN)
+import (
+    "github.com/posthog/posthog-go"
+)
+
+type FeatureFlags struct {
+    client posthog.Client
+}
+
+func NewFeatureFlags() *FeatureFlags {
+    // PostHog initialization
+    client := posthog.New(os.Getenv("POSTHOG_API_KEY"))
+    return &FeatureFlags{client: client}
+}
+
+// Check if feature is enabled for user
+func (f *FeatureFlags) IsEnabled(userID string, feature string) bool {
+    // PostHog handles:
+    // - Percentage rollouts
+    // - User targeting
+    // - A/B testing
+    // - Analytics tracking
+    
+    isEnabled, err := f.client.IsFeatureEnabled(
+        posthog.FeatureFlagPayload{
+            Key: feature,
+            DistinctId: userID,
+            Properties: posthog.Properties{
+                "subscription_tier": getUserTier(userID),
+            },
+        },
+    )
+    
+    if err != nil {
+        // Default to disabled on error
+        return false
+    }
+    
+    return isEnabled
+}
+
+// Example usage in GraphQL resolver
+func (r *Resolver) GetAdvancedAnalytics(ctx context.Context) (*Analytics, error) {
+    userID := ctx.Value("user_id").(string)
+    
+    // Check feature flag for gradual rollout
+    if !features.IsEnabled(userID, "advanced_analytics_v2") {
+        return r.getLegacyAnalytics(ctx) // Fallback to old version
+    }
+    
+    return r.getNewAnalytics(ctx)
 }
 ```
 
-### 3. Data Encryption Strategy
-
-#### Encryption Layers
-```sql
--- Application-level encryption for sensitive fields
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-
--- Key rotation table
-CREATE TABLE encryption_keys (
-    id UUID PRIMARY KEY,
-    key_version INTEGER NOT NULL,
-    key_data BYTEA NOT NULL, -- Encrypted with master key from KMS
-    algorithm TEXT DEFAULT 'AES-256-GCM',
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    rotated_at TIMESTAMPTZ,
-    is_active BOOLEAN DEFAULT TRUE
-);
-
--- Encrypted fields implementation
-CREATE OR REPLACE FUNCTION encrypt_sensitive(
-    plain_text TEXT,
-    field_type TEXT -- 'pii', 'financial', 'credential'
-) RETURNS JSONB AS $$
-DECLARE
-    current_key RECORD;
-    encrypted_data BYTEA;
-    iv BYTEA;
-BEGIN
-    -- Get active key for field type
-    SELECT * INTO current_key 
-    FROM encryption_keys 
-    WHERE is_active = TRUE 
-    ORDER BY key_version DESC 
-    LIMIT 1;
-    
-    -- Generate IV
-    iv := gen_random_bytes(16);
-    
-    -- Encrypt with AES-256-GCM
-    encrypted_data := pgp_sym_encrypt_bytea(
-        plain_text::bytea,
-        current_key.key_data,
-        'compress-algo=0, cipher-algo=aes256'
-    );
-    
-    RETURN jsonb_build_object(
-        'ciphertext', encode(encrypted_data, 'base64'),
-        'iv', encode(iv, 'base64'),
-        'key_version', current_key.key_version,
-        'encrypted_at', NOW()
-    );
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+#### Why PostHog?
+- **Free tier**: 1M feature flag requests/month (plenty for MVP)
+- **Analytics included**: Track feature adoption automatically
+- **A/B testing**: Built-in experimentation capabilities
+- **Easy integration**: SDKs for Go, Flutter, and web
+- **Self-host option**: Can migrate to self-hosted if needed
+- **Alternative options**: Flagsmith (50k requests free), Unleash (self-hosted free)
 ```
 
-#### Data Classification and Encryption Requirements
+#### GraphQL Authorization Directives (Zero Trust)
+```graphql
+# Zero Trust: Authentication required by default
+# Only @public endpoints are accessible without auth
+directive @public on FIELD_DEFINITION
+directive @premium on FIELD_DEFINITION
+
+type Query {
+  # Public endpoints must be explicitly marked
+  health: String! @public
+  mobileAppConfig: AppConfig! @public # Firebase config, feature flags
+  
+  # All other endpoints require authentication by default
+  me: User! # Auth required (default)
+  myAccounts: [Account!]! # Auth required (default)
+  myTransactions: TransactionConnection! # Auth required (default)
+  
+  # Premium features (auth implicit, premium check added)
+  advancedAnalytics: Analytics! @premium
+  ocrReceipt(id: ID!): Receipt! @premium
+  
+  # Rate limiting handled at API Gateway level
+}
+```
+
+### 3. Data Encryption Strategy (Go-Based)
+
+#### Encryption Approach
+```go
+// Application-level encryption in Go 1.25 using AES-GCM
+// Key stored in environment variable or cloud KMS, never in database
+
+package encryption
+
+import (
+    "crypto/aes"
+    "crypto/cipher"
+    "crypto/rand"
+    "encoding/base64"
+    "os"
+)
+
+type EncryptionService struct {
+    key []byte // Loaded from environment/KMS at startup
+}
+
+func NewEncryptionService() (*EncryptionService, error) {
+    // Key from environment variable (production uses KMS)
+    keyBase64 := os.Getenv("ENCRYPTION_KEY")
+    if keyBase64 == "" {
+        // In production, fetch from AWS KMS or GCP Secret Manager
+        keyBase64 = fetchFromKMS()
+    }
+    
+    key, err := base64.StdEncoding.DecodeString(keyBase64)
+    if err != nil {
+        return nil, err
+    }
+    
+    return &EncryptionService{key: key}, nil
+}
+
+// Encrypt Plaid tokens before storing in database
+func (e *EncryptionService) EncryptToken(plaintext string) (string, error) {
+    block, err := aes.NewCipher(e.key)
+    if err != nil {
+        return "", err
+    }
+    
+    gcm, err := cipher.NewGCM(block)
+    if err != nil {
+        return "", err
+    }
+    
+    nonce := make([]byte, gcm.NonceSize())
+    if _, err = rand.Read(nonce); err != nil {
+        return "", err
+    }
+    
+    ciphertext := gcm.Seal(nonce, nonce, []byte(plaintext), nil)
+    return base64.StdEncoding.EncodeToString(ciphertext), nil
+}
+
+// Decrypt tokens when needed for Plaid API calls
+func (e *EncryptionService) DecryptToken(ciphertext string) (string, error) {
+    // Implementation similar to encrypt, but in reverse
+    // ...
+}
+```
+
+```sql
+-- Database just stores encrypted tokens as text
+CREATE TABLE secure_credentials (
+    user_id UUID PRIMARY KEY REFERENCES users(id),
+    plaid_access_token TEXT, -- Already encrypted by Go app
+    encrypted_at TIMESTAMPTZ DEFAULT NOW(),
+    key_version INTEGER DEFAULT 1
+);
+```
+
+#### Key Management Strategy
+- **Development**: AES-256 key in environment variable
+- **Production**: Key stored in cloud KMS (AWS KMS or GCP Secret Manager)
+- **Key Rotation**: Quarterly rotation with versioning support
+- **No pgcrypto**: Avoids storing keys in database or PostgreSQL config
+```
+
+#### Data Classification and Encryption Requirements (Simplified)
 | Data Type | Classification | Encryption | Storage | Retention |
 |-----------|---------------|------------|---------|-----------|
-| Passwords | Critical | Firebase managed | Never stored | N/A |
-| Bank Credentials | Critical | Plaid token vault | Token reference only | Until disconnected |
-| Account Numbers | High | AES-256 at rest | Masked (last 4) | 7 years |
+| OAuth Tokens | Critical | Firebase managed | Never stored | N/A |
+| Plaid Tokens | Critical | pgcrypto encryption | PostgreSQL | Until disconnected |
+| Account Numbers | Medium | DB encryption + masking | Display last 4 only | 7 years |
 | Transaction Data | Medium | TLS + DB encryption | PostgreSQL | 7 years |
 | Receipt Images | Medium | S3 SSE-S3 | S3 with signed URLs | 7 years |
-| Email Addresses | High | Hashed for lookup | Encrypted at rest | Until deletion |
+| Email Addresses | Low | DB encryption | PostgreSQL | Until deletion |
 | User Preferences | Low | DB encryption | JSONB | Until deletion |
 
 ### 4. API Security
 
-#### Rate Limiting Strategy
+#### API Protection and Rate Limiting
 ```go
-// Rate limiter configuration
-type RateLimitConfig struct {
-    // Per-user limits
-    FreeUserLimits: Limits{
-        RequestsPerMinute: 60,
-        OCRPerDay: 10,
-        ExportsPerDay: 3,
-    },
-    PremiumUserLimits: Limits{
-        RequestsPerMinute: 300,
-        OCRPerDay: 100,
-        ExportsPerDay: 50,
+// Simplified rate limiting at API Gateway level
+type APIProtectionConfig struct {
+    // Public endpoints (whitelist for mobile app)
+    PublicEndpoints: []string{
+        "/health",
+        "/version",
+        "/mobile/config", // App configuration endpoint
+        "/.well-known/*", // Firebase auth discovery
     },
     
-    // Per-endpoint limits
-    EndpointLimits: map[string]Limit{
-        "/graphql": {Rate: 100, Burst: 200},
-        "/upload":  {Rate: 10, Burst: 20},
-        "/export":  {Rate: 5, Burst: 10},
+    // All other endpoints require Firebase auth token
+    RequireAuth: true,
+    
+    // Simple tier-based rate limiting
+    RateLimits: map[string]int{
+        "free_user":    100, // requests per minute
+        "premium_user": 500, // requests per minute
     },
     
-    // Global limits
-    GlobalLimits: Limits{
-        RequestsPerSecond: 1000,
-        ConcurrentConnections: 5000,
+    // Feature-specific limits tracked in Redis
+    FeatureLimits: map[string]map[string]int{
+        "ocr_processing": {
+            "free_user":    10,  // per day
+            "premium_user": 100, // per day
+        },
+        "data_export": {
+            "free_user":    3,  // per day
+            "premium_user": 20, // per day
+        },
     }
 }
 
-// Implementation using Redis
-func RateLimitMiddleware(config RateLimitConfig) func(http.Handler) http.Handler {
-    limiter := redis_rate.NewLimiter(redisClient)
+// Feature limit implementation using Redis
+func CheckFeatureLimit(userID string, feature string, tier string) (bool, int) {
+    key := fmt.Sprintf("limit:%s:%s:%s", feature, userID, today())
     
+    // Get current usage from Redis
+    count, _ := redis.Get(key).Int()
+    limit := FeatureLimits[feature][tier]
+    
+    if count >= limit {
+        return false, 0 // Limit exceeded
+    }
+    
+    // Increment counter with 24h expiration
+    redis.Incr(key)
+    redis.Expire(key, 24*time.Hour)
+    
+    return true, limit - count - 1 // Allowed, return remaining
+}
+
+// GraphQL resolver example
+func (r *Resolver) ProcessOCR(ctx context.Context, receiptID string) (*Receipt, error) {
+    userID := ctx.Value("user_id").(string)
+    tier := getUserTier(userID)
+    
+    // Check feature limit
+    allowed, remaining := CheckFeatureLimit(userID, "ocr_processing", tier)
+    if !allowed {
+        return nil, fmt.Errorf("daily OCR limit reached for %s tier", tier)
+    }
+    
+    // Process OCR...
+    receipt := processReceipt(receiptID)
+    
+    // Add remaining count to response headers
+    ctx = context.WithValue(ctx, "X-Feature-Remaining", remaining)
+    
+    return receipt, nil
+}
+
+// Zero Trust authentication middleware - auth required by default
+func ZeroTrustAuthMiddleware() func(http.Handler) http.Handler {
     return func(next http.Handler) http.Handler {
         return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-            userID := getUserID(r.Context())
-            endpoint := r.URL.Path
+            // In GraphQL, check if the field has @public directive
+            // This is handled by gqlgen directive implementation
             
-            // Check user limit
-            userKey := fmt.Sprintf("rate:user:%s", userID)
-            userLimit := getUserLimit(userID, config)
+            // For REST endpoints, only allow specific public paths
+            publicPaths := []string{"/health", "/version", "/mobile/config"}
+            for _, path := range publicPaths {
+                if r.URL.Path == path {
+                    next.ServeHTTP(w, r)
+                    return
+                }
+            }
             
-            res, err := limiter.Allow(r.Context(), userKey, userLimit)
-            if err != nil || res.Allowed == 0 {
-                http.Error(w, "Rate limit exceeded", 429)
-                w.Header().Set("X-RateLimit-Retry-After", res.RetryAfter.String())
+            // Default: Authentication required for everything else
+            token := extractFirebaseToken(r)
+            if token == "" {
+                http.Error(w, "Authentication required (zero trust)", 401)
                 return
             }
             
-            // Set rate limit headers
-            w.Header().Set("X-RateLimit-Limit", strconv.Itoa(userLimit.Rate))
-            w.Header().Set("X-RateLimit-Remaining", strconv.Itoa(res.Remaining))
-            w.Header().Set("X-RateLimit-Reset", res.ResetAfter.String())
+            // Verify Firebase token
+            decoded, err := firebaseAuth.VerifyIDToken(r.Context(), token)
+            if err != nil {
+                http.Error(w, "Invalid token", 401)
+                return
+            }
             
-            next.ServeHTTP(w, r)
+            // Log sensitive operations
+            if isSensitiveOperation(r.URL.Path) {
+                logSecurityEvent("sensitive_access", decoded.UID)
+            }
+            
+            // Set user context for RLS
+            ctx := context.WithValue(r.Context(), "user_id", decoded.UID)
+            next.ServeHTTP(w, r.WithContext(ctx))
         })
     }
+}
+
+// GraphQL directive implementations
+func PublicDirective(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
+    // @public directive allows bypassing auth
+    return next(ctx)
+}
+
+func PremiumDirective(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
+    // Check if user has premium subscription
+    userID := ctx.Value("user_id").(string)
+    
+    // Use application service to check premium status
+    userService := ctx.Value("user_service").(*UserService)
+    if !userService.IsPremium(userID) {
+        return nil, fmt.Errorf("premium subscription required")
+    }
+    
+    return next(ctx)
+}
+
+// Application layer premium check
+type UserService struct {
+    db *sql.DB
+}
+
+func (u *UserService) IsPremium(userID string) bool {
+    var tier string
+    var expiresAt *time.Time
+    
+    err := u.db.QueryRow(`
+        SELECT subscription_tier, subscription_expires_at 
+        FROM users WHERE firebase_uid = $1
+    `, userID).Scan(&tier, &expiresAt)
+    
+    if err != nil {
+        return false
+    }
+    
+    // Premium if tier is premium and not expired
+    return tier == "premium" && (expiresAt == nil || expiresAt.After(time.Now()))
+}
+
+func AuthRequired(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
+    // Default behavior - auth required unless @public is present
+    userID := ctx.Value("user_id")
+    if userID == nil {
+        return nil, fmt.Errorf("authentication required")
+    }
+    return next(ctx)
 }
 ```
 
@@ -371,7 +604,7 @@ secrets:
 #### Container Security
 ```dockerfile
 # Secure container configuration
-FROM golang:1.21-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
 # Run as non-root user
 RUN adduser -D -g '' appuser
@@ -399,12 +632,12 @@ USER appuser
 
 #### Security Event Monitoring
 ```sql
--- Security audit events
+-- Security audit events (Firebase handles auth, we track API abuse)
 CREATE TABLE security_events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    event_type TEXT NOT NULL, -- login_failed, permission_denied, suspicious_activity
+    event_type TEXT NOT NULL, -- invalid_token, wrong_app_token, rate_limit_exceeded, suspicious_activity
     severity TEXT NOT NULL CHECK (severity IN ('info', 'warning', 'critical')),
-    user_id UUID REFERENCES users(id),
+    user_id UUID REFERENCES users(id), -- NULL for unauthenticated attempts
     ip_address INET,
     user_agent TEXT,
     details JSONB NOT NULL,
@@ -412,38 +645,52 @@ CREATE TABLE security_events (
 );
 
 CREATE INDEX idx_security_events_severity ON security_events(severity, created_at DESC);
-CREATE INDEX idx_security_events_user ON security_events(user_id, created_at DESC);
+CREATE INDEX idx_security_events_ip ON security_events(ip_address, created_at DESC);
 
--- Anomaly detection triggers
-CREATE OR REPLACE FUNCTION detect_anomalies() RETURNS TRIGGER AS $$
-BEGIN
-    -- Multiple failed login attempts
-    IF NEW.event_type = 'login_failed' THEN
-        PERFORM pg_notify('security_alert', json_build_object(
-            'type', 'multiple_failed_logins',
-            'user_id', NEW.user_id,
-            'count', (
-                SELECT COUNT(*) 
-                FROM security_events 
-                WHERE user_id = NEW.user_id 
-                AND event_type = 'login_failed'
-                AND created_at > NOW() - INTERVAL '10 minutes'
-            )
-        )::text);
-    END IF;
-    
-    -- Unusual access patterns
-    IF NEW.event_type = 'data_export' THEN
-        PERFORM pg_notify('security_alert', json_build_object(
-            'type', 'unusual_export',
-            'user_id', NEW.user_id,
-            'details', NEW.details
-        )::text);
-    END IF;
-    
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+```
+
+#### Anomaly Detection (Application Layer)
+```go
+// Anomaly detection in Go application
+type SecurityMonitor struct {
+    db *sql.DB
+    alertService *AlertService
+}
+
+// Check for API abuse patterns after logging security event
+func (s *SecurityMonitor) CheckForAnomalies(event SecurityEvent) {
+    switch event.Type {
+    case "invalid_token", "wrong_app_token":
+        // Check for token abuse from same IP
+        var count int
+        s.db.QueryRow(`
+            SELECT COUNT(*) FROM security_events 
+            WHERE ip_address = $1 
+            AND event_type IN ('invalid_token', 'wrong_app_token')
+            AND created_at > NOW() - INTERVAL '10 minutes'
+        `, event.IPAddress).Scan(&count)
+        
+        if count > 10 {
+            s.alertService.SendAlert("potential_token_abuse", event.IPAddress)
+        }
+        
+    case "data_export":
+        // Check for excessive exports
+        if event.UserID != nil {
+            var count int
+            s.db.QueryRow(`
+                SELECT COUNT(*) FROM security_events 
+                WHERE user_id = $1 
+                AND event_type = 'data_export'
+                AND created_at > NOW() - INTERVAL '1 hour'
+            `, event.UserID).Scan(&count)
+            
+            if count > 5 {
+                s.alertService.SendAlert("excessive_exports", *event.UserID)
+            }
+        }
+    }
+}
 ```
 
 #### Incident Response Plan
@@ -565,24 +812,23 @@ func (ps *PrivacyService) UpdateConsent(userID string, consent ConsentUpdate) er
 }
 ```
 
-#### Regulatory Compliance Checklist
+#### Privacy Compliance Requirements
 | Regulation | Requirement | Implementation |
 |------------|------------|---------------|
-| GLBA | Financial data protection | Encryption, access controls, audit logs |
-| CCPA/CPRA | Privacy rights | Data export, deletion, consent management |
-| PCI DSS | Payment card security | No card storage, use tokenization |
-| SOC 2 Type II | Security controls | Monitoring, incident response, vendor management |
+| CCPA/CPRA | Privacy rights | Data export, deletion, minimal collection |
 | GDPR | EU data protection | Privacy by design, data minimization, consent |
+| Privacy-First | User trust | Transparent data handling, user control |
 
 ## Consequences
 
 ### Positive
 - **User Trust**: Bank-grade security builds confidence in the platform
+- **Physical Security**: Biometric protection against device theft/unauthorized access
 - **Compliance Ready**: Architecture supports current and future regulations
-- **Scalable Security**: Role-based system grows with user base
+- **Scalable Security**: Simple tier-based system grows with user base
 - **Defense in Depth**: Multiple security layers prevent single point of failure
-- **Audit Trail**: Complete security event logging for forensics
-- **Privacy First**: Strong encryption and data isolation
+- **Audit Trail**: Security event logging for API abuse detection
+- **Privacy First**: Strong encryption for sensitive tokens and data isolation
 - **Cost Effective**: Leverages managed services (Firebase, KMS) to reduce overhead
 
 ### Negative
@@ -613,21 +859,86 @@ func (ps *PrivacyService) UpdateConsent(userID string, consent ConsentUpdate) er
 - **Cons**: More complex than Firebase, AWS lock-in, steeper learning curve
 - **Reason for not choosing**: Firebase offers better mobile SDKs and simpler integration
 
-### Option C: Passwordless Only
-- **Description**: Magic links and biometric only
-- **Pros**: More secure, no password management
-- **Cons**: Email dependency, user education needed, recovery complex
-- **Reason for not choosing**: Users expect password option, especially from Mint
+### Option C: Email/Password Authentication
+- **Description**: Traditional email and password authentication
+- **Pros**: Familiar to users, no third-party dependency
+- **Cons**: Password management complexity, reset flows, breach risk
+- **Reason for not choosing**: OAuth provides better security without password risks
 
 ## Implementation Notes
 
+### Implementation Notes for Mobile Biometric Flow
+
+#### Flutter Implementation
+```dart
+class AuthService {
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final LocalAuthentication _localAuth = LocalAuthentication();
+  
+  // Check if user needs authentication
+  Future<AuthState> checkAuthRequired() async {
+    // Check if Firebase token exists and is valid
+    final user = _firebaseAuth.currentUser;
+    if (user == null) {
+      return AuthState.needsOAuthLogin; // First time or logged out
+    }
+    
+    // Token exists, check if biometric needed
+    final lastBackground = await getLastBackgroundTime();
+    final now = DateTime.now();
+    
+    if (lastBackground == null || 
+        now.difference(lastBackground).inMinutes > 5) {
+      return AuthState.needsBiometric; // Need biometric unlock
+    }
+    
+    return AuthState.authenticated; // Good to go
+  }
+  
+  // Biometric authentication
+  Future<bool> authenticateWithBiometric() async {
+    try {
+      final isAuthenticated = await _localAuth.authenticate(
+        localizedReason: 'Authenticate to access your financial data',
+        options: AuthenticationOptions(
+          biometricOnly: false, // Allow passcode fallback
+          stickyAuth: true, // Don't minimize on background
+        ),
+      );
+      
+      if (isAuthenticated) {
+        await updateLastAuthTime();
+        return true;
+      }
+    } catch (e) {
+      // Biometric not available, fall back to device passcode
+    }
+    return false;
+  }
+  
+  // Google/Apple sign in (only for initial auth or re-auth after 30 days)
+  Future<void> signInWithGoogle() async {
+    // Only called for first-time users or token expiration
+    final googleUser = await GoogleSignIn().signIn();
+    final googleAuth = await googleUser?.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+    
+    await _firebaseAuth.signInWithCredential(credential);
+    await enableBiometricAuth(); // Prompt to enable biometric
+  }
+}
+```
+
 ### Migration Strategy
-1. **Phase 1**: Implement Firebase Auth with email/password
-2. **Phase 2**: Add OAuth providers (Google, Apple)
-3. **Phase 3**: Enable MFA for premium users
-4. **Phase 4**: Implement encryption for sensitive fields
-5. **Phase 5**: Add rate limiting and monitoring
-6. **Phase 6**: Security audit and penetration testing
+1. **Phase 1**: Implement Firebase Auth with OAuth only (Google, Apple) for mobile
+2. **Phase 2**: Integrate biometric authentication with proper session handling
+3. **Phase 3**: Implement PostgreSQL RLS and basic encryption
+4. **Phase 4**: Add API gateway with rate limiting for mobile clients
+5. **Phase 5**: Implement privacy features (data export, deletion)
+6. **Phase 6**: Security audit focused on mobile app data aggregation
 
 ### Testing Approach
 - Unit tests for all security functions
@@ -637,12 +948,14 @@ func (ps *PrivacyService) UpdateConsent(userID string, consent ConsentUpdate) er
 - Chaos engineering for incident response
 
 ### Monitoring and Success Metrics
-- Failed login attempts < 1% legitimate users
+- Invalid token attempts < 0.1% of API calls
 - Zero security breaches
-- MFA adoption > 30% premium users
-- Security scan findings: 0 critical, < 5 high
-- Mean time to detect (MTTD) < 5 minutes
-- Mean time to respond (MTTR) < 30 minutes
+- OAuth adoption: 100% (only auth method)
+- Biometric adoption > 90% of devices that support it
+- Wrong app token attempts < 10 per day (tokens from other apps)
+- Security scan findings: 0 critical, < 3 high
+- User data isolation: 100% effective (verified via testing)
+- Privacy compliance: Full CCPA/GDPR feature implementation
 
 ## References
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
