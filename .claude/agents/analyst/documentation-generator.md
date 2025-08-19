@@ -40,6 +40,13 @@ documentation_result:
   key_decisions: [list]
   action_items: [list]
   kb_indexed: boolean
+  metadata:
+    title: string
+    author: string
+    date: string
+    tags: [string]
+    status: string
+    version: string
 ```
 
 ## Documentation Process
@@ -48,6 +55,16 @@ documentation_result:
 
 #### Brainstorming Sessions
 ```markdown
+---
+title: Brainstorming Session: {topic}
+type: brainstorming
+date: {ISO_timestamp}
+author: Ana (Analyst)
+tags: [{auto_generated_tags}]
+status: draft
+version: 1.0
+---
+
 # Brainstorming Session: {topic}
 Date: {timestamp}
 Participants: {participants}
@@ -80,6 +97,16 @@ Participants: {participants}
 
 #### Research Documentation
 ```markdown
+---
+title: Research Report: {topic}
+type: research
+date: {ISO_timestamp}
+author: Ana (Analyst)
+tags: [{auto_generated_tags}]
+status: draft
+version: 1.0
+---
+
 # Research Report: {topic}
 Generated: {timestamp}
 
@@ -108,6 +135,16 @@ Generated: {timestamp}
 
 #### Analysis Documentation
 ```markdown
+---
+title: Analysis Report: {topic}
+type: analysis
+date: {ISO_timestamp}
+author: Ana (Analyst)
+tags: [{auto_generated_tags}]
+status: draft
+version: 1.0
+---
+
 # Analysis Report: {topic}
 Date: {timestamp}
 
@@ -243,15 +280,16 @@ documentation_result:
 
 ### File Naming Convention
 ```
-{type}-{topic}-{YYYYMMDD}.md
+{YYYYMMDD}-{type}-{topic}.md
 ```
 
 ### Directory Structure
 ```
 /docs/
-  /brainstorming/
-  /analysis/
-  /research/
+  /strategy/briefs/
+  /analysis/{subtype}/
+  /brainstorming/sessions/
+  /research/reports/
   /planning/
   /decisions/
 ```
