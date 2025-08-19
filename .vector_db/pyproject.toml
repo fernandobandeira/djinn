@@ -1,0 +1,14 @@
+[project]
+name = "djinn-kb"
+version = "0.1.0"
+description = "Djinn Knowledge Base with Enhanced GraphRAG"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "chromadb>=1.0.20",
+    "graphrag>=2.5.0",
+    "networkx>=3.5",
+    "pyyaml>=6.0.2",
+    "scikit-learn>=1.7.1",
+    "sentence-transformers>=5.1.0",
+]
