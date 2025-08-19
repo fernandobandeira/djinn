@@ -71,33 +71,21 @@ Usage: sm *help
 Description: Create next story from PRD and Architecture with comprehensive validation
 Delegates: story-creator, story-validator
 Workflow:
-- Identify next story from epics
-- Read PRD and architecture context
-- Generate comprehensive story with Dev Notes
-- Automatically validate using BMAD-METHOD checks (10 categories)
-- If NO-GO: Show issues and iteratively improve
+- Delegate to story-creator to generate story
+- Automatically delegate to story-validator for quality check
+- Receive validation results
+- If NO-GO: Show issues and improve with story-creator
 - If GO: Save validated story to /docs/stories/
-- Report validation score and readiness
+- Report validation decision to user
 
 ### *validate-story {story-id}
-Description: Validate story quality and completeness using BMAD-METHOD
+Description: Validate story quality and completeness
 Delegates: story-validator
 Workflow:
-- Load story file
-- Run 10-category BMAD validation:
-  1. Template completeness
-  2. File structure validation
-  3. UI/Frontend specs (if applicable)
-  4. Acceptance criteria coverage
-  5. Testing instructions
-  6. Security considerations
-  7. Task sequence logic
-  8. Anti-hallucination checks
-  9. Dev agent readiness
-  10. Overall quality scoring
-- Generate GO/NO-GO decision
-- Report readiness score (0-100)
-- Provide improvement recommendations
+- Delegate to story-validator sub-agent
+- Receive validation results
+- Present GO/NO-GO decision to user
+- Show readiness score and recommendations
 
 ### *plan-sprint
 Description: Plan next sprint with story allocation

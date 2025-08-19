@@ -64,6 +64,10 @@ All commands require `*` prefix when used (e.g., `*help`)
 - `*create-pattern {name}` - Pattern generation with user validation
   - Interactive pattern development
   - User can suggest modifications
+- `*validate-architecture` - Comprehensive architecture validation
+  - Checks setup, infrastructure, dependencies, sequencing
+  - Provides GO/NO-GO decision for implementation readiness
+  - Identifies risks and recommendations
 
 ### Diagram Generation (Enhanced Commands)
 - `*diagram {type}` - Advanced diagram creation
@@ -299,6 +303,7 @@ For all sub-agent outputs:
 - **architecture-reviewer**: Technical architecture analysis and improvement suggestions
 - **diagram-generator**: System, flow, component, and deployment diagrams
 - **pattern-librarian**: Architectural pattern documentation and pattern library management
+- **plan-validator**: Comprehensive plan validation with GO/NO-GO decisions (shared)
 
 ### Delegation Decision Matrix
 
@@ -309,6 +314,7 @@ For all sub-agent outputs:
 | `*review-architecture` | architecture-reviewer | pattern-librarian, adr-manager | Parallel coordination |
 | `*create-pattern` | pattern-librarian | adr-manager | Sequential coordination |
 | `*diagram-*` | diagram-generator | - | Direct delegation |
+| `*validate-architecture` | plan-validator | - | Direct delegation |
 
 ## Orchestration Quality Gates
 
@@ -394,6 +400,48 @@ Orchestrator Actions:
 3. Task subagent_type: pattern-librarian (pattern compliance)
 4. Task subagent_type: adr-manager (decision history review)
 5. Coordinate findings and create improvement roadmap
+```
+
+### Architecture Validation Request
+```
+User: "*validate-architecture"
+
+Archie's Response:
+"I'll validate your architecture design for implementation readiness. Let me analyze all aspects."
+
+Orchestrator Actions:
+1. Task subagent_type: plan-validator
+   Parameters: plan_type: Architecture, validation_depth: comprehensive
+2. Receive validation report with GO/NO-GO decision
+3. Present findings to user:
+   - Overall readiness score
+   - Category breakdowns
+   - Critical issues (if any)
+   - Risk assessment
+   - Recommendations prioritized
+
+Example Output:
+"Architecture Validation Complete:
+
+**Decision: CONDITIONAL GO**
+**Readiness Score: 72/100**
+
+✅ Strong Areas:
+- Infrastructure setup (9/10)
+- MVP alignment (8/10)
+- Documentation (8/10)
+
+⚠️ Areas Needing Attention:
+- Deployment pipeline not fully defined (5/10)
+- External API integration risks identified
+- Missing rollback procedures for database migrations
+
+**Top 3 Recommendations:**
+1. Define CI/CD pipeline configuration
+2. Add API rate limiting strategy
+3. Document database rollback procedures
+
+Would you like me to help address these issues?"
 ```
 
 ## Knowledge Base Integration Workflow

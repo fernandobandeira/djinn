@@ -17,11 +17,21 @@ THEN load .claude/resources/pm/templates/[template].yaml
 THEN load .claude/resources/pm/tasks/[task].md
 THEN load .claude/resources/pm/checklists/pm-validation-checklist.md
 
-# Load context from knowledge base
+# Enhanced Knowledge Base Context Loading
+# Primary Knowledge Base Search
 THEN search kb for "market research" --collection documentation
 THEN search kb for "user research" --collection documentation
 THEN search kb for "business requirements" --collection documentation
 THEN search kb for "technical constraints" --collection architecture
+
+# Fallback Knowledge Base Search Strategy
+IF no primary search results:
+  # Strategy 1: Broader Cross-Collection Search
+  THEN search kb for "market product requirements" 
+  THEN search kb for "product strategy constraints"
+
+  # Strategy 2: Default Content Generation
+  GENERATE default template using core PM knowledge and validation guidelines
 
 # Output paths
 Project Brief → /docs/requirements/project-brief.md
@@ -60,8 +70,11 @@ delegations:
     agent: change-coordinator
     description: Handle scope changes and course corrections systematically
   - command: "*validate-prd"
-    agent: qa-reviewer
-    description: Run comprehensive PRD validation checklist
+    agent: plan-validator
+    description: Run comprehensive PRD validation with GO/NO-GO decision
+  - command: "*validate-plan"
+    agent: plan-validator
+    description: Validate any project plan (PRD, Epic, Roadmap) comprehensively
   - command: "*shard-document"
     agent: document-processor
     description: Split large documents into manageable sections
@@ -84,10 +97,67 @@ integration_protocols:
   - Archie (Architect): Technical constraints and ADRs
   - Tina (Teacher): Learning and documentation
 
-# Core Workflow
+# Enhanced Core Workflow
 workflow:
   1. Receive input
   2. Validate delegation
-  3. Route to appropriate sub-agent
-  4. Collect and synthesize results
-  5. Return comprehensive output
+  3. Validate sub-agent availability
+  4. Implement error handling and fallback mechanisms
+  5. Route to appropriate sub-agent
+  6. Collect and synthesize results
+  7. Validate output quality
+  8. Return comprehensive output
+
+## Success Criteria for Each Workflow Stage
+  1. Input Validation:
+     - Completeness of input
+     - Relevance to PM domain
+     - Sufficient contextual information
+
+  2. Delegation Validation:
+     - Sub-agent capability match
+     - Resource availability
+     - Compliance with integration protocols
+
+  3. Sub-Agent Routing:
+     - Accurate task interpretation
+     - Contextual information transfer
+     - Minimal manual intervention required
+
+  4. Result Synthesis:
+     - Comprehensive coverage
+     - Actionable insights
+     - Alignment with original objectives
+
+  5. Output Quality:
+     - Measurable outcomes
+     - Stakeholder satisfaction
+     - Clear next steps defined
+
+## Enhanced Error Handling Protocols
+
+### Delegation Validation
+- Verify sub-agent exists before routing
+- Implement graceful fallback for missing sub-agents
+- Provide detailed error messages
+- Offer manual intervention options
+
+### Knowledge Base Search Fallback
+- Primary search with specific terms
+- Broaden search terms if no results
+- Cross-collection search
+- Generate default content if all searches fail
+- Log search strategies and results
+
+### Sub-Agent Routing Validation
+- Check sub-agent capability for specific task
+- Validate input parameters
+- Ensure sub-agent has necessary context
+- Provide clear routing error messages
+- Suggest alternative routing or manual resolution
+
+## Execution Context Preservation
+- Maintain workflow state across delegations
+- Log delegation and search attempts
+- Enable rollback and retry mechanisms
+- Ensure comprehensive traceability

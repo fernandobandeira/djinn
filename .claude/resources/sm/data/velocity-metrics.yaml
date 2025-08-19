@@ -1,0 +1,20 @@
+velocity_tracking:
+  current_sprint:
+    total_points: 0
+    completed_points: 0
+    completion_percentage: 0
+
+  historical_velocity:
+    - sprint_number: 1
+      points_committed: 0
+      points_completed: 0
+      completion_rate: 0.0
+
+  team_capacity:
+    total_story_points_per_sprint: 0
+    team_members: 0
+    points_per_member: 0
+
+  trends:
+    velocity_stability: "Not enough data"
+    improvement_direction: "Not tracked"

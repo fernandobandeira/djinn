@@ -1,4 +1,4 @@
-# Story Validation Checklist (BMAD-METHOD Enhanced)
+# Story Validation Checklist
 
 ## Critical Requirements (MUST PASS for GO Decision)
 

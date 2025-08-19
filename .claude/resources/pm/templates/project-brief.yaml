@@ -1,157 +1,45 @@
-template:
-  id: project-brief-v1
-  name: Project Brief
-  version: 1.0
-  output:
-    format: markdown
-    filename: /docs/requirements/project-brief.md
-    title: "Project Brief: {{project_name}}"
-
-workflow:
-  mode: interactive
-  elicitation: advanced
-
+version: 1.1
+template_type: Project Brief
 sections:
-  - id: executive-summary
-    title: Executive Summary
-    instruction: |
-      Create a concise overview capturing the project essence:
-      - Product concept (1-2 sentences)
-      - Primary problem being solved
-      - Target market identification
-      - Key value proposition
-    elicit: true
+  - name: Project Overview
+    fields:
+      - project_name: ""
+      - project_purpose: ""
+      - key_stakeholders: []
 
-  - id: problem-statement
-    title: Problem Statement
-    instruction: |
-      Articulate the problem with clarity and evidence:
-      - Current state and pain points
-      - Impact of the problem (quantified)
-      - Why existing solutions fall short
-      - Urgency and importance
-    elicit: true
+  - name: Strategic Alignment
+    fields:
+      - business_goals: []
+      - strategic_objectives: []
+      - expected_outcomes: []
 
-  - id: proposed-solution
-    title: Proposed Solution
-    instruction: |
-      Describe the solution approach:
-      - Core concept and approach
-      - Key differentiators
-      - Why this solution will succeed
-      - High-level product vision
-    elicit: true
+  - name: Scope and Boundaries
+    fields:
+      - in_scope: []
+      - out_of_scope: []
+      - constraints: []
 
-  - id: target-users
-    title: Target Users
-    instruction: |
-      Define intended users with specificity:
-      - Primary user segment profile
-      - Current behaviors and workflows
-      - Specific needs and pain points
-      - Goals they're trying to achieve
-    sections:
-      - id: primary-segment
-        title: "Primary User Segment"
-      - id: secondary-segment
-        title: "Secondary User Segment"
-        condition: Has secondary users
+  - name: Initial Resource Estimate
+    fields:
+      - estimated_budget: null
+      - initial_timeline: {}
+      - key_team_members: []
 
-  - id: goals-metrics
-    title: Goals & Success Metrics
-    instruction: |
-      Establish SMART objectives and success measures
-    sections:
-      - id: business-objectives
-        title: Business Objectives
-        type: bullet-list
-      - id: user-success-metrics
-        title: User Success Metrics
-        type: bullet-list
-      - id: kpis
-        title: Key Performance Indicators
-        type: bullet-list
+  - name: Risk Assessment
+    fields:
+      - potential_risks: []
+      - mitigation_strategies: []
 
-  - id: mvp-scope
-    title: MVP Scope
-    instruction: |
-      Define minimum viable product clearly.
-      Distinguish must-haves from nice-to-haves.
-    elicit: true
-    sections:
-      - id: core-features
-        title: Core Features (Must Have)
-        type: bullet-list
-      - id: out-of-scope
-        title: Out of Scope for MVP
-        type: bullet-list
-      - id: success-criteria
-        title: MVP Success Criteria
+  - name: Success Criteria
+    fields:
+      - primary_success_metrics: []
+      - secondary_success_metrics: []
+      - definition_of_done: []
 
-  - id: post-mvp-vision
-    title: Post-MVP Vision
-    instruction: |
-      Outline longer-term product direction
-    sections:
-      - id: phase-2
-        title: Phase 2 Features
-      - id: long-term
-        title: Long-term Vision (1-2 years)
-      - id: expansion
-        title: Expansion Opportunities
-
-  - id: technical-considerations
-    title: Technical Considerations
-    instruction: |
-      Document known technical constraints and preferences.
-      Note these are initial thoughts, not final decisions.
-    sections:
-      - id: platform-requirements
-        title: Platform Requirements
-      - id: technology-preferences
-        title: Technology Preferences
-      - id: architecture-considerations
-        title: Architecture Considerations
-
-  - id: constraints-assumptions
-    title: Constraints & Assumptions
-    instruction: |
-      State limitations and assumptions clearly
-    sections:
-      - id: constraints
-        title: Constraints
-        items:
-          - Budget
-          - Timeline
-          - Resources
-          - Technical
-      - id: assumptions
-        title: Key Assumptions
-        type: bullet-list
-
-  - id: risks-questions
-    title: Risks & Open Questions
-    instruction: |
-      Identify unknowns and potential challenges
-    sections:
-      - id: key-risks
-        title: Key Risks
-        type: bullet-list
-      - id: open-questions
-        title: Open Questions
-        type: bullet-list
-      - id: research-areas
-        title: Areas Needing Research
-        type: bullet-list
-
-  - id: next-steps
-    title: Next Steps
-    sections:
-      - id: immediate-actions
-        title: Immediate Actions
-        type: numbered-list
-      - id: handoff
-        title: PRD Creation Handoff
-        content: |
-          This Project Brief provides full context for {{project_name}}.
-          Next: Create PRD using this brief as foundation.
+validation_rules:
+  - required_fields:
+      - project_name
+      - project_purpose
+      - business_goals
+  - min_stakeholders: 2
+  - risk_assessment_required: true
