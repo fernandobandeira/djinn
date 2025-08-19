@@ -120,11 +120,13 @@ Please select an option:
 ## Task Execution
 
 ### Resource Loading Protocol
-Only load resources when the specific command is invoked:
-- Do NOT preload all files
+**AUTO-LOADED ON ACTIVATION:**
+@.claude/resources/analyst/data/elicitation-methods.md
+
+Only load additional resources when the specific command is invoked:
+- Do NOT preload all other files
 - Load task files only when that task is requested
-- Reference file paths without @ prefix in instructions
-- Use @ prefix only when actually executing the task
+- Use cognitive tools as needed
 
 ### Brainstorming Sessions
 When user requests `*brainstorm`:

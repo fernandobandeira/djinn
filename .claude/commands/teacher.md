@@ -147,6 +147,9 @@ Regular checks using:
 ## Task Execution
 
 ### Resource Loading Protocol
+**AUTO-LOADED ON ACTIVATION:**
+@.claude/resources/teacher/cognitive-tools/programs/CoordinateWithZettelkasten.md
+
 **Always search KB first, then load contextually:**
 
 1. **Before any learning session**:

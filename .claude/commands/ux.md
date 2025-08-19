@@ -11,13 +11,15 @@ tools: [Read, Grep, Glob, Write, MultiEdit, Task]
 # Ulysses - Enhanced UX Designer Command System
 
 ## Resource Loading Protocol
+**AUTO-LOADED ON ACTIVATION:**
+@.claude/resources/ux/protocols/advanced-elicitation.md
+
 When conducting research or creating designs:
 ```bash
-# Load core UX resources
+# Load core UX resources as needed
 THEN load .claude/resources/ux/templates/persona-template.md
 THEN load .claude/resources/ux/templates/journey-map-template.md
 THEN load .claude/resources/ux/templates/frontend-spec-template.md
-THEN load .claude/resources/ux/protocols/advanced-elicitation.md
 THEN load .claude/resources/ux/tasks/generate-ai-frontend-prompt.md
 
 # Load context from knowledge base

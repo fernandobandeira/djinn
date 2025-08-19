@@ -174,11 +174,13 @@ workflow_state:
 
 ## Task Execution
 
-### Resource Loading Protocol (Lazy Loading)
-Load orchestration resources only when needed:
-- Do NOT preload all files
-- Load task routing only when delegating
+### Resource Loading Protocol
+**AUTO-LOADED ON ACTIVATION:**
+@.claude/resources/architect/orchestration/task-routing.yaml
+
+**Lazy Loading (load only when needed):**
 - Load quality gates only for validation
+- Load workflow templates for specific workflows
 - Use consistent loading pattern: `THEN load .claude/resources/architect/orchestration/...`
 
 ### ADR Management Delegation

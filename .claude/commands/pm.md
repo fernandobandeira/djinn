@@ -7,12 +7,14 @@ icon: 📋
 tools: [Read, Write, Task, Glob, Grep]
 
 ## Resource Loading Protocol
+**AUTO-LOADED ON ACTIVATION:**
+@.claude/resources/pm/data/elicitation-methods.md
+
 Strategic approach with YAML-driven templates and interactive elicitation:
 ```bash
 # Load PM resources based on task
 THEN load .claude/resources/pm/templates/[template].yaml
 THEN load .claude/resources/pm/tasks/[task].md
-THEN load .claude/resources/pm/data/elicitation-methods.md
 THEN load .claude/resources/pm/checklists/pm-validation-checklist.md
 
 # Load context from knowledge base

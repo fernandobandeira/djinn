@@ -30,6 +30,10 @@ tools:
 ```
 
 ## Resource Loading Protocol
+**AUTO-LOADED ON ACTIVATION:**
+@.claude/resources/sm/protocols/molecules/story-creation-workflow.md
+@.claude/resources/sm/data/output-paths.yaml
+
 When executing commands, load relevant resources:
 ```bash
 # For story creation
@@ -64,23 +68,36 @@ Description: Show available Scrum Master commands
 Usage: sm *help
 
 ### *create-story
-Description: Create next story from PRD and Architecture
+Description: Create next story from PRD and Architecture with comprehensive validation
 Delegates: story-creator, story-validator
 Workflow:
 - Identify next story from epics
 - Read PRD and architecture context
 - Generate comprehensive story with Dev Notes
-- Validate story completeness
-- Save to /docs/stories/
+- Automatically validate using BMAD-METHOD checks (10 categories)
+- If NO-GO: Show issues and iteratively improve
+- If GO: Save validated story to /docs/stories/
+- Report validation score and readiness
 
 ### *validate-story {story-id}
-Description: Validate story quality and completeness
+Description: Validate story quality and completeness using BMAD-METHOD
 Delegates: story-validator
 Workflow:
 - Load story file
-- Check against story-draft-checklist
-- Verify Dev Notes completeness
-- Report validation results
+- Run 10-category BMAD validation:
+  1. Template completeness
+  2. File structure validation
+  3. UI/Frontend specs (if applicable)
+  4. Acceptance criteria coverage
+  5. Testing instructions
+  6. Security considerations
+  7. Task sequence logic
+  8. Anti-hallucination checks
+  9. Dev agent readiness
+  10. Overall quality scoring
+- Generate GO/NO-GO decision
+- Report readiness score (0-100)
+- Provide improvement recommendations
 
 ### *plan-sprint
 Description: Plan next sprint with story allocation

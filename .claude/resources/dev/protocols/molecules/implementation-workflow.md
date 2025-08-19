@@ -189,9 +189,29 @@ npm run test:integration
 npm run test:e2e
 ```
 
-## Phase 6: Review
+## Phase 6: Review (MANDATORY QA-REVIEWER DELEGATION)
 
-### Self-Review Checklist
+### CRITICAL: This phase is MANDATORY and AUTOMATIC
+**MUST delegate to qa-reviewer - NO EXCEPTIONS**
+
+### Automatic QA-Reviewer Invocation
+```yaml
+mandatory_review:
+  trigger: "ALWAYS after Phase 5 (Testing)"
+  delegate_to: qa-reviewer
+  instruction: "IMPORTANT actively critiques code and finds issues"
+  iteration_limit: 5
+  approval_required: true
+```
+
+### Review Process
+1. **AUTOMATIC**: Delegate to qa-reviewer for critique
+2. Receive critique_report with issues
+3. Apply all critical/high severity fixes
+4. Re-delegate to qa-reviewer for validation
+5. Repeat until approved or max iterations
+
+### Self-Review Checklist (Pre-QA)
 - [ ] Code follows standards
 - [ ] All tests passing
 - [ ] Documentation updated
@@ -345,6 +365,8 @@ quality_gates:
     - Integration tested
     
   review_to_optimization:
+    - **qa-reviewer approval_status: approved (MANDATORY)**
+    - All critical issues fixed
     - Review feedback addressed
     - Approval received
     
@@ -370,9 +392,12 @@ integrations:
     - Request architecture updates
     
   qa_reviewer:
+    - **MANDATORY: Perform critical code review after implementation**
     - Generate test scenarios
     - Validate test coverage
-    - Perform code review
+    - Find and report issues with severity levels
+    - Provide actionable fixes
+    - Block or approve implementation
     
   kb_analyst:
     - Search for patterns
