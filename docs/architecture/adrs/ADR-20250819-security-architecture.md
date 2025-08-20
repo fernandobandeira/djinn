@@ -334,7 +334,7 @@ CREATE TABLE secure_credentials (
 | Plaid Tokens | Critical | pgcrypto encryption | PostgreSQL | Until disconnected |
 | Account Numbers | Medium | DB encryption + masking | Display last 4 only | 7 years |
 | Transaction Data | Medium | TLS + DB encryption | PostgreSQL | 7 years |
-| Receipt Images | Medium | S3 SSE-S3 | S3 with signed URLs | 7 years |
+| Receipt OCR Data | Low | DB encryption | PostgreSQL (JSON) | 7 years |
 | Email Addresses | Low | DB encryption | PostgreSQL | Until deletion |
 | User Preferences | Low | DB encryption | JSONB | Until deletion |
 

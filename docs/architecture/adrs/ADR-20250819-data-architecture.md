@@ -34,7 +34,7 @@ Users (root tenant)
 ├── Categories (hierarchical, user-customizable)
 ├── Budgets (monthly/weekly/custom periods)
 ├── Rules (auto-categorization)
-├── Receipts (images + OCR data)
+├── Receipts (OCR metadata only, no images)
 └── Merchants (shared but user-enrichable)
 
 Institutions (shared + user-customizable)
@@ -378,8 +378,8 @@ CREATE TABLE receipts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     transaction_id UUID REFERENCES transactions(id) ON DELETE SET NULL,  -- Nullable, matched later
-    image_url TEXT NOT NULL,                       -- S3/GCS URL
-    thumbnail_url TEXT,
+    ocr_data JSONB NOT NULL,                       -- Extracted OCR data (no image stored)
+    -- No thumbnail_url needed (images stay on device)
     ocr_status TEXT DEFAULT 'pending',             -- pending, processing, completed, failed
     ocr_provider TEXT,                              -- azure, google, textract
     ocr_raw_response JSONB,                        -- Raw OCR response
@@ -1175,8 +1175,8 @@ type Mutation {
   updateTransaction(input: UpdateTransactionInput!): Transaction!
   deleteTransaction(id: ID!): Boolean!
   
-  # Receipts
-  uploadReceipt(transactionId: ID, image: Upload!): Receipt!
+  # Receipts (OCR data from on-device processing)
+  processReceipt(transactionId: ID, ocrData: OCRDataInput!): Receipt!
   matchReceiptToTransaction(receiptId: ID!, transactionId: ID!): Receipt!
   unmatchReceipt(receiptId: ID!): Receipt!
   acceptSuggestedMatch(receiptId: ID!, transactionId: ID!): Receipt!

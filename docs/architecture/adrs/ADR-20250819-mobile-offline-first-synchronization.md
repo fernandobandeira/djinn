@@ -12,19 +12,19 @@ Djinn's Flutter mobile application requires robust offline-first data synchroniz
 - **API**: GraphQL with Ferry client (includes normalized cache)
 - **State Management**: Riverpod for reactive state management
 - **Local Database**: Drift (SQLite wrapper for Flutter)
-  - Chosen for: Type-safe queries, blob support, migrations
-  - Stores: Transactions, accounts, sync queue, receipt images
+  - Chosen for: Type-safe queries, migrations, reactive streams
+  - Stores: Transactions, accounts, sync queue, OCR metadata
   - Persists across app restarts and device reboots
 - **Cache Layer**: Ferry HiveStore (GraphQL normalized cache) + Drift (structured data)
 - **Data Types**: 
   - Hierarchical: Institutions → Accounts → Transactions
-  - Binary: Receipt images requiring OCR processing (stored in Drift blobs)
+  - OCR Data: Extracted text and metadata from on-device ML Kit processing
   - Linked: Transfer transactions between accounts
   - Read-only: Credit card liabilities from Plaid
 
 ### Key Requirements
 - Users must be able to create, edit, and delete transactions offline
-- Receipt upload and storage offline with server-side OCR processing
+- Receipt OCR processing offline with Google ML Kit, sync metadata only
 - Institution hierarchy maintained (system institutions cached locally)
 - Transfer transactions must sync atomically (both sides together)
 - Credit card statement data sync separate from transactions
@@ -41,8 +41,8 @@ Djinn's Flutter mobile application requires robust offline-first data synchroniz
 - Financial data requires ACID properties and cannot tolerate data loss
 - Mobile device storage and performance constraints
 - Network connectivity can be intermittent or unreliable
-- Receipt images can be large (2-5MB each)
-- OCR processing must happen server-side
+- OCR processing happens on-device with Google ML Kit
+- Only OCR metadata (< 5KB) needs syncing
 - Institution data is shared across all users
 - Credit card liability data is read-only from Plaid
 
@@ -53,7 +53,7 @@ We will implement a **hybrid Event Sourcing with Last-Write-Wins (LWW) conflict 
 
 We chose **Drift** (formerly Moor) as our local SQLite database for Flutter because:
 
-1. **Blob Support**: Native support for storing receipt images as binary data
+1. **Type Safety**: Generates type-safe Dart code from SQL schemas
 2. **Type Safety**: Generates type-safe Dart code from SQL schemas
 3. **Persistence**: SQLite storage survives app restarts, ensuring offline changes are never lost
 4. **Migrations**: Built-in migration system for schema updates
@@ -61,7 +61,7 @@ We chose **Drift** (formerly Moor) as our local SQLite database for Flutter beca
 6. **Reactive Streams**: Integrates well with Riverpod for reactive UI updates
 
 #### Drift vs Alternatives:
-- **Hive alone**: No blob support, limited query capabilities
+- **Hive alone**: Limited query capabilities, less type safety
 - **sqflite**: No type safety, manual SQL writing
 - **Isar**: Less mature, smaller community
 - **ObjectBox**: Licensing concerns, overkill for our needs
@@ -135,36 +135,37 @@ class StartupSync {
 #### 3. Receipt Handling Strategy
 ```dart
 class ReceiptSyncManager {
-  // Offline: Store image locally
-  Future<void> uploadReceipt(Uint8List imageData) async {
+  // Process receipt with on-device OCR
+  Future<void> processReceipt(File imageFile) async {
     final receiptId = Uuid().v4();
     
-    // Store in Drift blob column
+    // On-device OCR with Google ML Kit
+    final ocrData = await MLKitTextRecognizer.processImage(imageFile);
+    
+    // Store OCR data locally (no image storage)
     await db.receipts.insert(
       ReceiptCompanion(
         id: Value(receiptId),
-        imageData: Value(imageData),
-        status: Value('pending_upload'),
+        ocrData: Value(ocrData.toJson()),
+        status: Value('pending_sync'),
         createdAt: Value(DateTime.now()),
       ),
     );
     
-    // Queue for upload
+    // Queue OCR data for sync (not image)
     await syncQueue.add(SyncTask(
-      type: 'receipt_upload',
+      type: 'receipt_ocr_sync',
       entityId: receiptId,
       priority: 50, // Lower priority than transactions
     ));
   }
   
-  // Online: Upload and process
+  // Online: Sync OCR data only
   Future<void> processReceiptQueue() async {
-    // 1. Upload image to cloud storage
-    // 2. Trigger OCR processing
-    // 3. Receive extracted data
-    // 4. Server performs transaction matching
-    // 5. Return match suggestions to client
-    // 6. Handle based on confidence
+    // 1. Send OCR data to server (no image upload)
+    // 2. Server performs transaction matching
+    // 3. Return match suggestions to client
+    // 4. Handle based on confidence
     await handleMatchResult(matchResult);
   }
   
@@ -298,7 +299,6 @@ CREATE TABLE sync_queue (
     transaction_group_id UUID,       -- For transfer pairs
     dependency_ids UUID[],           -- For hierarchical dependencies
     priority INTEGER DEFAULT 100,    -- Higher = sync first
-    binary_ref TEXT,                 -- Reference to blob storage for receipts
     payload JSONB NOT NULL,
     sync_status TEXT DEFAULT 'pending',
     retry_count INTEGER DEFAULT 0,
@@ -313,7 +313,7 @@ CREATE TABLE sync_queue (
 ### Synchronization Flow with Priority
 1. **Offline Operations**: 
    - Store events with dependencies and priorities
-   - Receipts stored in Drift blob, reference in queue
+   - Receipt OCR data stored in Drift, synced as JSON
    - Transfers grouped with transaction_group_id
 
 2. **Sync Priority Order**:

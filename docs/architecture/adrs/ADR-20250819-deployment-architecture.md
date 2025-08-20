@@ -42,14 +42,14 @@ deployment_architecture:
     what_you_get:
       - 2 vCPU AMD EPYC processors
       - 4GB RAM
-      - 40GB NVMe SSD (includes file storage for receipts)
+      - 40GB NVMe SSD (no file storage needed - OCR on-device)
       - 20TB bandwidth (essentially unlimited)
       - Full root access
       - Run complete backend stack:
         - PostgreSQL database
         - Go API server
         - Redis cache
-        - Receipt image storage (local filesystem)
+        - Receipt metadata storage (JSON only, no images)
         - Nginx for API gateway
         - Background job processors
         - Push notification workers
@@ -73,7 +73,7 @@ deployment_architecture:
     - Mobile-first financial apps
     - Teams comfortable with basic DevOps
     - Cost-conscious startups
-    - Apps needing file storage
+    - Apps needing local databases
     - Full backend control
 ```
 
@@ -91,9 +91,9 @@ deployment_architecture:
     - Zero-downtime deployments
     
   limitations:
-    - No built-in file storage (need external solution)
+    - No built-in PostgreSQL (need database addon)
     - Higher cost than VPS
-    - Need separate receipt storage solution
+    - Database storage only (no file storage needed)
     
   perfect_for:
     - Teams with no DevOps expertise
@@ -248,7 +248,7 @@ scaling_adjustments:
     additions:
       - Read replicas for analytics
       - Connection pooling
-      - Automated backup to S3
+      - Automated database backups
 ```
 
 #### Scale Phase (50K-100K+ users, €200-500/month)
@@ -262,7 +262,7 @@ enterprise_migration:
   migration_path:
     backend: "AWS ECS or GCP Cloud Run"
     database: "AWS RDS or GCP Cloud SQL"
-    file_storage: "S3 or Cloud Storage"
+    database: "RDS or Cloud SQL"
     orchestration: "Temporal Cloud Enterprise"
     mobile_backend: "Consider Firebase for some services"
 ```
@@ -690,7 +690,7 @@ backup_strategy:
     recovery_point_objective: "< 5 minutes"
     
   daily_snapshots:
-    destination: "AWS S3"
+    destination: "Local backup volume"
     retention: "30 days"
     encryption: "AES-256"
     schedule: "02:00 UTC"
@@ -1067,7 +1067,7 @@ migration_options:
       benefits: "Serverless, automatic scaling"
       
   hybrid_approach:
-    keep_on_hetzner: "Database and file storage"
+    keep_on_hetzner: "Database only"
     move_to_cloud: "API servers for auto-scaling"
     benefits: "Balance cost and flexibility"
 ```

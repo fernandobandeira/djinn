@@ -229,9 +229,9 @@ type Mutation {
     categoryId: ID!
   ): CategorizePayload! @validate(maxItems: 100)
   
-  # Async operations for heavy processing
+  # Process OCR data from on-device scanning
   processReceipt(
-    image: Upload!
+    ocrData: OCRDataInput!
     transactionId: ID
   ): ProcessReceiptPayload!
 }
@@ -770,7 +770,6 @@ type Query {
 - **Complexity**: GraphQL adds learning curve for team
 - **Query Complexity**: Need to manage and limit query complexity
 - **Caching Challenges**: GraphQL caching more complex than REST
-- **File Uploads**: GraphQL multipart uploads add complexity
 - **Monitoring**: Requires specialized GraphQL monitoring tools
 
 ### Risks

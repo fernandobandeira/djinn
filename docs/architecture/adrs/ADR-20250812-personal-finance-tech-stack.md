@@ -42,8 +42,8 @@ Building a personal finance application requiring:
 #### Mobile (Flutter)
 - **Framework**: Flutter (single codebase, strong typing)
 - **GraphQL Client**: Ferry (code generation, normalized cache)
-- **Local Database**: Drift (SQLite wrapper with blob support for receipts)
-- **Cache Persistence**: Ferry HiveStore (GraphQL normalized cache) + Drift (structured data & blobs)
+- **Local Database**: Drift (SQLite wrapper with type safety and migrations)
+- **Cache Persistence**: Ferry HiveStore (GraphQL normalized cache) + Drift (structured data)
 - **State Management**: Riverpod 2.0 (reactive, less boilerplate)
 - **Navigation**: go_router (official, declarative)
 - **HTTP Client**: built-in http package (Ferry handles GraphQL)
@@ -52,7 +52,7 @@ Building a personal finance application requiring:
 #### Infrastructure & Operations
 - **Observability**: OpenTelemetry + Prometheus + slog
 - **Caching**: Redis with go-redis/v9 (optional, for rate limiting)
-- **Object Storage**: S3/GCS (for CSV imports/exports)
+- **CSV Storage**: Local filesystem or S3/GCS (for CSV imports/exports only)
 - **CSV Parsing**: encoding/csv (stdlib sufficient)
 
 ### Key Architectural Decisions
