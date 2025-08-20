@@ -349,77 +349,91 @@ EOF
 echo "VPS setup complete! Configure nginx and deploy your app."
 ```
 
-#### Terraform Configuration
+#### Infrastructure as Code (Optional for MVP)
 ```hcl
-# MVP Infrastructure Definition
+# Terraform configuration for Hetzner VPS
+# Note: For MVP, manual setup is simpler and sufficient
+# This is for future automation needs
+
 terraform {
   required_providers {
-    vercel = {
-      source  = "vercel/vercel"
-      version = "~> 0.16"
-    }
-    railway = {
-      source  = "railway/railway"
-      version = "~> 0.2"
-    }
-    neon = {
-      source  = "neon/neon"
-      version = "~> 0.1"
+    hcloud = {
+      source  = "hetznercloud/hcloud"
+      version = "~> 1.45"
     }
   }
 }
 
-# Vercel Frontend
-resource "vercel_project" "djinn_web" {
-  name      = "djinn-web"
-  framework = "nextjs"
+# Hetzner VPS
+resource "hcloud_server" "djinn_api" {
+  name        = "djinn-api"
+  server_type = "cx22"  # 2 vCPU, 4GB RAM, 40GB SSD
+  image       = "ubuntu-22.04"
+  location    = "fsn1"  # Falkenstein, Germany
   
-  environment_variables = {
-    NEXT_PUBLIC_API_URL = railway_service.api.domain
-    NEXT_PUBLIC_FIREBASE_CONFIG = var.firebase_config
-  }
+  ssh_keys = [hcloud_ssh_key.deploy.id]
   
-  domains = ["app.djinn.finance"]
+  user_data = file("${path.module}/cloud-init.yml")
 }
 
-# Railway Backend
-resource "railway_project" "djinn_backend" {
-  name = "djinn-backend"
-}
-
-resource "railway_service" "api" {
-  project_id = railway_project.djinn_backend.id
-  name       = "djinn-api"
+# Hetzner Volume for backups
+resource "hcloud_volume" "djinn_backups" {
+  name     = "djinn-backups"
+  size     = 10  # 10GB for backups
+  location = "fsn1"
   
-  source = {
-    repo = "github.com/djinn/backend"
-    branch = "main"
-  }
-  
-  environment_variables = {
-    DATABASE_URL = neon_database.djinn.connection_string
-    REDIS_URL = railway_redis.cache.url
-    TEMPORAL_ADDRESS = var.temporal_cloud_endpoint
+  lifecycle {
+    prevent_destroy = true
   }
 }
 
-# Neon Database
-resource "neon_project" "djinn" {
-  name       = "djinn-db"
-  region     = "us-east-1"
-  postgres_version = 16
+resource "hcloud_volume_attachment" "djinn_backups" {
+  volume_id = hcloud_volume.djinn_backups.id
+  server_id = hcloud_server.djinn_api.id
+  automount = true
 }
 
-resource "neon_database" "djinn" {
-  project_id = neon_project.djinn.id
-  name       = "djinn_production"
-  owner      = "djinn_app"
+# Floating IP for stable endpoint
+resource "hcloud_floating_ip" "djinn_api" {
+  type          = "ipv4"
+  home_location = "fsn1"
+  description   = "Djinn API endpoint"
 }
 
-resource "neon_branch" "staging" {
-  project_id = neon_project.djinn.id
-  name       = "staging"
-  parent_id  = neon_project.djinn.main_branch_id
+resource "hcloud_floating_ip_assignment" "djinn_api" {
+  floating_ip_id = hcloud_floating_ip.djinn_api.id
+  server_id      = hcloud_server.djinn_api.id
+}
+
+# Firewall rules
+resource "hcloud_firewall" "djinn_api" {
+  name = "djinn-api-firewall"
+  
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = "22"
+    source_ips = var.admin_ips  # Restrict SSH to admin IPs
+  }
+  
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = "443"
+    source_ips = ["0.0.0.0/0", "::/0"]
+  }
+  
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = "80"
+    source_ips = ["0.0.0.0/0", "::/0"]
+  }
+}
+
+resource "hcloud_firewall_attachment" "djinn_api" {
+  firewall_id = hcloud_firewall.djinn_api.id
+  server_ids  = [hcloud_server.djinn_api.id]
 }
 ```
 
@@ -434,10 +448,6 @@ on:
     branches: [main, staging]
   pull_request:
     branches: [main]
-
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
 jobs:
   test:
@@ -465,46 +475,83 @@ jobs:
           sqlc generate
           git diff --exit-code
   
-  deploy-frontend:
+  build:
     needs: test
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       
-      - name: Deploy to Vercel
+      - name: Build Go Binary
         run: |
-          npm install -g vercel
-          vercel pull --yes --environment=production
-          vercel build --prod
-          vercel deploy --prebuilt --prod
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+            -ldflags='-w -s -extldflags "-static"' \
+            -o djinn-api ./cmd/api
+      
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: djinn-api
+          path: djinn-api
           
-  deploy-backend:
-    needs: test
+  deploy:
+    needs: build
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       
-      - name: Deploy to Railway
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: djinn-api
+      
+      - name: Deploy to Hetzner VPS
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
         run: |
-          npm install -g @railway/cli
-          railway up --service djinn-api
+          # Setup SSH
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts
+          
+          # Deploy binary
+          scp djinn-api $SERVER_USER@$SERVER_HOST:/tmp/
+          
+          # Restart service
+          ssh $SERVER_USER@$SERVER_HOST <<'ENDSSH'
+            sudo mv /tmp/djinn-api /usr/local/bin/djinn-api.new
+            sudo chmod +x /usr/local/bin/djinn-api.new
+            sudo mv /usr/local/bin/djinn-api.new /usr/local/bin/djinn-api
+            sudo systemctl restart djinn-api
+          ENDSSH
           
   database-migration:
-    needs: [deploy-backend]
+    needs: [deploy]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       
       - name: Run Migrations
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
         run: |
-          go install github.com/pressly/goose/v3/cmd/goose@latest
-          goose -dir ./migrations postgres "$DATABASE_URL" up
+          # Setup SSH
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts
+          
+          # Run migrations on server
+          ssh $SERVER_USER@$SERVER_HOST <<'ENDSSH'
+            cd /opt/djinn
+            goose -dir ./migrations postgres "$DATABASE_URL" up
+          ENDSSH
 ```
 
 ### 4. Container Strategy
@@ -627,7 +674,7 @@ ALTER SYSTEM SET wal_buffers = '16MB';
 ALTER SYSTEM SET default_statistics_target = 100;
 ALTER SYSTEM SET random_page_cost = 1.1;
 
--- Connection pooling with PgBouncer (Railway/Neon provided)
+-- Connection pooling with PgBouncer (self-managed or Neon when scaling)
 -- Pool mode: transaction
 -- Max client connections: 100
 -- Default pool size: 25
@@ -664,7 +711,7 @@ backup_strategy:
 ```yaml
 monitoring:
   application:
-    provider: Railway Metrics
+    provider: Prometheus + Grafana (self-hosted)
     cost: "Included"
     metrics:
       - Request rate
@@ -792,13 +839,13 @@ mobile_deployment:
 security_measures:
   network:
     - SSL/TLS everywhere (Let's Encrypt)
-    - WAF enabled (Vercel/CloudFlare)
+    - WAF enabled (CloudFlare when needed)
     - DDoS protection (Platform provided)
     - Private networking for services
     
   secrets:
     - GitHub Secrets for CI/CD
-    - Railway/Vercel environment variables
+    - Environment variables via systemd
     - Temporal Cloud secret store
     - No secrets in code or Docker images
     
@@ -860,7 +907,7 @@ cost_progression:
     features:
       - Basic API functionality
       - PostgreSQL database
-      - Simple frontend on Vercel
+      - Mobile app with Flutter
       - GitHub Actions CI/CD
     limitations_accepted:
       - Manual scaling
@@ -1064,7 +1111,7 @@ migration_options:
 ## Implementation Notes
 
 ### Migration Strategy
-1. **Week 1**: Set up Vercel and Railway projects
+1. **Week 1**: Provision Hetzner VPS and setup base Ubuntu environment
 2. **Week 2**: Configure Neon database and migrations
 3. **Week 3**: Implement CI/CD pipeline
 4. **Week 4**: Set up monitoring and alerts
@@ -1088,8 +1135,8 @@ migration_options:
 - Uptime > 99.9%
 
 ## References
-- [Vercel Pricing and Features](https://vercel.com/pricing)
-- [Railway Documentation](https://docs.railway.app)
+- [Hetzner Cloud Documentation](https://docs.hetzner.cloud/)
+- [PostgreSQL Performance Tuning](https://wiki.postgresql.org/wiki/Tuning_Your_PostgreSQL_Server)
 - [Neon Serverless Postgres](https://neon.tech/docs)
 - [Temporal Cloud](https://temporal.io/cloud)
 - [12 Factor App Methodology](https://12factor.net)
