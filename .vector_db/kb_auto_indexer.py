@@ -1,4 +1,4 @@
-#!/usr/bin/env -S uv run python
+#!/usr/bin/env -S uv run
 """
 Auto-Indexer for Knowledge Base
 Watches for file changes and automatically updates the index

@@ -1,4 +1,4 @@
-#!/usr/bin/env -S uv run python
+#!/usr/bin/env -S uv run
 """
 Enhanced Knowledge Base Manager for AI Agents
 Optimized for local AI-assisted development with improved search and indexing
