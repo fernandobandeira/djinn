@@ -50,7 +50,7 @@ Based on ADR-20250819 (Deployment Architecture):
 ## Decision
 
 ### Hybrid Monitoring Architecture
-Adopt a hybrid approach leveraging PostHog's strengths in user analytics while implementing lightweight infrastructure monitoring for VPS operations.
+Adopt a hybrid approach leveraging PostHog's strengths in user analytics while implementing lightweight infrastructure monitoring for VPS operations, comprehensive crash reporting, and user behavior tracking.
 
 #### 1. PostHog for User-Centric Monitoring (Free Tier)
 
@@ -162,7 +162,186 @@ application_monitoring:
       level: "INFO in production"
 ```
 
-#### 4. Alerting Strategy
+#### 4. Analytics & User Behavior Tracking
+
+```yaml
+analytics_strategy:
+  purpose: "Deep understanding of user behavior and feature adoption"
+  
+  user_journey_tracking:
+    implementation:
+      - Session recording with PostHog
+      - Custom event tracking for key actions
+      - Funnel analysis for conversion flows
+      - Cohort analysis for user segments
+    
+    key_events:
+      authentication:
+        - "user_signup_started"
+        - "user_signup_completed"
+        - "user_login"
+        - "user_logout"
+        - "password_reset_requested"
+      
+      receipt_processing:
+        - "receipt_upload_started"
+        - "receipt_captured"
+        - "receipt_processed"
+        - "receipt_categorized"
+        - "receipt_manual_correction"
+      
+      financial_insights:
+        - "dashboard_viewed"
+        - "report_generated"
+        - "budget_created"
+        - "goal_set"
+        - "alert_configured"
+      
+      engagement:
+        - "feature_discovered"
+        - "feature_first_use"
+        - "feature_repeated_use"
+        - "help_accessed"
+        - "settings_changed"
+  
+  behavioral_metrics:
+    user_engagement:
+      - Daily Active Users (DAU)
+      - Weekly Active Users (WAU)
+      - Monthly Active Users (MAU)
+      - Session duration
+      - Sessions per user
+      - Feature adoption rate
+    
+    business_metrics:
+      - Receipt processing rate
+      - Categorization accuracy
+      - Time to first value
+      - User retention (D1, D7, D30)
+      - Churn rate
+      - Customer lifetime value (CLV)
+    
+    performance_metrics:
+      - Page load times
+      - API response times
+      - Error rates by feature
+      - Crash-free rate
+      - Network failure rate
+
+  custom_properties:
+    user_attributes:
+      - account_type: "free|premium|trial"
+      - signup_source: "organic|referral|campaign"
+      - device_type: "ios|android|web"
+      - app_version: "semantic_version"
+      - locale: "language_code"
+    
+    session_context:
+      - network_type: "wifi|cellular|offline"
+      - battery_level: "percentage"
+      - device_memory: "MB"
+      - screen_resolution: "width x height"
+```
+
+#### 5. Crash Reporting & Diagnostics
+
+```yaml
+crash_reporting:
+  purpose: "Comprehensive crash detection, analysis, and recovery"
+  
+  mobile_crash_handling:
+    flutter_implementation:
+      tools:
+        - "Flutter built-in error handling"
+        - "PostHog error tracking integration"
+        - "Custom crash reporter with slog patterns"
+      
+      crash_capture:
+        fatal_errors:
+          - Flutter framework crashes
+          - Dart unhandled exceptions
+          - Native platform crashes (iOS/Android)
+        
+        non_fatal_errors:
+          - API request failures (ref: error-handling-ADR)
+          - Widget rendering errors
+          - Navigation errors
+          - State management errors
+    
+    crash_context:
+      device_info:
+        - OS version
+        - Device model
+        - Available memory
+        - Storage space
+        - Battery state
+      
+      app_state:
+        - Current screen/route
+        - User actions before crash
+        - Network connectivity
+        - Background/foreground state
+        - Feature flags active
+      
+      user_context:
+        - User ID (anonymized)
+        - Session ID
+        - Account type
+        - App version
+        - Locale settings
+  
+  backend_crash_handling:
+    go_implementation:
+      # Integration with error-handling-ADR patterns
+      panic_recovery:
+        - Structured panic logging with slog
+        - Graceful degradation
+        - Circuit breaker activation
+        - Correlation ID tracking
+      
+      error_aggregation:
+        - Group similar errors
+        - Track error frequency
+        - Identify error patterns
+        - Alert on error spikes
+  
+  diagnostic_data:
+    breadcrumbs:
+      - User interactions
+      - Network requests
+      - Navigation events
+      - System events
+      - Custom checkpoints
+    
+    memory_diagnostics:
+      - Memory usage trends
+      - Memory leak detection
+      - Large allocation tracking
+      - GC pressure monitoring
+    
+    performance_diagnostics:
+      - Slow frame rendering
+      - Jank detection
+      - Network latency
+      - Database query times
+      - Background job duration
+  
+  crash_recovery:
+    client_side:
+      - Automatic crash report submission
+      - Offline crash queue
+      - Retry with exponential backoff
+      - User feedback collection
+    
+    server_side:
+      - Crash report processing pipeline
+      - Automatic issue creation
+      - Duplicate detection
+      - Severity classification
+      - Team notification
+```
+
+#### 6. Alerting Strategy
 
 ```yaml
 alerting:
