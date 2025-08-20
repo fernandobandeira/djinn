@@ -173,8 +173,8 @@ deployment_architecture:
 
 #### Comparison Matrix for MVP Options
 
-| Criteria | Railway (Recommended) | Hetzner VPS | Fly.io + Supabase | Render |
-|----------|------------------------|-------------|-------------------|--------|
+| Criteria | Railway | Hetzner VPS (Recommended) | Fly.io + Supabase | Render |
+|----------|---------|----------------------------|-------------------|--------|
 | **Monthly Cost** | $5-20 | €3.79 (~$4) | $0 | $0-7 |
 | **Setup Time** | 5 minutes | 2-4 hours | 30 minutes | 20 minutes |
 | **No Sleep/Cold Starts** | ✅ Never | ✅ Never | ⚠️ Minimal | ❌ Sleeps |
