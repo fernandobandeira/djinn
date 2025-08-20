@@ -8,7 +8,15 @@ Today's date is provided in the environment context. All agents and sub-agents s
 - Example: When creating ADRs, use `ADR-YYYYMMDD-{title}.md` format with actual date
 
 ## Knowledge Base System
-.vector_db/KB-INSTRUCTIONS.md
+**Documentation**: `.vector_db/KB_ENHANCED_DOCUMENTATION.md`  
+**Quick Reference**: `.vector_db/KB-INSTRUCTIONS.md`
+
+### Enhanced KB Features
+- **Better Search**: BAAI/bge-large-en-v1.5 embeddings with hybrid BM25+vector search
+- **Auto-Indexing**: File watcher automatically indexes changes
+- **Agent Context**: Search optimized for specific agents with `--agent` flag
+- **Smart Query Processing**: Handles LLM verbosity automatically
+- **Document Categorization**: Tracks source (internal/harvested) and creator agent
 
 ### Custom Commands
 - **analyst**: Use `/analyst` to invoke Ana the business analyst (research, brainstorming, competitive analysis)

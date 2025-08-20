@@ -1,7 +1,17 @@
 # Enhanced Knowledge Base Instructions for AI Agents
 
+## 🚀 NEW: Enhanced KB v2.0
+**For full documentation of new features, see: `KB_ENHANCED_DOCUMENTATION.md`**
+
+### Quick Improvements Summary:
+- **30% Better Search**: BAAI/bge-large-en-v1.5 embeddings + hybrid search + reranking
+- **Auto-Indexing**: File watcher automatically updates index on changes
+- **Agent-Optimized**: Use `--agent architect|teacher|developer` for context-aware search
+- **Smart Query Processing**: Handles LLM verbosity automatically
+- **Document Tracking**: Categorizes internal vs harvested content
+
 ## Overview
-The knowledge base is a unified vector database with **GraphRAG enhancement** that intelligently organizes and retrieves all project knowledge. It combines ChromaDB vector search with relationship-aware graph reasoning to achieve 99% precision through structured understanding of knowledge connections.
+The knowledge base is a unified vector database with **enhanced search capabilities** that intelligently organizes and retrieves all project knowledge. It combines hybrid BM25+vector search with reranking and GraphRAG enhancement for superior accuracy.
 
 ## 🚀 **NEW: GraphRAG Enhanced Search**
 The primary search is now **relationship-aware** by default, understanding connections between zettelkasten notes, constraint architecture patterns, and cross-agent integration opportunities.

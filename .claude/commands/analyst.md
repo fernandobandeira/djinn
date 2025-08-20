@@ -161,8 +161,8 @@ Only load additional resources when the specific command is invoked:
 ### Brainstorming Sessions
 When user requests `*brainstorm`:
 1. **FIRST search knowledge base**: 
-   - `./.vector_db/kb search "[topic]" --collection documentation`
-   - `./.vector_db/kb search "brainstorm" --collection documentation`
+   - `./.vector_db/kb search "[topic]" --agent analyst`
+   - `./.vector_db/kb search "brainstorm" --collection documentation --agent analyst`
 2. THEN load: `.claude/resources/analyst/tasks/brainstorm.md`
 3. THEN load: `.claude/resources/analyst/data/brainstorming-techniques.md`
 4. Ask 4 setup questions (topic, constraints, goal, output preference)
@@ -198,8 +198,8 @@ When user requests `*brainstorm`:
 ### Project Documentation
 When user requests `*document-project`:
 1. **FIRST search knowledge base**:
-   - `./.vector_db/kb search "architecture" --collection architecture`
-   - `./.vector_db/kb search "system design" --collection documentation`
+   - `./.vector_db/kb search "architecture" --collection architecture --agent analyst`
+   - `./.vector_db/kb search "system design" --agent analyst`
 2. THEN load: `.claude/resources/analyst/tasks/document-project.md`
 3. Check if requirements/PRD exists
 4. If yes: Focus documentation on relevant areas
@@ -220,8 +220,8 @@ Throughout ANY analysis or document creation:
 ### Market Research
 When user requests `*research`:
 1. **FIRST search knowledge base**:
-   - `./.vector_db/kb search "market research" --collection documentation`
-   - `./.vector_db/kb search "[topic]" --collection documentation`
+   - `./.vector_db/kb search "market research" --agent analyst`
+   - `./.vector_db/kb search "[topic]" --agent analyst`
 2. Use cognitive tool: `AssessResearchNeed` to determine scope
 3. **Delegate to market-researcher sub-agent**:
    ```
@@ -252,8 +252,8 @@ When user requests `*research`:
 ### Competitive Analysis
 When user requests `*analyze-competition`:
 1. **FIRST search knowledge base**:
-   - `./.vector_db/kb search "competitor" --collection documentation`
-   - `./.vector_db/kb search "competitive analysis" --collection documentation`
+   - `./.vector_db/kb search "competitor" --agent analyst`
+   - `./.vector_db/kb search "competitive analysis" --agent analyst`
 2. Identify competitors to analyze through discussion
 3. **Delegate to competitive-analyzer sub-agent**:
    ```
@@ -316,7 +316,7 @@ When creating any document:
 ### KB Commands Usage
 ```bash
 # Search for existing insights
-./.vector_db/kb search "authentication patterns" --collection architecture
+./.vector_db/kb search "authentication patterns" --agent analyst
 
 # Index new findings
 ./.vector_db/kb index --path ./docs/analysis

@@ -294,11 +294,11 @@ When user requests `*review-architecture`:
 
 ### 1. Knowledge Base Analysis (Always First)
 ```bash
-# ALWAYS start by understanding what exists
-./.vector_db/kb search "current architecture" --collection architecture
-./.vector_db/kb search "system design" --collection documentation
-./.vector_db/kb search "ADR" --collection architecture
-./.vector_db/kb search "pattern" --collection architecture
+# ALWAYS start by understanding what exists (with enhanced agent context)
+./.vector_db/kb search "current architecture" --agent architect
+./.vector_db/kb search "system design" --agent architect
+./.vector_db/kb search "ADR" --collection architecture --agent architect
+./.vector_db/kb search "pattern" --collection architecture --agent architect
 ```
 
 ### 2. Sub-Agent Delegation Patterns
@@ -535,10 +535,10 @@ Would you like me to help address these issues?"
 
 ### Pre-Task Knowledge Gathering
 ```bash
-# Search for relevant context
-./.vector_db/kb search "{domain} architecture" --collection architecture
-./.vector_db/kb search "ADR {topic}" --collection architecture
-./.vector_db/kb search "pattern {type}" --collection architecture
+# Search for relevant context (with enhanced agent context)
+./.vector_db/kb search "{domain} architecture" --agent architect
+./.vector_db/kb search "ADR {topic}" --collection architecture --agent architect
+./.vector_db/kb search "pattern {type}" --collection architecture --agent architect
 ```
 
 ### Post-Task Knowledge Updates

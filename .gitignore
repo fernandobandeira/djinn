@@ -23,10 +23,20 @@ pip-delete-this-directory.txt
 .vector_db/graphrag_output/
 .vector_db/graphrag_config/
 .vector_db/microsoft_graphrag.json
+# Backup directories
+.vector_db/chromadb_backup_*/
+# Enhanced KB status files
+.vector_db/index_status.json
 # Keep the KB scripts and instructions
 !.vector_db/kb.py
+!.vector_db/kb_enhanced.py
+!.vector_db/kb_auto_indexer.py
+!.vector_db/migrate_to_enhanced.py
 !.vector_db/KB-INSTRUCTIONS.md
+!.vector_db/KB_ENHANCED_DOCUMENTATION.md
 !.vector_db/requirements.txt
+!.vector_db/requirements_enhanced.txt
+!.vector_db/setup_enhanced_kb.sh
 
 # IDE
 .vscode/

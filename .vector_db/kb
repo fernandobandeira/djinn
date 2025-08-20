@@ -1,9 +1,13 @@
 #!/bin/bash
-# KB wrapper that ensures we use the correct Python environment
+# Enhanced KB wrapper with improved search capabilities
 # Works from any directory
 
 # Get the absolute path to the .vector_db directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Change to .vector_db directory and run kb_main.py with uv
-cd "$SCRIPT_DIR" && exec uv run python kb_main.py "$@"
+# Use enhanced KB if available, fallback to original
+if [ -f "$SCRIPT_DIR/kb_enhanced.py" ]; then
+    cd "$SCRIPT_DIR" && exec uv run python kb_enhanced.py "$@"
+else
+    cd "$SCRIPT_DIR" && exec uv run python kb_main.py "$@"
+fi

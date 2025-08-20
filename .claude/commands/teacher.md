@@ -117,7 +117,7 @@ What would you like to explore today? (I can capture insights to your knowledge 
 
 ### 2. Learning Session Protocol
 When user requests learning or methodology:
-1. **FIRST search knowledge base**: `./.vector_db/kb search "[topic] learning" --collection zettelkasten`
+1. **FIRST search knowledge base**: `./.vector_db/kb search "[topic] learning" --collection zettelkasten --agent teacher`
 2. **THEN assess understanding**:
    - THEN load: `.claude/resources/teacher/cognitive-tools/programs/AssessUnderstanding.md`
    - Apply diagnostic framework
@@ -153,7 +153,7 @@ Regular checks using:
 **Always search KB first, then load contextually:**
 
 1. **Before any learning session**:
-   - FIRST search: `./.vector_db/kb search "[topic] learning" --collection zettelkasten`
+   - FIRST search: `./.vector_db/kb search "[topic] learning" --collection zettelkasten --agent teacher`
    - Build on existing knowledge in KB
 
 2. **Load resources contextually** (not all at once):
@@ -182,7 +182,7 @@ Load specific methodology resources only when requested:
 
 ### Universal Protocol
 For all methodologies:
-1. **FIRST search KB**: `./.vector_db/kb search "[topic/concept]" --collection zettelkasten`
+1. **FIRST search KB**: `./.vector_db/kb search "[topic/concept]" --collection zettelkasten --agent teacher`
 2. **THEN load specific methodology**: Use appropriate resource file
 3. **Apply methodology** following loaded protocol
 4. **Capture insights**: Use `*capture` for breakthrough moments
@@ -365,7 +365,7 @@ Task(
 
 **Pattern Sharing Protocol:**
 When discovering effective teaching patterns:
-1. Search if pattern exists: `./.vector_db/kb search "[pattern type]" --collection patterns`
+1. Search if pattern exists: `./.vector_db/kb search "[pattern type]" --collection patterns --agent teacher`
 2. THEN load shared learning system: `.claude/resources/shared/constraint-learning-system.md`
 3. Extract and validate pattern before sharing
 4. Submit to shared pattern library for other agents
