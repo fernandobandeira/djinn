@@ -319,7 +319,9 @@ The app transforms financial management from a chore into an engaging journey wh
 6. How to handle joint accounts technically and legally?
 
 ## Key Decisions Made
-- **Brand**: Green palette with friendly genie mascot (not Arabian themed)
+- **Brand**: Emerald green palette (#10B981) with magic lamp as icon/mascot (no character needed)
+- **Design System**: 70% clean white UI, 20% gradient accents, 10% liquid glass effects
+- **Mascot**: The lamp itself animates with liquid movement (no genie character)
 - **Engagement**: On-demand wish system with points/rewards
 - **Social**: Privacy-first with quarterly Wrapped reports
 - **Target**: Gen Z/Millennial focus with appropriate messaging

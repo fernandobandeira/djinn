@@ -135,12 +135,13 @@ Ready for First Magic
    - **Animation**: Genie "reading" receipt with particle effects
    - **Reveal**: Items appear with categories
    - **Insight**: "You spent $X on drinks - that's $Y monthly!"
+   - **First AI Wish Preview**: "Want to know how to cut this in half? Use your free wish!"
 
 #### The Magic Moment
 ```
 Scan Receipt → Processing Animation (3s) → 
 Items Appear One by One → Categories Assign → 
-Insight Revealed → First Points Earned!
+Insight Revealed → First Points Earned (500 welcome + 100 scan)!
 ```
 
 #### Emotional Journey
@@ -163,25 +164,27 @@ Insight Revealed → First Points Earned!
 
 #### User Actions
 1. Receive first points
-   - **Amount**: 500 points for first scan
-   - **Visual**: Coins falling animation
-   - **Context**: "Lamp Points" with progress bar
+   - **Amount**: 600 points total (500 welcome + 100 scan)
+   - **Visual**: Lamp Points falling animation
+   - **Context**: "600 Lamp Points earned! That's enough for your first AI Wish!"
 
-2. Unlock first achievement
-   - **Achievement**: "First Wish Granted"
-   - **Visual**: Badge animation
-   - **Share Option**: Screenshot for social
+2. Use first free AI Wish
+   - **Prompt**: "You have enough points! Ask your genie anything about your spending"
+   - **Example Wishes Shown**: 
+     - "How can I save $50 this month?" (500 pts)
+     - "What subscriptions am I paying for?" (500 pts)
+   - **First Wish FREE**: Waive point cost for immediate value
 
-3. See first goal progress
-   - **Visual**: Progress bar filling
-   - **Context**: "5% toward your first reward"
-   - **Teaser**: "Scan 4 more receipts this week for bonus"
+3. See rewards catalog preview
+   - **Visual**: Wish Store with 3 categories (AI Wishes, OCR Boosts, Premium Trials)
+   - **Context**: "You can earn 2,000+ points weekly by scanning regularly"
+   - **Teaser**: "Scan 3 days in a row for 200 bonus points!"
 
 #### Reward Psychology
-- **Immediate**: Points awarded instantly
-- **Meaningful**: 500 points = $0.50 value communicated
-- **Progressive**: Shows path to bigger rewards
-- **Social**: Shareable achievement
+- **Immediate**: 600 points instantly (enough for redemption)
+- **Meaningful**: "1,000 points = $1 value" clearly shown
+- **Actionable**: Can use first AI Wish immediately
+- **Progressive**: Shows weekly earning potential
 
 #### Success Metrics
 - Points acknowledgment: >95%
@@ -440,16 +443,29 @@ Total Calculating → Insights Generating
 ### Phase 5: Reward Celebration (8-10 minutes)
 
 #### Reward Mechanisms
-1. **Points Summary**: Weekly total with bonuses
-2. **Level Progress**: XP bar filling animation
-3. **Unlock Moment**: New badge or feature
-4. **Redemption Options**: Show available rewards
+1. **Points Summary**: 
+   - Base scanning: 700 points (7 receipts × 100)
+   - Streak bonus: 500 points (7-day streak achieved!)
+   - Weekend bonus: 150 points (weekend multiplier)
+   - **Total**: 1,350 points earned = $1.35 value
+
+2. **Redemption Moment**:
+   - **AI Wishes Available**: Show 2-3 wishes they can afford
+     - "What am I wasting money on?" (500 pts)
+     - "Compare this week to last week" (1,000 pts)
+   - **OCR Boost Unlocked**: "Speed Scan for instant results" (500 pts)
+   - **Savings Shown**: "You discovered $47 in potential savings!"
+
+3. **Next Week Preview**:
+   - **30-Day Streak**: "Stay consistent for 2,000 bonus points!"
+   - **Double Point Day**: Random day with 2x multiplier
+   - **Challenge Available**: "No-Coffee Tuesday for 500 bonus"
 
 #### Psychological Hooks
-- Variable rewards (surprise bonuses)
-- Near-miss mechanics ("Only 50 points from reward!")
-- Social proof ("2,847 users unlocked this week")
-- Preview next week's bonuses
+- **Immediate Use**: Can redeem AI Wish right now
+- **Near-miss**: "Only 650 points from Premium Week trial!"
+- **Social proof**: "2,847 users asked their genie this week"
+- **Value Reinforcement**: "$8.50 in savings found from 7 scans"
 
 ## Weekly Engagement Metrics
 
@@ -489,12 +505,70 @@ Total Calculating → Insights Generating
 
 # Cross-Journey Insights
 
+## Rewards Integration Across All Journeys
+
+### Monthly Value Delivery Path
+
+#### Week 1: Discovery (600-1,000 points = $0.60-1.00)
+- **Day 1**: 600 points (500 welcome + 100 first scan) = 1 Free AI Wish
+- **Day 2-7**: 600 points (6 scans + 200 three-day streak)
+- **Value Delivered**: 2 AI Wishes demonstrating personalized insights
+- **User Perception**: "This actually helps me understand my spending"
+
+#### Week 2-4: Habit Building (3,000-4,000 points = $3-4)
+- **Regular Scanning**: 2,000 points (20 scans)
+- **7-Day Streak**: 500 bonus points  
+- **Weekend Bonuses**: 300 points
+- **Value Delivered**: 
+  - 4-6 AI Wishes ("Save $50", "Find subscriptions")
+  - 1 OCR Speed Scan boost
+  - Premium Day Pass preview
+- **User Perception**: "I'm earning real value by tracking"
+
+#### Month 2+: Power Usage (8,000-10,000 points = $8-10)
+- **50+ Scans**: 5,000 base points
+- **30-Day Streak**: 2,000 bonus
+- **Achievements**: 2,000 various
+- **Value Delivered**: 
+  - Premium Week trial (3,000 pts)
+  - Advanced AI analysis (2,000 pts)
+  - Bulk OCR processing (2,000 pts)
+  - History import (2,500 pts)
+- **User Perception**: "This is better than paid apps, and I earned it"
+
+### Reward Touch Points in Each Journey
+
+#### Onboarding Journey
+- **Minute 3**: First 600 points earned (wow moment)
+- **Minute 4**: First AI Wish used FREE (value discovery)
+- **Minute 5**: See path to more rewards (motivation)
+
+#### First Scan Journey  
+- **Second 30**: Points counter animating up (+100)
+- **Second 45**: "You earned enough for an AI Wish!"
+- **Second 60**: Preview of insights from wishes
+
+#### Weekly Ritual Journey
+- **Minute 1**: Week streak bonus celebration
+- **Minute 5**: Points total with $ value shown
+- **Minute 8**: Redeem rewards or save for bigger ones
+
+### Persona-Specific Reward Appeals
+
+| Persona | Primary Motivation | Preferred Rewards | Messaging |
+|---------|-------------------|------------------|-----------|
+| Alex | Learning & Achievement | Basic AI Wishes, Badges | "Level up your money skills" |
+| Zoe | Social & Progress | Premium trials, Shareable stats | "Unlock exclusive features" |
+| Sarah | Efficiency & Privacy | OCR bulk processing, Reports | "Save time, protect privacy" |
+| Marcus | Automation & Data | API trials, Export features | "Programmatic access earned" |
+| Robert | Accuracy & Control | QA verification, Pro analytics | "Professional-grade tools" |
+
 ## Critical Success Factors Across All Journeys
 
 ### The 5-10-20 Rule
-- **5 minutes**: Maximum first experience
-- **$10 value**: Demonstrated in first month
-- **20% scanning**: Minimum weekly active rate
+- **5 minutes**: Maximum first experience with immediate reward
+- **$10 value**: Achievable monthly through regular scanning (10,000 points)
+- **20% scanning**: Driven by clear reward progression
 
 ### Friction Points to Eliminate
 1. **Manual Entry**: Everything must scan or auto-import
