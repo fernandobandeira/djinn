@@ -1,7 +1,7 @@
 # ADR-20250820: Testing Strategy and Standards
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 
@@ -977,3 +977,5 @@ jobs:
 ## Revision History
 - 2025-08-20: Initial draft based on comprehensive testing research
 - 2025-08-20: Incorporated existing ADR constraints and decisions
+- 2025-08-20: Added comprehensive Firebase testing strategy
+- 2025-08-20: Decision accepted
