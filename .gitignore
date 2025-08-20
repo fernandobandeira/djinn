@@ -27,15 +27,17 @@ pip-delete-this-directory.txt
 .vector_db/chromadb_backup_*/
 # Enhanced KB status files
 .vector_db/index_status.json
-# Keep the KB scripts and instructions
+# Temporary/backup KB files
+.vector_db/kb_backup_*.py
+.vector_db/migrate_*.py
+.vector_db/setup_*.sh
+# Keep the core KB scripts and instructions
 !.vector_db/kb.py
 !.vector_db/kb_enhanced.py
 !.vector_db/kb_auto_indexer.py
-!.vector_db/migrate_to_enhanced.py
 !.vector_db/KB-INSTRUCTIONS.md
 !.vector_db/requirements.txt
 !.vector_db/requirements_enhanced.txt
-!.vector_db/setup_enhanced_kb.sh
 
 # IDE
 .vscode/
