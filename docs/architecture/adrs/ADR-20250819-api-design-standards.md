@@ -115,9 +115,9 @@ type Transaction implements Timestamped & Owned {
 #### Cost-Optimized Query Design
 ```graphql
 type Query {
-  # Efficient single-resource fetches
-  transaction(id: ID!): Transaction @cacheControl(maxAge: 300)
-  account(id: ID!): Account @cacheControl(maxAge: 60)
+  # Efficient single-resource fetches (DataLoader handles batching)
+  transaction(id: ID!): Transaction
+  account(id: ID!): Account
   
   # Paginated lists (cursor-based for 30% cost savings)
   transactions(
@@ -131,7 +131,7 @@ type Query {
   monthlySpending(
     month: String!
     accountIds: [ID!]
-  ): MonthlySpendingSummary! @cacheControl(maxAge: 3600)
+  ): MonthlySpendingSummary!
   
   # Premium features with higher cost
   advancedAnalytics(
@@ -360,56 +360,58 @@ func NewErrorPresenter() graphql.ErrorPresenterFunc {
 
 ### 6. Caching Strategy for Cost Reduction
 
-#### Multi-Layer Caching (60-80% cost reduction)
+#### Simplified Caching Strategy (DataLoader-First Approach)
 ```go
-// Layer 1: Response caching (CDN/CloudFlare)
-// @cacheControl directives in schema
+// PRIMARY: DataLoaders for request-scoped caching
+// Eliminates N+1 queries without cache invalidation complexity
+// See ADR-20250120-performance-scalability for details
 
-// Layer 2: Application caching (Redis)
-type CacheConfig struct {
-    // Reference data (long TTL)
-    Categories:    CacheTTL{Duration: 1 * time.Hour},
-    Merchants:     CacheTTL{Duration: 1 * time.Hour},
-    
-    // User data (medium TTL)
-    Accounts:      CacheTTL{Duration: 5 * time.Minute},
-    Transactions:  CacheTTL{Duration: 1 * time.Minute},
-    
-    // Sensitive data (short TTL)
-    Balances:      CacheTTL{Duration: 30 * time.Second},
-    
-    // Analytics (long TTL)
-    MonthlyStats:  CacheTTL{Duration: 6 * time.Hour},
+type DataLoaders struct {
+    UserByID         *dataloader.Loader[string, *User]
+    AccountsByUserID *dataloader.Loader[string, []*Account]
+    TransactionByID  *dataloader.Loader[string, *Transaction]
+    CategoryByID     *dataloader.Loader[string, *Category]
+    MerchantByID     *dataloader.Loader[string, *Merchant]
 }
 
-// Layer 3: Database query caching
-// Prepared statements and connection pooling
+// SECONDARY: Thin cache for truly static system data only
+type SystemCacheConfig struct {
+    // Only cache data that rarely changes
+    Institutions:  CacheTTL{Duration: 24 * time.Hour},
+    Categories:    CacheTTL{Duration: 24 * time.Hour},
+    Currencies:    CacheTTL{Duration: 24 * time.Hour},
+    Countries:     CacheTTL{Duration: 7 * 24 * time.Hour},
+}
+
+// Note: User data NOT cached beyond request scope
+// Note: Redis only when scaling to multiple servers
 ```
 
-#### Cache Invalidation Patterns
+#### No Cache Invalidation Needed
 ```go
-// Smart invalidation on mutations
+// Simple mutations without cache invalidation complexity
 func (r *mutationResolver) CreateTransaction(ctx context.Context, input model.CreateTransactionInput) (*model.TransactionPayload, error) {
-    // Create transaction
+    // Create transaction - no cache invalidation needed!
     tx, err := r.service.CreateTransaction(ctx, input)
     if err != nil {
         return nil, err
     }
     
-    // Invalidate affected caches
-    cacheKeys := []string{
-        fmt.Sprintf("account:%s:balance", tx.AccountID),
-        fmt.Sprintf("user:%s:transactions", tx.UserID),
-        fmt.Sprintf("category:%s:total", tx.CategoryID),
-    }
-    
-    r.cache.DeleteMulti(ctx, cacheKeys...)
+    // DataLoaders are request-scoped, so next request gets fresh data
+    // System cache only contains static data that rarely changes
+    // No complex cache invalidation logic required
     
     return &model.TransactionPayload{
         Success: true,
         Transaction: tx,
     }, nil
 }
+
+// Benefits of this approach:
+// 1. No cache inconsistency bugs
+// 2. Simpler code and testing
+// 3. Fresh data on every request
+// 4. DataLoaders still prevent N+1 queries
 ```
 
 ### 7. Rate Limiting and Query Complexity
@@ -694,8 +696,7 @@ directives:
     skip_runtime: false
   rateLimit:
     skip_runtime: false
-  cacheControl:
-    skip_runtime: false
+  # cacheControl removed - using DataLoaders instead
 ```
 
 #### Code Generation Commands
@@ -764,12 +765,13 @@ type Query {
 - **Flexibility**: GraphQL allows client-specific queries
 - **Mobile Optimized**: Efficient bandwidth usage and offline support
 - **Scalability**: Architecture supports 100K+ users
-- **Cache Hit Rate**: 60-80% reduction in database load
+- **Query Efficiency**: DataLoaders eliminate N+1 queries
+- **Cache Simplicity**: No invalidation complexity
 
 ### Negative
 - **Complexity**: GraphQL adds learning curve for team
 - **Query Complexity**: Need to manage and limit query complexity
-- **Caching Challenges**: GraphQL caching more complex than REST
+- **Request Scope**: DataLoaders only cache within request
 - **Monitoring**: Requires specialized GraphQL monitoring tools
 
 ### Risks
@@ -783,7 +785,7 @@ type Query {
 
 ### Option A: REST API
 - **Description**: Traditional RESTful API design
-- **Pros**: Simple, well-understood, better caching
+- **Pros**: Simple, well-understood, HTTP caching
 - **Cons**: Over/under-fetching, multiple round trips, no type safety
 - **Reason for not choosing**: GraphQL better for complex financial queries
 
@@ -805,7 +807,7 @@ type Query {
 1. **Week 1-2**: Define core GraphQL schema
 2. **Week 3-4**: Implement authentication and basic queries
 3. **Week 5-6**: Add mutations and data loaders
-4. **Week 7-8**: Implement caching layers
+4. **Week 7-8**: Implement DataLoaders and system cache
 5. **Week 9-10**: Add rate limiting and monitoring
 6. **Week 11-12**: Performance optimization and testing
 
@@ -827,8 +829,8 @@ type Query {
 ### Cost Optimization Roadmap
 | Phase | Implementation | Cost Savings | Timeline |
 |-------|---------------|--------------|----------|
-| MVP | Basic caching, pagination | 40% | Launch |
-| Growth | Advanced caching, CDN | 60% | Month 3 |
+| MVP | DataLoaders, pagination | 40% | Launch |
+| Growth | System cache, optimization | 60% | Month 3 |
 | Scale | Edge computing, optimization | 80% | Month 6 |
 
 ## References
@@ -840,6 +842,7 @@ type Query {
 - ADR-20250812: Personal Finance Tech Stack Selection
 - ADR-20250819: Data Architecture and Schema Design
 - ADR-20250819: Security Architecture
+- ADR-20250120: Performance & Scalability Architecture
 
 ## Decision Makers
 - Author: Archie (System Architect)
