@@ -484,12 +484,16 @@ echo "Grafana: http://localhost:3000"
 echo "Configure Nginx reverse proxy for external access"
 ```
 
-#### Go Application Instrumentation
+#### Go Application Instrumentation with Crash Reporting
 
 ```go
 package monitoring
 
 import (
+    "context"
+    "fmt"
+    "runtime/debug"
+    "sync"
     "github.com/prometheus/client_golang/prometheus"
     "github.com/prometheus/client_golang/prometheus/promauto"
     "github.com/prometheus/client_golang/prometheus/promhttp"
@@ -522,13 +526,74 @@ var (
         Buckets: []float64{0.1, 0.5, 1, 2, 5, 10},
     })
     
+    // Crash metrics
+    panicCounter = promauto.NewCounterVec(prometheus.CounterOpts{
+        Name: "djinn_panics_total",
+        Help: "Total number of panic recoveries.",
+    }, []string{"service", "handler"})
+    
+    crashReports = promauto.NewCounterVec(prometheus.CounterOpts{
+        Name: "djinn_crash_reports_total",
+        Help: "Total number of crash reports.",
+    }, []string{"severity", "category"})
+    
     // PostHog client
     posthogClient posthog.Client
+    
+    // Analytics tracker
+    analytics *AnalyticsTracker
 )
+
+// AnalyticsTracker handles user behavior analytics
+type AnalyticsTracker struct {
+    client posthog.Client
+    mu     sync.RWMutex
+    breadcrumbs map[string][]Breadcrumb
+}
+
+type Breadcrumb struct {
+    Timestamp time.Time
+    Category  string
+    Message   string
+    Data      map[string]interface{}
+}
+
+// CrashReport represents a crash report with context
+type CrashReport struct {
+    ID            string                 `json:"id"`
+    Timestamp     time.Time              `json:"timestamp"`
+    CorrelationID string                 `json:"correlation_id"`
+    UserID        string                 `json:"user_id,omitempty"`
+    SessionID     string                 `json:"session_id,omitempty"`
+    Severity      string                 `json:"severity"` // critical, error, warning
+    Category      string                 `json:"category"` // panic, error, timeout
+    Message       string                 `json:"message"`
+    StackTrace    string                 `json:"stack_trace,omitempty"`
+    Context       map[string]interface{} `json:"context"`
+    Breadcrumbs   []Breadcrumb           `json:"breadcrumbs,omitempty"`
+    SystemInfo    SystemInfo             `json:"system_info"`
+}
+
+type SystemInfo struct {
+    GoVersion    string `json:"go_version"`
+    NumGoroutine int    `json:"num_goroutine"`
+    MemStats     struct {
+        Alloc      uint64 `json:"alloc"`
+        TotalAlloc uint64 `json:"total_alloc"`
+        Sys        uint64 `json:"sys"`
+        NumGC      uint32 `json:"num_gc"`
+    } `json:"mem_stats"`
+}
 
 func InitMonitoring(posthogAPIKey string) {
     // Initialize PostHog
     posthogClient = posthog.New(posthogAPIKey)
+    
+    // Initialize analytics tracker
+    analytics = &AnalyticsTracker{
+        client: posthogClient,
+        breadcrumbs: make(map[string][]Breadcrumb),
+    }
     
     // Expose Prometheus metrics endpoint
     http.Handle("/metrics", promhttp.Handler())
@@ -541,10 +606,82 @@ func InitMonitoring(posthogAPIKey string) {
     }()
 }
 
-// HTTPMiddleware tracks HTTP metrics
+// PanicRecoveryMiddleware recovers from panics and reports crashes
+// Integrates with error-handling-ADR patterns
+func PanicRecoveryMiddleware(serviceName string) func(http.Handler) http.Handler {
+    return func(next http.Handler) http.Handler {
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+            defer func() {
+                if err := recover(); err != nil {
+                    // Capture panic details
+                    stackTrace := string(debug.Stack())
+                    correlationID := r.Context().Value("correlation_id").(string)
+                    
+                    // Log with slog (from error-handling-ADR)
+                    logger := slog.Default().With(
+                        slog.String("correlation_id", correlationID),
+                        slog.String("service", serviceName),
+                        slog.String("path", r.URL.Path),
+                    )
+                    
+                    logger.Error("Panic recovered",
+                        slog.Any("panic", err),
+                        slog.String("stack_trace", stackTrace),
+                    )
+                    
+                    // Track panic metric
+                    panicCounter.WithLabelValues(serviceName, r.URL.Path).Inc()
+                    
+                    // Create crash report
+                    report := CrashReport{
+                        ID:            uuid.New().String(),
+                        Timestamp:     time.Now().UTC(),
+                        CorrelationID: correlationID,
+                        UserID:        getUserID(r.Context()),
+                        SessionID:     getSessionID(r.Context()),
+                        Severity:      "critical",
+                        Category:      "panic",
+                        Message:       fmt.Sprintf("%v", err),
+                        StackTrace:    stackTrace,
+                        Context: map[string]interface{}{
+                            "method":     r.Method,
+                            "path":       r.URL.Path,
+                            "user_agent": r.UserAgent(),
+                            "remote_ip":  r.RemoteAddr,
+                        },
+                        Breadcrumbs: analytics.GetBreadcrumbs(correlationID),
+                        SystemInfo:  collectSystemInfo(),
+                    }
+                    
+                    // Send crash report
+                    go SendCrashReport(report)
+                    
+                    // Return error response (from error-handling-ADR)
+                    HandleHTTPError(w, r, fmt.Errorf("internal server error"), logger)
+                }
+            }()
+            
+            next.ServeHTTP(w, r)
+        })
+    }
+}
+
+// HTTPMiddleware tracks HTTP metrics and analytics
 func HTTPMiddleware(next http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         start := time.Now()
+        correlationID := r.Context().Value("correlation_id").(string)
+        
+        // Add breadcrumb for request
+        analytics.AddBreadcrumb(correlationID, Breadcrumb{
+            Timestamp: start,
+            Category:  "http",
+            Message:   fmt.Sprintf("%s %s", r.Method, r.URL.Path),
+            Data: map[string]interface{}{
+                "user_agent": r.UserAgent(),
+                "referer":    r.Referer(),
+            },
+        })
         
         // Wrap response writer to capture status
         wrapped := &responseWriter{ResponseWriter: w, statusCode: 200}
@@ -559,78 +696,531 @@ func HTTPMiddleware(next http.Handler) http.Handler {
         httpDuration.WithLabelValues(r.Method, r.URL.Path, status).Observe(duration)
         httpRequests.WithLabelValues(r.Method, r.URL.Path, status).Inc()
         
-        // Track in PostHog for user analytics
-        if userID := r.Context().Value("userID"); userID != nil {
-            posthogClient.Capture(posthog.Capture{
-                DistinctId: userID.(string),
-                Event: "api_request",
-                Properties: posthog.NewProperties().
-                    Set("method", r.Method).
-                    Set("path", r.URL.Path).
-                    Set("status", wrapped.statusCode).
-                    Set("duration_ms", duration*1000),
-            })
+        // Track user behavior analytics
+        if userID := getUserID(r.Context()); userID != "" {
+            analytics.TrackRequest(userID, r, wrapped.statusCode, duration)
         }
         
         // Log slow requests
         if duration > 1.0 {
             slog.Warn("Slow request detected",
-                "method", r.Method,
-                "path", r.URL.Path,
-                "duration", duration,
-                "status", wrapped.statusCode,
+                slog.String("correlation_id", correlationID),
+                slog.String("method", r.Method),
+                slog.String("path", r.URL.Path),
+                slog.Float64("duration", duration),
+                slog.Int("status", wrapped.statusCode),
             )
         }
     })
 }
 
-// TrackReceiptProcessing tracks receipt processing metrics
-func TrackReceiptProcessing(userID string, duration time.Duration, success bool) {
-    receiptProcessing.Observe(duration.Seconds())
+// TrackUserAction tracks custom user behavior events
+func (a *AnalyticsTracker) TrackUserAction(userID, action string, properties map[string]interface{}) {
+    // Add to breadcrumbs
+    correlationID := properties["correlation_id"].(string)
+    a.AddBreadcrumb(correlationID, Breadcrumb{
+        Timestamp: time.Now(),
+        Category:  "user_action",
+        Message:   action,
+        Data:      properties,
+    })
     
     // Track in PostHog
-    posthogClient.Capture(posthog.Capture{
+    props := posthog.NewProperties()
+    for k, v := range properties {
+        props.Set(k, v)
+    }
+    
+    a.client.Capture(posthog.Capture{
         DistinctId: userID,
-        Event: "receipt_processed",
-        Properties: posthog.NewProperties().
-            Set("duration_ms", duration.Milliseconds()).
-            Set("success", success),
+        Event:      action,
+        Properties: props,
+    })
+}
+
+// TrackReceiptProcessing tracks receipt processing with enhanced analytics
+func TrackReceiptProcessing(ctx context.Context, userID string, duration time.Duration, success bool, details map[string]interface{}) {
+    receiptProcessing.Observe(duration.Seconds())
+    
+    // Enhanced tracking with context
+    properties := posthog.NewProperties().
+        Set("duration_ms", duration.Milliseconds()).
+        Set("success", success).
+        Set("processing_stage", details["stage"]).
+        Set("ocr_confidence", details["ocr_confidence"]).
+        Set("category_confidence", details["category_confidence"])
+    
+    // Add error details if failed
+    if !success {
+        if err, ok := details["error"]; ok {
+            properties.Set("error_message", err)
+            properties.Set("error_type", details["error_type"])
+            
+            // Create crash report for processing failures
+            if duration > 10*time.Second {
+                report := CrashReport{
+                    Severity: "error",
+                    Category: "processing_timeout",
+                    Message:  fmt.Sprintf("Receipt processing timeout: %v", err),
+                    Context:  details,
+                }
+                go SendCrashReport(report)
+            }
+        }
+    }
+    
+    analytics.client.Capture(posthog.Capture{
+        DistinctId: userID,
+        Event:      "receipt_processed",
+        Properties: properties,
     })
     
     // Log if processing was slow
     if duration > 5*time.Second {
         slog.Warn("Slow receipt processing",
-            "user_id", userID,
-            "duration", duration,
-            "success", success,
+            slog.String("user_id", userID),
+            slog.Duration("duration", duration),
+            slog.Bool("success", success),
+            slog.Any("details", details),
         )
     }
 }
 
-// TrackError tracks errors in both Prometheus and PostHog
-func TrackError(userID, errorType, errorMessage string, context map[string]interface{}) {
-    // Log error
-    slog.Error("Application error",
-        "user_id", userID,
-        "error_type", errorType,
-        "error_message", errorMessage,
-        "context", context,
+// SendCrashReport sends crash report to monitoring backend
+func SendCrashReport(report CrashReport) {
+    // Track in metrics
+    crashReports.WithLabelValues(report.Severity, report.Category).Inc()
+    
+    // Send to PostHog
+    posthogClient.Capture(posthog.Capture{
+        DistinctId: report.UserID,
+        Event:      "$exception",
+        Properties: posthog.NewProperties().
+            Set("$exception_message", report.Message).
+            Set("$exception_type", report.Category).
+            Set("$exception_stack_trace", report.StackTrace).
+            Set("correlation_id", report.CorrelationID).
+            Set("severity", report.Severity).
+            Set("system_info", report.SystemInfo),
+    })
+    
+    // Log for local debugging
+    slog.Error("Crash report",
+        slog.String("report_id", report.ID),
+        slog.String("correlation_id", report.CorrelationID),
+        slog.String("severity", report.Severity),
+        slog.String("category", report.Category),
+        slog.String("message", report.Message),
     )
+}
+
+// Helper functions
+func collectSystemInfo() SystemInfo {
+    var m runtime.MemStats
+    runtime.ReadMemStats(&m)
     
-    // Track in PostHog for analysis
-    props := posthog.NewProperties().
-        Set("error_type", errorType).
-        Set("error_message", errorMessage)
+    return SystemInfo{
+        GoVersion:    runtime.Version(),
+        NumGoroutine: runtime.NumGoroutine(),
+        MemStats: struct {
+            Alloc      uint64 `json:"alloc"`
+            TotalAlloc uint64 `json:"total_alloc"`
+            Sys        uint64 `json:"sys"`
+            NumGC      uint32 `json:"num_gc"`
+        }{
+            Alloc:      m.Alloc,
+            TotalAlloc: m.TotalAlloc,
+            Sys:        m.Sys,
+            NumGC:      m.NumGC,
+        },
+    }
+}
+
+func (a *AnalyticsTracker) AddBreadcrumb(correlationID string, crumb Breadcrumb) {
+    a.mu.Lock()
+    defer a.mu.Unlock()
     
-    for k, v := range context {
-        props.Set(k, v)
+    if a.breadcrumbs[correlationID] == nil {
+        a.breadcrumbs[correlationID] = []Breadcrumb{}
     }
     
-    posthogClient.Capture(posthog.Capture{
-        DistinctId: userID,
-        Event: "error_occurred",
-        Properties: props,
-    })
+    a.breadcrumbs[correlationID] = append(a.breadcrumbs[correlationID], crumb)
+    
+    // Keep only last 50 breadcrumbs
+    if len(a.breadcrumbs[correlationID]) > 50 {
+        a.breadcrumbs[correlationID] = a.breadcrumbs[correlationID][1:]
+    }
+}
+
+func (a *AnalyticsTracker) GetBreadcrumbs(correlationID string) []Breadcrumb {
+    a.mu.RLock()
+    defer a.mu.RUnlock()
+    return a.breadcrumbs[correlationID]
+}
+```
+
+#### Flutter Mobile App Analytics & Crash Reporting
+
+```dart
+// lib/monitoring/analytics_tracker.dart
+import 'package:flutter/foundation.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:battery_plus/battery_plus.dart';
+
+class AnalyticsTracker {
+  static final AnalyticsTracker _instance = AnalyticsTracker._internal();
+  factory AnalyticsTracker() => _instance;
+  AnalyticsTracker._internal();
+
+  late Posthog _posthog;
+  final List<Breadcrumb> _breadcrumbs = [];
+  String? _sessionId;
+  String? _userId;
+  Map<String, dynamic>? _deviceInfo;
+
+  Future<void> initialize() async {
+    _posthog = await Posthog().init(
+      apiKey: const String.fromEnvironment('POSTHOG_API_KEY'),
+      options: PosthogOptions(
+        host: 'https://app.posthog.com',
+        captureApplicationLifecycleEvents: true,
+        debug: kDebugMode,
+      ),
+    );
+
+    _sessionId = DateTime.now().millisecondsSinceEpoch.toString();
+    await _collectDeviceInfo();
+    
+    // Set up automatic crash reporting
+    FlutterError.onError = _recordFlutterError;
+    PlatformDispatcher.instance.onError = _recordPlatformError;
+  }
+
+  // Track user behavior events
+  void trackUserAction(String action, {Map<String, dynamic>? properties}) {
+    final eventProperties = {
+      'session_id': _sessionId,
+      'timestamp': DateTime.now().toIso8601String(),
+      ...?_deviceInfo,
+      ...?properties,
+    };
+
+    _addBreadcrumb(
+      category: 'user_action',
+      message: action,
+      data: eventProperties,
+    );
+
+    _posthog.capture(
+      eventName: action,
+      properties: eventProperties,
+    );
+  }
+
+  // Track receipt processing analytics
+  void trackReceiptProcessing({
+    required String stage,
+    required bool success,
+    required Duration duration,
+    double? ocrConfidence,
+    String? category,
+    Map<String, dynamic>? metadata,
+  }) {
+    trackUserAction('receipt_processing', properties: {
+      'stage': stage,
+      'success': success,
+      'duration_ms': duration.inMilliseconds,
+      'ocr_confidence': ocrConfidence,
+      'category': category,
+      ...?metadata,
+    });
+
+    // Alert on slow processing
+    if (duration.inSeconds > 10) {
+      _reportPerformanceIssue(
+        'Slow receipt processing',
+        {'duration_seconds': duration.inSeconds, 'stage': stage},
+      );
+    }
+  }
+
+  // Track screen views for user journey
+  void trackScreenView(String screenName, {Map<String, dynamic>? properties}) {
+    trackUserAction('screen_view', properties: {
+      'screen_name': screenName,
+      ...?properties,
+    });
+  }
+
+  // Track feature adoption
+  void trackFeatureUsage(String feature, {bool firstUse = false}) {
+    final event = firstUse ? 'feature_first_use' : 'feature_used';
+    trackUserAction(event, properties: {
+      'feature': feature,
+      'first_use': firstUse,
+    });
+  }
+
+  // Enhanced crash reporting for Flutter errors
+  void _recordFlutterError(FlutterErrorDetails details) {
+    final crashReport = CrashReport(
+      severity: 'error',
+      category: 'flutter_error',
+      message: details.exception.toString(),
+      stackTrace: details.stack?.toString(),
+      context: {
+        'library': details.library,
+        'silent': details.silent,
+        'breadcrumbs': _getBreadcrumbs(),
+        'device_info': _deviceInfo,
+        'session_id': _sessionId,
+      },
+    );
+
+    _sendCrashReport(crashReport);
+  }
+
+  // Handle platform-level errors
+  bool _recordPlatformError(Object error, StackTrace? stack) {
+    final crashReport = CrashReport(
+      severity: 'critical',
+      category: 'platform_error',
+      message: error.toString(),
+      stackTrace: stack?.toString(),
+      context: {
+        'breadcrumbs': _getBreadcrumbs(),
+        'device_info': _deviceInfo,
+        'session_id': _sessionId,
+      },
+    );
+
+    _sendCrashReport(crashReport);
+    return true; // Prevents app from crashing in release mode
+  }
+
+  // Send crash report to backend
+  void _sendCrashReport(CrashReport report) {
+    // Add to breadcrumbs
+    _addBreadcrumb(
+      category: 'crash',
+      message: report.message,
+      data: {'severity': report.severity},
+    );
+
+    // Send to PostHog
+    _posthog.capture(
+      eventName: '\$exception',
+      properties: {
+        '\$exception_message': report.message,
+        '\$exception_type': report.category,
+        '\$exception_stack_trace': report.stackTrace,
+        'severity': report.severity,
+        'context': report.context,
+        'user_id': _userId,
+        'session_id': _sessionId,
+      },
+    );
+
+    // Log locally for debugging
+    if (kDebugMode) {
+      print('CRASH REPORT: ${report.toJson()}');
+    }
+  }
+
+  // Collect device information for context
+  Future<void> _collectDeviceInfo() async {
+    final deviceInfo = DeviceInfoPlugin();
+    final battery = Battery();
+    final connectivity = Connectivity();
+
+    try {
+      Map<String, dynamic> info = {};
+      
+      if (Platform.isAndroid) {
+        final androidInfo = await deviceInfo.androidInfo;
+        info = {
+          'platform': 'android',
+          'os_version': androidInfo.version.release,
+          'device_model': androidInfo.model,
+          'manufacturer': androidInfo.manufacturer,
+          'sdk_int': androidInfo.version.sdkInt,
+        };
+      } else if (Platform.isIOS) {
+        final iosInfo = await deviceInfo.iosInfo;
+        info = {
+          'platform': 'ios',
+          'os_version': iosInfo.systemVersion,
+          'device_model': iosInfo.model,
+          'device_name': iosInfo.name,
+        };
+      }
+
+      // Add common info
+      final batteryLevel = await battery.batteryLevel;
+      final connectivityResult = await connectivity.checkConnectivity();
+      
+      info.addAll({
+        'battery_level': batteryLevel,
+        'network_type': connectivityResult.toString(),
+        'app_version': const String.fromEnvironment('APP_VERSION', defaultValue: '1.0.0'),
+        'locale': Platform.localeName,
+      });
+
+      _deviceInfo = info;
+    } catch (e) {
+      debugPrint('Failed to collect device info: $e');
+    }
+  }
+
+  // Breadcrumb management
+  void _addBreadcrumb({
+    required String category,
+    required String message,
+    Map<String, dynamic>? data,
+  }) {
+    _breadcrumbs.add(Breadcrumb(
+      timestamp: DateTime.now(),
+      category: category,
+      message: message,
+      data: data,
+    ));
+
+    // Keep only last 50 breadcrumbs
+    if (_breadcrumbs.length > 50) {
+      _breadcrumbs.removeAt(0);
+    }
+  }
+
+  List<Map<String, dynamic>> _getBreadcrumbs() {
+    return _breadcrumbs.map((b) => b.toJson()).toList();
+  }
+
+  // Performance monitoring
+  void _reportPerformanceIssue(String issue, Map<String, dynamic> details) {
+    trackUserAction('performance_issue', properties: {
+      'issue': issue,
+      'details': details,
+    });
+  }
+
+  // User identification
+  void identifyUser(String userId, {Map<String, dynamic>? traits}) {
+    _userId = userId;
+    _posthog.identify(userId: userId, userProperties: traits);
+  }
+
+  // Session management
+  void startNewSession() {
+    _sessionId = DateTime.now().millisecondsSinceEpoch.toString();
+    _breadcrumbs.clear();
+  }
+}
+
+// Supporting classes
+class Breadcrumb {
+  final DateTime timestamp;
+  final String category;
+  final String message;
+  final Map<String, dynamic>? data;
+
+  Breadcrumb({
+    required this.timestamp,
+    required this.category,
+    required this.message,
+    this.data,
+  });
+
+  Map<String, dynamic> toJson() => {
+    'timestamp': timestamp.toIso8601String(),
+    'category': category,
+    'message': message,
+    'data': data,
+  };
+}
+
+class CrashReport {
+  final String severity;
+  final String category;
+  final String message;
+  final String? stackTrace;
+  final Map<String, dynamic> context;
+
+  CrashReport({
+    required this.severity,
+    required this.category,
+    required this.message,
+    this.stackTrace,
+    required this.context,
+  });
+
+  Map<String, dynamic> toJson() => {
+    'severity': severity,
+    'category': category,
+    'message': message,
+    'stack_trace': stackTrace,
+    'context': context,
+    'timestamp': DateTime.now().toIso8601String(),
+  };
+}
+
+// Usage example in main.dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize analytics and crash reporting
+  final analytics = AnalyticsTracker();
+  await analytics.initialize();
+  
+  // Track app launch
+  analytics.trackUserAction('app_launched');
+  
+  runApp(MyApp());
+}
+
+// Widget error boundary for catching widget errors
+class ErrorBoundary extends StatefulWidget {
+  final Widget child;
+  final Widget Function(FlutterErrorDetails) errorWidget;
+
+  const ErrorBoundary({
+    Key? key,
+    required this.child,
+    required this.errorWidget,
+  }) : super(key: key);
+
+  @override
+  _ErrorBoundaryState createState() => _ErrorBoundaryState();
+}
+
+class _ErrorBoundaryState extends State<ErrorBoundary> {
+  FlutterErrorDetails? _errorDetails;
+
+  @override
+  void initState() {
+    super.initState();
+    // Capture widget errors in this subtree
+    FlutterError.onError = (details) {
+      setState(() {
+        _errorDetails = details;
+      });
+      
+      // Report to analytics
+      AnalyticsTracker().trackUserAction('widget_error', properties: {
+        'error': details.exception.toString(),
+        'widget': details.context?.toString(),
+      });
+    };
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_errorDetails != null) {
+      return widget.errorWidget(_errorDetails!);
+    }
+    return widget.child;
+  }
 }
 ```
 
@@ -832,12 +1422,16 @@ monitoring_evolution:
 ### Positive
 - **Zero Additional Cost**: Entire monitoring stack runs on existing VPS infrastructure
 - **No Docker Overhead**: Native binaries use less resources than containers
-- **Comprehensive Coverage**: Combines user analytics with infrastructure monitoring
+- **Comprehensive Coverage**: Combines user analytics, crash reporting, and infrastructure monitoring
+- **Deep User Insights**: Rich behavioral analytics for understanding user journeys and feature adoption
+- **Proactive Crash Detection**: Automatic crash reporting with context and breadcrumbs
+- **Error Pattern Recognition**: Integration with error-handling-ADR for consistent error tracking
 - **Scalable Architecture**: Can grow from free tier to enterprise solutions
 - **Developer Friendly**: Simple instrumentation with familiar tools
 - **Privacy Compliant**: Self-hosted infrastructure monitoring keeps data in-house
 - **Quick Implementation**: Can be deployed in 1-2 days
 - **Low Resource Usage**: ~200MB total RAM for monitoring stack
+- **Correlation Tracking**: End-to-end request tracking with correlation IDs
 
 ### Negative
 - **Manual Setup Required**: Self-hosted monitoring needs configuration
@@ -845,6 +1439,7 @@ monitoring_evolution:
 - **Maintenance Overhead**: Team must maintain monitoring infrastructure
 - **Basic Alerting**: Simple alerting compared to enterprise solutions
 - **No Machine Learning**: Missing anomaly detection and predictive alerts
+- **Analytics Learning Curve**: Team needs to learn to interpret user behavior data
 
 ### Risks
 - **Resource Contention**: Monitoring stack could impact application performance
@@ -889,34 +1484,42 @@ monitoring_evolution:
 ## Implementation Checklist
 
 ### Week 1: Foundation
-- [ ] Deploy Prometheus and Grafana containers
+- [ ] Deploy Prometheus and Grafana native binaries
 - [ ] Configure node_exporter for system metrics
 - [ ] Set up PostHog account and get API keys
-- [ ] Implement basic Go instrumentation
+- [ ] Implement basic Go instrumentation with slog integration
+- [ ] Set up crash reporting middleware with panic recovery
 
-### Week 2: Integration
-- [ ] Add PostHog SDK to Flutter app
-- [ ] Configure postgres_exporter
-- [ ] Create initial Grafana dashboards
-- [ ] Set up Prometheus alerting rules
+### Week 2: Analytics & Crash Reporting
+- [ ] Implement Flutter AnalyticsTracker class
+- [ ] Add crash reporting to Flutter app with error boundaries
+- [ ] Configure user behavior tracking events
+- [ ] Set up breadcrumb collection for crash context
+- [ ] Integrate correlation ID tracking across stack
 
-### Week 3: Refinement
-- [ ] Tune alert thresholds
-- [ ] Implement custom business metrics
-- [ ] Configure log rotation
-- [ ] Set up Uptime Robot for external monitoring
+### Week 3: Integration & Monitoring
+- [ ] Configure postgres_exporter for database metrics
+- [ ] Create Grafana dashboards for system and business metrics
+- [ ] Set up Prometheus alerting rules with crash thresholds
+- [ ] Implement receipt processing analytics
+- [ ] Configure session replay for debugging
 
-### Week 4: Documentation
-- [ ] Create monitoring runbook
-- [ ] Document alert response procedures
-- [ ] Train team on dashboard usage
-- [ ] Establish on-call rotation (if needed)
+### Week 4: Refinement & Documentation
+- [ ] Tune alert thresholds based on initial data
+- [ ] Create user journey funnels in PostHog
+- [ ] Set up crash report processing pipeline
+- [ ] Document monitoring runbook with crash response procedures
+- [ ] Train team on analytics dashboards and crash reports
+- [ ] Configure Uptime Robot for external monitoring
 
 ## References
 - [PostHog Documentation](https://posthog.com/docs)
+- [PostHog Flutter SDK](https://posthog.com/docs/libraries/flutter)
 - [Prometheus Best Practices](https://prometheus.io/docs/practices/)
 - [Grafana VPS Deployment Guide](https://grafana.com/docs/grafana/latest/setup-grafana/)
 - [OpenTelemetry Go SDK](https://opentelemetry.io/docs/languages/go/)
+- [Flutter Error Handling](https://docs.flutter.dev/testing/errors)
+- ADR-20250120: Go Error Handling & slog Logging Strategy
 - ADR-20250819: Deployment Architecture
 - ADR-20250812: Personal Finance Tech Stack Selection
 
