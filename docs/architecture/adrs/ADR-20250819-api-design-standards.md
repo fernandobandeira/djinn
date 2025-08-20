@@ -730,28 +730,155 @@ test-graphql:
 	@go test ./graph/... -v
 ```
 
-### 11. API Versioning Strategy
+### 11. API Versioning Strategy (GraphQL Deprecation Approach)
+
+#### Why We Don't Need Traditional API Versioning
+
+GraphQL's schema evolution capabilities eliminate the need for traditional API versioning (v1, v2, etc.). Instead, we use:
+
+1. **Field Deprecation**: Mark fields as deprecated with migration guidance
+2. **Additive Changes**: New fields don't break existing clients
+3. **Feature Flags**: Control rollout of new functionality
+4. **Client-Driven Queries**: Clients request only what they need
 
 #### Schema Evolution Without Breaking Changes
 ```graphql
-# Deprecation instead of removal
+# GraphQL Schema Evolution Pattern - NO VERSION NUMBERS NEEDED
 type Transaction {
   id: ID!
   amount: Money!
   
-  # Deprecated field
-  amountCents: Int @deprecated(reason: "Use amount.amountMinor")
+  # Step 1: Deprecate old field with clear migration path
+  amountCents: Int @deprecated(reason: "Use amount.amountMinor - will be removed after 2025-06-01")
   
-  # New field with default
-  tags: [String!]! @since(version: "1.1.0")
+  # Step 2: Add new fields (always backward compatible)
+  tags: [String!]! # New field - old clients unaffected
+  metadata: JSON # New field - clients opt-in by querying it
+  
+  # Step 3: Track deprecation usage via monitoring
+  # PostHog tracks which clients still use deprecated fields
 }
 
-# Feature flags for gradual rollout
+# Deprecation lifecycle management
+directive @deprecated(
+  reason: String!
+  removeAfter: String # ISO 8601 date for planned removal
+) on FIELD_DEFINITION | ENUM_VALUE
+
+# Feature flags for gradual rollout (not versioning)
 directive @feature(flag: String!) on FIELD_DEFINITION
 
 type Query {
-  # New feature behind flag
+  # Old clients continue using existing queries unchanged
+  transactions: [Transaction!]!
+  
+  # New features added alongside existing ones
+  transactionsV2: TransactionConnection! @deprecated(reason: "Use transactions with pagination arguments")
+  
+  # Feature-flagged functionality (not version-based)
   aiInsights: AIInsights @feature(flag: "ai_insights") @premium
+}
+```
+
+#### Deprecation Process
+```typescript
+// Server-side deprecation tracking
+const deprecationMiddleware = {
+  willSendResponse(requestContext) {
+    const deprecatedFields = extractDeprecatedFields(requestContext);
+    
+    if (deprecatedFields.length > 0) {
+      // Log deprecation usage
+      logger.warn('Deprecated fields used', {
+        fields: deprecatedFields,
+        client: requestContext.request.http.headers.get('user-agent'),
+        userId: requestContext.contextValue.userId,
+      });
+      
+      // Track in PostHog for migration monitoring
+      posthog.capture({
+        distinctId: requestContext.contextValue.userId,
+        event: 'deprecated_field_usage',
+        properties: {
+          fields: deprecatedFields,
+          clientVersion: extractClientVersion(requestContext),
+        }
+      });
+      
+      // Add deprecation warnings to response
+      requestContext.response.http.headers.set(
+        'X-GraphQL-Deprecation-Warning',
+        JSON.stringify(deprecatedFields)
+      );
+    }
+  }
+};
+```
+
+#### Client Migration Support
+```typescript
+// Client-side handling of deprecation warnings
+const apolloClient = new ApolloClient({
+  uri: '/graphql',
+  onError: ({ response }) => {
+    const deprecationWarning = response?.headers?.get('X-GraphQL-Deprecation-Warning');
+    if (deprecationWarning) {
+      console.warn('GraphQL Deprecation Warning:', JSON.parse(deprecationWarning));
+      // Alert monitoring system about deprecated field usage
+      reportDeprecationUsage(deprecationWarning);
+    }
+  },
+});
+```
+
+#### Breaking Change Avoidance Patterns
+```graphql
+# NEVER DO THIS - Breaking changes
+type User {
+  name: String! # DON'T change to firstName: String!
+  email: String! # DON'T change nullability
+  role: UserRole! # DON'T change type
+}
+
+# ALWAYS DO THIS - Non-breaking evolution
+type User {
+  # Keep old field, deprecate it
+  name: String! @deprecated(reason: "Use fullName or firstName + lastName")
+  
+  # Add new fields alongside
+  firstName: String
+  lastName: String
+  fullName: String!
+  
+  # Keep original field working
+  email: String!
+  
+  # Add new field instead of changing type
+  role: UserRole! @deprecated(reason: "Use roles array for multi-role support")
+  roles: [UserRole!]!
+}
+```
+
+#### Feature Flag-Based Evolution (Not Versioning)
+```graphql
+# Use feature flags for experimental features, not API versions
+type Query {
+  # Stable API - always available
+  accounts: [Account!]!
+  transactions(filter: TransactionFilter): [Transaction!]!
+  
+  # Experimental features behind flags (not v2 API)
+  analyticsInsights: Analytics @feature(flag: "advanced_analytics")
+  budgetForecasting: Forecast @feature(flag: "ml_forecasting")
+  
+  # Beta features with explicit opt-in
+  betaFeatures: BetaAPI @requiresOptIn
+}
+
+type BetaAPI {
+  # Grouped beta features - not a new API version
+  experimentalOCR: OCRResult
+  aiCategorization: Categorization
 }
 ```
 

@@ -154,60 +154,531 @@ CREATE TABLE users (
 ```
 
 #### Feature Flag Management (PostHog)
+
+##### Feature Flag Naming Conventions
 ```go
-// Feature flag implementation using PostHog
+// Standardized feature flag naming patterns for consistency
+const (
+    // Kill Switches - Emergency feature disabling (prefix: kill_)
+    KillSwitch_OCRProcessing = "kill_ocr_processing"
+    KillSwitch_AIInsights = "kill_ai_insights"
+    KillSwitch_ThirdPartySync = "kill_third_party_sync"
+    
+    // Feature Rollouts - New feature releases (prefix: feature_)
+    Feature_AdvancedAnalyticsV2 = "feature_advanced_analytics_v2"
+    Feature_MultiCurrency = "feature_multi_currency"
+    Feature_BudgetForecasting = "feature_budget_forecasting"
+    
+    // Experiments - A/B testing (prefix: exp_)
+    Experiment_CheckoutFlow = "exp_checkout_flow"
+    Experiment_OnboardingV2 = "exp_onboarding_v2"
+    
+    // Operations - Operational flags (prefix: ops_)
+    Ops_MaintenanceMode = "ops_maintenance_mode"
+    Ops_ReadOnlyMode = "ops_read_only_mode"
+    Ops_DebugLogging = "ops_debug_logging"
+    
+    // Limits - Rate limiting and quotas (prefix: limit_)
+    Limit_MaxReceiptsPerDay = "limit_max_receipts_per_day"
+    Limit_APIRateLimit = "limit_api_rate_limit"
+)
+```
+
+##### Core Feature Flag Implementation
+```go
+// Enhanced feature flag implementation with kill switches and progressive rollout
 package features
 
 import (
+    "context"
+    "log/slog"
+    "sync"
+    "time"
     "github.com/posthog/posthog-go"
 )
 
 type FeatureFlags struct {
-    client posthog.Client
+    client          posthog.Client
+    cache           sync.Map
+    cacheTTL        time.Duration
+    killSwitches    map[string]bool
+    fallbackValues  map[string]interface{}
+    logger          *slog.Logger
 }
 
-func NewFeatureFlags() *FeatureFlags {
-    // PostHog initialization
-    client := posthog.New(os.Getenv("POSTHOG_API_KEY"))
-    return &FeatureFlags{client: client}
+func NewFeatureFlags(apiKey string, logger *slog.Logger) *FeatureFlags {
+    client := posthog.New(apiKey)
+    
+    return &FeatureFlags{
+        client:     client,
+        cacheTTL:   5 * time.Minute,
+        logger:     logger,
+        killSwitches: make(map[string]bool),
+        fallbackValues: map[string]interface{}{
+            // Critical feature fallbacks
+            KillSwitch_OCRProcessing: false,  // Default: enabled
+            KillSwitch_AIInsights: false,     // Default: enabled
+            Feature_AdvancedAnalyticsV2: false, // Default: use v1
+            Ops_MaintenanceMode: false,       // Default: normal operation
+        },
+    }
 }
 
-// Check if feature is enabled for user
-func (f *FeatureFlags) IsEnabled(userID string, feature string) bool {
-    // PostHog handles:
-    // - Percentage rollouts
-    // - User targeting
-    // - A/B testing
-    // - Analytics tracking
+// IsEnabled with caching and kill switch support
+func (f *FeatureFlags) IsEnabled(ctx context.Context, userID string, feature string) bool {
+    // Priority 1: Check kill switches (immediate response)
+    if f.isKillSwitchActive(feature) {
+        f.logger.Warn("Feature disabled by kill switch",
+            "feature", feature,
+            "user_id", userID,
+        )
+        return false
+    }
+    
+    // Priority 2: Check cached value
+    if cached, ok := f.getCachedValue(feature, userID); ok {
+        return cached.(bool)
+    }
+    
+    // Priority 3: Fetch from PostHog with timeout
+    ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+    defer cancel()
     
     isEnabled, err := f.client.IsFeatureEnabled(
         posthog.FeatureFlagPayload{
             Key: feature,
             DistinctId: userID,
-            Properties: posthog.Properties{
-                "subscription_tier": getUserTier(userID),
-            },
+            Properties: f.getUserProperties(ctx, userID),
         },
     )
     
     if err != nil {
-        // Default to disabled on error
-        return false
+        f.logger.Error("Feature flag evaluation failed",
+            "feature", feature,
+            "user_id", userID,
+            "error", err,
+        )
+        // Return safe fallback value
+        return f.getFallbackValue(feature)
     }
+    
+    // Cache the result
+    f.setCachedValue(feature, userID, isEnabled)
     
     return isEnabled
 }
 
-// Example usage in GraphQL resolver
-func (r *Resolver) GetAdvancedAnalytics(ctx context.Context) (*Analytics, error) {
-    userID := ctx.Value("user_id").(string)
+// Progressive rollout helper
+func (f *FeatureFlags) GetRolloutPercentage(feature string) int {
+    variant := f.client.GetFeatureFlag(
+        posthog.FeatureFlagPayload{
+            Key: feature + "_rollout_percentage",
+        },
+    )
     
-    // Check feature flag for gradual rollout
-    if !features.IsEnabled(userID, "advanced_analytics_v2") {
-        return r.getLegacyAnalytics(ctx) // Fallback to old version
+    if percentage, ok := variant.(float64); ok {
+        return int(percentage)
+    }
+    return 0
+}
+```
+
+##### Progressive Rollout Strategy
+```go
+// Progressive rollout implementation with stages
+type RolloutStage struct {
+    Name       string
+    Percentage int
+    Criteria   map[string]interface{}
+    StartDate  time.Time
+    Duration   time.Duration
+}
+
+type ProgressiveRollout struct {
+    flags  *FeatureFlags
+    stages []RolloutStage
+    logger *slog.Logger
+}
+
+func NewProgressiveRollout(flags *FeatureFlags, logger *slog.Logger) *ProgressiveRollout {
+    return &ProgressiveRollout{
+        flags:  flags,
+        logger: logger,
+        stages: []RolloutStage{
+            {
+                Name:       "internal_testing",
+                Percentage: 0,
+                Criteria:   map[string]interface{}{"email_domain": "company.com"},
+                Duration:   72 * time.Hour,
+            },
+            {
+                Name:       "beta_users",
+                Percentage: 1,
+                Criteria:   map[string]interface{}{"user_segment": "beta"},
+                Duration:   7 * 24 * time.Hour,
+            },
+            {
+                Name:       "canary_release",
+                Percentage: 5,
+                Duration:   3 * 24 * time.Hour,
+            },
+            {
+                Name:       "gradual_rollout_10",
+                Percentage: 10,
+                Duration:   2 * 24 * time.Hour,
+            },
+            {
+                Name:       "gradual_rollout_25",
+                Percentage: 25,
+                Duration:   2 * 24 * time.Hour,
+            },
+            {
+                Name:       "gradual_rollout_50",
+                Percentage: 50,
+                Duration:   3 * 24 * time.Hour,
+            },
+            {
+                Name:       "gradual_rollout_75",
+                Percentage: 75,
+                Duration:   3 * 24 * time.Hour,
+            },
+            {
+                Name:       "general_availability",
+                Percentage: 100,
+                Duration:   0, // Permanent
+            },
+        },
+    }
+}
+
+// Execute progressive rollout with monitoring
+func (pr *ProgressiveRollout) ExecuteRollout(ctx context.Context, feature string) error {
+    for _, stage := range pr.stages {
+        pr.logger.Info("Starting rollout stage",
+            "feature", feature,
+            "stage", stage.Name,
+            "percentage", stage.Percentage,
+        )
+        
+        // Update PostHog configuration
+        if err := pr.updateRolloutPercentage(feature, stage); err != nil {
+            return pr.handleRolloutError(feature, stage, err)
+        }
+        
+        // Monitor metrics during stage
+        if err := pr.monitorStage(ctx, feature, stage); err != nil {
+            // Automatic rollback on error
+            return pr.rollback(feature, stage, err)
+        }
+        
+        // Wait for stage duration
+        if stage.Duration > 0 {
+            select {
+            case <-time.After(stage.Duration):
+                continue
+            case <-ctx.Done():
+                return ctx.Err()
+            }
+        }
     }
     
-    return r.getNewAnalytics(ctx)
+    return nil
+}
+```
+
+##### Kill Switch Implementation
+```go
+// Kill switch manager for emergency feature disabling
+type KillSwitchManager struct {
+    flags         *FeatureFlags
+    logger        *slog.Logger
+    notifier      AlertNotifier
+    activeKills   sync.Map
+}
+
+func (ksm *KillSwitchManager) ActivateKillSwitch(feature string, reason string) error {
+    ksm.logger.Error("KILL SWITCH ACTIVATED",
+        "feature", feature,
+        "reason", reason,
+        "timestamp", time.Now(),
+    )
+    
+    // Immediately disable in PostHog
+    err := ksm.flags.client.ReloadFeatureFlags()
+    if err != nil {
+        // Even if PostHog fails, activate locally
+        ksm.logger.Error("PostHog update failed, using local kill switch", "error", err)
+    }
+    
+    // Set local kill switch (immediate effect)
+    ksm.activeKills.Store(feature, true)
+    ksm.flags.killSwitches[feature] = true
+    
+    // Notify operations team
+    ksm.notifier.SendAlert(Alert{
+        Severity: "CRITICAL",
+        Title:    fmt.Sprintf("Kill Switch Activated: %s", feature),
+        Message:  reason,
+        Feature:  feature,
+    })
+    
+    // Log to audit trail
+    ksm.logKillSwitchEvent(feature, reason, "ACTIVATED")
+    
+    return nil
+}
+
+// Automatic kill switch based on error rates
+func (ksm *KillSwitchManager) MonitorErrorRates(ctx context.Context) {
+    ticker := time.NewTicker(30 * time.Second)
+    defer ticker.Stop()
+    
+    for {
+        select {
+        case <-ticker.C:
+            for feature, threshold := range ksm.getMonitoredFeatures() {
+                errorRate := ksm.calculateErrorRate(feature)
+                
+                if errorRate > threshold {
+                    ksm.ActivateKillSwitch(feature, 
+                        fmt.Sprintf("Error rate exceeded threshold: %.2f%% > %.2f%%", 
+                            errorRate, threshold))
+                }
+            }
+        case <-ctx.Done():
+            return
+        }
+    }
+}
+```
+
+##### GraphQL Integration Example
+```go
+// GraphQL resolver with feature flags and kill switches
+func (r *Resolver) ProcessReceipt(ctx context.Context, input ReceiptInput) (*Receipt, error) {
+    userID := ctx.Value("user_id").(string)
+    
+    // Check kill switch first
+    if r.features.IsEnabled(ctx, userID, KillSwitch_OCRProcessing) {
+        return nil, fmt.Errorf("receipt processing is temporarily disabled")
+    }
+    
+    // Check feature flag for new OCR engine
+    if r.features.IsEnabled(ctx, userID, Feature_OCREngineV2) {
+        return r.processReceiptV2(ctx, input)
+    }
+    
+    // Fallback to stable version
+    return r.processReceiptV1(ctx, input)
+}
+
+// A/B testing example
+func (r *Resolver) GetDashboard(ctx context.Context) (*Dashboard, error) {
+    userID := ctx.Value("user_id").(string)
+    
+    // Get experiment variant
+    variant := r.features.GetVariant(ctx, userID, Experiment_DashboardLayout)
+    
+    switch variant {
+    case "control":
+        return r.getClassicDashboard(ctx)
+    case "variant_a":
+        return r.getModernDashboard(ctx)
+    case "variant_b":
+        return r.getMinimalDashboard(ctx)
+    default:
+        return r.getClassicDashboard(ctx)
+    }
+}
+```
+
+##### GraphQL Directive Implementation (Minimal)
+```go
+// Custom GraphQL directives - only essential security controls
+package directives
+
+import (
+    "context"
+    "fmt"
+    "github.com/99designs/gqlgen/graphql"
+)
+
+// @feature directive - checks PostHog feature flag
+// This is the primary way to control feature rollout
+func Feature(ctx context.Context, obj interface{}, next graphql.Resolver, flag string) (interface{}, error) {
+    userID := ctx.Value("user_id").(string)
+    features := ctx.Value("features").(*FeatureFlags)
+    
+    // Check PostHog feature flag (includes kill switch logic internally)
+    if !features.IsEnabled(ctx, userID, flag) {
+        return nil, fmt.Errorf("feature '%s' is not enabled for your account", flag)
+    }
+    
+    return next(ctx)
+}
+
+// @premium directive - checks subscription tier
+// Simple business logic check at the API level
+func Premium(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
+    userID := ctx.Value("user_id").(string)
+    
+    // Check user's subscription tier
+    user, err := getUserFromDB(ctx, userID)
+    if err != nil {
+        return nil, err
+    }
+    
+    if user.SubscriptionTier != "premium" && user.SubscriptionTier != "enterprise" {
+        return nil, fmt.Errorf("this feature requires a premium subscription")
+    }
+    
+    return next(ctx)
+}
+
+// Note: @rateLimit directive will be handled in a separate Rate Limiting ADR
+```
+
+##### GraphQL Schema with Security Directives
+```graphql
+# Directive definitions - focused on security and feature control
+directive @feature(flag: String!) on FIELD_DEFINITION
+directive @premium on FIELD_DEFINITION  
+
+type Query {
+  # Standard features - always available
+  me: User!
+  accounts: [Account!]!
+  transactions: [Transaction!]!
+  
+  # Feature-flagged functionality (controlled by PostHog)
+  # Kill switches are handled internally via PostHog flags
+  aiInsights: AIInsights @feature(flag: "feature_ai_insights")
+  budgetForecasting: Forecast @feature(flag: "feature_budget_forecasting")
+  
+  # Premium features (subscription check)
+  advancedAnalytics: Analytics @premium
+  unlimitedAccounts: [Account!]! @premium
+  
+  # Experimental features (PostHog handles the rollout logic)
+  experimentalOCR: OCRResult @feature(flag: "exp_ocr_v2")
+  
+  # Regular endpoints (kill switches and rate limiting handled internally)
+  processReceipt(input: ReceiptInput): Receipt 
+  generateReport: Report
+  exportData: DataExport
+}
+
+type Mutation {
+  # User preferences handled internally, not via directives
+  updatePreferences(input: PreferencesInput!): User!
+  
+  # Feature usage tracking
+  trackFeatureUsage(feature: String!): Boolean!
+}
+```
+
+##### Internal Kill Switch & Opt-In Handling
+```go
+// Kill switches and opt-in logic handled in resolver, not as directives
+func (r *Resolver) ProcessReceipt(ctx context.Context, input ReceiptInput) (*Receipt, error) {
+    userID := ctx.Value("user_id").(string)
+    
+    // Kill switch check (internal, not exposed in GraphQL schema)
+    if r.features.IsEnabled(ctx, "system", KillSwitch_OCRProcessing) {
+        return nil, fmt.Errorf("receipt processing is temporarily unavailable")
+    }
+    
+    // User opt-in check (if needed, handled internally)
+    user, _ := r.getUserByID(ctx, userID)
+    if user.BetaFeaturesEnabled {
+        // Use experimental version if opted in AND feature flag enabled
+        if r.features.IsEnabled(ctx, userID, Feature_OCREngineV2) {
+            return r.processReceiptV2(ctx, input)
+        }
+    }
+    
+    // Default to stable version
+    return r.processReceiptV1(ctx, input)
+}
+
+// Client handles UI-level opt-in preferences
+// The client can check user.preferences.betaFeatures and show/hide UI accordingly
+// No need for GraphQL directives for this
+```
+
+##### Directive Registration in GraphQL Server
+```go
+// server.go - Wire up directives with gqlgen
+package main
+
+import (
+    "github.com/99designs/gqlgen/graphql/handler"
+    "github.com/99designs/gqlgen/graphql/playground"
+)
+
+func NewGraphQLServer(features *FeatureFlags, rateLimiter *RateLimiter) *handler.Server {
+    config := generated.Config{
+        Resolvers: &resolver{
+            features: features,
+        },
+    }
+    
+    // Register custom directives
+    config.Directives.Feature = directives.Feature
+    config.Directives.RequiresOptIn = directives.RequiresOptIn
+    config.Directives.KillSwitch = directives.KillSwitch
+    config.Directives.Premium = directives.Premium
+    config.Directives.RateLimit = directives.RateLimit
+    
+    srv := handler.NewDefaultServer(generated.NewExecutableSchema(config))
+    
+    // Add middleware to inject dependencies into context
+    srv.AroundOperations(func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
+        ctx = context.WithValue(ctx, "features", features)
+        ctx = context.WithValue(ctx, "rateLimiter", rateLimiter)
+        return next(ctx)
+    })
+    
+    return srv
+}
+```
+
+##### User Opt-In Management
+```go
+// User preferences stored in database, not PostHog
+type UserPreferences struct {
+    UserID              string
+    BetaFeaturesEnabled bool      // User explicitly opted into beta
+    EmailNotifications  bool      
+    DataCollection      bool      // GDPR compliance
+    MarketingEmails     bool
+    UpdatedAt           time.Time
+}
+
+// Opt-in mutation resolver
+func (r *mutationResolver) UpdateBetaPreferences(ctx context.Context, enableBeta bool) (*User, error) {
+    userID := ctx.Value("user_id").(string)
+    
+    // Update user preferences in database
+    err := r.db.UpdateUserPreferences(ctx, userID, map[string]interface{}{
+        "beta_features_enabled": enableBeta,
+        "updated_at": time.Now(),
+    })
+    
+    if err != nil {
+        return nil, err
+    }
+    
+    // Track opt-in event in PostHog for analytics
+    r.features.client.Capture(posthog.Capture{
+        DistinctId: userID,
+        Event: "beta_features_toggled",
+        Properties: posthog.NewProperties().
+            Set("enabled", enableBeta).
+            Set("timestamp", time.Now()),
+    })
+    
+    return r.getUserByID(ctx, userID)
 }
 ```
 
@@ -217,7 +688,39 @@ func (r *Resolver) GetAdvancedAnalytics(ctx context.Context) (*Analytics, error)
 - **A/B testing**: Built-in experimentation capabilities
 - **Easy integration**: SDKs for Go, Flutter, and web
 - **Self-host option**: Can migrate to self-hosted if needed
+- **Kill switches**: Instant feature disabling for emergencies
+- **Progressive rollout**: Gradual feature deployment with monitoring
 - **Alternative options**: Flagsmith (50k requests free), Unleash (self-hosted free)
+
+#### Feature Flag Best Practices
+```yaml
+conventions:
+  naming:
+    - Use lowercase with underscores
+    - Prefix with category (kill_, feature_, exp_, ops_, limit_)
+    - Be descriptive but concise
+    - Include version suffix for iterations (_v2, _v3)
+  
+  lifecycle:
+    - Create flag before feature development
+    - Test with internal users first
+    - Progressive rollout with monitoring
+    - Clean up after 100% rollout + 30 days
+    - Document in ADR for significant features
+  
+  safety:
+    - Always provide fallback values
+    - Implement timeout for flag evaluation (3s max)
+    - Cache flags locally with TTL
+    - Monitor error rates and auto-disable if needed
+    - Log all flag evaluations for audit trail
+  
+  rollout_stages:
+    1_internal: "email contains @company.com"
+    2_beta: "user_segment = beta OR organization_tier = enterprise"
+    3_canary: "5% random users"
+    4_gradual: "10% -> 25% -> 50% -> 75% -> 100%"
+    5_general: "100% with monitoring for 7 days"
 ```
 
 #### GraphQL Authorization Directives (Zero Trust)
