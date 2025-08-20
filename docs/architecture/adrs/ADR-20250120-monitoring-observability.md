@@ -1,7 +1,7 @@
 # ADR-20250120: Monitoring and Observability Strategy
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 Djinn requires a comprehensive monitoring and observability strategy that balances:
