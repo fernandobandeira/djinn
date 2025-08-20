@@ -33,7 +33,6 @@ pip-delete-this-directory.txt
 !.vector_db/kb_auto_indexer.py
 !.vector_db/migrate_to_enhanced.py
 !.vector_db/KB-INSTRUCTIONS.md
-!.vector_db/KB_ENHANCED_DOCUMENTATION.md
 !.vector_db/requirements.txt
 !.vector_db/requirements_enhanced.txt
 !.vector_db/setup_enhanced_kb.sh
