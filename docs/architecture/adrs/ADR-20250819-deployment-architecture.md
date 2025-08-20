@@ -1,7 +1,7 @@
 # ADR-20250819: Deployment Architecture
 
 ## Status
-Proposed (Updated with Ultra-Low-Cost MVP Options)
+Accepted
 
 ## Context
 Djinn requires a deployment architecture that balances:
