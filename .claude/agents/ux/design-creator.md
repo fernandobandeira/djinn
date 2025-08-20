@@ -205,10 +205,10 @@ Examples: [Usage scenarios]
 ```
 
 ## Output Destinations
-- Wireframes: `/docs/ux/design/wireframes/`
-- Prototypes: `/docs/ux/design/prototypes/`
-- Design System: `/docs/ux/design/design-system.md`
-- Specifications: `/docs/ux/design/specifications/`
+- Wireframes: `/docs/analysis/user/wireframes/`
+- Prototypes: `/docs/analysis/user/prototypes/`
+- Design System: `/docs/analysis/technical/design-system.md`
+- Specifications: `/docs/analysis/technical/specifications/`
 
 ## Reporting Protocol
 **TO ORCHESTRATOR ONLY**:

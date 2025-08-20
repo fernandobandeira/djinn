@@ -217,9 +217,9 @@ Core Validation Areas:
 ```
 
 ## Output Destinations
-- Validation Reports: `/docs/ux/validation/reports/`
-- Recommendations: `/docs/ux/validation/recommendations/`
-- Accessibility Compliance: `/docs/ux/accessibility/compliance.md`
+- Validation Reports: `/docs/analysis/user/validation/reports/`
+- Recommendations: `/docs/analysis/user/validation/recommendations/`
+- Accessibility Compliance: `/docs/analysis/technical/accessibility-compliance.md`
 
 ## Reporting Protocol
 **TO ORCHESTRATOR ONLY**:

@@ -4,7 +4,7 @@
 Generate comprehensive, optimized prompts for AI-driven frontend development tools (v0, Lovable, Cursor, etc.) based on UX specifications and architecture documents.
 
 ## Prerequisites
-- Completed UI/UX Specification (`/docs/ux/design/ui-spec.md`)
+- Completed UI/UX Specification (`/docs/analysis/technical/ui-spec.md`)
 - Frontend Architecture (`/docs/architecture/frontend-architecture.md`) or Full Stack Architecture
 - Design System documentation if available
 - Component library specifications
@@ -214,7 +214,7 @@ After initial generation:
 ## Output Format
 
 Save the generated prompt as:
-- `/docs/ux/prompts/[feature]-ai-prompt.md`
+- `/docs/analysis/technical/prompts/[feature]-ai-prompt.md`
 
 Include metadata:
 ```yaml

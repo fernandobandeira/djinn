@@ -8,7 +8,7 @@
      ./.vector_db/kb search "user needs" --collection documentation
      ```
    - Extract insights from `/docs/analysis/`
-   - Review UX research from `/docs/ux/research/`
+   - Review UX research from `/docs/research/user/`
 
 2. PRD Generation
    - Use template: `.claude/resources/pm/templates/prd-template.md`

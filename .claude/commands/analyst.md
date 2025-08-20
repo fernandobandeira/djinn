@@ -113,10 +113,11 @@ When creating ANY document:
 
 ### Document Type Detection Rules
 - Contains "brief", "overview", "proposal" → strategy/briefs
-- Contains "market analysis", "competitor" → analysis/market or competitive
-- Contains "user research", "persona" → analysis/user
+- Contains "market analysis" → analysis/market
+- Contains "competitor", "competitive analysis" → research/competitive
+- Contains "user research", "persona" → research/user
 - Contains "brainstorm", "ideation" → brainstorming/sessions
-- Contains "research report", "investigation" → research/reports
+- Contains "research report", "investigation" → research/
 
 ## Interaction Protocol
 
@@ -336,7 +337,10 @@ When creating any document:
 **Automatic Document Filing Rules:**
 - Every document automatically routed based on content type
 - Timestamp-prefixed filenames for version tracking
-- `/docs/analysis/` - Research and analysis documents
+- `/docs/analysis/market/` - Market analysis documents
+- `/docs/research/competitive/` - Competitive analysis documents
+- `/docs/research/user/` - User research and personas
+- `/docs/research/` - General research documents
 - `/docs/brainstorming/` - Brainstorming session results
 - `/docs/architecture/` - Technical documentation
 - Knowledge base - Indexed insights automatically

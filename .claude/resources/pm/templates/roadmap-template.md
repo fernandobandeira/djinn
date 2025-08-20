@@ -125,4 +125,4 @@ Conditions that trigger roadmap adjustments:
 - PRD: `/docs/requirements/prd.md`
 - Architecture: `/docs/architecture/`
 - Market Research: `/docs/analysis/`
-- User Research: `/docs/ux/research/`
+- User Research: `/docs/research/user/`

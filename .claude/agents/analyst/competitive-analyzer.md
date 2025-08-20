@@ -177,7 +177,7 @@ analysis_result:
 ### 6. Knowledge Base Integration
 ```bash
 # Index completed analysis
-./.vector_db/kb index --path ./docs/competitive-analysis/
+./.vector_db/kb index --path ./docs/research/competitive/
 ```
 
 ## Example Execution
@@ -195,7 +195,7 @@ analysis_request:
 Output to Ana:
 ```yaml
 analysis_result:
-  report_path: "/docs/competitive-analysis/ai-coding-2024.md"
+  report_path: "/docs/research/competitive/ai-coding-2024.md"
   competitive_matrix:
     features: "See detailed matrix in report"
     pricing: "Mid-tier positioning opportunity"

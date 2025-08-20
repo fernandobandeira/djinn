@@ -210,10 +210,10 @@ interface ComponentSpec {
 ```
 
 ## Output Destinations
-- Specifications: `/docs/ux/design/specifications/`
-- AI Prompts: `/docs/ux/prompts/`
-- Design Tokens: `/docs/ux/design/design-tokens.json`
-- Component Library: `/docs/ux/design/components/`
+- Specifications: `/docs/analysis/technical/specifications/`
+- AI Prompts: `/docs/analysis/technical/prompts/`
+- Design Tokens: `/docs/analysis/technical/design-tokens.json`
+- Component Library: `/docs/analysis/technical/components/`
 
 ## Reporting Protocol
 **TO ORCHESTRATOR ONLY**:

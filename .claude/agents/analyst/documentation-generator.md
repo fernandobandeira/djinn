@@ -227,7 +227,8 @@ Use template: `.claude/resources/analyst/templates/brainstorming-output.md`
 ```bash
 # Index generated documentation
 ./.vector_db/kb index --path ./docs/brainstorming/
-./.vector_db/kb index --path ./docs/analysis/
+./.vector_db/kb index --path ./docs/analysis/market/
+./.vector_db/kb index --path ./docs/research/
 ```
 
 ## Example Execution
@@ -287,9 +288,11 @@ documentation_result:
 ```
 /docs/
   /strategy/briefs/
-  /analysis/{subtype}/
-  /brainstorming/sessions/
-  /research/reports/
+  /analysis/market/
+  /research/competitive/
+  /research/user/
+  /research/
+  /brainstorming/
   /planning/
   /decisions/
 ```

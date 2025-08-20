@@ -4,7 +4,7 @@
 1. Collect Market Research
    - Search existing KB: `./.vector_db/kb search "market research" --collection documentation`
    - Load Ana's research from `/docs/analysis/`
-   - Review UX research from `/docs/ux/research/`
+   - Review UX research from `/docs/research/user/`
 
 2. Initial Research Synthesis
    - Extract key insights
