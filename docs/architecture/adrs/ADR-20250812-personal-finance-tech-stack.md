@@ -52,7 +52,7 @@ Building a personal finance application requiring:
 #### Infrastructure & Operations
 - **Observability**: OpenTelemetry + Prometheus + slog
 - **Caching**: Redis with go-redis/v9 (optional, for rate limiting)
-- **CSV Storage**: Local filesystem or S3/GCS (for CSV imports/exports only)
+- **File Storage**: MinIO (S3-compatible) for CSV imports/exports and data files
 - **CSV Parsing**: encoding/csv (stdlib sufficient)
 
 ### Key Architectural Decisions

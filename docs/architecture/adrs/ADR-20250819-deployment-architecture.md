@@ -42,14 +42,15 @@ deployment_architecture:
     what_you_get:
       - 2 vCPU AMD EPYC processors
       - 4GB RAM
-      - 40GB NVMe SSD (no file storage needed - OCR on-device)
+      - 40GB NVMe SSD (includes storage for CSV imports and MinIO)
       - 20TB bandwidth (essentially unlimited)
       - Full root access
       - Run complete backend stack:
         - PostgreSQL database
         - Go API server
         - Redis cache
-        - Receipt metadata storage (JSON only, no images)
+        - MinIO for file imports/exports
+        - ClamAV for malware scanning
         - Nginx for API gateway
         - Background job processors
         - Push notification workers
@@ -64,7 +65,7 @@ deployment_architecture:
   why_its_best:
     - Single server runs entire backend
     - No frontend hosting needed (mobile-only)
-    - 40GB storage included for receipts
+    - 40GB storage included for MinIO file storage
     - Complete control over API and data
     - No cold starts ever
     - Perfect for API-first architecture
@@ -91,9 +92,9 @@ deployment_architecture:
     - Zero-downtime deployments
     
   limitations:
-    - No built-in PostgreSQL (need database addon)
+    - No built-in file storage (need external solution)
     - Higher cost than VPS
-    - Database storage only (no file storage needed)
+    - Need separate file storage solution
     
   perfect_for:
     - Teams with no DevOps expertise
@@ -137,7 +138,7 @@ deployment_architecture:
     specs:
       - 4 vCPU, 8GB RAM, 80GB SSD
       - Handles 10K+ users easily
-      - 80GB storage for more receipts
+      - 80GB storage for more file imports/exports
       - Same stack as MVP phase
       
   mobile_app:
@@ -203,7 +204,7 @@ hetzner_scaling_path:
     cost: "€7.59/month"
     changes:
       - More CPU/RAM for growing load
-      - Larger storage for receipts
+      - Larger storage for file imports/exports
       - Add automated backups
       
   validated_product:

@@ -234,6 +234,24 @@ type Mutation {
     ocrData: OCRDataInput!
     transactionId: ID
   ): ProcessReceiptPayload!
+  
+  # File import operations
+  uploadImportFile(
+    file: Upload!
+    format: ImportFormat!
+  ): ImportJobPayload!
+  
+  confirmImport(
+    importId: ID!
+    mappings: ImportMappingInput
+  ): ImportConfirmPayload!
+  
+  # Data export operations  
+  requestExport(
+    type: ExportType!
+    format: ExportFormat!
+    dateRange: DateRangeInput
+  ): ExportJobPayload!
 }
 
 # Consistent payload pattern

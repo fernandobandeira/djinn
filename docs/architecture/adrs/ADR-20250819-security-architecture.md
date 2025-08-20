@@ -7,7 +7,7 @@ Accepted
 Djinn handles personal financial data requiring appropriate security measures:
 - Personal financial information (PII) and aggregated transaction history
 - Plaid access tokens for read-only bank connections
-- Receipt images potentially containing sensitive information
+- Receipt OCR data and imported CSV files containing transaction information
 - Budget and spending patterns revealing lifestyle details
 - Personal finance app with single-user data access (users only see own data)
 - Mobile app requiring secure offline/online synchronization
@@ -838,6 +838,7 @@ CREATE TABLE secure_credentials (
 | Account Numbers | Medium | DB encryption + masking | Display last 4 only | 7 years |
 | Transaction Data | Medium | TLS + DB encryption | PostgreSQL | 7 years |
 | Receipt OCR Data | Low | DB encryption | PostgreSQL (JSON) | 7 years |
+| Imported Files | Medium | MinIO encryption | MinIO (S3) | 7 days |
 | Email Addresses | Low | DB encryption | PostgreSQL | Until deletion |
 | User Preferences | Low | DB encryption | JSONB | Until deletion |
 

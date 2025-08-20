@@ -25,6 +25,7 @@ Djinn's Flutter mobile application requires robust offline-first data synchroniz
 ### Key Requirements
 - Users must be able to create, edit, and delete transactions offline
 - Receipt OCR processing offline with Google ML Kit, sync metadata only
+- CSV/data import files uploaded directly to server for processing
 - Institution hierarchy maintained (system institutions cached locally)
 - Transfer transactions must sync atomically (both sides together)
 - Credit card statement data sync separate from transactions

@@ -34,7 +34,7 @@ Users (root tenant)
 ├── Categories (hierarchical, user-customizable)
 ├── Budgets (monthly/weekly/custom periods)
 ├── Rules (auto-categorization)
-├── Receipts (OCR metadata only, no images)
+├── Receipts (OCR data + import file references)
 └── Merchants (shared but user-enrichable)
 
 Institutions (shared + user-customizable)
@@ -378,8 +378,11 @@ CREATE TABLE receipts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     transaction_id UUID REFERENCES transactions(id) ON DELETE SET NULL,  -- Nullable, matched later
-    ocr_data JSONB NOT NULL,                       -- Extracted OCR data (no image stored)
-    -- No thumbnail_url needed (images stay on device)
+    -- OCR data from on-device processing
+    ocr_data JSONB,                                -- OCR data from mobile (nullable for imports)
+    -- File references for CSV/data imports
+    import_file_url TEXT,                          -- MinIO URL for imported files
+    import_job_id UUID REFERENCES import_jobs(id), -- Link to import job
     ocr_status TEXT DEFAULT 'pending',             -- pending, processing, completed, failed
     ocr_provider TEXT,                              -- azure, google, textract
     ocr_raw_response JSONB,                        -- Raw OCR response
