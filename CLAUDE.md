@@ -10,6 +10,33 @@ Today's date is provided in the environment context. All agents and sub-agents s
 ## Knowledge Base System
 `.vector_db/KB-INSTRUCTIONS.md`
 
+### MANDATORY: Knowledge Base Usage for All Agents
+
+**CRITICAL**: All command agents MUST use the kb-analyst sub-agent for project discovery and search operations. Direct file system commands (find, grep, ls) should NEVER be used for searching project information.
+
+#### Required Initial Workflow for Commands
+When any command agent is activated and asked to analyze a project, they MUST:
+1. FIRST delegate to kb-analyst for initial project discovery
+2. Use kb-analyst for all subsequent searches
+3. Never use raw Bash commands for file discovery (find, grep, ls)
+4. Use Read/Glob/Grep tools only AFTER kb-analyst provides specific file paths
+
+#### Example: Proper Project Analysis Start
+```python
+# CORRECT - Using kb-analyst
+Task(
+  subagent_type="kb-analyst",
+  description="Initial project discovery",
+  prompt="Agent context: [agent_type]
+         Search query: project overview requirements documentation
+         Collection focus: documentation, architecture, zettelkasten
+         Detail level: comprehensive"
+)
+
+# WRONG - Using raw commands
+Bash("find . -name '*.md' | grep -E 'readme|design'")
+```
+
 ### Custom Commands
 - **analyst**: Use `/analyst` to invoke Ana the business analyst (research, brainstorming, competitive analysis)
 - **ux**: Use `/ux` to invoke Ulysses the UX Designer (user research, personas, wireframes, prototypes, design specs)

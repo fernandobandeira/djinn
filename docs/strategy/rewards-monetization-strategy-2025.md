@@ -1,20 +1,29 @@
 # Djinn Rewards & Monetization Strategy
-*Comprehensive Points System and Redemption Framework*
+*Comprehensive Points System and Redemption Framework - Trial-to-Premium Model*
 
-Generated: 2025-01-20
-Status: Strategic Planning Document
-Version: 1.0
+Generated: 2025-01-21
+Status: Strategic Planning Document  
+Version: 2.0
 
 ## Executive Summary
 
-This document outlines the complete rewards strategy for Djinn, designed to achieve 20-36% weekly active scanning rate (vs. 5-10% baseline) by delivering $5-10 monthly value through the "Lamp Points" system.
+This document outlines the complete rewards strategy for Djinn's **mandatory trial-to-premium model**, designed to achieve 48.8% trial conversion and 20-36% weekly active scanning rate by delivering $5-10 monthly value through the "Lamp Points" system. Users must sign up for a 7-day trial with payment information to access the app.
 
-## Core Principle: $5-10 Monthly Value Minimum
-**Exchange Rate**: 1,000 points = $1.00 value (transparent, simple)
+## Business Model: Mandatory Trial-to-Premium
+
+### No Free Tier Access
+- **Entry Requirement**: 7-day trial signup with payment method
+- **Trial Benefits**: 500 starter points + full premium features
+- **Conversion Target**: 48.8% trial-to-paid
+- **Premium Price**: $7.99/month or $59/year
+
+## Core Principle: Points Drive Engagement & Conversion
+**Exchange Rate**: 1,000 points = $1.00 perceived value
+**Purpose**: Create habit loops during trial, drive premium conversion
 
 ---
 
-# Full Redemption Strategy (All Phases)
+# Full Redemption Strategy (Trial-Optimized)
 
 ## Primary Redemption Categories
 
@@ -90,13 +99,23 @@ This document outlines the complete rewards strategy for Djinn, designed to achi
 
 # Point Earning Structure
 
-## Base Earning Rates
-- **Receipt Scan**: 100 points (base)
+## Trial Period Earning (7 Days)
+- **Welcome Bonus**: 500 points immediately
+- **Receipt Scan**: 100 points each
 - **First Daily Scan**: 200 points (double)
-- **Weekend Scans**: 150 points (1.5x)
-- **Perfect Week** (7 days): +1,000 bonus
-- **Email Receipt Forward**: 50 points
-- **Transaction Categorization**: 10 points per correction
+- **Complete Onboarding**: 300 points
+- **First AI Wish**: 150 bonus points
+- **Trial Challenge**: Complete 5 scans = 500 bonus
+- **Maximum Trial Earnings**: ~2,500 points
+
+## Premium Member Earning
+- **Monthly Allowance**: 1,000 points (auto-credited)
+- **Receipt Scan**: 200 points (2x multiplier)
+- **First Daily Scan**: 400 points
+- **Weekend Scans**: 300 points (1.5x premium rate)
+- **Perfect Week** (7 days): +2,000 bonus
+- **Email Receipt Forward**: 100 points
+- **Transaction Categorization**: 20 points per correction
 
 ## Streak Bonuses (Habit Formation)
 - **7-day streak**: +500 bonus
@@ -118,10 +137,18 @@ This document outlines the complete rewards strategy for Djinn, designed to achi
 - **Community Helper**: 500 points for helping others
 
 ## Monthly Earning Potential
-- **Casual User** (5 scans/month): 500-750 points ($0.50-0.75 value)
-- **Regular User** (20 scans/month): 2,500-3,500 points ($2.50-3.50 value)
-- **Power User** (50+ scans/month): 7,500-10,000 points ($7.50-10 value)
-- **Maximum Possible** (with all bonuses): 15,000-20,000 points ($15-20 value)
+
+### Trial Period (7 Days)
+- **Minimal Engagement**: 500-750 points (welcome + 2 scans)
+- **Moderate Engagement**: 1,500-2,000 points (5+ scans)
+- **High Engagement**: 2,500+ points (daily use, challenges)
+
+### Premium Members
+- **Base (No Activity)**: 1,000 points (monthly allowance)
+- **Casual User** (5 scans/month): 2,000-2,500 points
+- **Regular User** (20 scans/month): 5,000-6,000 points
+- **Power User** (50+ scans/month): 10,000-15,000 points
+- **Maximum Possible** (with all bonuses): 20,000+ points
 
 ---
 

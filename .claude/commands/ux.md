@@ -29,25 +29,51 @@ What UX challenge are you working on today?
 ```
 
 ## Resource Loading Protocol
-**AUTO-LOADED ON ACTIVATION:**
-@.claude/resources/ux/protocols/advanced-elicitation.md
 
-When conducting research or creating designs:
-```bash
-# Load core UX resources as needed
+### MANDATORY Initial Project Discovery
+When asked to analyze a project or "look at what we have", ALWAYS START with kb-analyst:
+
+```python
+# STEP 1: MANDATORY KB-Analyst Project Discovery
+Task(
+  subagent_type="kb-analyst",
+  description="Comprehensive UX project discovery",
+  prompt="Agent context: ux_designer
+         Search query: project overview user requirements design patterns UI components
+         Collection focus: documentation, architecture, zettelkasten
+         Priority entities: user_experience, design_system, frontend, accessibility
+         Detail level: comprehensive
+         Purpose: Initial UX context understanding"
+)
+
+# STEP 2: Search for Existing User Research
+Task(
+  subagent_type="kb-analyst",
+  description="Find existing user research",
+  prompt="Agent context: ux_designer
+         Search query: user research personas journey maps feedback
+         Collection focus: documentation, zettelkasten
+         Priority entities: user_research, personas, customer_feedback
+         Detail level: detailed"
+)
+
+# STEP 3: Architecture and Constraints
+Task(
+  subagent_type="kb-analyst",
+  description="Architecture affecting UX",
+  prompt="Agent context: ux_designer
+         Search query: architecture frontend constraints performance
+         Collection focus: architecture, documentation
+         Priority entities: frontend_architecture, design_constraints
+         Detail level: technical"
+)
+
+# ONLY AFTER KB discovery, load specific templates if needed:
 THEN load .claude/resources/ux/templates/persona-template.md
 THEN load .claude/resources/ux/templates/journey-map-template.md
 THEN load .claude/resources/ux/templates/frontend-spec-template.md
-THEN load .claude/resources/ux/tasks/generate-ai-frontend-prompt.md
 
-# Load context from knowledge base
-THEN search kb for "market research" --collection documentation
-THEN search kb for "user requirements" --collection documentation
-THEN search kb for "architecture" --collection architecture
-THEN load /docs/analysis/ for business context
-THEN load /docs/requirements/prd.md if exists
-
-# Output paths
+# Output paths remain the same:
 User Research → /docs/research/user/
 Personas → /docs/research/user/
 Journey Maps → /docs/analysis/user/
@@ -56,6 +82,9 @@ AI Prompts → /docs/analysis/technical/
 Wireframes → /docs/analysis/user/
 Design System → /docs/analysis/technical/design-system.md
 ```
+
+**AUTO-LOADED ON ACTIVATION:**
+@.claude/resources/ux/protocols/advanced-elicitation.md
 
 ## Available Commands
 - *help: Show all available commands with descriptions
@@ -71,6 +100,14 @@ Design System → /docs/analysis/technical/design-system.md
 - *status: Show current UX workflow state and progress
 - *templates: List and access available UX templates
 - *exit: Exit UX mode
+
+## CRITICAL: Project Analysis Workflow
+
+When user asks to "look at the project" or "analyze from UX perspective":
+1. **MUST** use kb-analyst FIRST (never start with Bash/find/grep)
+2. **THEN** analyze KB results to understand project context
+3. **ONLY THEN** read specific files identified by KB
+4. **FINALLY** provide UX recommendations based on findings
 
 ## Enhanced Capabilities
 

@@ -29,37 +29,45 @@
 
 ## Engagement System
 
-### On-Demand Wish Loop
-**Core Mechanic**: Complete Wish → Earn Points → AI generates new personalized wish → Repeat
+### Trial-to-Premium Model
+**No Free Tier**: 7-day mandatory trial with payment info required
+- **Trial Points**: 500 starter points to experience AI wishes
+- **Trial Features**: Full premium access for 7 days
+- **Conversion Target**: 48.8% trial-to-paid at $7.99/month
 
-**Wish Types**:
-1. **Quick Wins** (5-10 min): "Scan 3 receipts" = 50 points
-2. **Discovery** (instant): "Find most expensive subscription" = 100 points
-3. **Challenges** (1-3 days): "Reduce delivery spending 20%" = 300 points
-4. **Learning** (2 min): "Categorize 10 transactions" = 75 points
-5. **Optimization** (varies): "Cancel 1 unused subscription" = 200 points
+### Points-Driven Wish Loop
+**Core Mechanic**: Earn Points → Make AI Wishes → Get Value → Convert to Premium
 
-**Cooldown System**:
-- **Free Users**: Big wishes every 72 hours, unlimited small wishes
-- **Premium Users**: Big wishes every 24 hours, unlimited small wishes
-- No streak pressure - engagement at user's own pace
+**AI Wish Types & Costs**:
+1. **Quick Analysis** (200 pts): "What's my biggest expense?"
+2. **Savings Finder** (300 pts): "Find subscriptions to cancel"
+3. **Comparison** (400 pts): "Am I overpaying for groceries?"
+4. **Tax Helper** (2,000 pts): "Find all tax deductions"
+5. **Investment Advisor** (3,000 pts): "Analyze for investment potential"
 
-### Points & Rewards
+**Points System**:
+- **Trial Users**: 100 points per receipt scan, 500 starter bonus
+- **Premium Users**: 200 points per scan, 1,000 monthly allowance
+- No pay-to-win - points earned through engagement only
+
+### Points Shop & Rewards
 
 **Points Economy**:
-- Points earned through wishes only (no pay-to-win)
-- Non-monetary rewards maintain trust
+- Earned through receipt scanning and engagement
+- Monthly allowance for premium members (1,000 pts)
+- Non-monetary rewards during MVP phase
 
-**Redemption Options**:
-- 300 pts: Djinn costume changes
-- 500 pts: 10 extra OCR scans
-- 600 pts: Animated reactions
-- 1000 pts: Early feature access
-- 1500 pts: Priority support (1 month)
-- 2000 pts: Unlimited custom categories
+**Primary Redemptions (Trial & Premium)**:
+- 200-500 pts: Basic AI wishes during trial
+- 500 pts: Extra AI wish token
+- 1,000 pts: Bulk OCR processing (50 receipts)
+- 1,500 pts: Tax-ready export reports
+- 2,000 pts: Premium AI wishes
+- 2,000 pts: Priority support (1 month)
+- 3,000 pts: Advanced financial analysis
 
 **Status Levels**:
-1. Apprentice (0-1K points)
+1. Apprentice (0-1K points lifetime)
 2. Saver (1K-5K points)
 3. Master (5K-15K points)
 4. Legend (15K+ points)
