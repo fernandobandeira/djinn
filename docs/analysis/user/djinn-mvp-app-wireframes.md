@@ -19,19 +19,36 @@ This document contains the main application screens (11-18) from the Djinn perso
 
 ## Core Application Screens
 
-### 11. Main Dashboard (Regular)
+### 11. Main Dashboard (Multi-Account View)
 ```
 ┌─────────────────────────────────┐
-│ 🏦 All Accounts    [Lamp] 600pts│ ← Points balance visible
+│ 🏦 All Accounts ▼  [Lamp] 600pts│ ← Account selector
 │                         🔥 3     │ ← Streak counter
 ├─────────────────────────────────┤
 │                                 │
 │  Good morning, Sarah! ☀️       │
 │                                 │
 │  ┌────────────────────────┐    │
-│  │ Total Balance          │    │ ← Primary card
+│  │ Total Balance          │    │ ← All accounts total
 │  │ $12,847.23            │    │
 │  │ ↑ $523 from last month │    │ ← Green for positive
+│  └────────────────────────┘    │
+│                                 │
+│  Your Accounts:                │
+│  ┌────────────────────────┐    │
+│  │ 🏦 Chase Checking      │    │ ← Institution shown
+│  │ ****4521              │    │ ← Masked account
+│  │ $4,892.15             │    │
+│  └────────────────────────┘    │
+│  ┌────────────────────────┐    │
+│  │ 💳 Chase Sapphire      │    │ ← Card name
+│  │ ****7823              │    │
+│  │ -$1,247 / $5,000      │    │ ← Balance/Limit
+│  └────────────────────────┘    │
+│  ┌────────────────────────┐    │
+│  │ 🏦 Ally Savings        │    │
+│  │ ****9012              │    │
+│  │ $9,202.97             │    │
 │  └────────────────────────┘    │
 │                                 │
 │  This Month's Spending          │
@@ -60,9 +77,74 @@ This document contains the main application screens (11-18) from the Djinn perso
 - Points balance always visible
 - Streak counter for engagement
 - Personalized greeting with time of day
-- Account aggregation selector
+- Multi-account view with institutions
+- Account numbers masked for security
+- Credit card utilization shown
+- Account selector dropdown
 - Quick access to primary actions
 - Visual budget progress indicator
+
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ All family accounts with institutions clearly shown
+- ✅ Account numbers masked for privacy
+- ✅ Can see credit utilization at a glance
+- **Result**: Complete financial picture with security
+
+**Zoe (Digital Native, 25)**
+- ✅ Multiple cards tracked separately
+- ✅ Institution names help organize
+- ✅ Credit limit prevents overspending
+- **Result**: Manages multiple cards effectively
+
+**Alex (Financial Freshman, 19)**
+- ✅ Sees checking vs credit card clearly
+- ✅ Credit utilization helps learn limits
+- ✅ Simple institution labels
+- **Result**: Learns responsible credit usage
+
+### 11A. Account Selector Dropdown
+```
+┌─────────────────────────────────┐
+│ Select Accounts to View         │
+├─────────────────────────────────┤
+│                                 │
+│  [✓] All Accounts              │ ← Selected
+│      Total: $12,847.23         │
+│                                 │
+│  ─────────────────────────     │
+│                                 │
+│  [ ] 🏦 Chase                   │ ← Institution group
+│      ├ [✓] Checking ****4521   │
+│      │     $4,892.15           │
+│      └ [✓] Sapphire ****7823   │
+│           -$1,247 / $5,000     │
+│                                 │
+│  [ ] 🏦 Ally Bank               │
+│      └ [✓] Savings ****9012    │
+│           $9,202.97            │
+│                                 │
+│  [ ] 💳 American Express        │
+│      └ [ ] Platinum ****1234   │
+│           -$523 / $10,000      │
+│                                 │
+│  [✓] 💵 Cash Transactions       │ ← Include cash
+│      This month: $234.50       │
+│                                 │
+│  ─────────────────────────     │
+│                                 │
+│  [Apply Filter]                │
+│                                 │
+└─────────────────────────────────┘
+```
+
+**Key Features**:
+- Multi-select account filtering
+- Group by institution
+- Shows balances for each account
+- Cash transactions toggle
+- Quick "All Accounts" option
 
 ### 12. AI Wishes Screen
 ```
@@ -91,14 +173,14 @@ This document contains the main application screens (11-18) from the Djinn perso
 │  ┌────────────────────────┐    │
 │  │ "Build me a budget to   │    │
 │  │  save $500/month"       │    │
-│  │ 🪙 2000 credits         │    │ ← Premium wish
+│  │ 🪙 2000 points          │    │ ← Premium wish
 │  └────────────────────────┘    │
 │                                 │
 │  Recent Wishes:                 │
 │  • "Show my subscriptions" ✓    │
 │  • "Coffee spending trend" ✓    │
 │                                 │
-│  [Get More Credits] ←───────    │ ← Link to store
+│  [Get More Points] ←────────    │ ← Link to store
 └─────────────────────────────────┘
 ```
 
@@ -108,6 +190,26 @@ This document contains the main application screens (11-18) from the Djinn perso
 - Popular question templates
 - Recent query history
 - Direct link to purchase points
+
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ Natural language interface feels intuitive
+- ✅ Clear point costs shown upfront
+- ✅ Query history for expense report insights
+- **Result**: Trusts the transparent pricing model
+
+**Zoe (Digital Native, 25)**
+- ✅ Popular questions match her needs perfectly
+- ✅ Recent wishes show AI learning patterns
+- ✅ Direct link to buy more points
+- **Result**: Engaged with AI assistant daily
+
+**Alex (Financial Freshman, 19)**
+- ✅ Can ask questions in plain English
+- ✅ "What am I wasting money on?" resonates
+- ⚠️ 2000 points for budget seems expensive
+- **Recommendation**: Offer starter questions at 250 points
 
 ### 13. Wish Processing
 ```
@@ -135,6 +237,26 @@ This document contains the main application screens (11-18) from the Djinn perso
 - Transparency about data being analyzed
 - Cancel option for long queries
 
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ Shows exact number of transactions analyzed
+- ✅ Transparency about which accounts accessed
+- ✅ Cancel option provides control
+- **Result**: Trusts the data processing transparency
+
+**Zoe (Digital Native, 25)**
+- ✅ Engaging lamp animation during wait
+- ✅ Sparkles make processing feel magical
+- ✅ Progress bar shows it's actually working
+- **Result**: Entertained while waiting
+
+**Alex (Financial Freshman, 19)**
+- ✅ Cool animations hold attention
+- ✅ Cancel button if impatient
+- ⚠️ "847 transactions" might feel overwhelming
+- **Recommendation**: Use friendlier language like "Looking through your purchases"
+
 ### 14. Wish Results
 ```
 ┌─────────────────────────────────┐
@@ -146,18 +268,24 @@ This document contains the main application screens (11-18) from the Djinn perso
 │                                 │
 │  ┌────────────────────────┐    │
 │  │ 1. Coffee: $47/month    │    │ ← Insight cards
-│  │    Make coffee at home  │    │
-│  │    3 days/week = $28    │    │
+│  │    Chase Sapphire: $38  │    │ ← Card breakdown
+│  │    Cash: $9            │    │
+│  │    Make at home 3x/week │    │
+│  │    Save: $28           │    │
 │  └────────────────────────┘    │
 │  ┌────────────────────────┐    │
 │  │ 2. Subscriptions: $23   │    │
 │  │    Cancel Hulu (unused) │    │
+│  │    On: Amex ****1234    │    │ ← Shows which card
 │  │    Last watched: 47 days│    │
 │  └────────────────────────┘    │
 │  ┌────────────────────────┐    │
 │  │ 3. Dining: $156/month   │    │
-│  │    One less dinner out   │    │
-│  │    Average meal: $43     │    │
+│  │    Multiple cards used: │    │
+│  │    • Sapphire: $89 (57%)│    │ ← Rewards card
+│  │    • Checking: $45 (29%)│    │
+│  │    • Cash: $22 (14%)    │    │
+│  │    Skip 1 dinner = $43  │    │
 │  └────────────────────────┘    │
 │                                 │
 │  Total Savings: $94/month 🎉   │
@@ -168,28 +296,54 @@ This document contains the main application screens (11-18) from the Djinn perso
 
 **Key Features**:
 - Actionable insights with specific amounts
+- Shows which accounts/cards involved
+- Breakdown by payment method
 - Clear savings opportunities
 - Evidence-based recommendations
 - Share functionality for social engagement
 - Total impact summary
 
-### 15. Transactions Screen
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ Specific dollar amounts for each saving
+- ✅ Actionable steps ("3 days/week")
+- ✅ Evidence-based recommendations
+- **Result**: Implements suggestions immediately
+
+**Zoe (Digital Native, 25)**
+- ✅ Share button for social bragging
+- ✅ Catches forgotten subscriptions
+- ✅ Total savings shown prominently
+- **Result**: Shares wins on Instagram stories
+
+**Alex (Financial Freshman, 19)**
+- ✅ Average meal cost makes sense
+- ✅ Simple actions to take
+- ✅ Celebration emoji for wins
+- **Result**: Finally understands spending patterns
+
+### 15. Transactions Screen (With Receipt Status)
 ```
 ┌─────────────────────────────────┐
 │ ← Back         Filter: All ▼    │
 │                                 │
 │        Transactions             │
 │                                 │
+│  [💵 Add Cash] [📷 Receipt]     │ ← Quick actions
+│                                 │
 │  Today                          │
 │  ┌────────────────────────┐    │
 │  │ Starbucks              │    │
 │  │ Coffee & Snacks  ☕    │    │
+│  │ Chase Sapphire ****7823│    │ ← Card used
 │  │ -$12.47         10:32am│    │
 │  │ [📷 Add Receipt]       │    │ ← CTA on each transaction
 │  └────────────────────────┘    │
 │  ┌────────────────────────┐    │
 │  │ Shell Gas Station      │    │
 │  │ Transportation  ⛽      │    │
+│  │ Chase Checking ****4521│    │ ← Debit used
 │  │ -$45.23         8:15am │    │
 │  │ [📷 Add Receipt]       │    │
 │  └────────────────────────┘    │
@@ -198,14 +352,26 @@ This document contains the main application screens (11-18) from the Djinn perso
 │  ┌────────────────────────┐    │
 │  │ Netflix               │    │
 │  │ Subscription  📺  [🔄] │    │ ← Recurring indicator
+│  │ Amex ****1234          │    │
 │  │ -$15.99               │    │
 │  └────────────────────────┘    │
 │  ┌────────────────────────┐    │
 │  │ Whole Foods           │    │
 │  │ Groceries  🛒         │    │
+│  │ Chase Sapphire ****7823│    │
 │  │ -$127.84              │    │
-│  │ ✅ Receipt attached    │    │ ← Already has receipt
+│  │ ✅ Receipt matched     │    │ ← Receipt status shown
 │  └────────────────────────┘    │
+│  ┌────────────────────────┐    │
+│  │ Amazon                │    │
+│  │ Shopping  📦          │    │
+│  │ Amex ****1234          │    │
+│  │ -$89.99               │    │
+│  │ 🔄 Receipt pending    │    │ ← Pending match status
+│  └────────────────────────┘    │
+│                                 │
+│  Floating action button:        │
+│         [➕]                    │ ← FAB for quick add
 │                                 │
 ├─────────────────────────────────┤
 │ [🏠] [💳] [✨] [📊] [👤]      │
@@ -214,18 +380,54 @@ This document contains the main application screens (11-18) from the Djinn perso
 
 **Key Features**:
 - Chronological transaction list
+- Shows account/card used for each transaction
+- Quick buttons for cash and receipt entry
 - Category icons for quick scanning
 - Receipt attachment CTAs
 - Recurring transaction indicators
-- Filter capabilities
+- Filter capabilities (All, Cards, Cash)
 
-### 15A. Adding Receipt Photo
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ Can see which card was used for each purchase
+- ✅ Cash tracking for complete picture
+- ✅ Receipt attachment for tax documentation
+- **Result**: Complete expense tracking across all payment methods
+
+**Zoe (Digital Native, 25)**
+- ✅ Quick cash entry button for split bills
+- ✅ Card details help track rewards
+- ✅ Filter by payment type
+- **Result**: Never misses tracking any expense
+
+**Alex (Financial Freshman, 19)**
+- ✅ Cash button for campus purchases
+- ✅ Sees which card was charged
+- ✅ Manual entry for unbanked spending
+- **Result**: Learns to track everything
+
+### 15A. Adding Receipt Photo (Works Offline)
 ```
 ┌─────────────────────────────────┐
 │ ← Cancel                        │
 │                                 │
 │      Add Receipt Photo          │
-│        Starbucks               │
+│                                 │
+│  How did you pay?               │ ← Payment method
+│  ┌────────────────────────┐    │
+│  │ 💳 Chase Sapphire     │    │ ← Default last used
+│  │    ****7823     [✓]    │    │
+│  └────────────────────────┘    │
+│  ┌────────────────────────┐    │
+│  │ 🏦 Chase Checking     │    │
+│  │    ****4521     [ ]    │    │
+│  └────────────────────────┘    │
+│  ┌────────────────────────┐    │
+│  │ 💵 Cash               │    │
+│  │    For tax records    │    │ ← Still useful
+│  │    No points    [ ]    │    │ ← Clear expectation
+│  └────────────────────────┘    │
 │                                 │
 │  ┌────────────────────────┐    │
 │  │                        │    │
@@ -241,11 +443,6 @@ This document contains the main application screens (11-18) from the Djinn perso
 │  │                        │    │
 │  └────────────────────────┘    │
 │                                 │
-│  Tips for best results:         │
-│  • Good lighting               │
-│  • Flat receipt                │
-│  • All text visible            │
-│                                 │
 │  [📷 Capture] ←─────────        │ ← Main action
 │  [📁 Choose from Gallery]       │ ← Alternative
 │                                 │
@@ -253,17 +450,38 @@ This document contains the main application screens (11-18) from the Djinn perso
 ```
 
 **Key Features**:
+- Payment method selector upfront
+- Defaults to last used card
+- Cash option for non-trackable purchases
 - Camera integration with guide overlay
-- Clear capture instructions
-- Gallery option for existing photos
-- Transaction context (Starbucks)
+- Works offline - syncs when connected
 
-### 15B. Receipt Captured (Matched)
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ Can select correct card for tax categorization
+- ✅ Cash option for untraceable purchases
+- ✅ Works without internet connection
+- **Result**: Accurate expense tracking for taxes
+
+**Zoe (Digital Native, 25)**
+- ✅ Quick card selection speeds up process
+- ✅ Remembers last used payment method
+- ✅ Camera guide makes it foolproof
+- **Result**: Faster, more accurate receipt capture
+
+**Alex (Financial Freshman, 19)**
+- ✅ Learns which card was used for what
+- ✅ Cash option for campus purchases
+- ✅ Simple selection interface
+- **Result**: Better understanding of payment methods
+
+### 15B. Receipt Captured (Saved for Processing)
 ```
 ┌─────────────────────────────────┐
-│ ← Retake              Save →    │
+│ ← Retake              Done →    │
 │                                 │
-│      Receipt Captured!          │
+│      Receipt Saved! ✓           │
 │                                 │
 │  ┌────────────────────────┐    │
 │  │ [Receipt Image Preview] │    │
@@ -278,69 +496,275 @@ This document contains the main application screens (11-18) from the Djinn perso
 │  │                        │    │
 │  └────────────────────────┘    │
 │                                 │
-│  ✅ Matched: Starbucks $12.47   │ ← Transaction match
-│  ✨ +50 Points earned!          │
+│  🔄 Processing Receipt           │ ← Processing status
 │                                 │
-│  ℹ️ Receipt matched to your bank │
-│    transaction from today       │ ← Verification message
+│  We're checking for matching    │
+│  transactions in your accounts. │
 │                                 │
-│  Note: Full item details coming │
-│  in Phase 2 with OCR!           │
+│  • If matched: +50 points       │
+│  • Usually takes: 1-5 minutes   │
+│  • You'll be notified           │
 │                                 │
-│   [Save Receipt] ←──────        │
+│  📱 Keep uploading! Even if the │
+│     transaction hasn't posted   │
+│     yet, we'll match it later. │
+│                                 │
+│   [Upload Another]   [Done]     │
 │                                 │
 └─────────────────────────────────┘
 ```
 
 **Key Features**:
-- Receipt preview with basic OCR
-- Transaction matching confirmation
-- Points reward for successful match
-- Clear next steps
+- Receipt saved immediately
+- Async processing explained
+- Timeline expectations (1-5 minutes)
+- Points pending until matched
+- Encourages continuous uploading
 
-### 15C. Receipt Captured (No Match)
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ Receipt saved immediately for records
+- ✅ Clear processing timeline
+- ✅ Async matching works in background
+- **Result**: Batch uploads all receipts quickly
+
+**Zoe (Digital Native, 25)**
+- ✅ Can keep uploading without waiting
+- ✅ Notification coming for points
+- ✅ Upload flow is fast like stories
+- **Result**: Uploads receipts rapid-fire
+
+**Alex (Financial Freshman, 19)**
+- ✅ Simple "saved" confirmation
+- ✅ Understanding of 1-5 minute wait
+- ✅ Can upload before transaction posts
+- **Result**: Uploads right after purchase
+
+### 15C. Receipt Status - Matched
 ```
 ┌─────────────────────────────────┐
-│ ← Retake           Save Anyway →│
+│        Notification             │
+├─────────────────────────────────┤
 │                                 │
-│      Receipt Captured          │
+│    ✅ Receipt Matched!          │
+│                                 │
+│  Your Starbucks receipt was     │
+│  matched to a transaction       │
 │                                 │
 │  ┌────────────────────────┐    │
-│  │ [Receipt Image Preview] │    │
+│  │ Starbucks              │    │
+│  │ Today, 10:32am         │    │
+│  │ $12.47                 │    │
 │  │                        │    │
-│  │  TARGET                │    │
-│  │  ---------------       │    │
-│  │  Items...              │    │
-│  │  ---------------       │    │
-│  │  Total:        $47.23  │    │
-│  │                        │    │
+│  │ ✨ +50 points earned!  │    │
 │  └────────────────────────┘    │
 │                                 │
-│  ⚠️ No matching transaction      │ ← Warning
+│  Total points: 1,300            │
 │                                 │
-│  We couldn't find a Target      │
-│  transaction for $47.23 in      │
-│  your connected accounts.       │
-│                                 │
-│  Possible reasons:              │
-│  • Transaction hasn't posted    │
-│  • Used different payment       │
-│  • Receipt from another day     │
-│                                 │
-│  No points awarded unless       │
-│  matched to bank transaction    │ ← Clear policy
-│                                 │
-│   [Try Different Receipt]       │
-│   [Save Without Points]         │
+│  [View Details]  [Dismiss]      │
 │                                 │
 └─────────────────────────────────┘
 ```
 
 **Key Features**:
-- Clear mismatch explanation
+- Notification when async match completes
+- Points awarded after successful match
+- Links to transaction details
+- Shows updated point balance
+
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ Clear confirmation of successful match
+- ✅ Points automatically added
+- ✅ Can verify transaction details
+- **Result**: Trusts the matching system
+
+**Zoe (Digital Native, 25)**
+- ✅ Push notification creates engagement
+- ✅ Points feel like rewards
+- ✅ Quick dismiss option
+- **Result**: Excited when matches happen
+
+**Alex (Financial Freshman, 19)**
+- ✅ Simple success notification
+- ✅ Free points earned
+- ✅ Clear connection to purchase
+- **Result**: Motivated to keep uploading
+
+### 15D. Manual Cash Transaction Entry
+```
+┌─────────────────────────────────┐
+│ ← Cancel                Save →  │
+│                                 │
+│    Add Cash Transaction         │
+│                                 │
+│  Have the receipt?              │
+│  ┌────────────────────────┐    │
+│  │ 📷 Yes, scan receipt   │    │ ← Redirects to camera
+│  │    (Easier & faster)   │    │
+│  └────────────────────────┘    │
+│  ┌────────────────────────┐    │
+│  │ ✏️ No, enter manually  │    │ ← Shows form below
+│  │    [Selected]          │    │
+│  └────────────────────────┘    │
+│                                 │
+│  ─────────────────────────     │
+│                                 │
+│  ┌────────────────────────┐    │
+│  │ Amount:                │    │
+│  │ $[     ]               │    │ ← Numeric input
+│  └────────────────────────┘    │
+│                                 │
+│  ┌────────────────────────┐    │
+│  │ Where:                 │    │
+│  │ [Merchant name...   ]  │    │ ← Text input
+│  └────────────────────────┘    │
+│                                 │
+│  Category:                     │
+│  ┌────────────────────────┐    │
+│  │ 🍔 Food & Dining   [✓] │    │ ← Quick select
+│  └────────────────────────┘    │
+│  ┌────────────────────────┐    │
+│  │ 🚗 Transportation   [ ] │    │
+│  └────────────────────────┘    │
+│  ┌────────────────────────┐    │
+│  │ 🛒 Shopping         [ ] │    │
+│  └────────────────────────┘    │
+│                                 │
+│  ┌────────────────────────┡    │
+│  │ Notes (optional):      │    │
+│  │ [                   ]  │    │
+│  └────────────────────────┘    │
+│                                 │
+│  💡 Cash purchases won't earn   │
+│     points but help track      │
+│     your complete spending     │
+│                                 │
+└─────────────────────────────────┘
+```
+
+**Key Features**:
+- Receipt check upfront to guide user
+- Redirects to camera if receipt available
+- Manual entry only if no receipt
+- Category selection for budgeting
+- No points for cash (clearly stated)
+- Helps complete spending picture
+
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ Smart routing based on receipt availability
+- ✅ Receipt capture for tax documentation
+- ✅ Manual fallback when needed
+- **Result**: Efficient cash expense tracking
+
+**Zoe (Digital Native, 25)**
+- ✅ Guided to fastest input method
+- ✅ Receipt photo is quicker than typing
+- ✅ Category icons make it visual
+- **Result**: Uses receipt capture whenever possible
+
+**Alex (Financial Freshman, 19)**
+- ✅ Clear choice between methods
+- ✅ Learns receipts are valuable
+- ✅ Simple manual entry as backup
+- **Result**: Starts keeping receipts
+
+### 15E. Cash Transaction in List
+```
+┌─────────────────────────────────┐
+│ ← Back         Filter: All ▼    │
+│                                 │
+│        Transactions             │
+│                                 │
+│  Today                          │
+│  ┌────────────────────────┐    │
+│  │ Campus Bookstore       │    │
+│  │ School Supplies  📚    │    │
+│  │ 💵 Cash                │    │ ← Cash indicator
+│  │ -$47.23         2:15pm │    │
+│  │ Manual entry           │    │ ← Entry type
+│  └────────────────────────┘    │
+│  ┌────────────────────────┐    │
+│  │ Food Truck            │    │
+│  │ Food & Dining  🌮     │    │
+│  │ 💵 Cash                │    │
+│  │ -$12.00         12:30pm│    │
+│  │ ✅ Receipt attached    │    │ ← Has receipt
+│  └────────────────────────┘    │
+│                                 │
+├─────────────────────────────────┤
+│ [🏠] [💳] [✨] [📊] [👤]      │
+└─────────────────────────────────┘
+```
+
+**Key Features**:
+- Cash transactions clearly marked
+- Shows manual vs receipt entry
+- Included in spending totals
+- Filtered view options
+
+### 15F. Receipt Status - Expired
+```
+┌─────────────────────────────────┐
+│      Receipt Management         │
+├─────────────────────────────────┤
+│                                 │
+│    ⏰ Receipt Expired           │
+│                                 │
+│  We couldn't match this receipt │
+│  after 30 days:                │
+│                                 │
+│  ┌────────────────────────┐    │
+│  │ CVS Pharmacy           │    │
+│  │ Uploaded: Nov 15       │    │
+│  │ Amount: $23.47         │    │
+│  │                        │    │
+│  │ Status: No match found │    │
+│  └────────────────────────┘    │
+│                                 │
+│  Possible reasons:              │
+│  • Used cash payment            │
+│  • Different card used          │
+│  • Transaction didn't sync      │
+│                                 │
+│  Receipt will be removed from   │
+│  pending queue but kept in      │
+│  your receipt history.          │
+│                                 │
+│  [View History]  [Got it]       │
+│                                 │
+└─────────────────────────────────┘
+```
+
+**Key Features**:
+- Receipts expire after 30 days unmatched
+- Clear explanation of expiration
+- Kept in history for records
 - Possible reasons for no match
-- Options to retry or save anyway
-- Transparent point policy
+
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ Receipts kept in history for taxes
+- ✅ Clear 30-day timeline
+- ✅ Explanation of why no match
+- **Result**: Understands system limits
+
+**Zoe (Digital Native, 25)**
+- ⚠️ Might be annoyed by no points
+- ✅ Clear reasons provided
+- ✅ Can still view in history
+- **Recommendation**: Offer 5 sympathy points
+
+**Alex (Financial Freshman, 19)**
+- ✅ Learns about cash vs card tracking
+- ✅ 30 days is generous window
+- ✅ Simple explanation
+- **Result**: Better understands system
 
 ### 16. Budget Screen
 ```
@@ -383,6 +807,26 @@ This document contains the main application screens (11-18) from the Djinn perso
 - Category breakdowns with emojis
 - Proactive alerts and recommendations
 - Edit capability for adjustments
+
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ 50/30/20 rule for family budgeting
+- ✅ Proactive alerts for course correction
+- ✅ Edit capability for adjustments
+- **Result**: Maintains household budget effectively
+
+**Zoe (Digital Native, 25)**
+- ✅ Visual progress bars with color coding
+- ✅ Instant understanding of status
+- ✅ Specific overspending alerts
+- **Result**: Makes immediate spending adjustments
+
+**Alex (Financial Freshman, 19)**
+- ✅ Simple Needs/Wants/Savings breakdown
+- ✅ Percentages easier than dollar amounts
+- ⚠️ Savings might feel impossible
+- **Recommendation**: Celebrate any savings amount
 
 ### 17. Points Store
 ```
@@ -428,6 +872,26 @@ This document contains the main application screens (11-18) from the Djinn perso
 - Point usage explanation
 - Earning opportunities outlined
 - Current balance visible
+
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ Clear pricing tiers with savings shown
+- ✅ Multiple earning opportunities listed
+- ✅ Transparent point usage explanation
+- **Result**: Buys bulk pack for family use
+
+**Zoe (Digital Native, 25)**
+- ✅ "Most Popular" badge influences choice
+- ✅ Best value clearly highlighted
+- ✅ Monthly bonus points shown
+- **Result**: Purchases 5,000 point pack
+
+**Alex (Financial Freshman, 19)**
+- ✅ Small $2.99 pack affordable
+- ✅ Can earn points without buying
+- ⚠️ Might avoid purchasing entirely
+- **Recommendation**: Offer student discount or starter pack
 
 ### 18. Profile & Settings
 ```
@@ -479,6 +943,26 @@ This document contains the main application screens (11-18) from the Djinn perso
 - Privacy controls accessible
 - Support options visible
 
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ Privacy & Security prominently placed
+- ✅ Data export for record keeping
+- ✅ Clear subscription management
+- **Result**: Feels in control of data and billing
+
+**Zoe (Digital Native, 25)**
+- ✅ Achievements section for badges
+- ✅ Referral program for social sharing
+- ✅ Points history tracking
+- **Result**: Explores every gamification feature
+
+**Alex (Financial Freshman, 19)**
+- ✅ Simple App Store subscription flow
+- ✅ Help center easily accessible
+- ✅ No complex billing pages
+- **Result**: Comfortable with settings
+
 ### 2C. Subscription Expired (Paywall)
 ```
 ┌─────────────────────────────────┐
@@ -520,6 +1004,53 @@ This document contains the main application screens (11-18) from the Djinn perso
 - Platform-specific subscription buttons
 - Restore option for existing subscribers
 - Support contact option
+
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ $7.99 reasonable for family management
+- ✅ Unlimited accounts included
+- ✅ Restore purchase option available
+- **Result**: Subscribes for household use
+
+**Zoe (Digital Native, 25)**
+- ✅ 5,000 monthly points compelling
+- ✅ Sad lamp creates emotional response
+- ✅ Platform-specific buttons familiar
+- **Result**: Subscribes to maintain streak
+
+**Alex (Financial Freshman, 19)**
+- ⚠️ $7.99 feels expensive for student
+- ✅ Clear value proposition shown
+- ⚠️ No student discount visible
+- **Critical Recommendation**: Add "Student? Tap here for 50% off" link
+
+## Receipt Processing Flow
+
+### Async Receipt Matching System
+All receipts are processed asynchronously - there are NO instant matches:
+
+1. **Upload** → Receipt saved immediately (works offline)
+2. **Processing** → System checks for matches (1-5 minutes)
+3. **Outcomes**:
+   - **Matched with existing transaction** → Points awarded, notification sent
+   - **Saved for future transaction** → Waits for transaction to post (1-3 days)
+   - **Expired after 30 days** → Moved to history, no points
+
+### Receipt Status Indicators
+- 📷 **Add Receipt** - No receipt uploaded yet
+- 🔄 **Processing** - Receipt uploaded, checking for match
+- ⏳ **Pending** - Receipt waiting for transaction to post
+- ✅ **Matched** - Receipt matched, points awarded
+- ⏰ **Expired** - No match found after 30 days
+
+### Points Policy
+- **50 points** awarded only when receipt successfully matches
+- **No points** for:
+  - Unmatched receipts
+  - Cash transactions
+  - Expired receipts
+  - Duplicate receipts
 
 ## Component Specifications
 
@@ -713,6 +1244,26 @@ Dashboard → AI Wish → View Results → Add Receipt → Earn Points → Check
 
 ### Monetization Flow
 Free Trial → Point Usage → Point Purchase → Subscription Renewal
+
+## Persona-Specific Optimizations
+
+### Sarah (Privacy-First Professional)
+- **Key Motivators**: Security, family financial management, tax organization
+- **Critical Features**: Multi-account aggregation, receipt storage, data export
+- **Conversion Triggers**: Privacy controls, transparent data handling
+- **Retention Factors**: Time-saving automation, expense report generation
+
+### Zoe (Digital Native)
+- **Key Motivators**: Gamification, social sharing, instant insights
+- **Critical Features**: Points/streaks, AI wishes, achievement badges
+- **Conversion Triggers**: Social proof, FOMO on features, bulk point deals
+- **Retention Factors**: Continuous engagement mechanics, shareable wins
+
+### Alex (Financial Freshman)
+- **Key Motivators**: Learning, simplicity, affordability
+- **Critical Features**: Natural language AI, visual budgets, educational tips
+- **Conversion Triggers**: Student pricing ($3.99), beginner-friendly language
+- **Retention Factors**: Progressive learning, celebrating small wins
 
 ---
 
