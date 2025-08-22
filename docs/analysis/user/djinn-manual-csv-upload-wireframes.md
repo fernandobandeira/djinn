@@ -133,6 +133,26 @@ isn't listed"  use Djinn"     secure?"      correctly!"   great!"
 └─────────────────────────────────┘
 ```
 
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ Manual setup feels more secure than auto-connect
+- ✅ Clear list of required information
+- ✅ No sensitive data like passwords needed
+- **Result**: Prefers this over Plaid connection
+
+**Zoe (Digital Native, 25)**
+- ⚠️ Manual setup feels like work
+- ✅ Video tutorial option helps
+- ✅ Clear, simple requirements list
+- **Result**: Proceeds but wishes it was automatic
+
+**Alex (Financial Freshman, 19)**
+- ✅ Step-by-step approach not overwhelming
+- ✅ "Start with checking" tip is helpful
+- ✅ Video tutorial reduces anxiety
+- **Result**: Feels capable of completing setup
+
 ### 11A. Account List (After Adding)
 ```
 ┌─────────────────────────────────┐
@@ -173,6 +193,26 @@ isn't listed"  use Djinn"     secure?"      correctly!"   great!"
 │                                 │
 └─────────────────────────────────┘
 ```
+
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ All accounts organized with institutions clearly shown
+- ✅ Can see complete financial picture at a glance
+- ✅ Edit options give her control over data
+- **Result**: Feels organized and in control
+
+**Zoe (Digital Native, 25)**
+- ✅ Quick upload buttons on each account
+- ✅ Multiple cards tracked separately
+- ✅ Visual organization by type
+- **Result**: Ready to start uploading CSVs
+
+**Alex (Financial Freshman, 19)**
+- ✅ Clear separation of checking vs credit
+- ✅ Masked numbers feel secure
+- ✅ Simple add more buttons
+- **Result**: Understands account structure
 
 ### 12. Add Account Manually
 ```
@@ -226,6 +266,26 @@ isn't listed"  use Djinn"     secure?"      correctly!"   great!"
 └─────────────────────────────────┘
 ```
 
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ Type-ahead search prevents typos
+- ✅ No routing number needed upfront
+- ✅ Only last 4 digits for security
+- **Result**: Trusts the minimal data requirement
+
+**Zoe (Digital Native, 25)**
+- ✅ Auto-complete speeds up entry
+- ✅ Recognizes bank in suggestions
+- ⚠️ Still wishes it was automatic
+- **Result**: Completes quickly with auto-complete
+
+**Alex (Financial Freshman, 19)**
+- ✅ Suggestions help spell bank name
+- ✅ Optional fields reduce pressure
+- ✅ Security message reassuring
+- **Result**: Successfully adds first account
+
 ### 12A. Institution Verification (During CSV Upload)
 ```
 ┌─────────────────────────────────┐
@@ -257,6 +317,26 @@ isn't listed"  use Djinn"     secure?"      correctly!"   great!"
 │                                 │
 └─────────────────────────────────┘
 ```
+
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ System verifies data accuracy
+- ✅ Can keep her original entry
+- ✅ Routing verification adds trust
+- **Result**: Appreciates data validation
+
+**Zoe (Digital Native, 25)**
+- ✅ Auto-detection feels smart
+- ✅ Quick decision to update
+- ✅ One-click correction
+- **Result**: Updates to correct name
+
+**Alex (Financial Freshman, 19)**
+- ✅ Learns official bank name
+- ✅ Simple yes/no choice
+- ✅ Explanation helps understanding
+- **Result**: Updates for accuracy
 
 ### 13. Credit Card Addition
 ```
@@ -315,6 +395,26 @@ isn't listed"  use Djinn"     secure?"      correctly!"   great!"
 └─────────────────────────────────┘
 ```
 
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ Full control over card details
+- ✅ Statement dates help tax tracking
+- ✅ No full card number required
+- **Result**: Adds all family cards
+
+**Zoe (Digital Native, 25)**
+- ✅ Network selection for rewards tracking
+- ✅ Credit limit helps budget
+- ✅ Payment reminders useful
+- **Result**: Tracks multiple cards effectively
+
+**Alex (Financial Freshman, 19)**
+- ✅ Learns about statement cycles
+- ✅ Credit limit visibility helpful
+- ✅ Simple dropdown selections
+- **Result**: Better understands credit cards
+
 ## CSV Upload Flow
 
 ### 14. Account Detail View (Entry to CSV Upload)
@@ -352,6 +452,26 @@ isn't listed"  use Djinn"     secure?"      correctly!"   great!"
 └─────────────────────────────────┘
 ```
 
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ Account-specific view prevents errors
+- ✅ Recent transactions shown for verification
+- ✅ Update reminder is helpful not pushy
+- **Result**: Uploads CSV with confidence
+
+**Zoe (Digital Native, 25)**
+- ✅ Primary action button is prominent
+- ✅ 3-day reminder creates urgency
+- ✅ Video help available if needed
+- **Result**: Immediately uploads new statement
+
+**Alex (Financial Freshman, 19)**
+- ✅ Clear which account being updated
+- ✅ Balance shown for reference
+- ✅ Help video reduces anxiety
+- **Result**: Learns to maintain accounts
+
 ### 14A. Select Account for Import
 ```
 ┌─────────────────────────────────┐
@@ -387,6 +507,26 @@ isn't listed"  use Djinn"     secure?"      correctly!"   great!"
 │                                 │
 └─────────────────────────────────┘
 ```
+
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ Must select specific account first
+- ✅ All accounts visible for selection
+- ✅ Institution names prevent confusion
+- **Result**: Selects correct account confidently
+
+**Zoe (Digital Native, 25)**
+- ⚠️ Extra step feels unnecessary
+- ✅ Quick selection buttons
+- ✅ Can add new account if missing
+- **Result**: Quickly selects and continues
+
+**Alex (Financial Freshman, 19)**
+- ✅ Clear which account for which CSV
+- ✅ Visual separation helps choose
+- ✅ Reminder to match CSV to account
+- **Result**: Avoids mixing up accounts
 
 ### 15. CSV Upload Instructions (Account-Specific)
 ```
@@ -426,6 +566,26 @@ isn't listed"  use Djinn"     secure?"      correctly!"   great!"
 │                                 │
 └─────────────────────────────────┘
 ```
+
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ Account clearly identified at top
+- ✅ Multiple format support
+- ✅ Security message about encryption
+- **Result**: Uploads with trust in security
+
+**Zoe (Digital Native, 25)**
+- ✅ Drag and drop is familiar
+- ✅ Date range saves time
+- ⚠️ Manual process still feels slow
+- **Result**: Drags file and continues
+
+**Alex (Financial Freshman, 19)**
+- ✅ Warning prevents wrong file upload
+- ✅ Video help available
+- ✅ Browse option if drag fails
+- **Result**: Successfully uploads first CSV
 
 ### 16. CSV Preview & Mapping
 ```
@@ -478,6 +638,26 @@ isn't listed"  use Djinn"     secure?"      correctly!"   great!"
 └─────────────────────────────────┘
 ```
 
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ Can verify data before import
+- ✅ Sample transactions for validation
+- ✅ Fix mapping if needed
+- **Result**: Carefully reviews before confirming
+
+**Zoe (Digital Native, 25)**
+- ✅ Auto-detection usually works
+- ✅ Quick preview of transactions
+- ✅ "Looks Good" for speed
+- **Result**: Confirms quickly if correct
+
+**Alex (Financial Freshman, 19)**
+- ✅ Visual preview helps understand
+- ✅ Auto-detection reduces confusion
+- ✅ Can fix if something looks wrong
+- **Result**: Learns how CSVs work
+
 ### 17. Processing & Categorization
 ```
 ┌─────────────────────────────────┐
@@ -508,6 +688,26 @@ isn't listed"  use Djinn"     secure?"      correctly!"   great!"
 │                                 │
 └─────────────────────────────────┘
 ```
+
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ Transparent about what's happening
+- ✅ Shows smart detection features
+- ✅ Can cancel if concerned
+- **Result**: Appreciates transparency
+
+**Zoe (Digital Native, 25)**
+- ✅ Progress indicators familiar
+- ✅ Subscription detection valuable
+- ⚠️ 30-60 seconds feels long
+- **Result**: Waits but slightly impatient
+
+**Alex (Financial Freshman, 19)**
+- ✅ Clear progress indication
+- ✅ Interesting to see subscriptions found
+- ✅ Time estimate helps patience
+- **Result**: Watches progress with interest
 
 ## Transaction Matching & Review
 
@@ -709,6 +909,26 @@ isn't listed"  use Djinn"     secure?"      correctly!"   great!"
 │                                 │
 └─────────────────────────────────┘
 ```
+
+#### Persona Reactions:
+
+**Sarah (Privacy-First, 34)**
+- ✅ Can update all accounts at once
+- ✅ Auto-matching to accounts
+- ✅ 200 bonus points valuable
+- **Result**: Uses bulk upload monthly
+
+**Zoe (Digital Native, 25)**
+- ✅ Bulk upload saves time
+- ✅ Drag multiple files easy
+- ✅ Big point bonus motivating
+- **Result**: Always bulk uploads
+
+**Alex (Financial Freshman, 19)**
+- ✅ Visual account matching
+- ✅ Can add files one by one
+- ✅ Extra points for efficiency
+- **Result**: Learns to batch updates
 
 ## Error States & Recovery
 
