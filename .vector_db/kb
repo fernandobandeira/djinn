@@ -1,13 +1,9 @@
 #!/bin/bash
-# Enhanced KB wrapper with improved search capabilities
+# Qdrant Knowledge Base - Fast vector search optimized for LLMs
 # Works from any directory
 
 # Get the absolute path to the .vector_db directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Use enhanced KB if available, fallback to original
-if [ -f "$SCRIPT_DIR/kb_enhanced.py" ]; then
-    cd "$SCRIPT_DIR" && exec uv run python kb_enhanced.py "$@"
-else
-    cd "$SCRIPT_DIR" && exec uv run python kb_main.py "$@"
-fi
+# Use Qdrant KB - the only KB implementation
+cd "$SCRIPT_DIR" && exec uv run python kb_qdrant.py "$@"

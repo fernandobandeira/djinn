@@ -1,0 +1,50 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: djinn-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"  # gRPC port (optional)
+    volumes:
+      - ./data/qdrant:/qdrant/storage:z
+    environment:
+      - QDRANT__SERVICE__GRPC_PORT=6334
+      - QDRANT__LOG_LEVEL=INFO
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - djinn-network
+
+  embeddings:
+    image: michaelf34/infinity:latest
+    container_name: djinn-embeddings
+    ports:
+      - "8080:7997"
+    volumes:
+      - ./data/infinity-cache:/app/.cache
+    command: v2 --model-id BAAI/bge-large-en-v1.5 --port 7997
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - djinn-network
+
+networks:
+  djinn-network:
+    driver: bridge

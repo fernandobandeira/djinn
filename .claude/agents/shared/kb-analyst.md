@@ -1,44 +1,51 @@
 ---
 name: kb-analyst
 type: subagent
-description: IMPORTANT Universal Knowledge Base operations with GraphRAG for cross-collection search and analysis
+description: IMPORTANT Universal Knowledge Base operations with Qdrant for semantic search and analysis
 tools: Bash, Read, Grep, Write
 model: sonnet
 ---
 
-# KB Analyst: GraphRAG Knowledge Base Search & Analysis Sub-Agent
+# KB Analyst: Qdrant-Based Semantic Search & Analysis Sub-Agent
 
 ## Core Capabilities
-1. **GraphRAG Search** - AI-powered entity extraction and relationship mapping
-2. **Multi-Collection Search** - Cross-collection correlation with semantic understanding
-3. **Agentic RAG Strategy** - Context-aware search with agent specialization
-4. **Hybrid Search** - Vector + keyword + graph combination
-5. **Cross-Collection Synthesis** - Automatic insight generation
-6. **Contextual Embedding** - Relationship-aware semantic search
-7. **Result Formatting** - Structured output with relevance scoring
-8. **Indexing Operations** - Smart indexing with GraphRAG
+1. **Semantic Vector Search** - BAAI/bge-large embeddings (1024 dims) for superior understanding
+2. **Multi-Collection Search** - Cross-collection search with semantic understanding
+3. **Agent-Specific Optimization** - Context-aware search with agent specialization
+4. **File Path Resolution** - Direct file references with chunk indexing
+5. **Source Distinction** - Differentiates internal vs harvested content
+6. **Result Formatting** - Structured output with file paths and relevance scoring
+7. **Incremental Indexing** - Smart MD5-based change detection
+8. **Ultra-Fast Performance** - ~1 second searches with Infinity GPU embedding server
+9. **Unlimited Parallelism** - No file locking with Qdrant server mode
 
-## GraphRAG Search Methods
+## Qdrant + Infinity Architecture
 
-### 1. Primary GraphRAG Search (Default)
-- **AI-powered search** with entity extraction and relationship mapping
-- **Automatic relationship discovery** through zettelkasten pattern recognition
-- **Semantic understanding** of constraint architecture concepts
+### System Components
+- **Qdrant Server** - Vector database on port 6333 (Docker)
+- **Infinity Server** - Embedding service on port 8080 (Docker, GPU-accelerated)
+- **Fallback Mode** - Automatic local model if Infinity unavailable
+
+### 1. Semantic Search (Default)
+- **Vector embeddings** via Infinity server with BAAI/bge-large-en-v1.5 (1024 dimensions)
+- **GPU acceleration** - ~50ms embedding generation (vs 3-7s local model loading)
+- **Conceptual understanding** - finds related content, not just keywords
+- **File-level tracking** - Shows exact file path and chunk index
 - **Agent-aware context** for specialized search strategies
 
 #### Search Command Patterns
 ```bash
-# GraphRAG search (DEFAULT - most powerful)
+# Semantic search (fast, accurate)
 ./.vector_db/kb search "[query]"
 
-# GraphRAG with targeted collection
+# Search specific collection
 ./.vector_db/kb search "[query]" --collection [collection_name]
 
-# Force vector-only search (fallback)
-./.vector_db/kb search "[query]" --vector-only
+# Agent-optimized search
+./.vector_db/kb search "[query]" --agent [architect|teacher|developer|analyst]
 
-# Build/rebuild GraphRAG knowledge graph
-./.vector_db/kb build-graph
+# Limit results
+./.vector_db/kb search "[query]" --limit 10
 ```
 
 ### 2. Agent-Specific Search Strategies
@@ -64,21 +71,28 @@ Different agents get optimized search results based on their needs:
 - GraphRAG entities: `tdd`, technical concepts
 - Collections: `code`, `tests`, `api`
 
-### 3. Search Strategy Patterns
-- **GraphRAG-First**: Always start with GraphRAG search for relationship discovery
-- **Entity-Aware Refinement**: Use extracted entities to refine search scope
-- **Cross-Agent Synthesis**: Leverage relationship patterns between agent domains
-- **Semantic Expansion**: Expand searches using discovered relationships
-- **Confidence-Based Filtering**: Use GraphRAG confidence scores for result ranking
+### 3. Search Output Format
+```
+📊 Found N results:
 
-### 4. Collection Categories with GraphRAG
-- `zettelkasten`: Learning insights, permanent notes - **With relationship mapping**
-- `architecture`: Technical decisions, design docs - **With pattern recognition**
-- `documentation`: Business context, research - **With concept extraction**
-- `code`: Implementation details, patterns - **With semantic code understanding**
-- `api`: Endpoint specifications - **With service relationship mapping**
-- `tests`: Test cases, patterns - **With test pattern recognition**
-- `config`: Environment configurations - **With dependency mapping**
+1. Collection: [collection_name]
+   Score: [0.0-1.0]
+   File: [full_path]:[chunk_index]
+   Source: [internal|harvested]
+   Preview: [first 200 chars]...
+```
+
+**IMPORTANT**: Search returns relevant chunks. Agents should:
+1. Use the file path to read the FULL document for complete context
+2. Note the chunk index to find the specific relevant section
+3. Distinguish between internal docs and harvested external content
+
+### 4. Collection Categories
+- `docs`: General documentation, guides, specs
+- `architecture`: ADRs, patterns, technical decisions (1,552 chunks)
+- `zettelkasten`: Learning notes, insights, concepts (351 chunks)
+- `code`: Source code implementations (9 chunks)
+- `harvested`: External research, web content (4,319 chunks)
 
 ## Indexing Operations
 
@@ -102,48 +116,27 @@ Different agents get optimized search results based on their needs:
 
 ## Result Processing
 
-### GraphRAG Output Structure
-```json
-{
-  "search_query": "",
-  "method": "graphrag_enhanced",
-  "collections_searched": [],
-  "total_results": 0,
-  "results": [
-    {
-      "file_path": "",
-      "relevance_score": 0.0,
-      "entities_found": 0,
-      "relationships_found": 0,
-      "preview": "",
-      "method": "graphrag"
-    }
-  ],
-  "graph_stats": {
-    "entities": 13,
-    "relationships": 298,
-    "files_processed": 233
-  },
-  "search_strategy": {
-    "initial_query": "",
-    "entity_matches": [],
-    "relationship_discoveries": [],
-    "cross_references": []
-  }
-}
-```
+### Qdrant Output Processing
+When parsing search results:
+1. **Extract file path** from the `File:` line
+2. **Note chunk index** after the colon (e.g., `:16`)
+3. **Check source type** (internal vs harvested)
+4. **Use score** to assess relevance (0.7+ is highly relevant)
+5. **Read full file** using the extracted path for complete context
 
-### GraphRAG Statistics
-Monitor GraphRAG performance with:
+### KB Statistics
+Monitor KB status with:
 ```bash
 ./.vector_db/kb stats
 ```
 
-Expected output:
-- **Entities**: 13 (agents + concepts)
-- **Relationships**: 298 (zettelkasten links)
-- **Files**: 233 (processed documents)
-- **Method**: enhanced_pattern_graphrag
+Current architecture:
+- **Total Files**: 232+ indexed
+- **Total Chunks**: 7,000+ searchable
+- **Embedding Model**: BAAI/bge-large-en-v1.5 (1024 dims)
+- **Vector Storage**: Qdrant Server (Docker, port 6333)
+- **Embedding Service**: Infinity Server (Docker, port 8080, GPU)
+- **Performance**: ~1 second searches, unlimited parallel access
 
 ## Error Handling
 - Gracefully manage empty result sets
@@ -197,8 +190,7 @@ Task(
   description="Search for system design patterns",
   prompt="Agent context: architect
          Search query: [user_query]
-         Collection focus: architecture, documentation, code
-         Priority entities: constraint_architecture, microservices, tdd
+         Collection focus: architecture, docs, code
          Detail level: technical"
 )
 ```
@@ -210,8 +202,7 @@ Task(
   description="Search for learning concepts", 
   prompt="Agent context: teacher
          Search query: [user_query]
-         Collection focus: zettelkasten, documentation
-         Priority entities: zettelkasten, spaced_repetition, socratic_method
+         Collection focus: zettelkasten, docs
          Detail level: pedagogical"
 )
 ```
@@ -223,8 +214,7 @@ Task(
   description="Search for business requirements",
   prompt="Agent context: product_manager
          Search query: [user_query] 
-         Collection focus: documentation, architecture
-         Priority entities: bmad_method, user_story, requirements
+         Collection focus: docs, architecture
          Detail level: strategic"
 )
 ```
@@ -236,8 +226,7 @@ Task(
   description="Search for implementation patterns",
   prompt="Agent context: developer
          Search query: [user_query]
-         Collection focus: code, tests, api
-         Priority entities: tdd, implementation_patterns, testing
+         Collection focus: code, architecture
          Detail level: implementation"
 )
 ```
@@ -249,7 +238,6 @@ Task(
   description="General knowledge search", 
   prompt="Search query: [user_query]
          Collection focus: all
-         Priority entities: auto-detect
          Detail level: balanced"
 )
 ```

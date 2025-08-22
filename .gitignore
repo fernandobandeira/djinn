@@ -11,34 +11,37 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # Vector Database
-.vector_db/venv/
-.vector_db/chroma_db/
-.vector_db/chromadb/
-.vector_db/*.pyc
+.vector_db/.venv/
 .vector_db/__pycache__/
+.vector_db/*.pyc
+
+# Qdrant
+.vector_db/qdrant_storage/
+.vector_db/qdrant_hashes.json
+.vector_db/qdrant
+.vector_db/*.tar.gz
+
+# Old KB files (cleanup)
+.vector_db/chromadb/
+.vector_db/chroma_db/
 .vector_db/document_hashes.json
-.vector_db/statistics.json
-# GraphRAG temporary files and generated data
-.vector_db/graphrag_input/
-.vector_db/graphrag_output/
-.vector_db/graphrag_config/
-.vector_db/microsoft_graphrag.json
-# Backup directories
 .vector_db/chromadb_backup_*/
-# Enhanced KB status files
-.vector_db/index_status.json
-# Temporary/backup KB files
-.vector_db/kb_backup_*.py
 .vector_db/kb_main.py
+.vector_db/kb_enhanced.py
+.vector_db/kb_auto_indexer.py
+.vector_db/enhanced_graphrag.py
 .vector_db/migrate_*.py
-.vector_db/setup_*.sh
-.vector_db/requirements*.txt
-# Keep the core KB scripts and instructions
-!.vector_db/kb.py
-!.vector_db/kb_enhanced.py
-!.vector_db/kb_auto_indexer.py
+.vector_db/index_status.json
+.vector_db/statistics.json
+.vector_db/graphrag_*/
+.vector_db/microsoft_graphrag.json
+
+# Keep only essential KB files
+!.vector_db/kb
+!.vector_db/kb_qdrant.py
 !.vector_db/KB-INSTRUCTIONS.md
 !.vector_db/pyproject.toml
+!.vector_db/setup.sh
 
 # IDE
 .vscode/
@@ -58,3 +61,4 @@ tmp/
 dist/
 build/
 results/
+data/

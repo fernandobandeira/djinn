@@ -195,18 +195,41 @@ When user requests `*brainstorm`:
    ```
 10. Continue facilitation with integrated findings
 
-### Project Documentation
+### Project Documentation with Parallel Discovery
 When user requests `*document-project`:
-1. **FIRST search knowledge base**:
-   - `./.vector_db/kb search "architecture" --collection architecture --agent analyst`
-   - `./.vector_db/kb search "system design" --agent analyst`
+1. **Parallel Knowledge Base Search**:
+parallel_discovery_tasks = [
+    Task("kb-analyst", "Architecture context discovery", {
+        "search_query": "architecture system design",
+        "collection_focus": ["architecture", "documentation"],
+        "priority_entities": ["system_design", "architecture_patterns"],
+        "detail_level": "comprehensive"
+    }),
+    Task("kb-analyst", "Project requirements search", {
+        "search_query": "project requirements PRD existing documentation",
+        "collection_focus": ["documentation", "requirements"],
+        "priority_entities": ["project_scope", "stakeholder_requirements"],
+        "detail_level": "detailed"
+    }),
+    Task("kb-analyst", "Codebase structure analysis", {
+        "search_query": "codebase architecture repository structure",
+        "collection_focus": ["code", "architecture"],
+        "priority_entities": ["code_organization", "technical_patterns"],
+        "detail_level": "technical"
+    })
+]
+
+# Execute ALL tasks in parallel
+project_context = parallel_execute(parallel_discovery_tasks)
+
+# Validate and synthesize results
+validated_context = document_validator(project_context)
+
 2. THEN load: `.claude/resources/analyst/tasks/document-project.md`
-3. Check if requirements/PRD exists
-4. If yes: Focus documentation on relevant areas
-5. If no: Ask for focus area or document comprehensively
-6. Analyze codebase structure and patterns
-7. Generate architecture documentation
-8. Index findings in knowledge base
+3. Analyze comprehensive context results
+4. Focus documentation based on discovered insights
+5. Generate architecture documentation
+6. Index findings in knowledge base
 
 ### Continuous Elicitation Process
 Throughout ANY analysis or document creation:
@@ -217,37 +240,62 @@ Throughout ANY analysis or document creation:
 3. Wait for user choice before proceeding
 4. Apply after EVERY major section
 
-### Market Research
+### Market Research with Parallel Discovery
 When user requests `*research`:
-1. **FIRST search knowledge base**:
-   - `./.vector_db/kb search "market research" --agent analyst`
-   - `./.vector_db/kb search "[topic]" --agent analyst`
-2. Use cognitive tool: `AssessResearchNeed` to determine scope
+1. **Parallel Knowledge Base Search**:
+parallel_discovery_tasks = [
+    Task("kb-analyst", "Market research context", {
+        "search_query": "market research [topic]",
+        "collection_focus": ["market_intelligence", "documentation"],
+        "priority_entities": ["market_trends", "industry_insights"],
+        "detail_level": "comprehensive"
+    }),
+    Task("kb-analyst", "Competitive landscape overview", {
+        "search_query": "competitive analysis [market segment]",
+        "collection_focus": ["market_research", "competitive_analysis"],
+        "priority_entities": ["competitor_profiles", "market_positioning"],
+        "detail_level": "detailed"
+    }),
+    Task("kb-analyst", "Topic-specific market signals", {
+        "search_query": "[topic] emerging trends market signals",
+        "collection_focus": ["research", "trend_analysis"],
+        "priority_entities": ["innovation_signals", "emerging_technologies"],
+        "detail_level": "technical"
+    })
+]
+
+# Execute ALL tasks in parallel
+market_research_context = parallel_execute(parallel_discovery_tasks)
+
+# Validate and synthesize results
+validated_context = research_validator(market_research_context)
+
+2. Use cognitive tool: `AssessResearchNeed` to determine scope using validated context
 3. **Delegate to market-researcher sub-agent**:
    ```
    Task(
      subagent_type="market-researcher",
      description="Generate market research report",
-     prompt="Research topic: [topic] 
-            Focus areas: [areas from discussion]
-            Research depth: [scope from cognitive tool]
-            Existing knowledge: [KB search results]"
+     prompt="Research topic: [topic]
+            Focus areas: [areas from comprehensive context]
+            Research depth: [scope from validated insights]
+            Existing market intelligence: [parallel KB search results]"
    )
    ```
 4. Receive comprehensive report from sub-agent
 5. Present findings to user and facilitate discussion
 6. Apply elicitation techniques for deeper insights
-7. **If competitive analysis needed**:
+7. **If advanced competitive analysis needed**:
    ```
    Task(
      subagent_type="competitive-analyzer", 
-     description="Analyze competitive landscape",
-     prompt="Competitors: [list]
-            Analysis criteria: [criteria from discussion]  
-            Market context: [from research]"
+     description="Advanced competitive landscape analysis",
+     prompt="Competitors: [validated list]
+            Analysis criteria: [refined criteria from context]
+            Market signals: [emerging trend insights]"
    )
    ```
-8. Index findings in KB automatically
+8. Index comprehensive findings in KB automatically
 
 ### Competitive Analysis
 When user requests `*analyze-competition`:
