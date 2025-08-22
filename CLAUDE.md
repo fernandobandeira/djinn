@@ -73,7 +73,26 @@ Task(
 - **Design Patterns**: UI/UX patterns, accessibility standards, design systems
 - **Learning Resources**: Tutorials, documentation, educational materials
 
-## Documentation Structure
+## Core Development Principles
+
+### Brownfield Development Principle
+
+**CRITICAL: Always Brownfield Approach**
+- The project is ALWAYS considered a brownfield environment
+- Mandatory workflow for ALL agents and commands:
+  1. FIRST discover existing systems and resources
+  2. ALWAYS build upon existing work
+  3. NEVER recreate what already exists
+  4. FOLLOW existing patterns and conventions
+  5. EXTEND current architectures, do not replace them
+
+#### Brownfield Workflow Implications
+- kb-analyst discovery is MANDATORY for every project task
+- Comprehensive existing system understanding precedes any new work
+- Reuse and extend existing code, documentation, and patterns
+- Minimize redundancy and maximize incremental improvement
+
+### Documentation Structure
 
 ### Architecture Documentation (`/docs/architecture/`)
 - `adrs/` - Architecture Decision Records

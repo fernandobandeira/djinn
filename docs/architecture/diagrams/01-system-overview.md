@@ -11,20 +11,25 @@ graph TB
     
     subgraph "API Gateway"
         Chi[Chi Router]
-        Chi --> Auth[Firebase Auth Middleware]
-        Auth --> GQL[gqlgen GraphQL]
+        Chi --> RateLimiter[Rate Limiting Middleware]
+        RateLimiter --> Auth[Firebase Auth Middleware]
+        Auth --> QryAnalyzer[Query Complexity Analyzer]
+        QryAnalyzer --> GQL[gqlgen GraphQL]
+        GQL --> ErrHandler[Error Handling Pipeline\nwith slog]
     end
     
     subgraph "Business Logic"
-        GQL --> Resolvers[GraphQL Resolvers]
+        ErrHandler --> Resolvers[GraphQL Resolvers]
         Resolvers --> UseCases[Domain Use Cases]
         UseCases --> Repo[sqlc Repositories]
         UseCases --> Temporal[Temporal Client]
+        UseCases --> OCRService[AI/OCR Service Integration]
     end
     
     subgraph "Data Layer"
         Repo --> PG[(PostgreSQL 16+<br/>UUIDv7, BIGINT money)]
         Temporal --> TempDB[(Temporal DB)]
+        OCRService --> MinIO[(MinIO Object Storage)]
     end
     
     subgraph "Background Processing"

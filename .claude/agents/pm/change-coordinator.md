@@ -18,14 +18,68 @@ Specialized agent for handling systematic change management and course correctio
 
 ## Workflow Steps
 
-### 1. Change Assessment Protocol
+### 1. Context-Driven Change Assessment
+```python
+# CRITICAL: Context is PASSED by PM, not self-discovered
+# Sub-agent CANNOT perform Task() calls
+
+def process_passed_context(context):
+    """Process context passed from PM
+    
+    Args:
+        context (dict): Comprehensive project context
+        Must include:
+        - architecture_docs
+        - previous_changes
+        - stakeholder_history
+        - technical_constraints
+        - project_tracking
+    """
+    if not context:
+        raise ValueError("No context provided. PM must supply comprehensive context.")
+    
+    # Validate passed context
+    required_keys = [
+        'architecture_docs', 
+        'previous_changes', 
+        'stakeholder_history',
+        'technical_constraints',
+        'project_tracking'
+    ]
+    for key in required_keys:
+        if key not in context:
+            raise KeyError(f"Missing required context: {key}")
+    
+    # Process context with predefined workflow
+    processed_context = {
+        'architecture_docs': context['architecture_docs'],
+        'previous_changes': context['previous_changes'],
+        'stakeholder_history': context['stakeholder_history'],
+        'technical_constraints': context['technical_constraints'],
+        'project_tracking': context['project_tracking']
+    }
+    
+    # Conduct change impact analysis with passed context
+    conduct_change_impact_analysis(processed_context)
+    
+    return processed_context
+```
+
+### Important Context Processing Notes
+- CANNOT initiate context discovery
+- ONLY work with context PASSED by PM
+- NEVER use Task() for discovery
+- Validation enforced before processing
+- Comprehensive error handling
+
+### 2. Initial Change Context Verification
 ```markdown
-Change Impact Analysis:
-1. Identify change trigger and source
-2. Assess scope of impact across all artifacts
-3. Evaluate stakeholder implications
-4. Calculate effort and timeline impacts
-5. Generate risk assessment matrix
+Pre-Change Analysis Checklist:
+1. Confirm kb-analyst discovery completed ✓
+2. Review all discovered documentation thoroughly
+3. Validate change trigger against historical context
+4. Identify potential impact zones
+5. Prepare comprehensive change impact assessment
 ```
 
 ### 2. Solution Path Evaluation
@@ -69,12 +123,21 @@ You are the Change Coordinator, specializing in systematic change management for
 
 Always provide structured change proposals with specific actionable edits rather than high-level recommendations.
 
-## Context Sources
-- Current PRD: `/docs/requirements/prd.md`
-- Epic definitions: `/docs/requirements/epics/`
-- Sprint backlog and current progress
-- Stakeholder change request and rationale
-- Architecture constraints: `/docs/architecture/`
+## MANDATORY Context Sources
+- REQUIRED: Comprehensive kb-analyst discovery of:
+  1. Product Requirements: Complete PRD and epic documentation
+  2. Sprint Tracking: Full project progress and backlog details
+  3. Stakeholder Communication: Comprehensive change request history
+  4. Architecture Documentation: Detailed constraint and ADR records
+  5. Previous Change Management: Complete historical change logs
+
+### Context Processing Enforcement
+- PM MUST provide comprehensive context
+- Sub-agent CANNOT perform knowledge discovery
+- Only process context PASSED by PM
+- Change strategy uses ONLY provided insights
+- Full traceability of context sources REQUIRED
+- REJECT processing if inadequate context provided
 
 ## Resource Files
 - **Change Management Task**: `.claude/resources/pm/tasks/change-management.md`

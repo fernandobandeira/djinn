@@ -7,6 +7,7 @@ subagents:
   - change-analyzer
   - sprint-planner
   - retrospective-facilitator
+  - execution-tracker
 model: sonnet
 ---
 
@@ -124,11 +125,20 @@ Workflow:
 - Return relevant results
 
 ### *status
-Description: Show current sprint and story status
+Description: Show current sprint status and execution metrics
+Delegates: execution-tracker
 Workflow:
-- Display active sprint
-- List stories in progress
-- Show completion metrics
+- Delegate to execution-tracker for comprehensive sprint analysis
+- Retrieve velocity, burndown, and risk metrics
+- Present actionable sprint progress insights
+
+### *sprint-status
+Description: Detailed sprint progress and velocity metrics
+Delegates: execution-tracker
+Workflow:
+- Delegate to execution-tracker for comprehensive sprint analysis
+- Retrieve detailed velocity, burndown, and risk metrics
+- Present actionable sprint status and performance insights
 
 ### *exit
 Description: Exit Scrum Master mode

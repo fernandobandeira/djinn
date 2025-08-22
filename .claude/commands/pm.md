@@ -42,72 +42,100 @@ Roadmap → /docs/requirements/roadmap.md
 Stakeholder Updates → /docs/requirements/updates/
 ```
 ---
+# MANDATORY: All sub-agents use this discovery workflow
+sub_agent_discovery_requirements:
+  kb-analyst_discovery: MANDATORY
+  reference_existing_docs: REQUIRED
+  comprehensive_aggregation: ENFORCED
+  single_source_of_truth: ENABLED
+
 delegations:
   - command: "*help"
     agent: help-system
     description: Show available PM commands and workflows
   - command: "*create-brief"
     agent: product-strategist
-    description: Create foundational Project Brief using interactive YAML template
-  - command: "*create-prd"
-    agent: product-strategist
-    description: Create comprehensive PRD with advanced elicitation methods
-  - command: "*create-prd-advanced"
-    agent: product-strategist
-    description: Create PRD using advanced YAML-driven interactive template
+    description: Aggregate comprehensive findings from UX, Analyst, and Architect into a strategic brief
   - command: "*create-epic"
     agent: product-strategist
-    description: Create comprehensive epic with detailed stories
-  - command: "*brownfield-epic"
+    description: Create ONE strategic epic with comprehensive context and interactive refinement
+  - command: "*create-roadmap"
     agent: product-strategist
-    description: Create focused epic for existing system enhancements
-  - command: "*roadmap"
-    agent: product-strategist
-    description: Create strategic product roadmap with OKRs and milestones
-  - command: "*stakeholder-update"
-    agent: stakeholder-coordinator
-    description: Generate comprehensive stakeholder progress update
-  - command: "*change-management"
-    agent: change-coordinator
-    description: Handle scope changes and course corrections systematically
-  - command: "*validate-prd"
+    description: Generate strategic vision from aggregated findings
+  - command: "*validate-brief"
     agent: plan-validator
-    description: Run comprehensive PRD validation with GO/NO-GO decision
-  - command: "*validate-plan"
-    agent: plan-validator
-    description: Validate any project plan (PRD, Epic, Roadmap) comprehensively
-  - command: "*shard-document"
-    agent: document-processor
-    description: Split large documents into manageable sections
-  - command: "*sprint-status"
-    agent: execution-tracker
-    description: Track current sprint progress and velocity metrics
+    description: Validate brief completeness and strategic alignment
   - command: "*search-kb"
     agent: kb-analyst
-    description: Search project knowledge base across all collections
-  - command: "*status"
-    agent: execution-tracker
-    description: Show current PM workflow state and next steps
+    description: Perform DEEP discovery across all knowledge collections
   - command: "*exit"
     agent: system
     description: Exit PM mode
 
 # Integration Strategy
 integration_protocols:
-  - Ana (Analyst): Market research and business briefs
-  - Archie (Architect): Technical constraints and ADRs
-  - Tina (Teacher): Learning and documentation
+  - Ana (Analyst): PRIMARY source for market research, business insights
+  - Archie (Architect): MANDATORY technical constraints and architectural decisions
+  - UX Team: Comprehensive user personas and journey maps
+  - CRITICAL: NO sub-agent performs independent discovery
+
+## MANDATORY Knowledge Discovery Workflow
+PRE-WORKFLOW REQUIREMENTS:
+  - ALL sub-agents MUST execute kb-analyst discovery
+  - Discovery is MANDATORY before any content generation
+  - Discovered content MUST be referenced in final output
+
+### Discovery Protocol Template
+```python
+# CENTRALIZED Discovery Protocol
+# ONLY PM Command Performs Knowledge Discovery
+
+# Sub-agents NO LONGER perform Task() calls
+# Context is PASSED by PM, not self-discovered
+
+def centralized_context_discovery():
+    """PM's DEEP knowledge discovery method"""
+    context = kb-analyst_discovery(
+        search_strategy="comprehensive",
+        search_targets=[
+            "Analyst market research",
+            "UX personas and journeys",
+            "Competitive intelligence",
+            "Architectural Decision Records (ADRs)",
+            "Technical system constraints",
+            "Existing product requirements",
+            "Stakeholder communication history"
+        ],
+        output_format="structured_brief",
+        validation_checks=[
+            "cross_source_consistency",
+            "strategic_alignment",
+            "completeness_score"
+        ]
+    )
+    
+    # Mandatory validation and augmentation
+    validated_context = plan-validator(
+        context=context,
+        validation_type="comprehensive_discovery"
+    )
+    
+    return validated_context
+
+# Sub-agents receive pre-discovered context
+# NO autonomous discovery allowed
+```
 
 # Enhanced Core Workflow
 workflow:
-  1. Receive input
-  2. Validate delegation
-  3. Validate sub-agent availability
-  4. Implement error handling and fallback mechanisms
-  5. Route to appropriate sub-agent
-  6. Collect and synthesize results
-  7. Validate output quality
-  8. Return comprehensive output
+  1. Execute DEEP KB discovery via kb-analyst
+  2. Aggregate findings from ALL sources (Analyst, UX, Architect)
+  3. Synthesize comprehensive strategic brief
+  4. Validate brief with plan-validator
+  5. Create ONE strategic epic
+  6. Refine epic through interactive process
+  7. Prepare for handoff to Scrum Master
+  8. Log and trace entire discovery journey
 
 ## Success Criteria for Each Workflow Stage
   1. Input Validation:
@@ -159,51 +187,41 @@ workflow:
 
 ## Knowledge Harvesting Integration
 
-### When to Use knowledge-harvester
-Automatically delegate to knowledge-harvester when:
-- Preparing technology and product trend assessments
-- Gathering comprehensive market and competitive research
-- Identifying emerging product development strategies
-- Cross-referencing innovation signals across domains
-- Building contextual background for product roadmaps
+### Context Discovery and Research Strategy
+PM is SOLELY RESPONSIBLE for context discovery. Sub-agents CANNOT use Task().
 
-### Research Delegation Examples
-```
-# Technology Assessment Preparation
-Task(
-    subagent_type="knowledge-harvester",
-    description="Comprehensive technology trend research",
-    prompt="Research Focus:
-    - Emerging technology domains
-    - Potential disruptive innovations
-    - Technology maturity assessment
-    - Cross-industry technology adoption"
+#### Research Strategy
+- PM uses kb-analyst to gather comprehensive context
+- Context is PASSED to sub-agents in their prompts
+- Sub-agents work ONLY with provided context
+- NO direct Task() calls in sub-agents
+
+#### Workflow Example
+```python
+# PM Command Orchestration Pattern
+# 1. Discover comprehensive context
+context = kb-analyst_discovery(
+    search_targets=[
+        "Market research documents",
+        "User personas and research", 
+        "Competitive analysis reports",
+        "Technical architecture documents",
+        "Existing project requirements",
+        "Previous stakeholder communications"
+    ]
 )
 
-# Product Strategy Intelligence
-Task(
-    subagent_type="knowledge-harvester", 
-    description="Product trend and strategy research",
-    prompt="Product Domain: {product_category}
-    Research Objectives:
-    - Market positioning trends
-    - Competitive landscape analysis
-    - Customer expectation evolution
-    - Potential strategic pivots"
-)
-
-# Innovation Signal Synthesis
-Task(
-    subagent_type="knowledge-harvester",
-    description="Cross-domain innovation research",
-    prompt="Research Goal: Identify innovation intersections
-    Domains to Explore:
-    - Technology sector
-    - Market dynamics
-    - Customer behavior
-    - Emerging business models"
+# 2. Pass discovered context to sub-agents
+product_strategist_result = product-strategist(
+    context=context,
+    task="Create PRD with discovered insights"
 )
 ```
+
+Important Notes:
+- Sub-agents CANNOT initiate knowledge discovery
+- Sub-agents work EXCLUSIVELY with PM-provided context
+- Enforces centralized, controlled knowledge management
 
 ## Execution Context Preservation
 - Maintain workflow state across delegations
