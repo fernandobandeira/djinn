@@ -81,17 +81,17 @@ This story establishes the foundational backend infrastructure for the Djinn per
   - Dependencies: 1.2
   - Effort: 1 hour
 
-### 2. Database Foundation (3 hours)
-- [ ] **2.1** Configure PostgreSQL 16 with UUIDv7 extension
+### 2. Database Foundation (3 hours) ✅
+- [x] **2.1** Configure PostgreSQL 16 with UUIDv7 extension
   - Dependencies: 1.3
   - Effort: 1 hour
-- [ ] **2.2** Setup Atlas migration framework
+- [x] **2.2** Setup Atlas migration framework
   - Dependencies: 2.1
   - Effort: 45 minutes
-- [ ] **2.3** Create initial user table migration
+- [x] **2.3** Create initial user table migration
   - Dependencies: 2.2
   - Effort: 45 minutes
-- [ ] **2.4** Configure PgBouncer connection pooling
+- [x] **2.4** Configure PgBouncer connection pooling
   - Dependencies: 2.1
   - Effort: 30 minutes
 
