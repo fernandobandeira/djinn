@@ -78,6 +78,31 @@ THEN load /docs/requirements/stories/*.md for story history
 ## Agent Description
 Orchestrates comprehensive Scrum Master workflows including story creation from PRDs/architecture, sprint planning, change management, and retrospectives. Integrates comprehensive story creation patterns.
 
+## Story Template Standards
+
+### Mandatory Template
+**ALL stories MUST use**: `.claude/resources/sm/templates/story-template.md`
+
+### File Naming Convention
+```
+Pattern: {story_id}-{slugified_title}.md
+Example: DJINN-1001-implement-user-authentication.md
+
+Slugification Rules:
+- Convert to lowercase
+- Replace spaces with hyphens
+- Remove special characters
+- Keep only alphanumeric and hyphens
+```
+
+### Delegation Requirements
+When delegating to sub-agents, ALWAYS include:
+```
+Template: .claude/resources/sm/templates/story-template.md
+Filename Format: {story_id}-{slugified_title}.md
+Story ID Pattern: {PROJECT}-{4-digits} (e.g., DJINN-1001)
+```
+
 ## Commands
 
 ### *help
@@ -93,7 +118,9 @@ Workflow:
 - Check /docs/requirements/stories/ to identify which stories already exist
 - Extract the NEXT uncreated story from the epic (in order)
 - Pass the SPECIFIC story content to story-creator (NOT generic "create next")
-- Save generated story to /docs/requirements/stories/{story-id}.md
+  Include: "Use template: .claude/resources/sm/templates/story-template.md"
+- Generate filename: `{story_id}-{slugified_title}.md`
+- Save generated story to `/docs/requirements/stories/{generated_filename}`
 - Automatically delegate to story-validator for quality check
 - Display validation results to user (GO/NO-GO decision)
 - If NO-GO: Show issues and optionally improve with story-creator
@@ -204,11 +231,17 @@ Workflow:
      "Create story US-001: Project Setup and Base Configuration
      Description: [exact description from epic]
      Acceptance Criteria: [exact criteria from epic]
-     Context from Epic: [provide full epic context]"
+     Context from Epic: [provide full epic context]
+     Template: Use enhanced-story-template.md for consistent formatting
+     Story ID Format: DJINN-XXXX (4-digit number)"
      ```
    - **NEVER** allow story-creator to invent new stories
    - Receive complete story document from story-creator
-   - **CRITICAL**: Save story immediately to `/docs/requirements/stories/{story-id}.md`
+   - Extract story ID and title from the generated content
+   - Generate filename: `{story_id}-{slugified_title}.md`
+     - Example: `DJINN-1001-flutter-base-architecture-setup.md`
+     - Slugified = lowercase, spaces replaced with hyphens, no special chars
+   - **CRITICAL**: Save story with consistent naming to `/docs/requirements/stories/`
    
 3. **Validation Phase**
    - Delegate saved story to story-validator
@@ -240,6 +273,9 @@ Recommendations:
 
 ### File Management Rules
 - ✅ SAVE: Story files to `/docs/requirements/stories/`
+  - **Naming Format**: `{story_id}-{slugified_title}.md`
+  - **Example**: `DJINN-1001-flutter-base-architecture-setup.md`
+  - **Slugify Rules**: lowercase, hyphens for spaces, alphanumeric only
 - ❌ DON'T SAVE: Validation reports (display only)
 - ❌ DON'T SAVE: Temporary working files
 - ✅ SAVE: Sprint plans to `/docs/sprints/`

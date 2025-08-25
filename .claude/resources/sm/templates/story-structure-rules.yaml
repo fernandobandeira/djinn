@@ -1,0 +1,57 @@
+version: 1.0
+structural_validation:
+  header:
+    pattern: "^# User Story: [A-Z]+-[0-9]{4} - .+$"
+    description: "Validates header format with specific story ID pattern"
+  
+  section_names:
+    required_sections:
+      - "## Metadata"
+      - "## User Story"
+      - "## Acceptance Criteria"
+      - "## Tasks and Subtasks"
+      - "## Dev Notes"
+      - "## Dependencies"
+      - "## Definition of Done"
+      - "## Change Log"
+    order_enforced: true
+  
+  metadata_fields:
+    required:
+      - story_id:
+          pattern: "DJINN-[0-9]{4}"
+          description: "Story ID must follow DJINN-XXXX format"
+      - title:
+          min_length: 10
+          max_length: 120
+      - epic_id:
+          pattern: "DJINN-EPIC-[0-9]{3}"
+      - status:
+          valid_values: 
+            - "Draft"
+            - "Approved"
+            - "InProgress"
+            - "Review"
+            - "Done"
+      - priority:
+          valid_values:
+            - "Must Have"
+            - "Should Have"
+            - "Could Have"
+            - "Won't Have"
+      - effort_estimate:
+          pattern: "^[0-9]+ (hours|points)$"
+  
+  task_formatting:
+    task_header: 
+      pattern: "### Task [0-9]+: .+ \\(AC-[0-9]+(, AC-[0-9]+)?\\)"
+    subtask_header:
+      pattern: "- \\*\\*[0-9]+\\.[0-9]+\\*\\*: .+"
+  
+  scoring:
+    header_format_weight: 2
+    section_names_weight: 2
+    section_order_weight: 1.5
+    metadata_fields_weight: 2
+    task_formatting_weight: 1.5
+    total_possible_score: 10

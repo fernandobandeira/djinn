@@ -1,82 +1,130 @@
-# Story {{epic_num}}.{{story_num}}: {{story_title}}
+# User Story: {ID} - {Title}
 
-## Status
-{{status}}
+## Metadata
+- **Author:** 
+- **Created:** {YYYY-MM-DD}
+- **Last Updated:** {YYYY-MM-DD}
+- **Priority:** 
+- **Estimated Effort:** 
+- **Epic/Initiative:** 
 
-## Story
-**As a** {{user_role}},
-**I want** {{action}},
-**so that** {{benefit}}.
+## User Story
+**As a** [user role]  
+**I want** [feature/capability]  
+**So that** [business value/outcome]
 
 ## Acceptance Criteria
-{{acceptance_criteria}}
+### Measurable Criteria
+- [ ] Criterion 1: [Specific, Measurable Condition]
+  - Metric: 
+  - Expected Value: 
 
-## Tasks / Subtasks
-{{tasks}}
+### Validation Methods
+- [ ] Method 1: [Specific Validation Approach]
+  - Tools: 
+  - Success Indicators: 
+
+## Tasks and Subtasks
+- [ ] Task 1: [Detailed Task Description]
+  - Depends on: [Previous Task IDs]
+  - Estimated Effort: 
+  - Owner: 
+
+- [ ] Task 2: [Detailed Task Description]
+  - Depends on: [Previous Task IDs]
+  - Estimated Effort: 
+  - Owner: 
 
 ## Dev Notes
+### Code Examples
+```python
+# Illustrative code snippet
+def example_implementation():
+    pass
+```
 
-### Previous Story Insights
-{{previous_insights}}
+### Configuration Requirements
+```yaml
+# Example configuration 
+config:
+  key: value
+```
 
-### Architecture Context
+### Integration Points
+- External System Interactions
+- API Contracts
+- Data Flow Diagrams
 
-**Technology Stack** [Source: /docs/architecture/tech-stack.md]
-{{tech_stack}}
+## Testing Requirements
+### Specific Test Scenarios
+- [ ] Scenario 1: [Detailed Test Case]
+  - Input: 
+  - Expected Output: 
+  - Test Type: [Unit/Integration/E2E]
 
-**Project Structure** [Source: /docs/architecture/source-tree.md]
-{{project_structure}}
+### Test Coverage
+- [ ] Unit Test Coverage: 
+- [ ] Integration Test Coverage: 
+- [ ] Performance Test Requirements: 
 
-**Clean Architecture Pattern** [Source: /docs/architecture/architecture.md]
-{{architecture_pattern}}
+## Definition of Done (DoD)
+### Code Quality
+- [ ] Code follows team's style guide
+- [ ] All linting checks passed
+- [ ] Code complexity within acceptable range
 
-**API Integration** [Source: /docs/architecture/api-spec.md]
-{{api_integration}}
+### Testing
+- [ ] 100% Unit Test Coverage
+- [ ] Integration Tests Passed
+- [ ] Performance Benchmarks Met
 
-**UI Components and Patterns** [Source: /docs/architecture/component-library.md]
-{{ui_components}}
+### Documentation
+- [ ] Inline Code Documentation
+- [ ] Updated System Documentation
+- [ ] API/Interface Documentation
 
-**Security Considerations** [Source: /docs/architecture/security.md]
-{{security_considerations}}
+### Deployment
+- [ ] Configuration Management
+- [ ] Zero-Downtime Deployment Strategy
+- [ ] Rollback Mechanism Verified
 
-### Project Structure Notes
-{{project_notes}}
+## Dependencies
+- External Services: 
+- Internal Components: 
+- Data Sources: 
 
-## Testing
+## Risks and Mitigation
+### Identified Risks
+- Risk 1: 
+  - Probability: 
+  - Impact: 
+  - Mitigation Strategy: 
 
-### Testing Standards
-[Source: /docs/architecture/testing-strategy.md]
+## Rollback Strategy
+### Rollback Triggers
+- [ ] Performance Degradation
+- [ ] Error Rate Threshold
+- [ ] Unexpected Behavior Detection
 
-**Test File Locations:**
-{{test_locations}}
-
-**Test Frameworks:**
-{{test_frameworks}}
-
-**Testing Patterns:**
-{{test_patterns}}
-
-**Specific Test Requirements for This Story:**
-{{test_requirements}}
+### Rollback Procedure
+1. Steps to revert changes
+2. Data restoration process
+3. System state recovery
 
 ## Change Log
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| {{date}} | 1.0 | Initial story creation | Sam (Scrum Master) |
+- {YYYY-MM-DD}: [Initial Creation]
+- {YYYY-MM-DD}: [Updates/Revisions]
 
 ## Dev Agent Record
-
-### Agent Model Used
-{{agent_model}}
-
-### Debug Log References
-{{debug_logs}}
-
-### Completion Notes List
-{{completion_notes}}
-
-### File List
-{{file_list}}
+- Agent Used: 
+- Timestamp: 
+- Configuration: 
 
 ## QA Results
-{{qa_results}}
+- [ ] QA Review Pending
+- Detailed QA Report: TBD
+
+## File List
+- [ ] List of Affected/Created Files
+  - File 1: 
+  - File 2: 

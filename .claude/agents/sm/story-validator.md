@@ -21,6 +21,10 @@ tools:
   - Grep
   - Glob
 model: haiku
+
+template_loading:
+  primary: .claude/resources/sm/templates/story-template.md
+  validation_rules: .claude/resources/sm/templates/story-structure-rules.yaml
 ```
 
 ## Brownfield Context Analysis
@@ -35,6 +39,11 @@ model: haiku
   - Check for: frontend-architecture.md, UI/UX specifications, design files
   - Look for: Frontend stories, component specifications, user interface mentions
 
+## Template Standards (MANDATORY)
+- **Expected Template**: `.claude/resources/sm/templates/story-template.md`
+- **Expected Filename**: `{story_id}-{slugified_title}.md`
+- **Story ID Format**: `{PROJECT}-{4-digits}` (e.g., DJINN-1001)
+
 ## Validation Methodology: Comprehensive Quality Checks
 
 ### 1. Template Completeness & Structure Validation
@@ -45,6 +54,42 @@ model: haiku
 - Confirm story file is in correct directory
 - Check naming conventions (/docs/requirements/stories/{epic}.{story_id}.md)
 - Validate links to related files/resources
+
+### 1.5 Template Compliance & Structural Format Enforcement
+- **Header Format Validation**:
+  - MUST match: `# User Story: {STORY-ID} - {Title}`
+  - Pattern: `^# User Story: [A-Z]+-[0-9]{4} - .+$`
+  - No comment-style headers allowed
+  
+- **Section Name Standardization**:
+  - MUST use "## Metadata" (not "Story Information")
+  - MUST use "## User Story" (not "Story" alone)
+  - MUST use "## Tasks and Subtasks" (not variations)
+  - Exact section names enforced from template
+  
+- **Section Order Validation**:
+  - Header line
+  - ## Metadata
+  - ## User Story  
+  - ## Acceptance Criteria
+  - ## Tasks and Subtasks
+  - ## Dev Notes
+  - ## Dependencies
+  - ## Definition of Done
+  - ## Change Log
+  
+- **Metadata Field Requirements**:
+  - story_id: format DJINN-XXXX
+  - title: present and non-empty
+  - epic_id: references valid epic
+  - status: Draft|Approved|InProgress|Review|Done
+  - priority: Must Have|Should Have|Could Have|Won't Have
+  - effort_estimate: numeric with unit (hours/points)
+  
+- **Task Format Enforcement**:
+  - Task headers: `### Task {N}: {Description} ({AC links})`
+  - Subtask format: `- **{N}.{M}**: {Description}`
+  - AC links format: `(AC-{N}, AC-{M})`
 
 ### 2. Infrastructure & Dependencies Validation
 - **Infrastructure Readiness**:
@@ -207,6 +252,7 @@ validation_result:
     documentation: 0-10
     anti_hallucination: 0-10
     extensibility: 0-10
+    structural_compliance: 0-10  # NEW: Critical structural enforcement
   
   po_assessment:
     blocking_issues: []        # Must fix before development
@@ -214,12 +260,14 @@ validation_result:
     missing_requirements: []   # Gaps in story definition
     dependency_conflicts: []   # Sequencing problems
     integration_concerns: []   # Always critical
+    structural_violations: []  # Specific format violations
   
   recommendations:
     must_fix: []               # Required before GO
     should_fix: []             # Strongly recommended
     consider: []               # Optional improvements
     defer_post_mvp: []         # Can be addressed later
+    format_corrections: []     # Exact structural corrections needed
   
   implementation_analysis:
     complexity: LOW|MEDIUM|HIGH|VERY_HIGH
@@ -234,6 +282,7 @@ validation_result:
     checks_failed: number
     checks_conditional: number
     confidence_level: percentage
+    structural_violations: number  # Number of structural non-compliances
 ```
 
 ## System Prompt
@@ -249,6 +298,10 @@ Your validation is the critical gateway between story creation and development, 
 
 ## Resource Discovery Protocol
 ```bash
+# Template Loading (MANDATORY FIRST)
+LOAD template from .claude/resources/sm/templates/story-template.yaml
+LOAD structure rules from .claude/resources/sm/templates/story-structure-rules.yaml
+
 # Story Source Discovery
 LOAD story from /docs/requirements/stories/{story_id}.md
 

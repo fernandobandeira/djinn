@@ -1,0 +1,46 @@
+version: "1.0"
+task_structure:
+  checkbox_format: "- [ ]"
+  
+  task_attributes:
+    - description: "Clear, actionable task"
+    - owner: "Assigned team member"
+    - effort_estimation:
+        scale: 
+          - "1 - Trivial (< 1 hour)"
+          - "2 - Small (1-4 hours)"
+          - "3 - Medium (4-8 hours)"
+          - "5 - Large (8-16 hours)"
+          - "8 - Complex (> 16 hours)"
+  
+  dependency_tracking:
+    format: "Depends on: [Task IDs]"
+    examples:
+      - "Depends on: [TASK-123, TASK-456]"
+      - "Blocked by: TASK-789"
+  
+  task_states:
+    - "Not Started"
+    - "In Progress"
+    - "Blocked"
+    - "Under Review"
+    - "Completed"
+  
+  best_practices:
+    - "Break down complex tasks into smaller, manageable subtasks"
+    - "Clearly define entry and exit criteria for each task"
+    - "Update task status regularly"
+    - "Include context or reference links when applicable"
+
+task_template:
+  - "- [ ] {Task Description}"
+  - "  - Depends on: [{Previous Task IDs}]"
+  - "  - Estimated Effort: {Effort Points}"
+  - "  - Owner: {Team Member}"
+  - "  - Context: {Additional Information}"
+
+dependency_rules:
+  - Minimize linear dependencies
+  - Parallelize tasks where possible
+  - Clearly document blocking conditions
+  - Use dependency graph for complex workflows

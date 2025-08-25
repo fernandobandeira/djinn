@@ -23,7 +23,10 @@ model: sonnet
 ## Resource Loading Protocol
 ```bash
 # When creating stories, load in sequence:
-THEN load .claude/resources/sm/templates/story-template.yaml
+THEN load .claude/resources/sm/templates/story-template.md
+THEN load .claude/resources/sm/templates/acceptance-criteria-patterns.yaml
+THEN load .claude/resources/sm/templates/task-structure-guide.yaml
+THEN load .claude/resources/sm/templates/dod-comprehensive-checklist.yaml
 THEN load .claude/resources/sm/protocols/molecules/story-creation-workflow.md
 THEN load .claude/resources/sm/data/output-paths.yaml
 
@@ -55,6 +58,14 @@ THEN load /docs/requirements/stories/{previous_story}.md if exists
 ```
 
 ## Core Responsibilities
+
+### Template Standards (MANDATORY)
+- **Template**: MUST use `.claude/resources/sm/templates/story-template.md`
+- **Filename Format**: Return suggested filename as `{story_id}-{slugified_title}.md`
+- **Story ID Pattern**: Use format `{PROJECT}-{4-digits}` (e.g., DJINN-1001)
+- **Slugification**: lowercase, hyphens for spaces, alphanumeric only
+
+### Story Creation Requirements
 - Transform PROVIDED story requirements from epics into actionable user stories
 - Extract architectural context for comprehensive story development  
 - Create stories that are self-contained and developer-friendly
@@ -86,15 +97,37 @@ THEN load /docs/requirements/stories/{previous_story}.md if exists
 - Never invent technical details not in docs
 
 ### 4. Create Story Document
-- Use story-template.yaml structure
-- Fill all sections:
-  - Status: Draft
-  - Story: As a/I want/So that format
-  - Acceptance Criteria: Numbered list from epic
-  - Tasks/Subtasks: Technical breakdown with AC links
-  - Dev Notes: Architecture references, file locations, patterns
-  - Testing Requirements: From testing-strategy.md
-  - Change Log: Initial creation entry
+- Use enhanced-story-template.md structure
+- Fill ALL sections comprehensively:
+  - Metadata: Complete with author, timestamps, priority
+  - User Story: Precise 'As a/I want/So that' format
+  - Acceptance Criteria:
+    - Use acceptance-criteria-patterns.yaml for validation
+    - Include Measurable and Validation subsections
+    - Link each criterion to specific acceptance tests
+  - Tasks/Subtasks:
+    - Use task-structure-guide.yaml for formatting
+    - Include checkbox status
+    - Show task dependencies
+    - Estimate effort for each task
+  - Dev Notes:
+    - Comprehensive code examples
+    - Configuration requirements
+    - Integration points with architecture
+  - Testing Requirements:
+    - Specific test scenarios from testing-strategy.md
+    - Coverage metrics
+    - Performance and security testing details
+  - Definition of Done:
+    - Use dod-comprehensive-checklist.yaml
+    - Comprehensive checklist across code, testing, deployment
+  - Dependencies: Clearly mapped
+  - Risks and Mitigation: Detailed strategy
+  - Rollback Strategy: Comprehensive procedure
+  - Change Log: Detailed tracking
+  - Dev Agent Record: Capture generation context
+  - QA Results: Prepare placeholders
+  - File List: Document affected files
 
 ### 5. Dev Notes Section (CRITICAL)
 Must contain:

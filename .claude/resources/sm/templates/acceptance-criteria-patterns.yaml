@@ -1,0 +1,59 @@
+version: "1.0"
+patterns:
+  performance:
+    - metric: "Response Time"
+      measurable: "Maximum response time under 200ms for 95% of requests"
+      validation: 
+        - tool: "Load Testing"
+        - benchmark: "Response Time Distribution"
+    
+  scalability:
+    - metric: "Concurrent Users"
+      measurable: "Support minimum 1000 concurrent users without performance degradation"
+      validation:
+        - tool: "Stress Testing"
+        - benchmark: "Throughput and Resource Utilization"
+  
+  reliability:
+    - metric: "Error Rate"
+      measurable: "Less than 0.1% error rate in production"
+      validation:
+        - tool: "Monitoring Dashboard"
+        - benchmark: "Error Tracking"
+  
+  security:
+    - metric: "Access Control"
+      measurable: "Role-based access with granular permissions"
+      validation:
+        - tool: "Penetration Testing"
+        - benchmark: "OWASP Security Checklist"
+  
+  usability:
+    - metric: "User Satisfaction"
+      measurable: "Minimum 4.5/5 rating in user feedback"
+      validation:
+        - tool: "User Survey"
+        - benchmark: "Net Promoter Score"
+
+generic_validation_methods:
+  - manual_testing: 
+      steps:
+        - Verify expected behavior
+        - Check edge cases
+        - Validate error handling
+  
+  - automated_testing:
+      types:
+        - unit_tests
+        - integration_tests
+        - end_to_end_tests
+
+validation_tools:
+  - name: "Postman"
+    type: "API Testing"
+  - name: "JMeter"
+    type: "Performance Testing"
+  - name: "Selenium"
+    type: "UI Testing"
+  - name: "SonarQube"
+    type: "Code Quality"
