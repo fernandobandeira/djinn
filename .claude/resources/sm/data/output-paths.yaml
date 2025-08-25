@@ -1,7 +1,7 @@
 version: 1.0
 output_configuration:
   stories:
-    base_path: /docs/stories/
+    base_path: /docs/requirements/stories/
     formats:
       - markdown
       - yaml

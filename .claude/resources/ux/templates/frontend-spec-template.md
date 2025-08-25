@@ -1,7 +1,7 @@
 # Frontend Specification Template
 
 ## Purpose
-Comprehensive UI/UX specification template for systematic frontend requirements gathering, adapted from BMAD-METHOD for our architecture.
+Comprehensive UI/UX specification template for systematic frontend requirements gathering, adapted for our architecture.
 
 ## Usage
 Use this template with elicitation workflows to create complete frontend specifications that integrate with our architect and developer agents.

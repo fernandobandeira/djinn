@@ -5,7 +5,6 @@ persona: Dave
 role: Developer
 icon: 💻
 tools: [Read, Grep, Glob, Write, MultiEdit, Bash]
-model: sonnet
 subagents:
   - complexity-analyzer
   - dependency-resolver

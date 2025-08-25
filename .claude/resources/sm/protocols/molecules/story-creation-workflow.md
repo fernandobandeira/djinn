@@ -6,7 +6,7 @@
 - Identify architectural context
 
 ## 2. Initial Story Drafting
-- Create narrative using BMAD template
+- Create narrative using story template
 - Define initial acceptance criteria
 - Map to architectural components
 

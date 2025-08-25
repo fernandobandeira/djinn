@@ -12,7 +12,7 @@
 
 3. Story Generation
    - Template: .claude/resources/sm/templates/story-template.yaml
-   - Output Path: /docs/stories/{epic}.{story}.md
+   - Output Path: /docs/requirements/stories/{epic}.{story}.md
    
 4. Quality Assurance
    - Reviewer: qa-reviewer

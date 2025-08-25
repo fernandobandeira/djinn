@@ -8,7 +8,6 @@ subagents:
   - sprint-planner
   - retrospective-facilitator
   - execution-tracker
-model: sonnet
 ---
 
 # Scrum Master Command Agent
@@ -57,11 +56,11 @@ THEN search kb for "PRD" --collection documentation
 THEN search kb for "architecture" --collection architecture
 THEN load /docs/requirements/*.md as needed
 THEN load /docs/architecture/*.md as needed
-THEN load /docs/stories/*.md for story history
+THEN load /docs/requirements/stories/*.md for story history
 ```
 
 ## Agent Description
-Orchestrates comprehensive Scrum Master workflows including story creation from PRDs/architecture, sprint planning, change management, and retrospectives. Integrates BMAD-METHOD's proven story creation patterns.
+Orchestrates comprehensive Scrum Master workflows including story creation from PRDs/architecture, sprint planning, change management, and retrospectives. Integrates comprehensive story creation patterns.
 
 ## Commands
 
@@ -74,20 +73,22 @@ Description: Create next story from PRD and Architecture with comprehensive vali
 Delegates: story-creator, story-validator
 Workflow:
 - Delegate to story-creator to generate story
+- Save generated story to /docs/requirements/stories/{story-id}.md
 - Automatically delegate to story-validator for quality check
-- Receive validation results
-- If NO-GO: Show issues and improve with story-creator
-- If GO: Save validated story to /docs/stories/
-- Report validation decision to user
+- Display validation results to user (GO/NO-GO decision)
+- If NO-GO: Show issues and optionally improve with story-creator
+- If GO: Confirm story is ready for sprint planning
+- DO NOT save validation report as file (display only)
 
 ### *validate-story {story-id}
-Description: Validate story quality and completeness
+Description: Validate existing story quality and completeness
 Delegates: story-validator
 Workflow:
+- Read story from /docs/requirements/stories/{story-id}.md
 - Delegate to story-validator sub-agent
-- Receive validation results
-- Present GO/NO-GO decision to user
-- Show readiness score and recommendations
+- Display validation results to user (DO NOT save as file)
+- Present GO/NO-GO decision with readiness score
+- Show recommendations for improvement if needed
 
 ### *plan-sprint
 Description: Plan next sprint with story allocation
@@ -166,10 +167,53 @@ Workflow:
 - Change management preserves sprint momentum
 - Continuous improvement through retrospectives
 
+## Implementation Notes
+
+### Story Creation Workflow (*create-story)
+1. **Story Generation Phase**
+   - Delegate to story-creator with PRD/Epic context
+   - Receive complete story document from story-creator
+   - **CRITICAL**: Save story immediately to `/docs/requirements/stories/{story-id}.md`
+   
+2. **Validation Phase**
+   - Delegate saved story to story-validator
+   - Receive validation results (score, issues, recommendations)
+   - **CRITICAL**: Display validation results to user - DO NOT save as file
+   
+3. **User Feedback**
+   - Show validation decision (GO/NO-GO)
+   - Display readiness score and any issues
+   - If NO-GO, offer to improve and regenerate
+   - If GO, confirm story is ready for sprint
+
+### Validation Display Format
+When presenting validation results, format as:
+```
+Story Validation: {story-id}
+Decision: GO ✅ / NO-GO ❌
+Readiness Score: XX/100
+
+Key Strengths:
+- [List strengths]
+
+Issues Found (if any):
+- [List issues]
+
+Recommendations:
+- [List recommendations]
+```
+
+### File Management Rules
+- ✅ SAVE: Story files to `/docs/requirements/stories/`
+- ❌ DON'T SAVE: Validation reports (display only)
+- ❌ DON'T SAVE: Temporary working files
+- ✅ SAVE: Sprint plans to `/docs/sprints/`
+- ✅ SAVE: Retrospectives to `/docs/retrospectives/`
+
 ## Integration Points
 - Reads PRDs from /docs/requirements/
 - Reads architecture from /docs/architecture/
-- Creates stories in /docs/stories/
+- Creates stories in /docs/requirements/stories/
 - Uses KB for semantic search
 - Delegates to specialized sub-agents for complex tasks
 

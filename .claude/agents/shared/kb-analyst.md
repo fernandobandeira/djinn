@@ -63,7 +63,7 @@ Different agents get optimized search results based on their needs:
 
 #### For Product Manager (Paul)
 - Prioritizes: business context, requirements, user stories
-- GraphRAG entities: `bmad_method`, business concepts
+- GraphRAG entities: `story_methods`, business concepts
 - Collections: `documentation`, `architecture`
 
 #### For Developer (Dave)

@@ -1,4 +1,4 @@
-# User Story Template (BMAD-METHOD)
+# User Story Template
 
 ## Story ID: [UNIQUE_IDENTIFIER]
 

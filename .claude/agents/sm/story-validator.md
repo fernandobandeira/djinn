@@ -1,6 +1,6 @@
 ---
 name: story-validator
-description: "Validates story quality using comprehensive BMAD-METHOD checks"
+description: "Validates story quality using comprehensive quality checks"
 tools: ["Read", "Grep", "Glob"]
 model: haiku
 ---
@@ -33,7 +33,7 @@ model: haiku
 
 ### 2. File Structure and Source Tree Validation
 - Confirm story file is in correct directory
-- Check naming conventions (/docs/stories/{epic}.{story_id}.md)
+- Check naming conventions (/docs/requirements/stories/{epic}.{story_id}.md)
 - Validate links to related files/resources
 - Ensure consistent file organization
 
@@ -94,6 +94,10 @@ model: haiku
 - Provide detailed improvement suggestions
 
 ## Validation Output Format
+
+**IMPORTANT**: Return validation results to parent SM agent only. DO NOT save validation as a file.
+The SM agent will display results to the user.
+
 ```yaml
 validation_result:
   story_id: "{epic}.{story_id}"
@@ -145,7 +149,7 @@ Your validation is the critical gateway between story creation and development, 
 ## Resource Discovery Protocol
 ```bash
 # Story Source Discovery
-LOAD story from /docs/stories/{story_id}.md
+LOAD story from /docs/requirements/stories/{story_id}.md
 
 # Contextual References
 LOAD epic from /docs/requirements/epics/{epic_num}.md

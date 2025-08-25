@@ -41,9 +41,21 @@ The product's **core engagement engine** transforms mundane receipt scanning int
 - **Universally Appealing**: Works across all age groups and sophistication levels
 - **Naturally Viral**: "My financial timeline" inherently shareable
 
+#### Proactive Time Traveler Strategy - Creating Aha Moments
+The Time Traveler AI **proactively surfaces insights** without waiting for user queries, creating immediate value during the critical trial period:
+
+**Week 1 Proactive Insight Schedule**:
+- **Day 1**: "Welcome! I've analyzed your financial timeline - you're losing $247/month to forgotten subscriptions"
+- **Day 2**: "Temporal pattern detected: You typically overspend $400 within 3 days of payday"
+- **Day 3**: "Historical anomaly: Your grocery costs jumped 23% since January"
+- **Day 5**: "Future projection: Based on current trajectory, you'll save $1,200 by March"
+- **Day 7**: "Week 1 summary: Here's what I learned about your financial timeline"
+
+This proactive approach solves the "what to ask" problem while controlling AI costs through scheduled batch processing (~$0.50/user/month for proactive insights).
+
 #### Core Features Implementation
 1. **Timeline Dashboard**: Visual past → present → future financial trajectory
-2. **Temporal Alerts**: "Historical alert: You typically overspend 3 days after payday"
+2. **Proactive Temporal Alerts**: Automatic insights without user prompting
 3. **Future Self Messages**: AI-generated personalized motivation
 4. **Parallel Universe Comparisons**: Show impact of financial decisions
 5. **The Financial Almanac**: Predictive insights as "historical facts from the future"
@@ -113,11 +125,17 @@ The product's **core engagement engine** transforms mundane receipt scanning int
 - Monthly streak: +3,000 bonus
 - **Monthly potential**: 5,000-10,000 points
 
-#### AI Wishes Pricing
+#### AI Wishes Pricing & Cost Control
 - **Quick Analysis**: 200-500 points
 - **Smart Insights**: 1,000 points
 - **Premium Reports**: 2,000-5,000 points
 - **Value Equation**: 1,000 points = $1 perceived value
+
+**AI Cost Management Strategy**:
+- **Proactive Insights**: Free scheduled batch processing (~$0.50/user/month)
+- **On-Demand Wishes**: Points-based to control usage and costs
+- **Total AI Cost Target**: <$1/user/month through intelligent batching
+- **Points as Governor**: Engagement drives data collection while controlling AI expenses
 
 ### Manual CSV Upload - Critical Differentiator
 For users whose banks aren't supported by Plaid:
@@ -384,10 +402,18 @@ While OCR will commoditize in 12-18 months, our moat lies in:
 
 #### Strategic Initiatives
 1. **Data Moat**: 1M+ receipts intelligence
-2. **B2B Features**: Enterprise/family plans
-3. **Platform Integrations**: Email receipts, merchant APIs
-4. **International**: UK/Canada expansion
-5. **Advanced Analytics**: Predictive intelligence
+2. **Social Features**: Expense splitting, couple budgeting, family accounts
+3. **Community Building**: Lamp Circles, anonymous comparisons, group challenges
+4. **Platform Integrations**: Email receipts, automated imports
+5. **Advanced Analytics**: Predictive intelligence and ML-powered insights
+
+#### Social & Community Features (Future Roadmap)
+- **Expense Splitting**: "Split the Bill" with automatic settlement tracking
+- **Couple Budgeting**: Shared financial goals and progress tracking
+- **Family Accounts**: $14.99/month for up to 4 users
+- **Lamp Circles**: Private groups for financial challenges
+- **Anonymous Comparisons**: "How do I compare?" benchmarking
+- **Group Challenges**: Savings competitions with friends
 
 #### Success Criteria
 - 50,000 paying users
@@ -444,6 +470,50 @@ Djinn represents a unique convergence of:
 
 ---
 
+## Research & Documentation Needs
+
+### Areas Requiring Further Research
+While the core strategy is validated, the following areas need additional research and documentation before implementation:
+
+#### Immediate Research Priorities (Pre-MVP)
+1. **Trial Conversion Validation**: Test 48.8% assumption with 100-user pilot
+2. **OCR Accuracy Testing**: Validate 90%+ accuracy across receipt types
+3. **AI Cost Modeling**: Detailed cost analysis for proactive insights
+4. **Points Economy Balance**: User testing for optimal earn/spend ratios
+
+#### Future Feature Research (Post-MVP)
+1. **Social Features Design**: Wireframes for expense splitting and couple budgeting
+2. **Community Mechanics**: Lamp Circles group dynamics and moderation
+3. **Family Account Architecture**: Multi-user permissions and data separation
+4. **Anonymous Comparison Privacy**: Technical approach for privacy-preserving benchmarks
+
+#### Technical Research Needs
+1. **OCR Edge Cases**: Handwritten, faded, multi-language receipt handling
+2. **AI Throttling Mechanisms**: Rate limiting and cost control systems
+3. **Offline Sync Strategies**: Conflict resolution for manual CSV uploads
+4. **Performance Optimization**: Receipt processing at scale
+
+### Realistic Expectations & Adjustments
+
+#### Timeline Adjustments
+- **MVP Timeline**: 6-9 months more realistic than 3-6 months
+- **Competitive Window**: 6-9 months before Monarch responds (not 12-18)
+- **Feature Velocity**: Single developer constraints require phased approach
+
+#### Metric Recalibration
+- **Trial Conversion**: Plan for 25-35% (validate 48.8% aspiration)
+- **CAC**: Budget for $35-45 initially (optimize to $25)
+- **OCR Accuracy**: 90% at launch, improving to 95% over time
+- **AI Costs**: Monitor closely, prepare for $1-2/user/month
+
+#### Risk Acknowledgments
+- **Monarch OCR Response**: Likely within 6 months of our launch
+- **Platform Dependencies**: App store policies could impact distribution
+- **Support Burden**: OCR corrections may require manual intervention
+- **Scaling Challenges**: Team growth needed sooner than anticipated
+
+---
+
 ## Conclusion & Call to Action
 
 ### The Djinn Advantage
@@ -476,11 +546,19 @@ By December 2025, Djinn will be the definitive financial intelligence platform w
 
 **Document Metadata**:
 - **Author**: Product Strategy Team
-- **Version**: 2.0 - Comprehensive Enhancement
+- **Version**: 3.0 - Strategic Refinement with Proactive AI
+- **Last Updated**: 2025-01-24
 - **Review Cycle**: Weekly during MVP, monthly post-launch
 - **Distribution**: Executive team, product, engineering, marketing
 - **Next Review**: 2025-02-01
 - **Dependencies**: Technical architecture finalized, UX designs approved
+
+**Key Changes in v3.0**:
+- Added proactive Time Traveler AI strategy for automatic aha moments
+- Incorporated AI cost control through points economy
+- Added future social features roadmap (expense splitting, couple budgeting)
+- Included research needs and realistic timeline adjustments
+- Clarified MVP vs future phase features
 
 **Key Documentation References**:
 - User Research: `/docs/research/user/`

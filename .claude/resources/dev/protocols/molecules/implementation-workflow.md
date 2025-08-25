@@ -23,14 +23,14 @@ workflow:
 ## Phase 1: Story Intake
 
 ### Inputs
-- Story file from SM: `/docs/stories/[epic].[story].story.md`
+- Story file from SM: `/docs/requirements/stories/[epic].[story].story.md`
 - Architecture context embedded in story
 - Acceptance criteria and test requirements
 
 ### Process
 ```bash
 # Load story context
-THEN load /docs/stories/[epic].[story].story.md
+THEN load /docs/requirements/stories/[epic].[story].story.md
 
 # Extract key elements
 - User story statement

@@ -1,6 +1,6 @@
 ---
 name: story-creator
-description: "Converts PRDs and architecture into comprehensive user stories using BMAD-inspired template"
+description: "Converts PRDs and architecture into comprehensive user stories using comprehensive story template"
 tools: ["Read", "Write", "Grep", "Glob", "MultiEdit"]
 model: sonnet
 ---
@@ -51,7 +51,7 @@ THEN load /docs/architecture/components.md
 THEN load /docs/architecture/core-workflows.md
 
 # Check previous stories for context
-THEN load /docs/stories/{previous_story}.md if exists
+THEN load /docs/requirements/stories/{previous_story}.md if exists
 ```
 
 ## Core Responsibilities
@@ -62,7 +62,7 @@ THEN load /docs/stories/{previous_story}.md if exists
 ## Story Creation Workflow
 
 ### 1. Identify Next Story
-- Check existing stories in /docs/stories/
+- Check existing stories in /docs/requirements/stories/
 - Find highest numbered story (e.g., 1.3.story.md)
 - Determine next sequential story
 - If epic complete, prompt user for next epic
@@ -102,7 +102,9 @@ Must contain:
 - Every detail MUST cite source
 
 ## Output Requirements
-- Create story at: /docs/stories/{epic_num}.{story_num}.story.md
+- Return complete story content to parent SM agent
+- SM agent will save to: /docs/requirements/stories/{story_id}.md
+- DO NOT save files directly - return content only
 - Status must be "Draft" until validated
 - Must be self-contained for dev agent
 - Dev Notes must provide complete technical context

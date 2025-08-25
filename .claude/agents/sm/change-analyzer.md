@@ -27,7 +27,7 @@ THEN load .claude/resources/sm/protocols/molecules/change-management-workflow.md
 THEN load .claude/resources/sm/checklists/change-checklist.md
 
 # Load current sprint context
-THEN load /docs/stories/*.story.md for current sprint
+THEN load /docs/requirements/stories/*.story.md for current sprint
 THEN load /docs/sprints/current-sprint.md if exists
 
 # Search for affected artifacts

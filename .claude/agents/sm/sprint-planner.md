@@ -25,8 +25,8 @@ THEN load .claude/resources/sm/data/output-paths.yaml
 THEN load .claude/resources/sm/data/velocity-metrics.yaml if exists
 
 # Load backlog and stories
-THEN glob /docs/stories/*.story.md
-THEN load /docs/stories/*.story.md with status != Done
+THEN glob /docs/requirements/stories/*.story.md
+THEN load /docs/requirements/stories/*.story.md with status != Done
 
 # Load previous sprint data
 THEN load /docs/sprints/sprint-*.md for velocity data

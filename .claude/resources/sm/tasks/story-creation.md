@@ -1,7 +1,7 @@
 # Story Creation Guidelines
 
 ## Purpose
-Guidelines for creating high-quality user stories using BMAD-METHOD
+Guidelines for creating high-quality user stories using best practices
 
 ## Key Steps
 1. Define clear user persona

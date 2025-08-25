@@ -24,7 +24,7 @@ THEN load .claude/resources/sm/data/velocity-metrics.yaml
 
 # Load sprint data
 THEN load /docs/sprints/sprint-{current}.md
-THEN load /docs/stories/*.story.md from current sprint
+THEN load /docs/requirements/stories/*.story.md from current sprint
 
 # Load previous retrospectives for patterns
 THEN glob /docs/retrospectives/*.md
