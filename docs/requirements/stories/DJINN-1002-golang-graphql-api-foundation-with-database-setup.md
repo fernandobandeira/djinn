@@ -95,14 +95,14 @@ This story establishes the foundational backend infrastructure for the Djinn per
   - Dependencies: 2.1
   - Effort: 30 minutes
 
-### 3. Data Access Layer (2 hours)
-- [ ] **3.1** Configure sqlc with pgx/v5 driver
+### 3. Data Access Layer (2 hours) ✅
+- [x] **3.1** Configure sqlc with pgx/v5 driver
   - Dependencies: 2.3
   - Effort: 45 minutes
-- [ ] **3.2** Implement User CRUD queries
+- [x] **3.2** Implement User CRUD queries
   - Dependencies: 3.1
   - Effort: 1 hour
-- [ ] **3.3** Generate and validate type-safe query functions
+- [x] **3.3** Generate and validate type-safe query functions
   - Dependencies: 3.2
   - Effort: 15 minutes
 
