@@ -23,7 +23,41 @@ void main() {
     // Verify that splash screen displays correctly.
     expect(find.text('Djinn'), findsOneWidget);
     expect(find.text('Your Financial Wishes, Granted'), findsOneWidget);
-    expect(find.byIcon(Icons.auto_awesome), findsOneWidget);
     expect(find.text('DEV MODE'), findsOneWidget);
+    
+    // Initially shows the icon (not loading since initialization is triggered async)
+    await tester.pump();
+    
+    // Now should show loading indicator
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    
+    // Wait for initialization to complete
+    await tester.pump(const Duration(seconds: 2));
+    
+    // Should now show the icon and success message
+    expect(find.byIcon(Icons.auto_awesome), findsOneWidget);
+    expect(find.text('Initialized Successfully!'), findsOneWidget);
+    expect(find.byType(ElevatedButton), findsOneWidget); // Theme toggle button in dev mode
+  });
+
+  testWidgets('Theme toggle works in dev mode', (WidgetTester tester) async {
+    AppConfig.initialize();
+    
+    await tester.pumpWidget(const ProviderScope(child: DjinnApp()));
+    await tester.pump(const Duration(seconds: 2));
+    
+    // Find and tap the theme toggle button
+    final themeButton = find.byType(ElevatedButton);
+    expect(themeButton, findsOneWidget);
+    
+    // Initially should show "Dark Mode" button (indicating light theme is active)
+    expect(find.text('Dark Mode'), findsOneWidget);
+    
+    // Tap to switch to dark mode
+    await tester.tap(themeButton);
+    await tester.pump();
+    
+    // Should now show "Light Mode" button (indicating dark theme is active)
+    expect(find.text('Light Mode'), findsOneWidget);
   });
 }
