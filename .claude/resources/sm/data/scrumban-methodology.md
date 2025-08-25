@@ -171,7 +171,7 @@ definition_refinement:
 ```yaml
 story_lifecycle:
   1. Conception: Initial story creation
-  2. Refinement: BMAD-METHOD application
+  2. Refinement: Story quality improvement
   3. Ready: Flow preparation completion
   4. Active: Continuous flow execution
   5. Review: Quality validation

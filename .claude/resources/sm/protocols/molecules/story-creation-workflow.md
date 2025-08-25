@@ -14,6 +14,25 @@
 - Run story-draft-checklist
 - Review INVEST criteria
 - Verify technical completeness
+- Display validation results to user (DO NOT save as file)
+- Show GO/NO-GO decision with readiness score
+- Present validation in structured format:
+  ```
+  Story Validation: {story-id}
+  Decision: GO ✅ / NO-GO ❌
+  Readiness Score: XX/100
+  
+  Key Strengths:
+  - [List strengths]
+  
+  Issues Found (if any):
+  - [List issues]
+  
+  Recommendations:
+  - [List recommendations]
+  ```
+- If NO-GO: Offer to improve with story-creator
+- If GO: Confirm ready for sprint planning
 
 ## 4. Architectural Alignment
 - Cross-reference architecture docs
