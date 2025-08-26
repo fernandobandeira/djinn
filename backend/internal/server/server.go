@@ -57,10 +57,9 @@ func (s *Server) setupRouter() {
 	s.router.Use(chimiddleware.Compress(5))
 	s.router.Use(chimiddleware.Timeout(60 * time.Second))
 	
-	// Add tracing middleware if enabled
+	// Add OpenTelemetry HTTP instrumentation if enabled
 	if s.config.TracingEnabled {
-		s.router.Use(middleware.TracingMiddleware())
-		s.router.Use(middleware.TracingGraphQLMiddleware())
+		s.router.Use(middleware.OTelHTTPMiddleware(s.config.ServiceName))
 	}
 	
 	// Mount routes

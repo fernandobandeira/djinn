@@ -33,12 +33,8 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUse
 			"error", err,
 			"request_id", requestID,
 		)
-		return nil, fmt.Errorf("validation failed: %w", err)
+		return nil, err
 	}
-
-	// Sanitize input fields
-	input.Name = validation.SanitizeInput(input.Name)
-	input.Email = validation.SanitizeInput(input.Email)
 	
 	// Create user in database using sqlc generated code
 	params := db.CreateUserParams{
@@ -86,17 +82,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input mode
 			"error", err,
 			"request_id", requestID,
 		)
-		return nil, fmt.Errorf("validation failed: %w", err)
-	}
-	
-	// Sanitize input fields
-	if input.Name != nil {
-		sanitized := validation.SanitizeInput(*input.Name)
-		input.Name = &sanitized
-	}
-	if input.Email != nil {
-		sanitized := validation.SanitizeInput(*input.Email)
-		input.Email = &sanitized
+		return nil, err
 	}
 
 	// Parse UUID
