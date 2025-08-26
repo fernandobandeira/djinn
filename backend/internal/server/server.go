@@ -68,8 +68,8 @@ func (s *Server) mountRoutes() {
 	
 	// API routes
 	s.router.Route("/api", func(r chi.Router) {
-		// GraphQL endpoint will be added in the next task
-		// r.Handle("/graphql", s.graphqlHandler())
+		// GraphQL endpoint
+		r.Handle("/graphql", s.graphqlHandler())
 		
 		// Version endpoint
 		r.Get("/version", s.versionHandler)
@@ -77,8 +77,7 @@ func (s *Server) mountRoutes() {
 	
 	// GraphQL playground (development only)
 	if s.config.EnablePlayground {
-		// Will be added with gqlgen
-		// s.router.Get("/playground", s.playgroundHandler())
+		s.router.Handle("/playground", s.playgroundHandler())
 	}
 	
 	// Metrics endpoint
