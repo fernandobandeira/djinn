@@ -117,19 +117,19 @@ This story establishes the foundational backend infrastructure for the Djinn per
   - Dependencies: 3.3, 4.2
   - Effort: 45 minutes
 
-### 5. Performance Optimization (1 hour)
-- [ ] **5.1** Implement DataLoader pattern for User queries
+### 5. Performance Optimization (1 hour) ✅
+- [x] **5.1** Implement DataLoader pattern for User queries
   - Dependencies: 4.3
   - Effort: 1 hour
 
-### 6. Infrastructure & Monitoring (1.5 hours)
-- [ ] **6.1** Configure OpenTelemetry tracing
+### 6. Infrastructure & Monitoring (1.5 hours) ✅
+- [x] **6.1** Configure OpenTelemetry tracing
   - Dependencies: 4.1
   - Effort: 45 minutes
-- [ ] **6.2** Implement health check endpoint
+- [x] **6.2** Implement health check endpoint
   - Dependencies: 4.1
   - Effort: 30 minutes
-- [ ] **6.3** Setup environment configuration with envconfig
+- [x] **6.3** Setup environment configuration with envconfig
   - Dependencies: 1.2
   - Effort: 15 minutes
 
