@@ -108,22 +108,32 @@ type contextKey string
 const userLoaderKey contextKey = "userLoader"
 
 // GetUserLoader returns the UserLoader from context
-func GetUserLoader(ctx context.Context) *UserLoader {
+func GetUserLoader(ctx context.Context) (*UserLoader, error) {
 	loader, ok := ctx.Value(userLoaderKey).(*UserLoader)
 	if !ok {
-		panic("UserLoader not found in context")
+		return nil, fmt.Errorf("UserLoader not found in context")
 	}
-	return loader
+	return loader, nil
 }
 
 // LoadUser loads a single user by ID using DataLoader
 func LoadUser(ctx context.Context, id string) (*db.User, error) {
-	loader := GetUserLoader(ctx)
+	loader, err := GetUserLoader(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return loader.Load(id)
 }
 
 // LoadUsers loads multiple users by IDs using DataLoader
 func LoadUsers(ctx context.Context, ids []string) ([]*db.User, []error) {
-	loader := GetUserLoader(ctx)
+	loader, err := GetUserLoader(ctx)
+	if err != nil {
+		errors := make([]error, len(ids))
+		for i := range errors {
+			errors[i] = err
+		}
+		return make([]*db.User, len(ids)), errors
+	}
 	return loader.LoadAll(ids)
 }

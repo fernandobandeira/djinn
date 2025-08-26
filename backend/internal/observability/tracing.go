@@ -52,11 +52,19 @@ func InitTracer(ctx context.Context, config TracingConfig) (func(context.Context
 	// Create OTLP exporter
 	var exporter *otlptrace.Exporter
 	if config.OTLPEndpoint != "" {
-		client := otlptracehttp.NewClient(
+		// Configure client options based on environment
+		clientOpts := []otlptracehttp.Option{
 			otlptracehttp.WithEndpoint(config.OTLPEndpoint),
-			otlptracehttp.WithInsecure(), // Use TLS in production
-			otlptracehttp.WithTimeout(30*time.Second),
-		)
+			otlptracehttp.WithTimeout(30 * time.Second),
+		}
+		
+		// Use insecure only in development
+		if config.Environment == "development" || config.Environment == "local" {
+			clientOpts = append(clientOpts, otlptracehttp.WithInsecure())
+		}
+		// In production, TLS is used by default
+		
+		client := otlptracehttp.NewClient(clientOpts...)
 		
 		exporter, err = otlptrace.New(ctx, client)
 		if err != nil {

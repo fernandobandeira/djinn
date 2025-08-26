@@ -13,6 +13,7 @@ import (
 	"github.com/fernandobandeira/djinn/backend/internal/graph/generated"
 	"github.com/fernandobandeira/djinn/backend/internal/graph/model"
 	"github.com/fernandobandeira/djinn/backend/internal/middleware"
+	"github.com/fernandobandeira/djinn/backend/internal/validation"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
@@ -25,7 +26,20 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUse
 		"email", input.Email,
 		"request_id", requestID,
 	)
+	
+	// Validate input
+	if err := validation.ValidateCreateUserInput(input); err != nil {
+		r.Logger.Warn("Invalid user input",
+			"error", err,
+			"request_id", requestID,
+		)
+		return nil, fmt.Errorf("validation failed: %w", err)
+	}
 
+	// Sanitize input fields
+	input.Name = validation.SanitizeInput(input.Name)
+	input.Email = validation.SanitizeInput(input.Email)
+	
 	// Create user in database using sqlc generated code
 	params := db.CreateUserParams{
 		FirebaseUid: input.FirebaseUID,
@@ -65,6 +79,25 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input mode
 		"user_id", id,
 		"request_id", requestID,
 	)
+	
+	// Validate input
+	if err := validation.ValidateUpdateUserInput(input); err != nil {
+		r.Logger.Warn("Invalid update input",
+			"error", err,
+			"request_id", requestID,
+		)
+		return nil, fmt.Errorf("validation failed: %w", err)
+	}
+	
+	// Sanitize input fields
+	if input.Name != nil {
+		sanitized := validation.SanitizeInput(*input.Name)
+		input.Name = &sanitized
+	}
+	if input.Email != nil {
+		sanitized := validation.SanitizeInput(*input.Email)
+		input.Email = &sanitized
+	}
 
 	// Parse UUID
 	userID, err := uuid.Parse(id)
