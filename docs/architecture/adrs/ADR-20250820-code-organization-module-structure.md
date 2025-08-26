@@ -28,10 +28,20 @@ From existing ADRs, the system uses:
 - **Code Generation**: Support for sqlc, gqlgen, dataloaden, Ferry code generation
 - **Testing**: Architecture must facilitate comprehensive testing at all levels
 - **Deployment**: Single Go binary for backend, standard Flutter build for mobile
+- **Internal Package Protection**: Generated code and internal logic must be protected from external imports
 
 ## Decision
 
 ### 1. Backend Go Module Structure (Clean Architecture)
+
+#### Generated Code Organization
+
+All generated code follows a consistent naming pattern:
+- `internal/database/generated/` - sqlc generated database code
+- `internal/graph/generated/` - gqlgen generated GraphQL code
+- `*/wire_gen.go` - Wire generated dependency injection code
+
+This consistent `generated/` subdirectory pattern makes it immediately clear which code is tool-generated versus hand-written.
 
 #### Dependency Injection with Google Wire
 
@@ -68,17 +78,20 @@ Google Wire will serve as the compile-time dependency injection framework for th
 │   ├── application/              # Application layer (use cases)
 │   ├── domain/                   # Domain layer (business logic)
 │   ├── infrastructure/           # Infrastructure layer (frameworks)
+│   ├── database/                 # Database infrastructure and generated code
+│   │   ├── generated/            # sqlc generated code (internal access only)
+│   │   ├── mocks/                # Database mocks for testing
+│   │   └── connection.go         # Database connection management
+│   ├── graph/                    # GraphQL layer (presentation)
+│   │   ├── generated/            # gqlgen generated code
+│   │   ├── dataloader/           # DataLoader implementations
+│   │   ├── resolver/             # GraphQL resolvers
+│   │   └── schema/               # GraphQL schema files
 │   └── shared/                   # Shared utilities and types
-├── graph/                        # GraphQL layer (presentation)
-│   ├── generated/                # gqlgen generated code
-│   ├── dataloader/               # DataLoader implementations
-│   ├── resolver/                 # GraphQL resolvers
-│   └── schema/                   # GraphQL schema files
-├── db/                           # Database layer
-│   ├── migrations/               # Atlas HCL migrations
-│   ├── queries/                  # sqlc SQL files
-│   └── generated/                # sqlc generated code
-├── config/                       # Configuration
+├── sqlc/                         # sqlc configuration and queries
+│   ├── queries/                  # SQL query files
+│   └── sqlc.yaml                 # sqlc configuration
+├── migrations/                   # Database migrations (Atlas HCL or SQL)
 ├── scripts/                      # Build and development scripts
 ├── test/                         # Integration and E2E tests
 └── tools/                        # Development tools
@@ -258,8 +271,11 @@ internal/infrastructure/
 ```
 
 #### GraphQL Presentation Layer
+
+The GraphQL layer is placed within `internal/graph/` to prevent external packages from directly accessing resolvers and generated code, enforcing API access only through the defined GraphQL endpoint.
+
 ```
-graph/
+internal/graph/
 ├── wire.go                       # Wire provider set for GraphQL layer
 ├── schema/                       # GraphQL schema definitions
 │   ├── schema.graphql           # Root schema
@@ -919,7 +935,7 @@ generate-wire:
 .PHONY: generate-sqlc
 generate-sqlc:
 	@echo "Generating database code..."
-	@sqlc generate
+	@sqlc generate  # Outputs to internal/database/generated/
 
 .PHONY: generate-gqlgen  
 generate-gqlgen:
@@ -1359,3 +1375,4 @@ flutter build apk        # Build application
 
 ## Revision History
 - 2025-08-20: Initial comprehensive draft with clean architecture focus
+- 2025-08-26: Updated database structure to reflect actual implementation with improved internal package organization

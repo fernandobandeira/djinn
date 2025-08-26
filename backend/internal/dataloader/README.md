@@ -41,7 +41,7 @@ To add a DataLoader for a new entity:
 1. Create a new file in this package (e.g., `account.go`)
 2. Add the go:generate directive:
    ```go
-   //go:generate go run github.com/vektah/dataloaden AccountLoader string *github.com/fernandobandeira/djinn/backend/internal/database/db.Account
+   //go:generate go run github.com/vektah/dataloaden AccountLoader string *github.com/fernandobandeira/djinn/backend/internal/database/generated.Account
    ```
 3. Implement the reader with batch query
 4. Add middleware integration

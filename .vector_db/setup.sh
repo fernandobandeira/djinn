@@ -32,6 +32,9 @@ if [ ! -d ".venv" ]; then
 fi
 
 # Install KB dependencies
+# Use specific scipy version with pre-built wheels to avoid compilation issues
+uv pip install scipy==1.14.1
+# Then install other dependencies
 uv pip install qdrant-client sentence-transformers tiktoken
 
 echo -e "${GREEN}✅ Python dependencies installed${NC}"
@@ -42,11 +45,11 @@ echo -e "${YELLOW}🕷️ Step 2: Setting up crawl4ai...${NC}"
 # Check if crawl4ai is already set up
 if ! uv run python -c "import crawl4ai" 2>/dev/null; then
     echo "Installing crawl4ai..."
-    uv pip install crawl4ai
+    uv pip install crawl4ai==0.7.4
     
     # Install playwright for crawl4ai
-    echo "Installing Playwright browsers..."
-    uv run playwright install chromium
+    echo "Installing Playwright browsers (this may require sudo)..."
+    uv run playwright install chromium || echo "⚠️  Playwright chromium installation may require manual setup"
     
     echo -e "${GREEN}✅ crawl4ai setup complete${NC}"
 else

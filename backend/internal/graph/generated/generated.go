@@ -15,8 +15,7 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
 	"github.com/99designs/gqlgen/plugin/federation/fedruntime"
-	"github.com/fernandobandeira/djinn/backend/internal/database/db"
-	"github.com/fernandobandeira/djinn/backend/internal/graph/model"
+	"github.com/fernandobandeira/djinn/backend/internal/application/dto"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -43,7 +42,6 @@ type Config struct {
 type ResolverRoot interface {
 	Mutation() MutationResolver
 	Query() QueryResolver
-	User() UserResolver
 }
 
 type DirectiveRoot struct {
@@ -51,9 +49,9 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
-		CreateUser func(childComplexity int, input model.CreateUserInput) int
+		CreateUser func(childComplexity int, input dto.CreateUserInput) int
 		DeleteUser func(childComplexity int, id string) int
-		UpdateUser func(childComplexity int, id string, input model.UpdateUserInput) int
+		UpdateUser func(childComplexity int, id string, input dto.UpdateUserInput) int
 	}
 
 	Query struct {
@@ -67,7 +65,7 @@ type ComplexityRoot struct {
 	User struct {
 		CreatedAt       func(childComplexity int) int
 		Email           func(childComplexity int) int
-		FirebaseUid     func(childComplexity int) int
+		FirebaseUID     func(childComplexity int) int
 		ID              func(childComplexity int) int
 		Name            func(childComplexity int) int
 		ProfileImageURL func(childComplexity int) int
@@ -80,22 +78,15 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	CreateUser(ctx context.Context, input model.CreateUserInput) (*db.User, error)
-	UpdateUser(ctx context.Context, id string, input model.UpdateUserInput) (*db.User, error)
+	CreateUser(ctx context.Context, input dto.CreateUserInput) (*dto.UserDTO, error)
+	UpdateUser(ctx context.Context, id string, input dto.UpdateUserInput) (*dto.UserDTO, error)
 	DeleteUser(ctx context.Context, id string) (bool, error)
 }
 type QueryResolver interface {
-	User(ctx context.Context, id string) (*db.User, error)
-	UserByFirebaseUID(ctx context.Context, firebaseUID string) (*db.User, error)
-	Me(ctx context.Context) (*db.User, error)
+	User(ctx context.Context, id string) (*dto.UserDTO, error)
+	UserByFirebaseUID(ctx context.Context, firebaseUID string) (*dto.UserDTO, error)
+	Me(ctx context.Context) (*dto.UserDTO, error)
 	Health(ctx context.Context) (string, error)
-}
-type UserResolver interface {
-	ID(ctx context.Context, obj *db.User) (string, error)
-
-	ProfileImageURL(ctx context.Context, obj *db.User) (*string, error)
-	CreatedAt(ctx context.Context, obj *db.User) (*time.Time, error)
-	UpdatedAt(ctx context.Context, obj *db.User) (*time.Time, error)
 }
 
 type executableSchema struct {
@@ -127,7 +118,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(model.CreateUserInput)), true
+		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(dto.CreateUserInput)), true
 
 	case "Mutation.deleteUser":
 		if e.complexity.Mutation.DeleteUser == nil {
@@ -151,7 +142,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateUser(childComplexity, args["id"].(string), args["input"].(model.UpdateUserInput)), true
+		return e.complexity.Mutation.UpdateUser(childComplexity, args["id"].(string), args["input"].(dto.UpdateUserInput)), true
 
 	case "Query.health":
 		if e.complexity.Query.Health == nil {
@@ -213,11 +204,11 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		return e.complexity.User.Email(childComplexity), true
 
 	case "User.firebaseUid":
-		if e.complexity.User.FirebaseUid == nil {
+		if e.complexity.User.FirebaseUID == nil {
 			break
 		}
 
-		return e.complexity.User.FirebaseUid(childComplexity), true
+		return e.complexity.User.FirebaseUID(childComplexity), true
 
 	case "User.id":
 		if e.complexity.User.ID == nil {
@@ -445,7 +436,7 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateUserInput2githubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋgraphᚋmodelᚐCreateUserInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateUserInput2githubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋapplicationᚋdtoᚐCreateUserInput)
 	if err != nil {
 		return nil, err
 	}
@@ -472,7 +463,7 @@ func (ec *executionContext) field_Mutation_updateUser_args(ctx context.Context, 
 		return nil, err
 	}
 	args["id"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateUserInput2githubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋgraphᚋmodelᚐUpdateUserInput)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateUserInput2githubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋapplicationᚋdtoᚐUpdateUserInput)
 	if err != nil {
 		return nil, err
 	}
@@ -579,7 +570,7 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateUser(rctx, fc.Args["input"].(model.CreateUserInput))
+		return ec.resolvers.Mutation().CreateUser(rctx, fc.Args["input"].(dto.CreateUserInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -591,9 +582,9 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*db.User)
+	res := resTmp.(*dto.UserDTO)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋdatabaseᚋdbᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋapplicationᚋdtoᚐUserDTO(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -650,7 +641,7 @@ func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateUser(rctx, fc.Args["id"].(string), fc.Args["input"].(model.UpdateUserInput))
+		return ec.resolvers.Mutation().UpdateUser(rctx, fc.Args["id"].(string), fc.Args["input"].(dto.UpdateUserInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -662,9 +653,9 @@ func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*db.User)
+	res := resTmp.(*dto.UserDTO)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋdatabaseᚋdbᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋapplicationᚋdtoᚐUserDTO(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -785,9 +776,9 @@ func (ec *executionContext) _Query_user(ctx context.Context, field graphql.Colle
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*db.User)
+	res := resTmp.(*dto.UserDTO)
 	fc.Result = res
-	return ec.marshalOUser2ᚖgithubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋdatabaseᚋdbᚐUser(ctx, field.Selections, res)
+	return ec.marshalOUser2ᚖgithubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋapplicationᚋdtoᚐUserDTO(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -853,9 +844,9 @@ func (ec *executionContext) _Query_userByFirebaseUid(ctx context.Context, field 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*db.User)
+	res := resTmp.(*dto.UserDTO)
 	fc.Result = res
-	return ec.marshalOUser2ᚖgithubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋdatabaseᚋdbᚐUser(ctx, field.Selections, res)
+	return ec.marshalOUser2ᚖgithubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋapplicationᚋdtoᚐUserDTO(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_userByFirebaseUid(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -921,9 +912,9 @@ func (ec *executionContext) _Query_me(ctx context.Context, field graphql.Collect
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*db.User)
+	res := resTmp.(*dto.UserDTO)
 	fc.Result = res
-	return ec.marshalOUser2ᚖgithubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋdatabaseᚋdbᚐUser(ctx, field.Selections, res)
+	return ec.marshalOUser2ᚖgithubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋapplicationᚋdtoᚐUserDTO(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_me(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1178,7 +1169,7 @@ func (ec *executionContext) fieldContext_Query___schema(_ context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *db.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *dto.UserDTO) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_id(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -1192,7 +1183,7 @@ func (ec *executionContext) _User_id(ctx context.Context, field graphql.Collecte
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.User().ID(rctx, obj)
+		return obj.ID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1213,8 +1204,8 @@ func (ec *executionContext) fieldContext_User_id(_ context.Context, field graphq
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type ID does not have child fields")
 		},
@@ -1222,7 +1213,7 @@ func (ec *executionContext) fieldContext_User_id(_ context.Context, field graphq
 	return fc, nil
 }
 
-func (ec *executionContext) _User_firebaseUid(ctx context.Context, field graphql.CollectedField, obj *db.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_firebaseUid(ctx context.Context, field graphql.CollectedField, obj *dto.UserDTO) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_firebaseUid(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -1236,7 +1227,7 @@ func (ec *executionContext) _User_firebaseUid(ctx context.Context, field graphql
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.FirebaseUid, nil
+		return obj.FirebaseUID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1266,7 +1257,7 @@ func (ec *executionContext) fieldContext_User_firebaseUid(_ context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _User_email(ctx context.Context, field graphql.CollectedField, obj *db.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_email(ctx context.Context, field graphql.CollectedField, obj *dto.UserDTO) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_email(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -1310,7 +1301,7 @@ func (ec *executionContext) fieldContext_User_email(_ context.Context, field gra
 	return fc, nil
 }
 
-func (ec *executionContext) _User_name(ctx context.Context, field graphql.CollectedField, obj *db.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_name(ctx context.Context, field graphql.CollectedField, obj *dto.UserDTO) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_name(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -1354,7 +1345,7 @@ func (ec *executionContext) fieldContext_User_name(_ context.Context, field grap
 	return fc, nil
 }
 
-func (ec *executionContext) _User_profileImageUrl(ctx context.Context, field graphql.CollectedField, obj *db.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_profileImageUrl(ctx context.Context, field graphql.CollectedField, obj *dto.UserDTO) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_profileImageUrl(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -1368,7 +1359,7 @@ func (ec *executionContext) _User_profileImageUrl(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.User().ProfileImageURL(rctx, obj)
+		return obj.ProfileImageURL, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1386,8 +1377,8 @@ func (ec *executionContext) fieldContext_User_profileImageUrl(_ context.Context,
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
 		},
@@ -1395,7 +1386,7 @@ func (ec *executionContext) fieldContext_User_profileImageUrl(_ context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.CollectedField, obj *db.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.CollectedField, obj *dto.UserDTO) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_createdAt(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -1409,7 +1400,7 @@ func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.User().CreatedAt(rctx, obj)
+		return obj.CreatedAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1421,17 +1412,17 @@ func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*time.Time)
+	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_User_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Time does not have child fields")
 		},
@@ -1439,7 +1430,7 @@ func (ec *executionContext) fieldContext_User_createdAt(_ context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _User_updatedAt(ctx context.Context, field graphql.CollectedField, obj *db.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_updatedAt(ctx context.Context, field graphql.CollectedField, obj *dto.UserDTO) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_updatedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -1453,7 +1444,7 @@ func (ec *executionContext) _User_updatedAt(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.User().UpdatedAt(rctx, obj)
+		return obj.UpdatedAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1465,17 +1456,17 @@ func (ec *executionContext) _User_updatedAt(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*time.Time)
+	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_User_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Time does not have child fields")
 		},
@@ -3475,8 +3466,8 @@ func (ec *executionContext) fieldContext___Type_isOneOf(_ context.Context, field
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, obj any) (model.CreateUserInput, error) {
-	var it model.CreateUserInput
+func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, obj any) (dto.CreateUserInput, error) {
+	var it dto.CreateUserInput
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -3523,8 +3514,8 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, obj any) (model.UpdateUserInput, error) {
-	var it model.UpdateUserInput
+func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, obj any) (dto.UpdateUserInput, error) {
+	var it dto.UpdateUserInput
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -3788,7 +3779,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 
 var userImplementors = []string{"User"}
 
-func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj *db.User) graphql.Marshaler {
+func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj *dto.UserDTO) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, userImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -3798,161 +3789,37 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("User")
 		case "id":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._User_id(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
+			out.Values[i] = ec._User_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
 			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "firebaseUid":
 			out.Values[i] = ec._User_firebaseUid(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "email":
 			out.Values[i] = ec._User_email(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "name":
 			out.Values[i] = ec._User_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "profileImageUrl":
-			field := field
-
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._User_profileImageUrl(ctx, field, obj)
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			out.Values[i] = ec._User_profileImageUrl(ctx, field, obj)
 		case "createdAt":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._User_createdAt(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
+			out.Values[i] = ec._User_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
 			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "updatedAt":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._User_updatedAt(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
+			out.Values[i] = ec._User_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
 			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4363,7 +4230,7 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) unmarshalNCreateUserInput2githubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋgraphᚋmodelᚐCreateUserInput(ctx context.Context, v any) (model.CreateUserInput, error) {
+func (ec *executionContext) unmarshalNCreateUserInput2githubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋapplicationᚋdtoᚐCreateUserInput(ctx context.Context, v any) (dto.CreateUserInput, error) {
 	res, err := ec.unmarshalInputCreateUserInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
@@ -4416,38 +4283,16 @@ func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) unmarshalNTime2ᚖtimeᚐTime(ctx context.Context, v any) (*time.Time, error) {
-	res, err := graphql.UnmarshalTime(v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNTime2ᚖtimeᚐTime(ctx context.Context, sel ast.SelectionSet, v *time.Time) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	_ = sel
-	res := graphql.MarshalTime(*v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-	}
-	return res
-}
-
-func (ec *executionContext) unmarshalNUpdateUserInput2githubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋgraphᚋmodelᚐUpdateUserInput(ctx context.Context, v any) (model.UpdateUserInput, error) {
+func (ec *executionContext) unmarshalNUpdateUserInput2githubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋapplicationᚋdtoᚐUpdateUserInput(ctx context.Context, v any) (dto.UpdateUserInput, error) {
 	res, err := ec.unmarshalInputUpdateUserInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNUser2githubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋdatabaseᚋdbᚐUser(ctx context.Context, sel ast.SelectionSet, v db.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2githubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋapplicationᚋdtoᚐUserDTO(ctx context.Context, sel ast.SelectionSet, v dto.UserDTO) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋdatabaseᚋdbᚐUser(ctx context.Context, sel ast.SelectionSet, v *db.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋapplicationᚋdtoᚐUserDTO(ctx context.Context, sel ast.SelectionSet, v *dto.UserDTO) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4790,7 +4635,7 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) marshalOUser2ᚖgithubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋdatabaseᚋdbᚐUser(ctx context.Context, sel ast.SelectionSet, v *db.User) graphql.Marshaler {
+func (ec *executionContext) marshalOUser2ᚖgithubᚗcomᚋfernandobandeiraᚋdjinnᚋbackendᚋinternalᚋapplicationᚋdtoᚐUserDTO(ctx context.Context, sel ast.SelectionSet, v *dto.UserDTO) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

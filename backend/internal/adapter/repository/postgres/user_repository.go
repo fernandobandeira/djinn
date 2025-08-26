@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/fernandobandeira/djinn/backend/internal/database/db"
+	"github.com/fernandobandeira/djinn/backend/internal/database/generated"
 	domainUser "github.com/fernandobandeira/djinn/backend/internal/domain/user"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -14,12 +14,12 @@ import (
 
 // UserRepository is the PostgreSQL implementation of the user repository
 type UserRepository struct {
-	queries *db.Queries
+	queries *generated.Queries
 	logger  *slog.Logger
 }
 
 // NewUserRepository creates a new PostgreSQL user repository
-func NewUserRepository(queries *db.Queries, logger *slog.Logger) *UserRepository {
+func NewUserRepository(queries *generated.Queries, logger *slog.Logger) *UserRepository {
 	return &UserRepository{
 		queries: queries,
 		logger:  logger.With(slog.String("repository", "user")),
@@ -28,7 +28,7 @@ func NewUserRepository(queries *db.Queries, logger *slog.Logger) *UserRepository
 
 // Create persists a new user to the database
 func (r *UserRepository) Create(ctx context.Context, user *domainUser.User) error {
-	params := db.CreateUserParams{
+	params := generated.CreateUserParams{
 		FirebaseUid: user.FirebaseUID,
 		Email:       user.Email,
 		Name:        user.Name,
@@ -95,7 +95,7 @@ func (r *UserRepository) Update(ctx context.Context, user *domainUser.User) erro
 		Valid: true,
 	}
 
-	params := db.UpdateUserParams{
+	params := generated.UpdateUserParams{
 		ID:    pgUUID,
 		Email: user.Email,
 		Name:  user.Name,
@@ -159,7 +159,7 @@ func (r *UserRepository) Exists(ctx context.Context, firebaseUID string) (bool, 
 }
 
 // toDomainUser converts a database user to a domain user
-func (r *UserRepository) toDomainUser(dbUser *db.User) *domainUser.User {
+func (r *UserRepository) toDomainUser(dbUser *generated.User) *domainUser.User {
 	user := &domainUser.User{
 		ID:          uuid.UUID(dbUser.ID.Bytes),
 		FirebaseUID: dbUser.FirebaseUid,

@@ -1,0 +1,51 @@
+# Prometheus configuration for Djinn monitoring
+# Based on ADR-20250120: Monitoring and Observability Strategy
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+rule_files:
+  - "alerts.yml"
+
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Node exporter for system metrics (if deployed)
+  - job_name: 'node'
+    static_configs:
+      - targets: ['host.docker.internal:9100']
+
+  # PostgreSQL exporter (if deployed)
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['host.docker.internal:9187']
+
+  # Djinn API application metrics
+  - job_name: 'djinn-api'
+    static_configs:
+      - targets: ['api:9091']
+    metrics_path: '/metrics'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'djinn-api'
+
+  # PgBouncer metrics (if exporter is added)
+  - job_name: 'pgbouncer'
+    static_configs:
+      - targets: ['pgbouncer:9127']
+    honor_labels: true
+
+  # Jaeger metrics (optional)
+  - job_name: 'jaeger'
+    static_configs:
+      - targets: ['jaeger:14269']

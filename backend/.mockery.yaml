@@ -5,7 +5,7 @@ outpkg: "mocks"
 filename: "mock_{{.InterfaceName}}.go"
 all: false
 packages:
-  github.com/fernandobandeira/djinn/backend/internal/database/db:
+  github.com/fernandobandeira/djinn/backend/internal/database/generated:
     interfaces:
       Querier:
         config:

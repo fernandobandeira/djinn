@@ -5,5 +5,5 @@
 # Get the absolute path to the .vector_db directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Use Qdrant KB - the only KB implementation
-cd "$SCRIPT_DIR" && exec uv run python kb_qdrant.py "$@"
+# Use the virtual environment's Python directly to avoid dependency re-checks
+cd "$SCRIPT_DIR" && exec .venv/bin/python kb_qdrant.py "$@"

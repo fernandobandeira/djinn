@@ -1,0 +1,35 @@
+# Grafana datasources configuration
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    jsonData:
+      httpMethod: POST
+      
+  - name: Jaeger
+    type: jaeger
+    access: proxy
+    url: http://jaeger:16686
+    jsonData:
+      tracesToMetrics:
+        datasourceUid: prometheus
+        
+  - name: PostgreSQL
+    type: postgres
+    access: proxy
+    url: postgres:5432
+    database: djinn
+    user: djinn_user
+    secureJsonData:
+      password: djinn_password
+    jsonData:
+      sslmode: 'disable'
+      maxOpenConns: 0
+      maxIdleConns: 2
+      connMaxLifetime: 14400
+      postgresVersion: 1800
+      timescaledb: false

@@ -27,14 +27,8 @@ services:
       - "7997:7997"
     volumes:
       - ./data/infinity-cache:/app/.cache
-    command: v2 --model-id BAAI/bge-large-en-v1.5 --port 7997
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+    # CPU mode - remove this comment and uncomment runtime: nvidia when GPU issue is fixed
+    command: v2 --model-id BAAI/bge-large-en-v1.5 --port 7997 --device cpu
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:7997/health"]
@@ -85,6 +79,133 @@ services:
     networks:
       - djinn-network
 
+  # PostHog for analytics and monitoring (local development)
+  posthog:
+    image: posthog/posthog:latest
+    container_name: djinn-posthog
+    environment:
+      SECRET_KEY: "local-secret-key-change-in-production"
+      DATABASE_URL: "postgres://posthog:posthog@posthog-db:5432/posthog"
+      REDIS_URL: "redis://posthog-redis:6379"
+      CLICKHOUSE_HOST: "posthog-clickhouse"
+      CLICKHOUSE_DATABASE: "posthog"
+      CLICKHOUSE_SECURE: "false"
+      CLICKHOUSE_VERIFY: "false"
+      IS_BEHIND_PROXY: "false"
+      TRUST_ALL_PROXIES: "false"
+    ports:
+      - "8000:8000"
+    depends_on:
+      posthog-db:
+        condition: service_healthy
+      posthog-redis:
+        condition: service_started
+      posthog-clickhouse:
+        condition: service_healthy
+    networks:
+      - djinn-network
+
+  posthog-db:
+    image: postgres:15-alpine
+    container_name: djinn-posthog-db
+    environment:
+      POSTGRES_DB: posthog
+      POSTGRES_USER: posthog
+      POSTGRES_PASSWORD: posthog
+    volumes:
+      - posthog_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U posthog -d posthog"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - djinn-network
+
+  posthog-redis:
+    image: redis:7-alpine
+    container_name: djinn-posthog-redis
+    volumes:
+      - posthog_redis_data:/data
+    networks:
+      - djinn-network
+
+  posthog-clickhouse:
+    image: clickhouse/clickhouse-server:24.3-alpine
+    container_name: djinn-posthog-clickhouse
+    volumes:
+      - posthog_clickhouse_data:/var/lib/clickhouse
+      - posthog_clickhouse_logs:/var/log/clickhouse-server
+    environment:
+      CLICKHOUSE_DB: posthog
+      CLICKHOUSE_USER: posthog
+      CLICKHOUSE_PASSWORD: posthog
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    healthcheck:
+      test: ["CMD", "clickhouse-client", "--query", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - djinn-network
+
+  # Prometheus for metrics collection
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: djinn-prometheus
+    volumes:
+      - ./backend/configs/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=7d'
+      - '--storage.tsdb.retention.size=500MB'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    ports:
+      - "9090:9090"
+    networks:
+      - djinn-network
+
+  # Grafana for metrics visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: djinn-grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_SECURITY_ADMIN_USER: admin
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./backend/configs/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - ./backend/configs/grafana-dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      - ./backend/dashboards:/var/lib/grafana/dashboards
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - djinn-network
+
+  # Jaeger for distributed tracing (OpenTelemetry backend)
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: djinn-jaeger
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "16686:16686"  # Jaeger UI
+      - "4318:4318"    # OTLP HTTP receiver
+      - "4317:4317"    # OTLP gRPC receiver
+    networks:
+      - djinn-network
+
   api:
     build: ./backend
     container_name: djinn-api
@@ -93,10 +214,23 @@ services:
       PGBOUNCER_URL: postgres://djinn_user:djinn_password@pgbouncer:5432/djinn
       PORT: 8080
       LOG_LEVEL: info
+      # Observability configuration
+      TRACING_ENABLED: "true"
+      TRACING_SAMPLE_RATE: "1.0"  # 100% sampling for local dev
+      OTEL_EXPORTER_OTLP_ENDPOINT: "jaeger:4318"
+      METRICS_ENABLED: "true"
+      METRICS_PORT: "9091"
+      POSTHOG_API_KEY: "phc_local_development_key"  # Replace with actual key
+      POSTHOG_ENABLED: "true"
+      ANALYTICS_ENABLED: "true"
     ports:
       - "8080:8080"
+      - "9091:9091"  # Metrics port
     depends_on:
       - pgbouncer
+      - posthog
+      - prometheus
+      - jaeger
     volumes:
       - ./backend:/app
     working_dir: /app
@@ -105,6 +239,12 @@ services:
 
 volumes:
   postgres_data:
+  posthog_postgres_data:
+  posthog_redis_data:
+  posthog_clickhouse_data:
+  posthog_clickhouse_logs:
+  prometheus_data:
+  grafana_data:
 
 networks:
   djinn-network:

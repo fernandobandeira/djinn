@@ -27,13 +27,19 @@ type Config struct {
 	QueryComplexity  int  `envconfig:"QUERY_COMPLEXITY" default:"1000"`
 
 	// Monitoring
-	OTELEndpoint     string  `envconfig:"OTEL_EXPORTER_OTLP_ENDPOINT"`
-	MetricsEnabled   bool    `envconfig:"METRICS_ENABLED" default:"true"`
-	TracingEnabled   bool    `envconfig:"TRACING_ENABLED" default:"true"`
+	OTELEndpoint      string  `envconfig:"OTEL_EXPORTER_OTLP_ENDPOINT"`
+	MetricsEnabled    bool    `envconfig:"METRICS_ENABLED" default:"true"`
+	MetricsPort       int     `envconfig:"METRICS_PORT" default:"9091"`
+	TracingEnabled    bool    `envconfig:"TRACING_ENABLED" default:"true"`
 	TracingSampleRate float64 `envconfig:"TRACING_SAMPLE_RATE" default:"1.0"`
-	ServiceName      string  `envconfig:"SERVICE_NAME" default:"djinn-api"`
-	ServiceVersion   string  `envconfig:"SERVICE_VERSION" default:"1.0.0"`
-	Environment      string  `envconfig:"ENVIRONMENT" default:"development"`
+	ServiceName       string  `envconfig:"SERVICE_NAME" default:"djinn-api"`
+	ServiceVersion    string  `envconfig:"SERVICE_VERSION" default:"1.0.0"`
+	Environment       string  `envconfig:"ENVIRONMENT" default:"development"`
+
+	// Analytics
+	PostHogAPIKey    string `envconfig:"POSTHOG_API_KEY"`
+	PostHogEnabled   bool   `envconfig:"POSTHOG_ENABLED" default:"false"`
+	AnalyticsEnabled bool   `envconfig:"ANALYTICS_ENABLED" default:"false"`
 }
 
 func Load() (*Config, error) {

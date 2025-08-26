@@ -19,10 +19,11 @@ resolver:
   dir: internal/graph/resolver
   package: resolver
   filename_template: "{name}.resolver.go"
+  type: Resolver
 
-# Autobind the database models to GraphQL types
+# Autobind the application DTOs to GraphQL types
 autobind:
-  - "github.com/fernandobandeira/djinn/backend/internal/database/db"
+  - "github.com/fernandobandeira/djinn/backend/internal/application/dto"
 
 models:
   ID:
@@ -35,12 +36,22 @@ models:
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
   User:
-    model: github.com/fernandobandeira/djinn/backend/internal/database/db.User
+    model: github.com/fernandobandeira/djinn/backend/internal/application/dto.UserDTO
     fields:
       id:
-        resolver: true
+        fieldName: ID
       firebaseUid:
-        fieldName: FirebaseUid
+        fieldName: FirebaseUID
+      email:
+        fieldName: Email
+      name:
+        fieldName: Name
+      profileImageUrl:
+        fieldName: ProfileImageURL
+      createdAt:
+        fieldName: CreatedAt
+      updatedAt:
+        fieldName: UpdatedAt
   Time:
     model: github.com/99designs/gqlgen/graphql.Time
 

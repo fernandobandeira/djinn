@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/fernandobandeira/djinn/backend/internal/database/db"
+	"github.com/fernandobandeira/djinn/backend/internal/database/generated"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/assert"

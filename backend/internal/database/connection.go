@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/exaring/otelpgx"
-	"github.com/fernandobandeira/djinn/backend/internal/database/db"
+	"github.com/fernandobandeira/djinn/backend/internal/database/generated"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -22,7 +22,7 @@ type Config struct {
 // DB wraps the database connection and queries
 type DB struct {
 	pool    *pgxpool.Pool
-	Queries *db.Queries
+	Queries *generated.Queries
 }
 
 // NewConnection creates a new database connection
@@ -56,7 +56,7 @@ func NewConnection(config Config) (*DB, error) {
 	}
 
 	// Create queries instance - pgx/v5 uses the pool directly
-	queries := db.New(pool)
+	queries := generated.New(pool)
 
 	return &DB{
 		pool:    pool,

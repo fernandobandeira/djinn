@@ -9,27 +9,51 @@ import (
 
 type contextKey string
 
-const RequestIDKey contextKey = "requestID"
+const (
+	// CorrelationIDKey is the context key for correlation ID
+	CorrelationIDKey contextKey = "correlation_id"
+	// RequestIDKey is maintained for backward compatibility
+	RequestIDKey contextKey = "requestID"
+)
 
-// RequestID middleware adds a unique request ID to each request
+// RequestID middleware adds a unique correlation ID to each request
+// It checks for X-Correlation-ID first, then X-Request-ID for backward compatibility
 func RequestID(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		requestID := r.Header.Get("X-Request-ID")
-		if requestID == "" {
-			requestID = uuid.New().String()
+		correlationID := r.Header.Get("X-Correlation-ID")
+		if correlationID == "" {
+			correlationID = r.Header.Get("X-Request-ID")
+		}
+		if correlationID == "" {
+			correlationID = uuid.New().String()
 		}
 		
-		ctx := context.WithValue(r.Context(), RequestIDKey, requestID)
-		w.Header().Set("X-Request-ID", requestID)
+		// Set both keys for backward compatibility
+		ctx := context.WithValue(r.Context(), CorrelationIDKey, correlationID)
+		ctx = context.WithValue(ctx, RequestIDKey, correlationID)
+		
+		// Set both headers for compatibility
+		w.Header().Set("X-Correlation-ID", correlationID)
+		w.Header().Set("X-Request-ID", correlationID)
 		
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
-// GetRequestID retrieves the request ID from context
-func GetRequestID(ctx context.Context) string {
+// GetCorrelationID retrieves the correlation ID from context
+func GetCorrelationID(ctx context.Context) string {
+	if correlationID, ok := ctx.Value(CorrelationIDKey).(string); ok {
+		return correlationID
+	}
+	// Fallback to request ID for backward compatibility
 	if requestID, ok := ctx.Value(RequestIDKey).(string); ok {
 		return requestID
 	}
 	return ""
+}
+
+// GetRequestID retrieves the request ID from context (deprecated, use GetCorrelationID)
+// Maintained for backward compatibility
+func GetRequestID(ctx context.Context) string {
+	return GetCorrelationID(ctx)
 }

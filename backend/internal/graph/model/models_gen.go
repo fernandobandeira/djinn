@@ -2,21 +2,8 @@
 
 package model
 
-type CreateUserInput struct {
-	FirebaseUID     string  `json:"firebaseUid"`
-	Email           string  `json:"email"`
-	Name            string  `json:"name"`
-	ProfileImageURL *string `json:"profileImageUrl,omitempty"`
-}
-
 type Mutation struct {
 }
 
 type Query struct {
-}
-
-type UpdateUserInput struct {
-	Email           *string `json:"email,omitempty"`
-	Name            *string `json:"name,omitempty"`
-	ProfileImageURL *string `json:"profileImageUrl,omitempty"`
 }

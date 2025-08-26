@@ -91,7 +91,7 @@ class QdrantKB:
         
         # Embeddings server URL - use TEI if available, fallback to local
         if embeddings_url is None:
-            embeddings_url = os.getenv('EMBEDDINGS_URL', 'http://localhost:8080')
+            embeddings_url = os.getenv('EMBEDDINGS_URL', 'http://localhost:7997')
         self.embeddings_url = embeddings_url
         self.use_embeddings_server = False
         

@@ -4,7 +4,7 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/fernandobandeira/djinn/backend/internal/database/db"
+	db "github.com/fernandobandeira/djinn/backend/internal/database/generated"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 

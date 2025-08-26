@@ -5,7 +5,7 @@ package mocks
 import (
 	context "context"
 
-	db "github.com/fernandobandeira/djinn/backend/internal/database/db"
+	db "github.com/fernandobandeira/djinn/backend/internal/database/generated"
 	mock "github.com/stretchr/testify/mock"
 
 	pgtype "github.com/jackc/pgx/v5/pgtype"

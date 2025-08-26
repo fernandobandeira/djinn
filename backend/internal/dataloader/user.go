@@ -6,12 +6,12 @@ import (
 	"time"
 
 	"github.com/fernandobandeira/djinn/backend/internal/database"
-	"github.com/fernandobandeira/djinn/backend/internal/database/db"
+	"github.com/fernandobandeira/djinn/backend/internal/database/generated"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-//go:generate go run github.com/vektah/dataloaden UserLoader string *github.com/fernandobandeira/djinn/backend/internal/database/db.User
+//go:generate go run github.com/vektah/dataloaden UserLoader string *github.com/fernandobandeira/djinn/backend/internal/database/generated.User
 
 type UserReader struct {
 	db *database.DB

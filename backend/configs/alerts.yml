@@ -1,0 +1,223 @@
+# Alert rules configuration for Djinn monitoring
+# Based on ADR-20250120: Monitoring and Observability Strategy
+
+groups:
+  - name: djinn_critical_alerts
+    interval: 30s
+    rules:
+      # Server resource alerts
+      - alert: HighCPUUsage
+        expr: 100 - (avg(irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 90
+        for: 5m
+        labels:
+          severity: critical
+          service: djinn
+        annotations:
+          summary: "High CPU usage detected on {{ $labels.instance }}"
+          description: "CPU usage is above 90% (current value: {{ $value }}%)"
+          
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          service: djinn
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is above 85% (current value: {{ $value }}%)"
+          
+      - alert: DiskSpaceRunningOut
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 < 20
+        for: 5m
+        labels:
+          severity: critical
+          service: djinn
+        annotations:
+          summary: "Disk space running out"
+          description: "Less than 20% disk space remaining on {{ $labels.instance }}"
+          
+      # Database alerts
+      - alert: DatabaseConnectionsHigh
+        expr: djinn_db_connections_active > 80
+        for: 2m
+        labels:
+          severity: warning
+          service: djinn-database
+        annotations:
+          summary: "High number of database connections"
+          description: "Database connections exceed 80 (current: {{ $value }})"
+          
+      - alert: DatabaseQuerySlow
+        expr: histogram_quantile(0.95, rate(djinn_db_query_duration_seconds_bucket[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+          service: djinn-database
+        annotations:
+          summary: "Database queries running slow"
+          description: "95th percentile query time exceeds 1 second"
+          
+  - name: djinn_application_alerts
+    interval: 30s
+    rules:
+      # API performance alerts
+      - alert: APIErrorRateHigh
+        expr: rate(djinn_http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          service: djinn-api
+        annotations:
+          summary: "High API error rate"
+          description: "API error rate exceeds 5% (current: {{ $value }})"
+          
+      - alert: APIResponseSlow
+        expr: histogram_quantile(0.95, rate(djinn_http_duration_seconds_bucket[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+          service: djinn-api
+        annotations:
+          summary: "Slow API response times"
+          description: "95th percentile response time exceeds 1 second"
+          
+      - alert: APIRequestRateHigh
+        expr: rate(djinn_http_requests_total[1m]) > 1000
+        for: 2m
+        labels:
+          severity: info
+          service: djinn-api
+        annotations:
+          summary: "High API request rate"
+          description: "API receiving more than 1000 requests per minute"
+          
+      # GraphQL specific alerts
+      - alert: GraphQLErrorsHigh
+        expr: rate(djinn_graphql_errors_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          service: djinn-graphql
+        annotations:
+          summary: "High GraphQL error rate"
+          description: "GraphQL error rate exceeds 10% (current: {{ $value }})"
+          
+      # Receipt processing alerts
+      - alert: ReceiptProcessingSlow
+        expr: histogram_quantile(0.95, rate(djinn_receipt_processing_seconds_bucket[5m])) > 10
+        for: 5m
+        labels:
+          severity: warning
+          service: djinn-receipts
+        annotations:
+          summary: "Receipt processing running slow"
+          description: "95th percentile processing time exceeds 10 seconds"
+          
+      - alert: ReceiptProcessingFailureHigh
+        expr: rate(djinn_receipt_processing_total{status="failure"}[5m]) > 0.2
+        for: 5m
+        labels:
+          severity: critical
+          service: djinn-receipts
+        annotations:
+          summary: "High receipt processing failure rate"
+          description: "Receipt processing failure rate exceeds 20%"
+          
+      # Crash and panic alerts
+      - alert: ApplicationPanics
+        expr: increase(djinn_panics_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+          service: djinn
+        annotations:
+          summary: "Application panic detected"
+          description: "{{ $value }} panics detected in service {{ $labels.service }}"
+          
+      - alert: CrashReportsIncreasing
+        expr: rate(djinn_crash_reports_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          service: djinn
+        annotations:
+          summary: "Increasing crash reports"
+          description: "Crash report rate increasing ({{ $value }} per second)"
+          
+      # Authentication alerts
+      - alert: AuthenticationFailuresHigh
+        expr: rate(djinn_auth_attempts_total{status="failure"}[5m]) > 0.3
+        for: 5m
+        labels:
+          severity: warning
+          service: djinn-auth
+        annotations:
+          summary: "High authentication failure rate"
+          description: "Authentication failure rate exceeds 30%"
+          
+      # Background job alerts
+      - alert: BackgroundJobFailuresHigh
+        expr: rate(djinn_background_jobs_processed_total{status="failure"}[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          service: djinn-jobs
+        annotations:
+          summary: "High background job failure rate"
+          description: "Background job failure rate exceeds 10%"
+          
+  - name: djinn_infrastructure_alerts
+    interval: 60s
+    rules:
+      # Service availability
+      - alert: ServiceDown
+        expr: up{job="djinn-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: djinn
+        annotations:
+          summary: "Djinn API service is down"
+          description: "The Djinn API service has been down for more than 1 minute"
+          
+      - alert: MetricsEndpointDown
+        expr: up{job="djinn-api", instance="djinn-api"} == 0
+        for: 5m
+        labels:
+          severity: warning
+          service: djinn-metrics
+        annotations:
+          summary: "Metrics endpoint is down"
+          description: "The metrics endpoint has been unreachable for 5 minutes"
+          
+      # Resource metrics
+      - alert: GoroutinesHigh
+        expr: djinn_goroutines_count > 1000
+        for: 5m
+        labels:
+          severity: warning
+          service: djinn
+        annotations:
+          summary: "High number of goroutines"
+          description: "Goroutine count exceeds 1000 (current: {{ $value }})"
+          
+      - alert: AppMemoryHigh
+        expr: djinn_app_memory_bytes > 500000000
+        for: 5m
+        labels:
+          severity: warning
+          service: djinn
+        annotations:
+          summary: "High application memory usage"
+          description: "Application memory exceeds 500MB (current: {{ $value }} bytes)"
+          
+      # PostHog integration alerts
+      - alert: PostHogConnectionFailure
+        expr: increase(djinn_analytics_failures_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          service: djinn-analytics
+        annotations:
+          summary: "PostHog connection failures detected"
+          description: "Multiple PostHog connection failures in the last 5 minutes"

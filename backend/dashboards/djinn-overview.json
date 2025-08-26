@@ -1,0 +1,325 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "djinn-overview",
+    "title": "Djinn Application Overview",
+    "tags": ["djinn", "overview", "monitoring"],
+    "timezone": "browser",
+    "schemaVersion": 38,
+    "version": 1,
+    "refresh": "10s",
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": {"x": 0, "y": 0, "w": 6, "h": 8},
+        "type": "stat",
+        "title": "Request Rate",
+        "targets": [
+          {
+            "expr": "rate(djinn_http_requests_total[5m])",
+            "refId": "A",
+            "format": "time_series",
+            "legendFormat": "Requests/sec"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 100},
+                {"color": "red", "value": 500}
+              ]
+            },
+            "unit": "reqps"
+          }
+        }
+      },
+      {
+        "id": 2,
+        "gridPos": {"x": 6, "y": 0, "w": 6, "h": 8},
+        "type": "stat",
+        "title": "Error Rate",
+        "targets": [
+          {
+            "expr": "rate(djinn_http_requests_total{status=~\"5..\"}[5m]) / rate(djinn_http_requests_total[5m]) * 100",
+            "refId": "A",
+            "format": "time_series",
+            "legendFormat": "Error %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 1},
+                {"color": "red", "value": 5}
+              ]
+            },
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "id": 3,
+        "gridPos": {"x": 12, "y": 0, "w": 6, "h": 8},
+        "type": "stat",
+        "title": "P95 Response Time",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(djinn_http_duration_seconds_bucket[5m])) by (le))",
+            "refId": "A",
+            "format": "time_series",
+            "legendFormat": "P95 Latency"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 0.5},
+                {"color": "red", "value": 1}
+              ]
+            },
+            "unit": "s"
+          }
+        }
+      },
+      {
+        "id": 4,
+        "gridPos": {"x": 18, "y": 0, "w": 6, "h": 8},
+        "type": "stat",
+        "title": "Active DB Connections",
+        "targets": [
+          {
+            "expr": "djinn_db_connections_active",
+            "refId": "A",
+            "format": "time_series",
+            "legendFormat": "Connections"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 50},
+                {"color": "red", "value": 80}
+              ]
+            },
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "id": 5,
+        "gridPos": {"x": 0, "y": 8, "w": 12, "h": 8},
+        "type": "timeseries",
+        "title": "HTTP Request Rate by Status",
+        "targets": [
+          {
+            "expr": "sum(rate(djinn_http_requests_total[5m])) by (status)",
+            "refId": "A",
+            "format": "time_series",
+            "legendFormat": "{{status}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "lineWidth": 2,
+              "fillOpacity": 10,
+              "gradientMode": "opacity",
+              "spanNulls": false,
+              "showPoints": "never",
+              "pointSize": 5,
+              "stacking": {
+                "mode": "none",
+                "group": "A"
+              },
+              "axisPlacement": "auto",
+              "axisLabel": "",
+              "axisColorMode": "text",
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "hideFrom": {
+                "tooltip": false,
+                "viz": false,
+                "legend": false
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            }
+          }
+        }
+      },
+      {
+        "id": 6,
+        "gridPos": {"x": 12, "y": 8, "w": 12, "h": 8},
+        "type": "timeseries",
+        "title": "Response Time Percentiles",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, sum(rate(djinn_http_duration_seconds_bucket[5m])) by (le))",
+            "refId": "A",
+            "format": "time_series",
+            "legendFormat": "P50"
+          },
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(djinn_http_duration_seconds_bucket[5m])) by (le))",
+            "refId": "B",
+            "format": "time_series",
+            "legendFormat": "P95"
+          },
+          {
+            "expr": "histogram_quantile(0.99, sum(rate(djinn_http_duration_seconds_bucket[5m])) by (le))",
+            "refId": "C",
+            "format": "time_series",
+            "legendFormat": "P99"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "lineWidth": 2,
+              "fillOpacity": 10,
+              "gradientMode": "opacity"
+            }
+          }
+        }
+      },
+      {
+        "id": 7,
+        "gridPos": {"x": 0, "y": 16, "w": 8, "h": 8},
+        "type": "stat",
+        "title": "Receipt Processing Success Rate",
+        "targets": [
+          {
+            "expr": "sum(rate(djinn_receipt_processing_total{status=\"success\"}[5m])) / sum(rate(djinn_receipt_processing_total[5m])) * 100",
+            "refId": "A",
+            "format": "time_series",
+            "legendFormat": "Success %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": null},
+                {"color": "yellow", "value": 80},
+                {"color": "green", "value": 95}
+              ]
+            },
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "id": 8,
+        "gridPos": {"x": 8, "y": 16, "w": 8, "h": 8},
+        "type": "gauge",
+        "title": "App Memory Usage",
+        "targets": [
+          {
+            "expr": "djinn_app_memory_bytes / 1024 / 1024",
+            "refId": "A",
+            "format": "time_series",
+            "legendFormat": "Memory (MB)"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 256},
+                {"color": "red", "value": 512}
+              ]
+            },
+            "unit": "decmbytes",
+            "max": 1024
+          }
+        }
+      },
+      {
+        "id": 9,
+        "gridPos": {"x": 16, "y": 16, "w": 8, "h": 8},
+        "type": "stat",
+        "title": "Active Goroutines",
+        "targets": [
+          {
+            "expr": "djinn_goroutines_count",
+            "refId": "A",
+            "format": "time_series",
+            "legendFormat": "Goroutines"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 500},
+                {"color": "red", "value": 1000}
+              ]
+            },
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "id": 10,
+        "gridPos": {"x": 0, "y": 24, "w": 24, "h": 8},
+        "type": "timeseries",
+        "title": "Database Query Performance",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(djinn_db_query_duration_seconds_bucket[5m])) by (le, operation))",
+            "refId": "A",
+            "format": "time_series",
+            "legendFormat": "{{operation}} P95"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "lineWidth": 2,
+              "fillOpacity": 10,
+              "gradientMode": "opacity"
+            }
+          }
+        }
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    }
+  }
+}
