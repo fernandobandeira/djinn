@@ -79,7 +79,7 @@ func ProvideServer(cfg *config.Config, logger *slog.Logger, db *database.DB, res
 }
 
 // ProvideMonitoring initializes the integrated monitoring service
-func ProvideMonitoring(cfg *config.Config, logger *slog.Logger) (*observability.MonitoringService, func(context.Context) error, error) {
+func ProvideMonitoring(cfg *config.Config, logger *slog.Logger) (*observability.MonitoringService, func(), error) {
 	if cfg == nil {
 		return nil, nil, fmt.Errorf("config is required")
 	}
@@ -107,7 +107,19 @@ func ProvideMonitoring(cfg *config.Config, logger *slog.Logger) (*observability.
 		Environment:    cfg.Environment,
 	}
 	
-	return observability.NewMonitoringService(context.Background(), monitoringConfig, logger)
+	// Get monitoring service with context-aware shutdown
+	service, shutdownWithContext, err := observability.NewMonitoringService(context.Background(), monitoringConfig, logger)
+	if err != nil {
+		return nil, nil, err
+	}
+	
+	// Wrap the context-aware shutdown for wire compatibility
+	wrappedShutdown := func() {
+		_ = shutdownWithContext(context.Background())
+	}
+	
+	// Return the service and wrapped shutdown
+	return service, wrappedShutdown, nil
 }
 
 // ProvideApplication creates the main application with monitoring
@@ -117,7 +129,6 @@ func ProvideApplication(
 	db *database.DB,
 	srv *server.Server,
 	monitoring *observability.MonitoringService,
-	shutdownMonitoring func(context.Context) error,
 ) *Application {
 	if cfg == nil {
 		panic("config is required")
@@ -131,7 +142,7 @@ func ProvideApplication(
 	if srv == nil {
 		panic("server is required")
 	}
-	// monitoring and shutdownMonitoring can be nil
+	// monitoring can be nil
 	
 	return &Application{
 		config:             cfg,
@@ -139,7 +150,7 @@ func ProvideApplication(
 		db:                 db,
 		server:             srv,
 		monitoring:         monitoring,
-		shutdownMonitoring: shutdownMonitoring,
+		shutdownMonitoring: nil, // Will be set separately if needed
 	}
 }
 

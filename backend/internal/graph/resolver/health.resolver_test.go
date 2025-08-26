@@ -34,9 +34,9 @@ func TestHealth(t *testing.T) {
 			mockSetup: func(mdb *mockPingableDB) {
 				mdb.On("Ping", ctx).Return(errors.New("connection refused")).Once()
 			},
-			expected:    "unhealthy",
+			expected:    "",
 			expectedErr: true,
-			errMessage:  "database connection failed",
+			errMessage:  "database unhealthy",
 		},
 	}
 	

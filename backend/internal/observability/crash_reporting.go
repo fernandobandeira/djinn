@@ -15,6 +15,17 @@ import (
 	"github.com/posthog/posthog-go"
 )
 
+// Pre-compiled regex patterns for performance
+var (
+	emailRegex    = regexp.MustCompile(`[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}`)
+	jwtRegex      = regexp.MustCompile(`eyJ[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+`)
+	apiKeyRegex   = regexp.MustCompile(`(api[_-]?key|apikey|api_secret|access_token|auth_token)["\s]*[:=]["\s]*[a-zA-Z0-9_\-]{20,}`)
+	passwordRegex = regexp.MustCompile(`(password|passwd|pwd)["\s]*[:=]["\s]*[^"\s]+`)
+	ccRegex       = regexp.MustCompile(`\b(?:\d[ -]*?){13,16}\b`)
+	ssnRegex      = regexp.MustCompile(`\b\d{3}-\d{2}-\d{4}\b`)
+	dbRegex       = regexp.MustCompile(`(postgres|mysql|mongodb|redis):\/\/[^@]+@[^\s]+`)
+)
+
 // CrashReport represents a crash report with context as defined in ADR
 type CrashReport struct {
 	ID            string                 `json:"id"`
@@ -85,7 +96,7 @@ func (cr *CrashReporter) PanicRecoveryMiddleware(serviceName string) func(http.H
 					// Track panic metric
 					PanicCounter.WithLabelValues(serviceName, r.URL.Path).Inc()
 
-					// Create crash report
+					// Create crash report with sanitized data
 					report := CrashReport{
 						ID:            uuid.New().String(),
 						Timestamp:     time.Now().UTC(),
@@ -94,15 +105,15 @@ func (cr *CrashReporter) PanicRecoveryMiddleware(serviceName string) func(http.H
 						SessionID:     GetSessionID(r.Context()),
 						Severity:      "critical",
 						Category:      "panic",
-						Message:       fmt.Sprintf("%v", err),
+						Message:       sanitizeMessage(fmt.Sprintf("%v", err)),
 						StackTrace:    stackTrace,
-						Context: map[string]interface{}{
+						Context: sanitizeContext(map[string]interface{}{
 							"method":     r.Method,
 							"path":       r.URL.Path,
 							"user_agent": r.UserAgent(),
 							"remote_ip":  r.RemoteAddr,
 							"service":    serviceName,
-						},
+						}),
 						SystemInfo: collectSystemInfo(),
 					}
 
@@ -176,7 +187,7 @@ func (cr *CrashReporter) SendCrashReport(report CrashReport) {
 		slog.String("correlation_id", report.CorrelationID),
 		slog.String("severity", report.Severity),
 		slog.String("category", report.Category),
-		slog.String("message", sanitizeMessage(report.Message)),
+		slog.String("message", report.Message), // Message is already sanitized
 	)
 }
 
@@ -309,4 +320,57 @@ func WithUserID(ctx context.Context, id string) context.Context {
 // WithSessionID adds session ID to context
 func WithSessionID(ctx context.Context, id string) context.Context {
 	return context.WithValue(ctx, sessionIDKey, id)
+}
+
+// sanitizeMessage removes potentially sensitive data from messages
+func sanitizeMessage(msg string) string {
+	// Use pre-compiled regex patterns for better performance
+	msg = emailRegex.ReplaceAllString(msg, "[EMAIL]")
+	msg = jwtRegex.ReplaceAllString(msg, "[JWT_TOKEN]")
+	msg = apiKeyRegex.ReplaceAllString(msg, "$1=[REDACTED]")
+	msg = passwordRegex.ReplaceAllString(msg, "$1=[REDACTED]")
+	msg = ccRegex.ReplaceAllString(msg, "[CREDIT_CARD]")
+	msg = ssnRegex.ReplaceAllString(msg, "[SSN]")
+	msg = dbRegex.ReplaceAllString(msg, "$1://[REDACTED]")
+	
+	return msg
+}
+
+// sanitizeContext removes sensitive data from context maps
+func sanitizeContext(ctx map[string]interface{}) map[string]interface{} {
+	sanitized := make(map[string]interface{})
+	sensitiveKeys := []string{
+		"password", "passwd", "pwd",
+		"token", "secret", "key",
+		"authorization", "auth",
+		"credit_card", "cc", "cvv",
+		"ssn", "social_security",
+	}
+	
+	for k, v := range ctx {
+		// Check if key contains sensitive words
+		keyLower := strings.ToLower(k)
+		isSensitive := false
+		for _, sensitive := range sensitiveKeys {
+			if strings.Contains(keyLower, sensitive) {
+				isSensitive = true
+				break
+			}
+		}
+		
+		if isSensitive {
+			sanitized[k] = "[REDACTED]"
+		} else {
+			// Recursively sanitize nested maps
+			if nestedMap, ok := v.(map[string]interface{}); ok {
+				sanitized[k] = sanitizeContext(nestedMap)
+			} else if str, ok := v.(string); ok {
+				sanitized[k] = sanitizeMessage(str)
+			} else {
+				sanitized[k] = v
+			}
+		}
+	}
+	
+	return sanitized
 }

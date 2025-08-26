@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/fernandobandeira/djinn/backend/internal/application/dto"
-	"github.com/fernandobandeira/djinn/backend/internal/graph/model"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,13 +13,13 @@ func TestCreateUser_DTOValidation(t *testing.T) {
 	
 	tests := []struct {
 		name        string
-		input       model.CreateUserInput
+		input       dto.CreateUserInput
 		expectedErr bool
 		errMessage  string
 	}{
 		{
 			name: "Valid user creation with profile image",
-			input: model.CreateUserInput{
+			input: dto.CreateUserInput{
 				FirebaseUID:     "firebase123456789012345678",
 				Email:          "test@example.com",
 				Name:           "Test User",
@@ -30,7 +29,7 @@ func TestCreateUser_DTOValidation(t *testing.T) {
 		},
 		{
 			name: "Valid user creation without profile image",
-			input: model.CreateUserInput{
+			input: dto.CreateUserInput{
 				FirebaseUID: "firebase123456789012345678",
 				Email:      "test@example.com",
 				Name:       "Test User",
@@ -39,7 +38,7 @@ func TestCreateUser_DTOValidation(t *testing.T) {
 		},
 		{
 			name: "Invalid Firebase UID with special characters",
-			input: model.CreateUserInput{
+			input: dto.CreateUserInput{
 				FirebaseUID: "invalid!@#",
 				Email:      "test@example.com",
 				Name:       "Test User",
@@ -49,7 +48,7 @@ func TestCreateUser_DTOValidation(t *testing.T) {
 		},
 		{
 			name: "Invalid Firebase UID too short",
-			input: model.CreateUserInput{
+			input: dto.CreateUserInput{
 				FirebaseUID: "short",
 				Email:      "test@example.com",
 				Name:       "Test User",
@@ -59,7 +58,7 @@ func TestCreateUser_DTOValidation(t *testing.T) {
 		},
 		{
 			name: "Invalid email format",
-			input: model.CreateUserInput{
+			input: dto.CreateUserInput{
 				FirebaseUID: "firebase123456789012345678",
 				Email:      "invalid-email",
 				Name:       "Test User",
@@ -69,7 +68,7 @@ func TestCreateUser_DTOValidation(t *testing.T) {
 		},
 		{
 			name: "Missing email",
-			input: model.CreateUserInput{
+			input: dto.CreateUserInput{
 				FirebaseUID: "firebase123456789012345678",
 				Email:      "",
 				Name:       "Test User",
@@ -79,7 +78,7 @@ func TestCreateUser_DTOValidation(t *testing.T) {
 		},
 		{
 			name: "Empty name",
-			input: model.CreateUserInput{
+			input: dto.CreateUserInput{
 				FirebaseUID: "firebase123456789012345678",
 				Email:      "test@example.com",
 				Name:       "",
@@ -89,7 +88,7 @@ func TestCreateUser_DTOValidation(t *testing.T) {
 		},
 		{
 			name: "Invalid profile image URL",
-			input: model.CreateUserInput{
+			input: dto.CreateUserInput{
 				FirebaseUID:     "firebase123456789012345678",
 				Email:          "test@example.com",
 				Name:           "Test User",
@@ -128,13 +127,13 @@ func TestUpdateUser_DTOValidation(t *testing.T) {
 	
 	tests := []struct {
 		name        string
-		input       model.UpdateUserInput
+		input       dto.UpdateUserInput
 		expectedErr bool
 		errMessage  string
 	}{
 		{
 			name: "Valid update all fields",
-			input: model.UpdateUserInput{
+			input: dto.UpdateUserInput{
 				Email:           stringPtr("new@example.com"),
 				Name:            stringPtr("New Name"),
 				ProfileImageURL: stringPtr("https://example.com/new.jpg"),
@@ -143,26 +142,26 @@ func TestUpdateUser_DTOValidation(t *testing.T) {
 		},
 		{
 			name: "Valid update email only",
-			input: model.UpdateUserInput{
+			input: dto.UpdateUserInput{
 				Email: stringPtr("new@example.com"),
 			},
 			expectedErr: false,
 		},
 		{
 			name: "Valid update name only",
-			input: model.UpdateUserInput{
+			input: dto.UpdateUserInput{
 				Name: stringPtr("New Name"),
 			},
 			expectedErr: false,
 		},
 		{
 			name: "Empty update (all nil)",
-			input: model.UpdateUserInput{},
+			input: dto.UpdateUserInput{},
 			expectedErr: false,
 		},
 		{
 			name: "Invalid email format",
-			input: model.UpdateUserInput{
+			input: dto.UpdateUserInput{
 				Email: stringPtr("invalid-email"),
 			},
 			expectedErr: true,
@@ -170,7 +169,7 @@ func TestUpdateUser_DTOValidation(t *testing.T) {
 		},
 		{
 			name: "Empty name not allowed",
-			input: model.UpdateUserInput{
+			input: dto.UpdateUserInput{
 				Name: stringPtr(""),
 			},
 			expectedErr: true,
@@ -178,7 +177,7 @@ func TestUpdateUser_DTOValidation(t *testing.T) {
 		},
 		{
 			name: "Invalid profile image URL",
-			input: model.UpdateUserInput{
+			input: dto.UpdateUserInput{
 				ProfileImageURL: stringPtr("not-a-url"),
 			},
 			expectedErr: true,

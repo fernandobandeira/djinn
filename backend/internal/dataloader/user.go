@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/fernandobandeira/djinn/backend/internal/database"
-	"github.com/fernandobandeira/djinn/backend/internal/database/generated"
+	db "github.com/fernandobandeira/djinn/backend/internal/database/generated"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )

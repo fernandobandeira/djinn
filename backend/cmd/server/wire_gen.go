@@ -20,15 +20,15 @@ import (
 // Injectors from wire.go:
 
 // InitializeApp creates a new application with all dependencies injected
-func InitializeApp() (*Application, error) {
+func InitializeApp() (*Application, func(), error) {
 	configConfig, err := config.Load()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	logger := logging.NewLogger(configConfig)
 	db, err := ProvideDatabase(configConfig, logger)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	queries := ProvideQueries(db)
 	userRepository := postgres.NewUserRepository(queries, logger)
@@ -40,12 +40,14 @@ func InitializeApp() (*Application, error) {
 	getUserByFirebaseUIDHandler := user3.NewGetUserByFirebaseUIDHandler(service, logger)
 	resolverResolver := resolver.NewResolver(db, logger, createUserHandler, updateUserHandler, deleteUserHandler, getUserHandler, getUserByFirebaseUIDHandler)
 	server := ProvideServer(configConfig, logger, db, resolverResolver)
-	v, err := ProvideTracing(configConfig)
+	monitoringService, cleanup, err := ProvideMonitoring(configConfig, logger)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	application := ProvideApplication(configConfig, logger, db, server, v)
-	return application, nil
+	application := ProvideApplication(configConfig, logger, db, server, monitoringService)
+	return application, func() {
+		cleanup()
+	}, nil
 }
 
 // wire.go:
@@ -53,7 +55,7 @@ func InitializeApp() (*Application, error) {
 // InfrastructureProviderSet groups infrastructure providers
 var InfrastructureProviderSet = wire.NewSet(config.Load, logging.NewLogger, ProvideDatabase,
 	ProvideQueries,
-	ProvideTracing,
+	ProvideMonitoring,
 )
 
 // RepositoryProviderSet groups repository providers

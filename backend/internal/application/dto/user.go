@@ -12,21 +12,21 @@ import (
 // UserDTO is a data transfer object for user data
 type UserDTO struct {
 	ID              string     `json:"id"`
-	FirebaseUID     string     `json:"firebase_uid"`
+	FirebaseUID     string     `json:"firebaseUid"`
 	Email           string     `json:"email"`
 	Name            string     `json:"name"`
-	ProfileImageURL *string    `json:"profile_image_url,omitempty"`
-	CreatedAt       time.Time  `json:"created_at"`
-	UpdatedAt       time.Time  `json:"updated_at"`
+	ProfileImageURL *string    `json:"profileImageUrl,omitempty"`
+	CreatedAt       time.Time  `json:"createdAt"`
+	UpdatedAt       time.Time  `json:"updatedAt"`
 }
 
 // CreateUserInput represents the input for creating a user
 // This is an immutable value object that validates on construction
 type CreateUserInput struct {
-	FirebaseUID     string  `json:"firebase_uid"`
+	FirebaseUID     string  `json:"firebaseUid"`
 	Email           string  `json:"email"`
 	Name            string  `json:"name"`
-	ProfileImageURL *string `json:"profile_image_url,omitempty"`
+	ProfileImageURL *string `json:"profileImageUrl,omitempty"`
 }
 
 // NewCreateUserInput creates and validates a new CreateUserInput
@@ -49,7 +49,7 @@ func NewCreateUserInput(firebaseUID, email, name string, profileImageURL *string
 type UpdateUserInput struct {
 	Email           *string `json:"email,omitempty"`
 	Name            *string `json:"name,omitempty"`
-	ProfileImageURL *string `json:"profile_image_url,omitempty"`
+	ProfileImageURL *string `json:"profileImageUrl,omitempty"`
 }
 
 // NewUpdateUserInput creates and validates a new UpdateUserInput

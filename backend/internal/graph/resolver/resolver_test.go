@@ -25,10 +25,7 @@ func TestResolverMethods(t *testing.T) {
 	assert.NotNil(t, query)
 	assert.IsType(t, &queryResolver{}, query)
 	
-	// Test User method
-	user := resolver.User()
-	assert.NotNil(t, user)
-	assert.IsType(t, &userResolver{}, user)
+	// User resolvers are now part of Query/Mutation resolvers with follow-schema layout
 }
 
 func TestNewResolver(t *testing.T) {

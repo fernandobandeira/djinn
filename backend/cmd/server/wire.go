@@ -54,7 +54,7 @@ var PresentationProviderSet = wire.NewSet(
 )
 
 // InitializeApp creates a new application with all dependencies injected
-func InitializeApp() (*Application, error) {
+func InitializeApp() (*Application, func(), error) {
 	wire.Build(
 		// Layer-based provider sets
 		InfrastructureProviderSet,
@@ -66,5 +66,5 @@ func InitializeApp() (*Application, error) {
 		// Application assembly
 		ProvideApplication,
 	)
-	return nil, nil
+	return nil, nil, nil
 }

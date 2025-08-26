@@ -1,0 +1,15 @@
+# Common types and scalars shared across the Djinn GraphQL Schema
+
+scalar Time
+
+# Root query type
+type Query {
+  # Health check query
+  health: String!
+}
+
+# Root mutation type
+type Mutation {
+  # Placeholder for mutations - extended in other files
+  _empty: String
+}

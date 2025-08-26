@@ -6,10 +6,13 @@ import (
 )
 
 func main() {
-	app, err := InitializeApp()
+	app, cleanup, err := InitializeApp()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to initialize application: %v\n", err)
 		os.Exit(1)
+	}
+	if cleanup != nil {
+		defer cleanup()
 	}
 	
 	if err := app.Run(); err != nil {

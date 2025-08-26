@@ -116,7 +116,10 @@ func NewMonitoringService(ctx context.Context, config *MonitoringConfig, logger 
 
 	analytics, err := NewAnalyticsTracker(analyticsConfig, logger)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to initialize analytics: %w", err)
+		logger.Warn("Failed to initialize analytics, continuing without analytics",
+			slog.String("error", err.Error()),
+		)
+		analytics = &AnalyticsTracker{enabled: false}
 	}
 	if analytics != nil && analytics.client != nil {
 		shutdownFuncs = append(shutdownFuncs, func(ctx context.Context) error {
@@ -170,9 +173,7 @@ func (ms *MonitoringService) HTTPMiddleware() func(http.Handler) http.Handler {
 			}
 
 			// Extract session ID if present - capture before processing
-			sessionID := ""
 			if sid := r.Header.Get("X-Session-ID"); sid != "" {
-				sessionID = sid
 				ctx = WithSessionID(ctx, sid)
 			}
 
@@ -209,43 +210,46 @@ func (ms *MonitoringService) HTTPMiddleware() func(http.Handler) http.Handler {
 				method := r.Method
 				path := r.URL.Path
 				
+				// Set up deferred metrics recording to avoid race conditions
+				defer func() {
+					// Record metrics after request completes (safe in defer)
+					duration := time.Since(start).Seconds()
+					statusStr := fmt.Sprintf("%d", wrapped.statusCode)
+
+					HTTPDuration.WithLabelValues(method, path, statusStr).Observe(duration)
+					HTTPRequests.WithLabelValues(method, path, statusStr).Inc()
+
+					// Track user request if user ID was captured
+					if userID != "" && ms.Analytics != nil {
+						ms.Analytics.TrackRequest(userID, r, wrapped.statusCode, duration)
+					}
+
+					// Log slow requests
+					if duration > 1.0 {
+						ms.logger.Warn("Slow request detected",
+							slog.String("correlation_id", correlationID),
+							slog.String("method", method),
+							slog.String("path", path),
+							slog.Float64("duration", duration),
+							slog.Int("status", wrapped.statusCode),
+						)
+					}
+
+					// Add final breadcrumb
+					if ms.Analytics != nil {
+						ms.Analytics.AddBreadcrumb(correlationID, Breadcrumb{
+							Timestamp: time.Now(),
+							Category:  "http_response",
+							Message:   fmt.Sprintf("Response %d", wrapped.statusCode),
+							Data: map[string]interface{}{
+								"duration_ms": duration * 1000,
+							},
+						})
+					}
+				}()
+				
 				// Process request
 				next.ServeHTTP(wrapped, r)
-
-				// Record metrics after request completes
-				duration := time.Since(start).Seconds()
-				statusStr := fmt.Sprintf("%d", wrapped.statusCode)
-
-				HTTPDuration.WithLabelValues(method, path, statusStr).Observe(duration)
-				HTTPRequests.WithLabelValues(method, path, statusStr).Inc()
-
-				// Track user request if user ID was captured
-				if userID != "" && ms.Analytics != nil {
-					ms.Analytics.TrackRequest(userID, r, wrapped.statusCode, duration)
-				}
-
-				// Log slow requests
-				if duration > 1.0 {
-					ms.logger.Warn("Slow request detected",
-						slog.String("correlation_id", correlationID),
-						slog.String("method", r.Method),
-						slog.String("path", r.URL.Path),
-						slog.Float64("duration", duration),
-						slog.Int("status", wrapped.statusCode),
-					)
-				}
-
-				// Add final breadcrumb
-				if ms.Analytics != nil {
-					ms.Analytics.AddBreadcrumb(correlationID, Breadcrumb{
-						Timestamp: time.Now(),
-						Category:  "http_response",
-						Message:   fmt.Sprintf("Response %d", wrapped.statusCode),
-						Data: map[string]interface{}{
-							"duration_ms": duration * 1000,
-						},
-					})
-				}
 			})).ServeHTTP(w, r)
 		})
 	}
