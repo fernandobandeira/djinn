@@ -75,18 +75,20 @@ class EnvironmentConfig {
   
   // Development environment
   factory EnvironmentConfig.dev() {
-    return const EnvironmentConfig(
-      apiUrl: 'https://api-dev.djinn.app/graphql',
-      websocketUrl: 'wss://api-dev.djinn.app/graphql',
+    return EnvironmentConfig(
+      apiUrl: const String.fromEnvironment('API_URL', 
+        defaultValue: 'http://localhost:4000/graphql'),
+      websocketUrl: const String.fromEnvironment('WS_URL',
+        defaultValue: 'ws://localhost:4000/graphql'),
       appName: 'Djinn Dev',
       appVersion: '1.0.0-dev',
       enableLogging: true,
       enableCrashlytics: false,
       enableAnalytics: false,
       enablePerformanceMonitoring: true,
-      apiTimeout: Duration(seconds: 30),
+      apiTimeout: const Duration(seconds: 30),
       maxRetryAttempts: 3,
-      sentryDsn: '',
+      sentryDsn: const String.fromEnvironment('SENTRY_DSN', defaultValue: ''),
       featureFlags: {
         'enable_firebase_auth': 'false',
         'enable_push_notifications': 'false',
@@ -99,18 +101,20 @@ class EnvironmentConfig {
   
   // Staging environment
   factory EnvironmentConfig.staging() {
-    return const EnvironmentConfig(
-      apiUrl: 'https://api-staging.djinn.app/graphql',
-      websocketUrl: 'wss://api-staging.djinn.app/graphql',
+    return EnvironmentConfig(
+      apiUrl: const String.fromEnvironment('API_URL',
+        defaultValue: 'https://api-staging.djinn.app/graphql'),
+      websocketUrl: const String.fromEnvironment('WS_URL',
+        defaultValue: 'wss://api-staging.djinn.app/graphql'),
       appName: 'Djinn Staging',
       appVersion: '1.0.0-staging',
       enableLogging: true,
       enableCrashlytics: true,
       enableAnalytics: true,
       enablePerformanceMonitoring: true,
-      apiTimeout: Duration(seconds: 20),
+      apiTimeout: const Duration(seconds: 20),
       maxRetryAttempts: 3,
-      sentryDsn: 'https://staging.sentry.io/djinn',
+      sentryDsn: const String.fromEnvironment('SENTRY_DSN', defaultValue: ''),
       featureFlags: {
         'enable_firebase_auth': 'true',
         'enable_push_notifications': 'true',
@@ -123,18 +127,20 @@ class EnvironmentConfig {
   
   // Production environment
   factory EnvironmentConfig.prod() {
-    return const EnvironmentConfig(
-      apiUrl: 'https://api.djinn.app/graphql',
-      websocketUrl: 'wss://api.djinn.app/graphql',
+    return EnvironmentConfig(
+      apiUrl: const String.fromEnvironment('API_URL',
+        defaultValue: 'https://api.djinn.app/graphql'),
+      websocketUrl: const String.fromEnvironment('WS_URL',
+        defaultValue: 'wss://api.djinn.app/graphql'),
       appName: 'Djinn',
       appVersion: '1.0.0',
       enableLogging: false,
       enableCrashlytics: true,
       enableAnalytics: true,
       enablePerformanceMonitoring: true,
-      apiTimeout: Duration(seconds: 15),
+      apiTimeout: const Duration(seconds: 15),
       maxRetryAttempts: 5,
-      sentryDsn: 'https://prod.sentry.io/djinn',
+      sentryDsn: const String.fromEnvironment('SENTRY_DSN', defaultValue: ''),
       featureFlags: {
         'enable_firebase_auth': 'true',
         'enable_push_notifications': 'true',

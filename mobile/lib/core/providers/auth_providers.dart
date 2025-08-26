@@ -97,7 +97,24 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 // Derived provider for auth token
 final authTokenProvider = Provider<String?>((ref) {
   final authState = ref.watch(authStateProvider);
-  return authState.isAuthenticated ? 'fake_token_${authState.user?.id}' : null;
+  
+  // TODO: When Firebase Auth is implemented, retrieve actual JWT token
+  // For now, return null to prevent security issues
+  // In production, this should:
+  // 1. Check secure storage for cached token
+  // 2. Validate token expiration
+  // 3. Refresh if needed
+  // 4. Return valid JWT token
+  
+  if (!authState.isAuthenticated) {
+    return null;
+  }
+  
+  // Placeholder for secure token retrieval
+  // final secureStorage = ref.read(secureStorageProvider);
+  // return await secureStorage.read(key: 'auth_token');
+  
+  return null; // Return null until proper auth is implemented
 });
 
 // Derived provider for checking if user is authenticated

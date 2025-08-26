@@ -212,11 +212,5 @@ final appDatabaseProvider = Provider<AppDatabase>((ref) {
   return database;
 });
 
-// Provider for current user profile
-final currentUserProfileProvider = StreamProvider<UserProfile?>((ref) async* {
-  final database = ref.watch(appDatabaseProvider);
-  // TODO: Get current user ID from auth provider
-  const userId = 'current_user_id'; // This will be replaced with actual auth user ID
-  
-  yield* database.watchUserProfile(userId);
-});
+// Note: Current user profile provider has been moved to database_provider.dart
+// to properly integrate with auth state management

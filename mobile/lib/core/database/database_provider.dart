@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:djinn_mobile/core/database/app_database.dart';
 import 'package:djinn_mobile/core/database/daos/user_dao.dart';
 import 'package:djinn_mobile/core/database/daos/settings_dao.dart';
+import 'package:djinn_mobile/core/providers/auth_providers.dart';
 
 // Database instance provider
 final databaseProvider = Provider<AppDatabase>((ref) {
@@ -29,18 +30,16 @@ final settingsDaoProvider = Provider<SettingsDao>((ref) {
 // Current user profile provider
 final currentUserProfileProvider = StreamProvider<UserProfile?>((ref) async* {
   final userDao = ref.watch(userDaoProvider);
+  final authState = ref.watch(authStateProvider);
   
-  // TODO: Get actual user ID from auth provider
-  // For now, return null since no user is logged in
-  yield* Stream.value(null);
-  
-  // When auth is implemented, use this:
-  // final authState = ref.watch(authStateProvider);
-  // if (authState.user != null) {
-  //   yield* userDao.watchById(authState.user!.id);
-  // } else {
-  //   yield* Stream.value(null);
-  // }
+  // Only fetch user profile when authenticated
+  if (authState.isAuthenticated && authState.user != null) {
+    final userId = authState.user!.id;
+    yield* userDao.watchById(userId);
+  } else {
+    // Return null if not authenticated
+    yield* Stream.value(null);
+  }
 });
 
 // Settings providers

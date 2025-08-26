@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -150,16 +151,32 @@ final routerProvider = Provider<GoRouter>((ref) {
 // Stream for router refresh when auth state changes
 class GoRouterRefreshStream extends ChangeNotifier {
   GoRouterRefreshStream(Stream<AuthState> stream) {
-    _subscription = stream.listen((_) {
-      notifyListeners();
-    });
+    _subscription = stream.listen(
+      (_) {
+        notifyListeners();
+      },
+      onError: (error) {
+        // Log error but don't crash the app
+        if (kDebugMode) {
+          print('Router refresh stream error: $error');
+        }
+      },
+      cancelOnError: false, // Continue listening even after errors
+    );
   }
 
   late final StreamSubscription<AuthState> _subscription;
 
   @override
   void dispose() {
-    _subscription.cancel();
+    try {
+      _subscription.cancel();
+    } catch (e) {
+      // Ensure disposal completes even if cancellation fails
+      if (kDebugMode) {
+        print('Error cancelling router subscription: $e');
+      }
+    }
     super.dispose();
   }
 }
