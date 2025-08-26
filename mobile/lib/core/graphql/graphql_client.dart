@@ -10,6 +10,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:djinn_mobile/core/config/environment.dart';
 import 'package:djinn_mobile/core/providers/auth_providers.dart';
+import 'package:djinn_mobile/core/utils/logger.dart';
 
 // GraphQL client provider
 final graphqlClientProvider = Provider<Client>((ref) {
@@ -36,9 +37,14 @@ class GraphQLClientFactory {
       onGraphQLError: (request, forward, response) {
         if (response.errors != null) {
           for (final error in response.errors!) {
-            print('[GraphQL Error] ${error.message}');
+            logger.error(
+              'GraphQL Error: ${error.message}',
+              tag: 'GraphQLClient',
+              error: error,
+            );
             if (error.extensions?['code'] == 'UNAUTHENTICATED') {
               // Handle unauthenticated error
+              logger.warning('User unauthenticated, signing out', tag: 'GraphQLClient');
               ref.read(authStateProvider.notifier).signOut();
             }
           }
@@ -46,7 +52,11 @@ class GraphQLClientFactory {
         return null;
       },
       onException: (request, forward, exception) {
-        print('[GraphQL Exception] $exception');
+        logger.error(
+          'GraphQL Exception occurred',
+          tag: 'GraphQLClient',
+          error: exception,
+        );
         return null;
       },
     );

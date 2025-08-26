@@ -18,6 +18,7 @@ import 'package:djinn_mobile/features/receipts/screens/receipt_detail_screen.dar
 import 'package:djinn_mobile/features/wishes/screens/wishes_screen.dart';
 import 'package:djinn_mobile/shared/screens/splash_screen.dart';
 import 'package:djinn_mobile/shared/screens/error_screen.dart';
+import 'package:djinn_mobile/core/utils/logger.dart';
 
 // Router provider
 final routerProvider = Provider<GoRouter>((ref) {
@@ -157,9 +158,11 @@ class GoRouterRefreshStream extends ChangeNotifier {
       },
       onError: (error) {
         // Log error but don't crash the app
-        if (kDebugMode) {
-          print('Router refresh stream error: $error');
-        }
+        logger.warning(
+          'Router refresh stream error',
+          tag: 'GoRouterRefreshStream',
+          error: error,
+        );
       },
       cancelOnError: false, // Continue listening even after errors
     );
@@ -173,9 +176,11 @@ class GoRouterRefreshStream extends ChangeNotifier {
       _subscription.cancel();
     } catch (e) {
       // Ensure disposal completes even if cancellation fails
-      if (kDebugMode) {
-        print('Error cancelling router subscription: $e');
-      }
+      logger.error(
+        'Error cancelling router subscription',
+        tag: 'GoRouterRefreshStream',
+        error: e,
+      );
     }
     super.dispose();
   }

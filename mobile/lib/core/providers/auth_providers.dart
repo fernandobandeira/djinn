@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:djinn_mobile/core/utils/validators.dart';
+import 'package:djinn_mobile/core/utils/logger.dart';
 
 // Authentication state provider
 final authStateProvider = StateNotifierProvider<AuthStateNotifier, AuthState>((ref) {
@@ -38,12 +40,21 @@ class User {
     required this.id,
     required this.email,
     this.name,
+    this.photoUrl,
+    this.phoneNumber,
+    this.emailVerified = false,
   });
 
   final String id;
   final String email;
   final String? name;
+  final String? photoUrl;
+  final String? phoneNumber;
+  final bool emailVerified;
 }
+
+// Alias for compatibility
+typedef AuthUser = User;
 
 class AuthStateNotifier extends StateNotifier<AuthState> {
   AuthStateNotifier() : super(const AuthState());
@@ -52,28 +63,54 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: true, error: null);
     
     try {
-      // Simulate authentication
+      // Validate input
+      final emailError = Validators.validateEmail(email);
+      if (emailError != null) {
+        throw Exception(emailError);
+      }
+      
+      final passwordError = Validators.validatePassword(password);
+      if (passwordError != null) {
+        throw Exception(passwordError);
+      }
+      
+      // Sanitize inputs
+      final sanitizedEmail = Validators.sanitizeInput(email.trim().toLowerCase());
+      
+      logger.info('Attempting sign in for user: $sanitizedEmail', tag: 'AuthStateNotifier');
+      
+      // TODO: Implement actual authentication with Firebase
+      // For now, simulate authentication
       await Future.delayed(const Duration(seconds: 1));
       
-      if (email.isNotEmpty && password.isNotEmpty) {
-        final user = User(
-          id: 'user_123',
-          email: email,
-          name: 'Demo User',
-        );
-        
-        state = state.copyWith(
-          isAuthenticated: true,
-          user: user,
-          isLoading: false,
-        );
-      } else {
-        throw Exception('Invalid credentials');
-      }
-    } catch (e) {
+      // In production, this would make an API call to authenticate
+      // final response = await authService.signIn(sanitizedEmail, password);
+      
+      // Demo user for development
+      final user = User(
+        id: 'user_${DateTime.now().millisecondsSinceEpoch}',
+        email: sanitizedEmail,
+        name: 'Demo User',
+      );
+      
+      state = state.copyWith(
+        isAuthenticated: true,
+        user: user,
+        isLoading: false,
+      );
+      
+      logger.info('Sign in successful for user: ${user.id}', tag: 'AuthStateNotifier');
+    } catch (e, stackTrace) {
+      logger.error(
+        'Sign in failed',
+        tag: 'AuthStateNotifier',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
+        error: e.toString().replaceAll('Exception: ', ''),
       );
     }
   }
@@ -81,12 +118,34 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
   Future<void> signOut() async {
     state = state.copyWith(isLoading: true);
     
-    await Future.delayed(const Duration(milliseconds: 500));
-    
-    state = const AuthState(
-      isAuthenticated: false,
-      isLoading: false,
-    );
+    try {
+      logger.info('User signing out', tag: 'AuthStateNotifier');
+      
+      // TODO: Clear secure storage tokens
+      // await secureStorage.delete(key: 'auth_token');
+      
+      await Future.delayed(const Duration(milliseconds: 500));
+      
+      state = const AuthState(
+        isAuthenticated: false,
+        isLoading: false,
+      );
+      
+      logger.info('Sign out successful', tag: 'AuthStateNotifier');
+    } catch (e, stackTrace) {
+      logger.error(
+        'Sign out failed',
+        tag: 'AuthStateNotifier',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      
+      // Force sign out even if there's an error
+      state = const AuthState(
+        isAuthenticated: false,
+        isLoading: false,
+      );
+    }
   }
 
   void clearError() {

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:djinn_mobile/core/utils/logger.dart';
 
 enum Environment { dev, staging, prod }
 
@@ -16,10 +17,8 @@ class AppConfig {
       Environment.prod => EnvironmentConfig.prod(),
     };
     
-    if (kDebugMode) {
-      print('🚀 App initialized in ${_env.name} environment');
-      print('📍 API URL: ${_config.apiUrl}');
-    }
+    logger.info('App initialized in ${_env.name} environment', tag: 'AppConfig');
+    logger.debug('API URL: ${_config.apiUrl}', tag: 'AppConfig');
   }
   
   // Environment checks

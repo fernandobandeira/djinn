@@ -73,8 +73,9 @@ class DjinnApp extends ConsumerWidget {
     final appTheme = ref.watch(appThemeProvider);
     final router = ref.watch(routerProvider);
     
-    // Initialize database on first build
-    ref.watch(databaseInitializerProvider);
+    // Initialize database only once using read instead of watch
+    // This prevents unnecessary rebuilds when database state changes
+    final databaseInit = ref.read(databaseInitializerProvider);
     
     return MaterialApp.router(
       title: AppConfig.appName,

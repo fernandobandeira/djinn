@@ -58,10 +58,9 @@ class AppStateNotifier extends StateNotifier<AppState> {
   }
 }
 
-// Theme mode provider
-final themeModeProvider = StateProvider<bool>((ref) {
-  return false; // false = light, true = dark
-});
+// Note: Theme mode provider has been moved to app_theme.dart
+// This avoids duplication and confusion between bool and ThemeMode types
+// Use: import 'package:djinn_mobile/core/theme/app_theme.dart';
 
 // Development tools provider
 final devToolsProvider = Provider<bool>((ref) {
