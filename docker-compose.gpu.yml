@@ -21,7 +21,7 @@ services:
       - djinn-network
 
   embeddings:
-    image: ghcr.io/huggingface/text-embeddings-inference:1.5
+    image: ghcr.io/huggingface/text-embeddings-inference:1.8
     container_name: djinn-embeddings
     ports:
       - "8080:80"
