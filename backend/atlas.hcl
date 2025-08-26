@@ -3,15 +3,12 @@
 
 env "local" {
   # URL to the database to migrate
-  url = getenv("DATABASE_URL")
+  url = "postgres://djinn_user:djinn_password@localhost:5432/djinn?sslmode=disable"
   
   # Migration directory
   migration {
     dir = "file://migrations"
   }
-  
-  # Optional: Schema definition file
-  src = getenv("ATLAS_SCHEMA_SRC")
 }
 
 env "test" {

@@ -46,7 +46,8 @@ services:
       - djinn-network
 
   postgres:
-    image: postgres:16-alpine
+    # Using PostgreSQL 18 beta for native UUIDv7 support
+    image: postgres:18beta3-alpine
     container_name: djinn-postgres
     environment:
       POSTGRES_DB: djinn
@@ -56,7 +57,6 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./backend/migrations:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U djinn_user -d djinn"]
       interval: 10s

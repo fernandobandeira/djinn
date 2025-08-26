@@ -2,7 +2,7 @@ version: "2"
 sql:
   - engine: "postgresql"
     queries: "sqlc/queries"
-    schema: "sqlc/schema"
+    schema: "schema.sql"
     gen:
       go:
         package: "db"
@@ -21,18 +21,3 @@ sql:
         emit_pointers_for_null_types: false
         emit_enum_valid_method: true
         emit_all_enum_values: true
-        overrides:
-          - column: "*.id"
-            go_type: "github.com/google/uuid.UUID"
-          - column: "users.firebase_uid"
-            go_type: "string"
-          - column: "users.email"
-            go_type: "string"
-          - column: "users.name"
-            go_type: "string"
-          - column: "users.profile_image_url"
-            go_type: "sql.NullString"
-          - column: "users.created_at"
-            go_type: "time.Time"
-          - column: "users.updated_at"
-            go_type: "time.Time"

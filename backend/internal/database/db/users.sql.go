@@ -7,10 +7,8 @@ package db
 
 import (
 	"context"
-	"database/sql"
-	"time"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const countUsers = `-- name: CountUsers :one
@@ -32,10 +30,10 @@ RETURNING id, firebase_uid, email, name, profile_image_url, created_at, updated_
 `
 
 type CreateUserParams struct {
-	FirebaseUid     string         `db:"firebase_uid" json:"firebase_uid"`
-	Email           string         `db:"email" json:"email"`
-	Name            string         `db:"name" json:"name"`
-	ProfileImageUrl sql.NullString `db:"profile_image_url" json:"profile_image_url"`
+	FirebaseUid     string      `db:"firebase_uid" json:"firebase_uid"`
+	Email           string      `db:"email" json:"email"`
+	Name            string      `db:"name" json:"name"`
+	ProfileImageUrl pgtype.Text `db:"profile_image_url" json:"profile_image_url"`
 }
 
 // Create a new user account
@@ -65,7 +63,7 @@ WHERE id = $1
 `
 
 // Delete a user account (soft delete could be implemented later)
-func (q *Queries) DeleteUser(ctx context.Context, id uuid.UUID) error {
+func (q *Queries) DeleteUser(ctx context.Context, id pgtype.UUID) error {
 	_, err := q.db.Exec(ctx, deleteUser, id)
 	return err
 }
@@ -90,8 +88,8 @@ LIMIT $2
 `
 
 type GetRecentUsersParams struct {
-	CreatedAt time.Time `db:"created_at" json:"created_at"`
-	Limit     int32     `db:"limit" json:"limit"`
+	CreatedAt pgtype.Timestamptz `db:"created_at" json:"created_at"`
+	Limit     int32              `db:"limit" json:"limit"`
 }
 
 // Get recently created users (for admin/analytics)
@@ -133,7 +131,7 @@ WHERE id = $1
 // User CRUD operations for Djinn personal finance application
 // Generated queries will be type-safe with pgx/v5
 // Get a user by their ID
-func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (User, error) {
+func (q *Queries) GetUser(ctx context.Context, id pgtype.UUID) (User, error) {
 	row := q.db.QueryRow(ctx, getUser, id)
 	var i User
 	err := row.Scan(
@@ -238,16 +236,17 @@ UPDATE users
 SET 
     email = COALESCE($2, email),
     name = COALESCE($3, name),
-    profile_image_url = COALESCE($4, profile_image_url)
+    profile_image_url = COALESCE($4, profile_image_url),
+    updated_at = NOW()
 WHERE id = $1
 RETURNING id, firebase_uid, email, name, profile_image_url, created_at, updated_at
 `
 
 type UpdateUserParams struct {
-	ID              uuid.UUID      `db:"id" json:"id"`
-	Email           string         `db:"email" json:"email"`
-	Name            string         `db:"name" json:"name"`
-	ProfileImageUrl sql.NullString `db:"profile_image_url" json:"profile_image_url"`
+	ID              pgtype.UUID `db:"id" json:"id"`
+	Email           string      `db:"email" json:"email"`
+	Name            string      `db:"name" json:"name"`
+	ProfileImageUrl pgtype.Text `db:"profile_image_url" json:"profile_image_url"`
 }
 
 // Update user profile information
@@ -276,16 +275,17 @@ UPDATE users
 SET 
     email = COALESCE($2, email),
     name = COALESCE($3, name),
-    profile_image_url = COALESCE($4, profile_image_url)
+    profile_image_url = COALESCE($4, profile_image_url),
+    updated_at = NOW()
 WHERE firebase_uid = $1
 RETURNING id, firebase_uid, email, name, profile_image_url, created_at, updated_at
 `
 
 type UpdateUserByFirebaseUIDParams struct {
-	FirebaseUid     string         `db:"firebase_uid" json:"firebase_uid"`
-	Email           string         `db:"email" json:"email"`
-	Name            string         `db:"name" json:"name"`
-	ProfileImageUrl sql.NullString `db:"profile_image_url" json:"profile_image_url"`
+	FirebaseUid     string      `db:"firebase_uid" json:"firebase_uid"`
+	Email           string      `db:"email" json:"email"`
+	Name            string      `db:"name" json:"name"`
+	ProfileImageUrl pgtype.Text `db:"profile_image_url" json:"profile_image_url"`
 }
 
 // Update user profile by Firebase UID (for auth flows)
@@ -314,7 +314,7 @@ SELECT EXISTS(SELECT 1 FROM users WHERE id = $1)
 `
 
 // Check if a user exists by ID
-func (q *Queries) UserExists(ctx context.Context, id uuid.UUID) (bool, error) {
+func (q *Queries) UserExists(ctx context.Context, id pgtype.UUID) (bool, error) {
 	row := q.db.QueryRow(ctx, userExists, id)
 	var exists bool
 	err := row.Scan(&exists)

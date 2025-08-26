@@ -51,7 +51,7 @@ func NewConnection(config Config) (*DB, error) {
 		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
 
-	// Create queries instance
+	// Create queries instance - pgx/v5 uses the pool directly
 	queries := db.New(pool)
 
 	return &DB{

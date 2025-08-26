@@ -5,18 +5,15 @@
 package db
 
 import (
-	"database/sql"
-	"time"
-
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type User struct {
-	ID              uuid.UUID      `db:"id" json:"id"`
-	FirebaseUid     string         `db:"firebase_uid" json:"firebase_uid"`
-	Email           string         `db:"email" json:"email"`
-	Name            string         `db:"name" json:"name"`
-	ProfileImageUrl sql.NullString `db:"profile_image_url" json:"profile_image_url"`
-	CreatedAt       time.Time      `db:"created_at" json:"created_at"`
-	UpdatedAt       time.Time      `db:"updated_at" json:"updated_at"`
+	ID              pgtype.UUID        `db:"id" json:"id"`
+	FirebaseUid     string             `db:"firebase_uid" json:"firebase_uid"`
+	Email           string             `db:"email" json:"email"`
+	Name            string             `db:"name" json:"name"`
+	ProfileImageUrl pgtype.Text        `db:"profile_image_url" json:"profile_image_url"`
+	CreatedAt       pgtype.Timestamptz `db:"created_at" json:"created_at"`
+	UpdatedAt       pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
 }

@@ -42,7 +42,8 @@ UPDATE users
 SET 
     email = COALESCE($2, email),
     name = COALESCE($3, name),
-    profile_image_url = COALESCE($4, profile_image_url)
+    profile_image_url = COALESCE($4, profile_image_url),
+    updated_at = NOW()
 WHERE id = $1
 RETURNING id, firebase_uid, email, name, profile_image_url, created_at, updated_at;
 
@@ -52,7 +53,8 @@ UPDATE users
 SET 
     email = COALESCE($2, email),
     name = COALESCE($3, name),
-    profile_image_url = COALESCE($4, profile_image_url)
+    profile_image_url = COALESCE($4, profile_image_url),
+    updated_at = NOW()
 WHERE firebase_uid = $1
 RETURNING id, firebase_uid, email, name, profile_image_url, created_at, updated_at;
 

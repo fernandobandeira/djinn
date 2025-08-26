@@ -7,7 +7,7 @@ package db
 import (
 	"context"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Querier interface {
@@ -16,7 +16,7 @@ type Querier interface {
 	// Create a new user account
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	// Delete a user account (soft delete could be implemented later)
-	DeleteUser(ctx context.Context, id uuid.UUID) error
+	DeleteUser(ctx context.Context, id pgtype.UUID) error
 	// Delete a user by Firebase UID
 	DeleteUserByFirebaseUID(ctx context.Context, firebaseUid string) error
 	// Get recently created users (for admin/analytics)
@@ -24,7 +24,7 @@ type Querier interface {
 	// User CRUD operations for Djinn personal finance application
 	// Generated queries will be type-safe with pgx/v5
 	// Get a user by their ID
-	GetUser(ctx context.Context, id uuid.UUID) (User, error)
+	GetUser(ctx context.Context, id pgtype.UUID) (User, error)
 	// Get a user by their email address
 	GetUserByEmail(ctx context.Context, email string) (User, error)
 	// Get a user by their Firebase UID for authentication
@@ -36,7 +36,7 @@ type Querier interface {
 	// Update user profile by Firebase UID (for auth flows)
 	UpdateUserByFirebaseUID(ctx context.Context, arg UpdateUserByFirebaseUIDParams) (User, error)
 	// Check if a user exists by ID
-	UserExists(ctx context.Context, id uuid.UUID) (bool, error)
+	UserExists(ctx context.Context, id pgtype.UUID) (bool, error)
 	// Check if a user exists by email
 	UserExistsByEmail(ctx context.Context, email string) (bool, error)
 	// Check if a user exists by Firebase UID
