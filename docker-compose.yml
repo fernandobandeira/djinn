@@ -131,7 +131,7 @@ services:
       - djinn-network
 
   posthog-clickhouse:
-    image: clickhouse/clickhouse-server:24.3-alpine
+    image: clickhouse/clickhouse-server:24.12-alpine
     container_name: djinn-posthog-clickhouse
     volumes:
       - posthog_clickhouse_data:/var/lib/clickhouse
