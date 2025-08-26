@@ -51,7 +51,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUse
 		}
 	}
 
-	user, err := r.DB.Queries.CreateUser(ctx, params)
+	user, err := r.Queries.CreateUser(ctx, params)
 	if err != nil {
 		r.Logger.Error("Failed to create user",
 			"error", err,
@@ -98,7 +98,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input mode
 	}
 
 	// Get existing user first
-	existingUser, err := r.DB.Queries.GetUser(ctx, pgUserID)
+	existingUser, err := r.Queries.GetUser(ctx, pgUserID)
 	if err != nil {
 		r.Logger.Error("Failed to find user",
 			"user_id", id,
@@ -130,7 +130,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input mode
 		}
 	}
 
-	user, err := r.DB.Queries.UpdateUser(ctx, params)
+	user, err := r.Queries.UpdateUser(ctx, params)
 	if err != nil {
 		r.Logger.Error("Failed to update user",
 			"user_id", id,
@@ -169,7 +169,7 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (bool, err
 	}
 
 	// Delete user
-	err = r.DB.Queries.DeleteUser(ctx, pgUserID)
+	err = r.Queries.DeleteUser(ctx, pgUserID)
 	if err != nil {
 		r.Logger.Error("Failed to delete user",
 			"user_id", id,
@@ -207,7 +207,7 @@ func (r *queryResolver) User(ctx context.Context, id string) (*db.User, error) {
 		Valid: true,
 	}
 
-	user, err := r.DB.Queries.GetUser(ctx, pgUserID)
+	user, err := r.Queries.GetUser(ctx, pgUserID)
 	if err != nil {
 		r.Logger.Error("Failed to fetch user",
 			"user_id", id,
@@ -228,7 +228,7 @@ func (r *queryResolver) UserByFirebaseUID(ctx context.Context, firebaseUID strin
 		"request_id", requestID,
 	)
 
-	user, err := r.DB.Queries.GetUserByFirebaseUID(ctx, firebaseUID)
+	user, err := r.Queries.GetUserByFirebaseUID(ctx, firebaseUID)
 	if err != nil {
 		r.Logger.Error("Failed to fetch user by Firebase UID",
 			"firebase_uid", firebaseUID,

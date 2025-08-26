@@ -11,14 +11,25 @@ import (
 
 // Resolver is the GraphQL resolver root
 type Resolver struct {
-	DB     *database.DB
-	Logger *slog.Logger
+	DB       DatabaseInterface
+	Queries  QueriesInterface
+	Logger   LoggerInterface
 }
 
 // NewResolver creates a new GraphQL resolver
 func NewResolver(db *database.DB, logger *slog.Logger) *Resolver {
+	wrapper := NewDatabaseWrapper(db)
 	return &Resolver{
-		DB:     db,
-		Logger: logger,
+		DB:      wrapper,
+		Queries: db.Queries,
+		Logger:  logger,
+	}
+}
+
+// NewResolverWithInterfaces creates a resolver with injected interfaces for testing
+func NewResolverWithInterfaces(queries QueriesInterface, logger LoggerInterface) *Resolver {
+	return &Resolver{
+		Queries: queries,
+		Logger:  logger,
 	}
 }
