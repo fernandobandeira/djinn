@@ -1,0 +1,52 @@
+# gqlgen configuration for Djinn API
+schema:
+  - internal/graph/schema/*.graphql
+
+exec:
+  filename: internal/graph/generated/generated.go
+  package: generated
+
+federation:
+  filename: internal/graph/generated/federation.go
+  package: generated
+
+model:
+  filename: internal/graph/model/models_gen.go
+  package: model
+
+resolver:
+  layout: follow-schema
+  dir: internal/graph/resolver
+  package: resolver
+  filename_template: "{name}.resolver.go"
+
+# Autobind the database models to GraphQL types
+autobind:
+  - "github.com/fernandobandeira/djinn/backend/internal/database/db"
+
+models:
+  ID:
+    model:
+      - github.com/99designs/gqlgen/graphql.ID
+      - github.com/99designs/gqlgen/graphql.String
+  Int:
+    model:
+      - github.com/99designs/gqlgen/graphql.Int
+      - github.com/99designs/gqlgen/graphql.Int64
+      - github.com/99designs/gqlgen/graphql.Int32
+  User:
+    model: github.com/fernandobandeira/djinn/backend/internal/database/db.User
+    fields:
+      id:
+        resolver: true
+      firebaseUid:
+        fieldName: FirebaseUid
+  Time:
+    model: github.com/99designs/gqlgen/graphql.Time
+
+# Optional: Configure where to put generated code
+struct_tag: json
+directives:
+  constraint:
+    skip_runtime: false
+

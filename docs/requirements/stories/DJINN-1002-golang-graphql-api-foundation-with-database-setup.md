@@ -70,50 +70,50 @@ This story establishes the foundational backend infrastructure for the Djinn per
 
 ## Tasks and Subtasks
 
-### 1. Project Structure Setup (2 hours)
-- [ ] **1.1** Initialize Go project with proper module structure
+### 1. Project Structure Setup (2 hours) ✅
+- [x] **1.1** Initialize Go project with proper module structure
   - Dependencies: None
   - Effort: 30 minutes
-- [ ] **1.2** Create directory structure per ADR-20250820-code-organization
+- [x] **1.2** Create directory structure per ADR-20250820-code-organization
   - Dependencies: 1.1
   - Effort: 30 minutes
-- [ ] **1.3** Setup development Docker containers
+- [x] **1.3** Setup development Docker containers
   - Dependencies: 1.2
   - Effort: 1 hour
 
-### 2. Database Foundation (3 hours)
-- [ ] **2.1** Configure PostgreSQL 16 with UUIDv7 extension
+### 2. Database Foundation (3 hours) ✅
+- [x] **2.1** Configure PostgreSQL 16 with UUIDv7 extension
   - Dependencies: 1.3
   - Effort: 1 hour
-- [ ] **2.2** Setup Atlas migration framework
+- [x] **2.2** Setup Atlas migration framework
   - Dependencies: 2.1
   - Effort: 45 minutes
-- [ ] **2.3** Create initial user table migration
+- [x] **2.3** Create initial user table migration
   - Dependencies: 2.2
   - Effort: 45 minutes
-- [ ] **2.4** Configure PgBouncer connection pooling
+- [x] **2.4** Configure PgBouncer connection pooling
   - Dependencies: 2.1
   - Effort: 30 minutes
 
-### 3. Data Access Layer (2 hours)
-- [ ] **3.1** Configure sqlc with pgx/v5 driver
+### 3. Data Access Layer (2 hours) ✅
+- [x] **3.1** Configure sqlc with pgx/v5 driver
   - Dependencies: 2.3
   - Effort: 45 minutes
-- [ ] **3.2** Implement User CRUD queries
+- [x] **3.2** Implement User CRUD queries
   - Dependencies: 3.1
   - Effort: 1 hour
-- [ ] **3.3** Generate and validate type-safe query functions
+- [x] **3.3** Generate and validate type-safe query functions
   - Dependencies: 3.2
   - Effort: 15 minutes
 
-### 4. GraphQL API Layer (2.5 hours)
-- [ ] **4.1** Setup Chi HTTP framework with middleware
+### 4. GraphQL API Layer (2.5 hours) ✅
+- [x] **4.1** Setup Chi HTTP framework with middleware
   - Dependencies: 1.2
   - Effort: 45 minutes
-- [ ] **4.2** Configure gqlgen with schema-first approach
+- [x] **4.2** Configure gqlgen with schema-first approach
   - Dependencies: 4.1
   - Effort: 1 hour
-- [ ] **4.3** Implement User GraphQL schema and resolvers
+- [x] **4.3** Implement User GraphQL schema and resolvers
   - Dependencies: 3.3, 4.2
   - Effort: 45 minutes
 

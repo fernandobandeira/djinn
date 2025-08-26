@@ -24,7 +24,7 @@ services:
     image: michaelf34/infinity:latest
     container_name: djinn-embeddings
     ports:
-      - "8080:7997"
+      - "7997:7997"
     volumes:
       - ./data/infinity-cache:/app/.cache
     command: v2 --model-id BAAI/bge-large-en-v1.5 --port 7997
@@ -37,13 +37,74 @@ services:
               capabilities: [gpu]
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:7997/health"]
       interval: 30s
       timeout: 10s
       retries: 5
       start_period: 60s
     networks:
       - djinn-network
+
+  postgres:
+    # Using PostgreSQL 18 beta for native UUIDv7 support
+    image: postgres:18beta3-alpine
+    container_name: djinn-postgres
+    environment:
+      POSTGRES_DB: djinn
+      POSTGRES_USER: djinn_user
+      POSTGRES_PASSWORD: djinn_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U djinn_user -d djinn"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - djinn-network
+
+  pgbouncer:
+    image: pgbouncer/pgbouncer:latest
+    container_name: djinn-pgbouncer
+    environment:
+      DATABASES_HOST: postgres
+      DATABASES_PORT: 5432
+      DATABASES_USER: djinn_user
+      DATABASES_PASSWORD: djinn_password
+      DATABASES_DBNAME: djinn
+      POOL_MODE: transaction
+      MAX_CLIENT_CONN: 100
+      DEFAULT_POOL_SIZE: 20
+    ports:
+      - "6543:5432"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - djinn-network
+
+  api:
+    build: ./backend
+    container_name: djinn-api
+    environment:
+      DATABASE_URL: postgres://djinn_user:djinn_password@postgres:5432/djinn
+      PGBOUNCER_URL: postgres://djinn_user:djinn_password@pgbouncer:5432/djinn
+      PORT: 8080
+      LOG_LEVEL: info
+    ports:
+      - "8080:8080"
+    depends_on:
+      - pgbouncer
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    networks:
+      - djinn-network
+
+volumes:
+  postgres_data:
 
 networks:
   djinn-network:
