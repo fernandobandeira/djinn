@@ -89,3 +89,19 @@ func (d *DB) Health(ctx context.Context) error {
 func (d *DB) GetPool() *pgxpool.Pool {
 	return d.pool
 }
+
+// Ping checks database connectivity
+func (d *DB) Ping(ctx context.Context) error {
+	return d.pool.Ping(ctx)
+}
+
+// Connect creates a database connection from a URL string
+func Connect(url string) (*DB, error) {
+	config := Config{
+		URL:             url,
+		MaxConnections:  25,
+		MinConnections:  5,
+		MaxConnLifetime: 1 * time.Hour,
+	}
+	return NewConnection(config)
+}
