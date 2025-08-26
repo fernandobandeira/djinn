@@ -190,6 +190,42 @@ func (q *Queries) GetUserByFirebaseUID(ctx context.Context, firebaseUid string) 
 	return i, err
 }
 
+const getUsersByIDs = `-- name: GetUsersByIDs :many
+SELECT id, firebase_uid, email, name, profile_image_url, created_at, updated_at
+FROM users
+WHERE id = ANY($1::uuid[])
+ORDER BY created_at DESC
+`
+
+// Get multiple users by their IDs (for DataLoader batch fetching)
+func (q *Queries) GetUsersByIDs(ctx context.Context, dollar_1 []pgtype.UUID) ([]User, error) {
+	rows, err := q.db.Query(ctx, getUsersByIDs, dollar_1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []User{}
+	for rows.Next() {
+		var i User
+		if err := rows.Scan(
+			&i.ID,
+			&i.FirebaseUid,
+			&i.Email,
+			&i.Name,
+			&i.ProfileImageUrl,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listUsers = `-- name: ListUsers :many
 SELECT id, firebase_uid, email, name, profile_image_url, created_at, updated_at
 FROM users

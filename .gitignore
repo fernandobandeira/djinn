@@ -62,3 +62,12 @@ dist/
 build/
 results/
 data/
+
+# Go binaries
+backend/api
+backend/cmd/api/api
+*.exe
+
+# Test coverage
+coverage.out
+backend/coverage.out

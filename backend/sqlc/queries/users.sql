@@ -87,3 +87,10 @@ FROM users
 WHERE created_at >= $1
 ORDER BY created_at DESC
 LIMIT $2;
+
+-- name: GetUsersByIDs :many
+-- Get multiple users by their IDs (for DataLoader batch fetching)
+SELECT id, firebase_uid, email, name, profile_image_url, created_at, updated_at
+FROM users
+WHERE id = ANY($1::uuid[])
+ORDER BY created_at DESC;

@@ -27,12 +27,13 @@ type Config struct {
 	QueryComplexity  int  `envconfig:"QUERY_COMPLEXITY" default:"1000"`
 
 	// Monitoring
-	OTELEndpoint     string `envconfig:"OTEL_EXPORTER_OTLP_ENDPOINT"`
-	MetricsEnabled   bool   `envconfig:"METRICS_ENABLED" default:"true"`
-	TracingEnabled   bool   `envconfig:"TRACING_ENABLED" default:"true"`
-	ServiceName      string `envconfig:"SERVICE_NAME" default:"djinn-api"`
-	ServiceVersion   string `envconfig:"SERVICE_VERSION" default:"1.0.0"`
-	Environment      string `envconfig:"ENVIRONMENT" default:"development"`
+	OTELEndpoint     string  `envconfig:"OTEL_EXPORTER_OTLP_ENDPOINT"`
+	MetricsEnabled   bool    `envconfig:"METRICS_ENABLED" default:"true"`
+	TracingEnabled   bool    `envconfig:"TRACING_ENABLED" default:"true"`
+	TracingSampleRate float64 `envconfig:"TRACING_SAMPLE_RATE" default:"1.0"`
+	ServiceName      string  `envconfig:"SERVICE_NAME" default:"djinn-api"`
+	ServiceVersion   string  `envconfig:"SERVICE_VERSION" default:"1.0.0"`
+	Environment      string  `envconfig:"ENVIRONMENT" default:"development"`
 }
 
 func Load() (*Config, error) {

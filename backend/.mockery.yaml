@@ -1,0 +1,12 @@
+with-expecter: true
+dir: "{{.InterfaceDir}}"
+mockname: "Mock{{.InterfaceName}}"
+outpkg: "mocks"
+filename: "mock_{{.InterfaceName}}.go"
+all: false
+packages:
+  github.com/fernandobandeira/djinn/backend/internal/database/db:
+    interfaces:
+      Querier:
+        config:
+          dir: "internal/database/mocks"

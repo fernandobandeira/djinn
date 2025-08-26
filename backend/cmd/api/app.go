@@ -8,17 +8,18 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/fernandobandeira/djinn/backend/internal/config"
+	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/config"
 	"github.com/fernandobandeira/djinn/backend/internal/database"
-	"github.com/fernandobandeira/djinn/backend/internal/server"
+	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/server"
 )
 
 // Application represents the main application with all dependencies
 type Application struct {
-	config *config.Config
-	logger *slog.Logger
-	db     *database.DB
-	server *server.Server
+	config          *config.Config
+	logger          *slog.Logger
+	db              *database.DB
+	server          *server.Server
+	shutdownTracing func(context.Context) error
 }
 
 // NewApplication creates a new application instance
@@ -63,6 +64,13 @@ func (app *Application) Run() error {
 	
 	// Close database connection
 	app.db.Close()
+	
+	// Shutdown tracing if configured
+	if app.shutdownTracing != nil {
+		if err := app.shutdownTracing(ctx); err != nil {
+			app.logger.Error("Failed to shutdown tracing", "error", err)
+		}
+	}
 	
 	return nil
 }

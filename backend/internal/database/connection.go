@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/exaring/otelpgx"
 	"github.com/fernandobandeira/djinn/backend/internal/database/db"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -36,6 +37,9 @@ func NewConnection(config Config) (*DB, error) {
 	poolConfig.MaxConns = config.MaxConnections
 	poolConfig.MinConns = config.MinConnections
 	poolConfig.MaxConnLifetime = config.MaxConnLifetime
+	
+	// Add OpenTelemetry instrumentation to pgx
+	poolConfig.ConnConfig.Tracer = otelpgx.NewTracer()
 
 	// Create database connection pool
 	pool, err := pgxpool.NewWithConfig(context.Background(), poolConfig)

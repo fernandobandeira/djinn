@@ -29,6 +29,8 @@ type Querier interface {
 	GetUserByEmail(ctx context.Context, email string) (User, error)
 	// Get a user by their Firebase UID for authentication
 	GetUserByFirebaseUID(ctx context.Context, firebaseUid string) (User, error)
+	// Get multiple users by their IDs (for DataLoader batch fetching)
+	GetUsersByIDs(ctx context.Context, dollar_1 []pgtype.UUID) ([]User, error)
 	// List users with pagination support
 	ListUsers(ctx context.Context, arg ListUsersParams) ([]User, error)
 	// Update user profile information
