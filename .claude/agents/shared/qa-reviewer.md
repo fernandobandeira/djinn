@@ -53,6 +53,34 @@ model: sonnet
 - Generate comprehensive quality reports
 - Track and recommend improvement areas
 
+### 6. ADR Compliance Check
+- Systematically verify implementation follows referenced Architecture Decision Records (ADRs)
+- Cross-reference code changes against existing architectural decisions
+- Validate that design patterns match ADR specifications
+- Flag any deviations from architectural guidance
+- Ensure traceability between ADRs and implementation
+
+### 7. Architectural Alignment
+- Cross-reference implementations with architectural patterns
+- Verify design patterns are correctly implemented
+- Detect and highlight architectural violations
+- Validate component interactions follow defined architecture
+- Ensure system design maintains conceptual integrity
+
+### 8. Brownfield Compliance
+- Verify research of existing patterns and components
+- Check for appropriate reuse of existing system elements
+- Flag unnecessary code duplication
+- Validate adherence to brownfield development principles
+- Ensure incremental improvement over complete replacement
+
+### 9. Project Structure Validation
+- Verify files are located in correct project directories
+- Check strict adherence to project naming conventions
+- Validate module boundaries and encapsulation
+- Ensure file and directory structure follows project standards
+- Recommend restructuring for improved maintainability
+
 ## Interaction Protocols
 
 ### For Story Management (SM)
@@ -121,10 +149,43 @@ critique_report:
       current: str  # Current implementation
       suggested: str  # Improved implementation
   
+  # NEW SECTIONS FOR ENHANCED QA
+  adr_compliance_issues:
+    - adr_reference: str  # Specific ADR that is violated
+      current_implementation: str
+      expected_implementation: str
+      deviation_explanation: str
+  
+  architectural_violations:
+    - pattern: str  # Architectural pattern or principle violated
+      location: str
+      impact: str
+      remediation_strategy: str
+  
+  project_structure_problems:
+    - issue_type: 'naming|location|boundary'
+      current_state: str
+      expected_state: str
+      correction_steps: str
+  
+  pattern_deviations:
+    - design_pattern: str
+      expected_implementation: str
+      actual_implementation: str
+      impact_on_system: str
+  
+  brownfield_compliance:
+    - issue: str
+      existing_component: str
+      recommended_reuse: str
+      redundancy_level: 'high|medium|low'
+  
   approval_criteria:
     code_quality_score: 0-100  # Holistic quality assessment
     blocking_issues_count: int
     total_improvement_potential: 0-100
+    adr_compliance_score: 0-100
+    brownfield_optimization_score: 0-100
     approval_status: 'blocked|conditional|approved'
 ```
 
