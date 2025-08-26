@@ -106,14 +106,14 @@ This story establishes the foundational backend infrastructure for the Djinn per
   - Dependencies: 3.2
   - Effort: 15 minutes
 
-### 4. GraphQL API Layer (2.5 hours)
-- [ ] **4.1** Setup Chi HTTP framework with middleware
+### 4. GraphQL API Layer (2.5 hours) ✅
+- [x] **4.1** Setup Chi HTTP framework with middleware
   - Dependencies: 1.2
   - Effort: 45 minutes
-- [ ] **4.2** Configure gqlgen with schema-first approach
+- [x] **4.2** Configure gqlgen with schema-first approach
   - Dependencies: 4.1
   - Effort: 1 hour
-- [ ] **4.3** Implement User GraphQL schema and resolvers
+- [x] **4.3** Implement User GraphQL schema and resolvers
   - Dependencies: 3.3, 4.2
   - Effort: 45 minutes
 
