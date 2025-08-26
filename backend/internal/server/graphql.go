@@ -7,6 +7,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/fernandobandeira/djinn/backend/internal/dataloader"
 	"github.com/fernandobandeira/djinn/backend/internal/graph/generated"
 	"github.com/fernandobandeira/djinn/backend/internal/graph/resolver"
 )
@@ -27,7 +28,15 @@ func (s *Server) graphqlHandler() http.Handler {
 		return fmt.Errorf("internal server error")
 	})
 	
-	return srv
+	// Add DataLoader middleware
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+		ctx = dataloader.LoaderMiddleware(s.db, func(ctx context.Context) context.Context {
+			return ctx
+		})(ctx)
+		r = r.WithContext(ctx)
+		srv.ServeHTTP(w, r)
+	})
 }
 
 // playgroundHandler creates the GraphQL playground handler
