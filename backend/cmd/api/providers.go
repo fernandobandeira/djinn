@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"os"
 
-	"github.com/fernandobandeira/djinn/backend/internal/config"
+	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/config"
 	"github.com/fernandobandeira/djinn/backend/internal/database"
+	"github.com/fernandobandeira/djinn/backend/internal/graph/resolver"
+	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/server"
 	"github.com/fernandobandeira/djinn/backend/internal/observability"
-	"github.com/fernandobandeira/djinn/backend/internal/server"
 )
 
 // ProvideConfig loads configuration from environment
@@ -17,25 +17,6 @@ func ProvideConfig() (*config.Config, error) {
 	return config.Load()
 }
 
-// ProvideLogger creates a logger instance
-func ProvideLogger(cfg *config.Config) *slog.Logger {
-	var handler slog.Handler
-	
-	opts := &slog.HandlerOptions{
-		Level: parseLogLevel(cfg.LogLevel),
-	}
-	
-	if cfg.LogJSON {
-		handler = slog.NewJSONHandler(os.Stdout, opts)
-	} else {
-		handler = slog.NewTextHandler(os.Stdout, opts)
-	}
-	
-	logger := slog.New(handler)
-	slog.SetDefault(logger)
-	
-	return logger
-}
 
 // ProvideDatabase creates a database connection
 func ProvideDatabase(cfg *config.Config, logger *slog.Logger) (*database.DB, error) {
@@ -58,8 +39,8 @@ func ProvideDatabase(cfg *config.Config, logger *slog.Logger) (*database.DB, err
 }
 
 // ProvideServer creates the HTTP server
-func ProvideServer(cfg *config.Config, logger *slog.Logger, db *database.DB) *server.Server {
-	return server.NewServer(cfg, logger, db)
+func ProvideServer(cfg *config.Config, logger *slog.Logger, db *database.DB, resolver *resolver.Resolver) *server.Server {
+	return server.NewServer(cfg, logger, db, resolver)
 }
 
 // ProvideTracing initializes OpenTelemetry tracing
@@ -93,18 +74,3 @@ func ProvideApplication(
 	}
 }
 
-// parseLogLevel converts string log level to slog.Level
-func parseLogLevel(level string) slog.Level {
-	switch level {
-	case "debug":
-		return slog.LevelDebug
-	case "info":
-		return slog.LevelInfo
-	case "warn":
-		return slog.LevelWarn
-	case "error":
-		return slog.LevelError
-	default:
-		return slog.LevelInfo
-	}
-}

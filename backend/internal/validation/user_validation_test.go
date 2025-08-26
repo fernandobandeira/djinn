@@ -1,143 +1,131 @@
 package validation
 
 import (
+	"strings"
 	"testing"
 
-	"github.com/fernandobandeira/djinn/backend/internal/graph/model"
 	"github.com/go-playground/validator/v10"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestValidateCreateUserInput(t *testing.T) {
+func TestValidateUserCreation(t *testing.T) {
 	tests := []struct {
-		name    string
-		input   model.CreateUserInput
-		wantErr bool
-		errMsg  string
+		name            string
+		firebaseUID     string
+		email           string
+		userName        string
+		profileImageURL *string
+		wantErr         bool
+		errMsg          string
 	}{
 		{
-			name: "Valid user input",
-			input: model.CreateUserInput{
-				FirebaseUID:     "validFirebaseUID123456789012",
-				Email:          "user@example.com",
-				Name:           "John Doe",
-				ProfileImageURL: stringPtr("https://example.com/image.jpg"),
-			},
-			wantErr: false,
+			name:            "Valid user input",
+			firebaseUID:     "validFirebaseUID123456789012",
+			email:           "test@example.com",
+			userName:        "Test User",
+			profileImageURL: stringPtr("https://example.com/image.jpg"),
+			wantErr:         false,
 		},
 		{
-			name: "Valid user without profile image",
-			input: model.CreateUserInput{
-				FirebaseUID: "validFirebaseUID123456789012",
-				Email:      "user@example.com",
-				Name:       "John Doe",
-			},
-			wantErr: false,
+			name:            "Valid user without profile image",
+			firebaseUID:     "validFirebaseUID123456789012",
+			email:           "test@example.com",
+			userName:        "Test User",
+			profileImageURL: nil,
+			wantErr:         false,
 		},
 		{
-			name: "Missing Firebase UID",
-			input: model.CreateUserInput{
-				Email: "user@example.com",
-				Name:  "John Doe",
-			},
-			wantErr: true,
-			errMsg:  "FirebaseUID is required",
+			name:        "Missing Firebase UID",
+			firebaseUID: "",
+			email:       "test@example.com",
+			userName:    "Test User",
+			wantErr:     true,
+			errMsg:      "FirebaseUID is required",
 		},
 		{
-			name: "Invalid Firebase UID",
-			input: model.CreateUserInput{
-				FirebaseUID: "invalid-uid!",
-				Email:      "user@example.com",
-				Name:       "John Doe",
-			},
-			wantErr: true,
-			errMsg:  "FirebaseUID must be a valid Firebase UID",
+			name:        "Invalid Firebase UID",
+			firebaseUID: "short",
+			email:       "test@example.com",
+			userName:    "Test User",
+			wantErr:     true,
+			errMsg:      "FirebaseUID must be a valid Firebase UID",
 		},
 		{
-			name: "Missing email",
-			input: model.CreateUserInput{
-				FirebaseUID: "validFirebaseUID123456789012",
-				Name:       "John Doe",
-			},
-			wantErr: true,
-			errMsg:  "Email is required",
+			name:        "Missing email",
+			firebaseUID: "validFirebaseUID123456789012",
+			email:       "",
+			userName:    "Test User",
+			wantErr:     true,
+			errMsg:      "Email is required",
 		},
 		{
-			name: "Invalid email",
-			input: model.CreateUserInput{
-				FirebaseUID: "validFirebaseUID123456789012",
-				Email:      "invalid-email",
-				Name:       "John Doe",
-			},
-			wantErr: true,
-			errMsg:  "Email must be a valid email address",
+			name:        "Invalid email",
+			firebaseUID: "validFirebaseUID123456789012",
+			email:       "invalid-email",
+			userName:    "Test User",
+			wantErr:     true,
+			errMsg:      "Email must be a valid email address",
 		},
 		{
-			name: "Email too long",
-			input: model.CreateUserInput{
-				FirebaseUID: "validFirebaseUID123456789012",
-				Email:      "test" + string(make([]byte, 245, 245)) + "@example.com", // 260+ characters total
-				Name:       "John Doe",
-			},
-			wantErr: true,
-			errMsg:  "Email must be a valid email address", // Validator checks format before length
+			name:        "Email too long",
+			firebaseUID: "validFirebaseUID123456789012",
+			email:       strings.Repeat("a", 247) + "@test.com",
+			userName:    "Test User",
+			wantErr:     true,
+			errMsg:      "Email must not exceed 255 characters",
 		},
 		{
-			name: "Missing name",
-			input: model.CreateUserInput{
-				FirebaseUID: "validFirebaseUID123456789012",
-				Email:      "user@example.com",
-			},
-			wantErr: true,
-			errMsg:  "Name is required",
+			name:        "Missing name",
+			firebaseUID: "validFirebaseUID123456789012",
+			email:       "test@example.com",
+			userName:    "",
+			wantErr:     true,
+			errMsg:      "Name is required",
 		},
 		{
-			name: "Empty name",
-			input: model.CreateUserInput{
-				FirebaseUID: "validFirebaseUID123456789012",
-				Email:      "user@example.com",
-				Name:       "",
-			},
-			wantErr: true,
-			errMsg:  "Name is required",
+			name:        "Empty name",
+			firebaseUID: "validFirebaseUID123456789012",
+			email:       "test@example.com",
+			userName:    "",
+			wantErr:     true,
+			errMsg:      "Name is required",
 		},
 		{
-			name: "Name too long",
-			input: model.CreateUserInput{
-				FirebaseUID: "validFirebaseUID123456789012",
-				Email:      "user@example.com",
-				Name:       string(make([]byte, 256)),
-			},
-			wantErr: true,
-			errMsg:  "Name must not exceed 255 characters",
+			name:        "Name too long",
+			firebaseUID: "validFirebaseUID123456789012",
+			email:       "test@example.com",
+			userName:    strings.Repeat("a", 256),
+			wantErr:     true,
+			errMsg:      "Name must not exceed 255 characters",
 		},
 		{
-			name: "Invalid profile image URL",
-			input: model.CreateUserInput{
-				FirebaseUID:     "validFirebaseUID123456789012",
-				Email:          "user@example.com",
-				Name:           "John Doe",
-				ProfileImageURL: stringPtr("not-a-url"),
-			},
-			wantErr: true,
-			errMsg:  "ProfileImageURL must be a valid URL",
+			name:            "Invalid profile image URL",
+			firebaseUID:     "validFirebaseUID123456789012",
+			email:           "test@example.com",
+			userName:        "Test User",
+			profileImageURL: stringPtr("not-a-url"),
+			wantErr:         true,
+			errMsg:          "ProfileImageURL must be a valid URL",
 		},
 		{
-			name: "Profile image URL too long",
-			input: model.CreateUserInput{
-				FirebaseUID:     "validFirebaseUID123456789012",
-				Email:          "user@example.com",
-				Name:           "John Doe",
-				ProfileImageURL: stringPtr("https://example.com/" + string(make([]byte, 1980, 1980))),
-			},
-			wantErr: true,
-			errMsg:  "ProfileImageURL must be a valid URL", // Validator checks format before length
+			name:            "Profile image URL too long",
+			firebaseUID:     "validFirebaseUID123456789012",
+			email:           "test@example.com",
+			userName:        "Test User",
+			profileImageURL: stringPtr("https://example.com/" + strings.Repeat("a", 1981)),
+			wantErr:         true,
+			errMsg:          "ProfileImageURL must not exceed 2000 characters",
 		},
 	}
 	
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := ValidateCreateUserInput(tt.input)
+			err := ValidateUserCreation(
+				tt.firebaseUID,
+				tt.email,
+				tt.userName,
+				tt.profileImageURL,
+			)
 			
 			if tt.wantErr {
 				assert.Error(t, err, "Expected validation error")
@@ -151,94 +139,81 @@ func TestValidateCreateUserInput(t *testing.T) {
 	}
 }
 
-func TestValidateUpdateUserInput(t *testing.T) {
+func TestValidateUserUpdate(t *testing.T) {
 	tests := []struct {
-		name    string
-		input   model.UpdateUserInput
-		wantErr bool
-		errMsg  string
+		name            string
+		email           *string
+		userName        *string
+		profileImageURL *string
+		wantErr         bool
+		errMsg          string
 	}{
 		{
-			name: "Valid update all fields",
-			input: model.UpdateUserInput{
-				Email:           stringPtr("newemail@example.com"),
-				Name:            stringPtr("New Name"),
-				ProfileImageURL: stringPtr("https://example.com/newimage.jpg"),
-			},
+			name:            "Valid update all fields",
+			email:           stringPtr("newemail@example.com"),
+			userName:        stringPtr("New Name"),
+			profileImageURL: stringPtr("https://example.com/new.jpg"),
+			wantErr:         false,
+		},
+		{
+			name:     "Valid update email only",
+			email:    stringPtr("newemail@example.com"),
+			wantErr:  false,
+		},
+		{
+			name:     "Valid update name only",
+			userName: stringPtr("New Name"),
+			wantErr:  false,
+		},
+		{
+			name:    "Empty update (all nil)",
 			wantErr: false,
 		},
 		{
-			name: "Valid update email only",
-			input: model.UpdateUserInput{
-				Email: stringPtr("newemail@example.com"),
-			},
-			wantErr: false,
-		},
-		{
-			name: "Valid update name only",
-			input: model.UpdateUserInput{
-				Name: stringPtr("New Name"),
-			},
-			wantErr: false,
-		},
-		{
-			name: "Empty update (all nil)",
-			input: model.UpdateUserInput{},
-			wantErr: false,
-		},
-		{
-			name: "Invalid email",
-			input: model.UpdateUserInput{
-				Email: stringPtr("invalid-email"),
-			},
+			name:    "Invalid email",
+			email:   stringPtr("invalid-email"),
 			wantErr: true,
 			errMsg:  "Email must be a valid email address",
 		},
 		{
-			name: "Email too long",
-			input: model.UpdateUserInput{
-				Email: stringPtr("test" + string(make([]byte, 245, 245)) + "@example.com"),
-			},
+			name:    "Email too long",
+			email:   stringPtr(strings.Repeat("a", 247) + "@test.com"),
 			wantErr: true,
-			errMsg:  "Email must be a valid email address", // Validator checks format before length
+			errMsg:  "Email must not exceed 255 characters",
 		},
 		{
-			name: "Empty name (not allowed)",
-			input: model.UpdateUserInput{
-				Name: stringPtr(""),
-			},
-			wantErr: true,
-			errMsg:  "Name must be at least 1 characters",
+			name:     "Empty name (not allowed)",
+			userName: stringPtr(""),
+			wantErr:  true,
+			errMsg:   "Name must be at least 1 characters",
 		},
 		{
-			name: "Name too long",
-			input: model.UpdateUserInput{
-				Name: stringPtr(string(make([]byte, 256))),
-			},
-			wantErr: true,
-			errMsg:  "Name must not exceed 255 characters",
+			name:     "Name too long",
+			userName: stringPtr(strings.Repeat("a", 256)),
+			wantErr:  true,
+			errMsg:   "Name must not exceed 255 characters",
 		},
 		{
-			name: "Invalid profile image URL",
-			input: model.UpdateUserInput{
-				ProfileImageURL: stringPtr("not-a-url"),
-			},
-			wantErr: true,
-			errMsg:  "ProfileImageURL must be a valid URL",
+			name:            "Invalid profile image URL",
+			profileImageURL: stringPtr("not-a-url"),
+			wantErr:         true,
+			errMsg:          "ProfileImageURL must be a valid URL",
 		},
 		{
-			name: "Profile image URL too long",
-			input: model.UpdateUserInput{
-				ProfileImageURL: stringPtr("https://example.com/" + string(make([]byte, 1980, 1980))),
-			},
-			wantErr: true,
-			errMsg:  "ProfileImageURL must be a valid URL", // Validator checks format before length
+			name:            "Profile image URL too long",
+			profileImageURL: stringPtr("https://example.com/" + strings.Repeat("a", 1981)),
+			wantErr:         true,
+			errMsg:          "ProfileImageURL must not exceed 2000 characters",
 		},
 	}
 	
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := ValidateUpdateUserInput(tt.input)
+			err := ValidateUserUpdate(
+				tt.email,
+				tt.userName,
+				tt.profileImageURL,
+			)
 			
 			if tt.wantErr {
 				assert.Error(t, err, "Expected validation error")
@@ -255,70 +230,155 @@ func TestValidateUpdateUserInput(t *testing.T) {
 func TestFormatValidationError(t *testing.T) {
 	v := GetValidator()
 	
-	// Test required field error
-	type RequiredTest struct {
-		Field string `validate:"required"`
-	}
-	err := v.Struct(RequiredTest{})
-	if validationErrors, ok := err.(validator.ValidationErrors); ok {
-		for _, e := range validationErrors {
-			formatted := formatValidationError(e)
-			assert.EqualError(t, formatted, "Field is required")
-			break
-		}
+	// Create a struct that will generate specific validation errors
+	type TestStruct struct {
+		Required  string `validate:"required"`
+		Email     string `validate:"email"`
+		MinLength string `validate:"min=5"`
+		MaxLength string `validate:"max=10"`
+		URL       string `validate:"url"`
+		Firebase  string `validate:"firebaseuid"`
 	}
 	
-	// Test email validation error
-	type EmailTest struct {
-		Email string `validate:"email"`
-	}
-	err = v.Struct(EmailTest{Email: "invalid"})
-	if validationErrors, ok := err.(validator.ValidationErrors); ok {
-		for _, e := range validationErrors {
-			formatted := formatValidationError(e)
-			assert.EqualError(t, formatted, "Email must be a valid email address")
-			break
-		}
-	}
-	
-	// Test min length error
-	type MinTest struct {
-		Name string `validate:"min=3"`
-	}
-	err = v.Struct(MinTest{Name: "ab"})
-	if validationErrors, ok := err.(validator.ValidationErrors); ok {
-		for _, e := range validationErrors {
-			formatted := formatValidationError(e)
-			assert.EqualError(t, formatted, "Name must be at least 3 characters")
-			break
-		}
-	}
-	
-	// Test max length error
-	type MaxTest struct {
-		Name string `validate:"max=5"`
-	}
-	err = v.Struct(MaxTest{Name: "toolong"})
-	if validationErrors, ok := err.(validator.ValidationErrors); ok {
-		for _, e := range validationErrors {
-			formatted := formatValidationError(e)
-			assert.EqualError(t, formatted, "Name must not exceed 5 characters")
-			break
-		}
+	tests := []struct {
+		name          string
+		input         TestStruct
+		expectedError string
+	}{
+		{
+			name:          "Required field error",
+			input:         TestStruct{Email: "test@test.com"},
+			expectedError: "Required is required",
+		},
+		{
+			name:          "Email format error",
+			input:         TestStruct{Required: "test", Email: "invalid"},
+			expectedError: "Email must be a valid email address",
+		},
+		{
+			name:          "Min length error",
+			input:         TestStruct{Required: "test", Email: "test@test.com", MinLength: "abc"},
+			expectedError: "MinLength must be at least 5 characters",
+		},
+		{
+			name:          "Max length error",
+			input:         TestStruct{Required: "test", Email: "test@test.com", MinLength: "abcdef", MaxLength: "12345678901"},
+			expectedError: "MaxLength must not exceed 10 characters",
+		},
+		{
+			name:          "URL format error",
+			input:         TestStruct{Required: "test", Email: "test@test.com", MinLength: "abcdef", MaxLength: "1234567890", URL: "not-a-url"},
+			expectedError: "URL must be a valid URL",
+		},
+		{
+			name:          "Firebase UID error",
+			input:         TestStruct{Required: "test", Email: "test@test.com", MinLength: "abcdef", MaxLength: "1234567890", URL: "https://test.com", Firebase: "invalid"},
+			expectedError: "Firebase must be a valid Firebase UID",
+		},
 	}
 	
-	// Test URL validation error
-	type URLTest struct {
-		URL string `validate:"url"`
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := v.Struct(tt.input)
+			assert.Error(t, err)
+			
+			if validationErrors, ok := err.(validator.ValidationErrors); ok {
+				for _, e := range validationErrors {
+					formattedErr := formatValidationError(e)
+					assert.EqualError(t, formattedErr, tt.expectedError)
+					break // Only test the first error
+				}
+			}
+		})
 	}
-	err = v.Struct(URLTest{URL: "not-a-url"})
-	if validationErrors, ok := err.(validator.ValidationErrors); ok {
-		for _, e := range validationErrors {
-			formatted := formatValidationError(e)
-			assert.EqualError(t, formatted, "URL must be a valid URL")
-			break
-		}
+}
+
+func TestGetValidator(t *testing.T) {
+	v1 := GetValidator()
+	v2 := GetValidator()
+	
+	// Should return the same instance (singleton)
+	assert.Equal(t, v1, v2, "GetValidator should return a singleton instance")
+	assert.NotNil(t, v1, "Validator should not be nil")
+}
+
+func TestValidateFirebaseUID(t *testing.T) {
+	v := GetValidator()
+	
+	type TestStruct struct {
+		UID string `validate:"firebaseuid"`
 	}
+	
+	tests := []struct {
+		name    string
+		uid     string
+		wantErr bool
+	}{
+		{
+			name:    "Valid Firebase UID",
+			uid:     "abcdefghijklmnopqrstuvwx",
+			wantErr: false,
+		},
+		{
+			name:    "Valid longer Firebase UID",
+			uid:     "abcdefghijklmnopqrstuvwxyz1234567890ABCDEF",
+			wantErr: false,
+		},
+		{
+			name:    "Too short UID",
+			uid:     "short",
+			wantErr: true,
+		},
+		{
+			name:    "Too long UID",
+			uid:     strings.Repeat("a", 129),
+			wantErr: true,
+		},
+		{
+			name:    "Invalid characters",
+			uid:     "abcdefghijklmnopqrstuvwx!@#",
+			wantErr: true,
+		},
+		{
+			name:    "Empty UID",
+			uid:     "",
+			wantErr: true,
+		},
+	}
+	
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := TestStruct{UID: tt.uid}
+			err := v.Struct(s)
+			
+			if tt.wantErr {
+				assert.Error(t, err, "Expected validation error for UID: %s", tt.uid)
+			} else {
+				assert.NoError(t, err, "Expected no validation error for UID: %s", tt.uid)
+			}
+		})
+	}
+}
+
+func TestRegisterCustomValidations(t *testing.T) {
+	// This test ensures custom validations are registered
+	v := validator.New(validator.WithRequiredStructEnabled())
+	registerCustomValidations(v)
+	
+	// Test that the firebaseuid validation is registered
+	type TestStruct struct {
+		UID string `validate:"firebaseuid"`
+	}
+	
+	// Valid UID should pass
+	validTest := TestStruct{UID: "abcdefghijklmnopqrstuvwx"}
+	err := v.Struct(validTest)
+	assert.NoError(t, err, "Valid Firebase UID should not produce an error")
+	
+	// Invalid UID should fail
+	invalidTest := TestStruct{UID: "invalid!"}
+	err = v.Struct(invalidTest)
+	assert.Error(t, err, "Invalid Firebase UID should produce an error")
 }
 
 // Helper function

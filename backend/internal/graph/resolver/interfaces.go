@@ -20,9 +20,8 @@ type QueriesInterface interface {
 	GetUsersByIDs(ctx context.Context, ids []pgtype.UUID) ([]db.User, error)
 }
 
-// DatabaseInterface defines what we need from the database
-type DatabaseInterface interface {
-	GetQueries() QueriesInterface
+// PingableDB defines the minimal database interface needed for health checks
+type PingableDB interface {
 	Ping(ctx context.Context) error
 }
 

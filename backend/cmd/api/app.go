@@ -8,9 +8,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/fernandobandeira/djinn/backend/internal/config"
+	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/config"
 	"github.com/fernandobandeira/djinn/backend/internal/database"
-	"github.com/fernandobandeira/djinn/backend/internal/server"
+	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/server"
 )
 
 // Application represents the main application with all dependencies

@@ -9,18 +9,16 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/fernandobandeira/djinn/backend/internal/dataloader"
 	"github.com/fernandobandeira/djinn/backend/internal/graph/generated"
-	"github.com/fernandobandeira/djinn/backend/internal/graph/resolver"
 	"github.com/ravilushqa/otelgqlgen"
 )
 
 // graphqlHandler creates the GraphQL handler
 func (s *Server) graphqlHandler() http.Handler {
-	// Create resolver with dependencies
-	res := resolver.NewResolver(s.db, s.logger)
+	// Use injected resolver
 	
 	// Create GraphQL server
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{
-		Resolvers: res,
+		Resolvers: s.resolver,
 	}))
 	
 	// Add OpenTelemetry instrumentation for GraphQL

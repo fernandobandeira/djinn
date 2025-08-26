@@ -67,3 +67,7 @@ data/
 backend/api
 backend/cmd/api/api
 *.exe
+
+# Test coverage
+coverage.out
+backend/coverage.out

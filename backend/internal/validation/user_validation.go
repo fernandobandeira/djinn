@@ -3,7 +3,6 @@ package validation
 import (
 	"fmt"
 
-	"github.com/fernandobandeira/djinn/backend/internal/graph/model"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -22,15 +21,15 @@ type UserUpdateRequest struct {
 	ProfileImageURL *string `validate:"omitempty,url,max=2000"`
 }
 
-// ValidateCreateUserInput validates user creation input
-func ValidateCreateUserInput(input model.CreateUserInput) error {
+// ValidateUserCreation validates any user creation input (GraphQL or Application layer)
+func ValidateUserCreation(firebaseUID string, email string, name string, profileImageURL *string) error {
 	v := GetValidator()
 	
 	req := UserCreateRequest{
-		FirebaseUID:     input.FirebaseUID,
-		Email:          input.Email,
-		Name:           input.Name,
-		ProfileImageURL: input.ProfileImageURL,
+		FirebaseUID:     firebaseUID,
+		Email:          email,
+		Name:           name,
+		ProfileImageURL: profileImageURL,
 	}
 	
 	if err := v.Struct(req); err != nil {
@@ -46,14 +45,14 @@ func ValidateCreateUserInput(input model.CreateUserInput) error {
 	return nil
 }
 
-// ValidateUpdateUserInput validates user update input
-func ValidateUpdateUserInput(input model.UpdateUserInput) error {
+// ValidateUserUpdate validates any user update input (GraphQL or Application layer)
+func ValidateUserUpdate(email *string, name *string, profileImageURL *string) error {
 	v := GetValidator()
 	
 	req := UserUpdateRequest{
-		Email:           input.Email,
-		Name:            input.Name,
-		ProfileImageURL: input.ProfileImageURL,
+		Email:           email,
+		Name:            name,
+		ProfileImageURL: profileImageURL,
 	}
 	
 	if err := v.Struct(req); err != nil {
