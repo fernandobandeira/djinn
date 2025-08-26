@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/config/environment.dart';
 import 'core/providers/app_providers.dart';
 import 'core/routing/app_router.dart';
 import 'core/graphql/graphql_client.dart';
+import 'core/database/database_provider.dart';
+import 'core/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +17,12 @@ void main() async {
   
   // Initialize Hive for GraphQL caching
   await GraphQLClientFactory.initializeHive();
+  
+  // Set preferred orientations
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   
   runApp(
     ProviderScope(
@@ -60,25 +69,20 @@ class DjinnApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDarkMode = ref.watch(themeModeProvider);
+    final themeMode = ref.watch(themeModeProvider);
+    final appTheme = ref.watch(appThemeProvider);
     final router = ref.watch(routerProvider);
     
+    // Initialize database on first build
+    ref.watch(databaseInitializerProvider);
+    
     return MaterialApp.router(
-      title: 'Djinn - Your Financial Wishes, Granted',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.purple,
-          brightness: Brightness.dark,
-        ),
-        useMaterial3: true,
-      ),
-      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      title: AppConfig.appName,
+      theme: appTheme.lightTheme,
+      darkTheme: appTheme.darkTheme,
+      themeMode: themeMode,
       routerConfig: router,
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: AppConfig.isDev,
     );
   }
 }
