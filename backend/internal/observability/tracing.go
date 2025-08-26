@@ -7,14 +7,12 @@ import (
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
-	"go.opentelemetry.io/otel/trace"
 )
 
 // TracingConfig holds configuration for OpenTelemetry tracing
@@ -27,7 +25,9 @@ type TracingConfig struct {
 	SampleRate     float64
 }
 
-// InitTracer initializes OpenTelemetry tracing
+// InitTracer initializes OpenTelemetry tracing.
+// This sets up the global tracer provider that all auto-instrumentation libraries use.
+// The contrib packages (otelhttp, otelpgx, otelgqlgen) will automatically use this provider.
 func InitTracer(ctx context.Context, config TracingConfig) (func(context.Context) error, error) {
 	if !config.Enabled {
 		// Return no-op shutdown function if tracing is disabled
@@ -113,38 +113,4 @@ func InitTracer(ctx context.Context, config TracingConfig) (func(context.Context
 		}
 		return nil
 	}, nil
-}
-
-// GetTracer returns a tracer for the given component
-func GetTracer(component string) trace.Tracer {
-	return otel.Tracer(
-		fmt.Sprintf("github.com/fernandobandeira/djinn/backend/%s", component),
-		trace.WithSchemaURL(semconv.SchemaURL),
-	)
-}
-
-// StartSpan starts a new span with common attributes
-func StartSpan(ctx context.Context, tracer trace.Tracer, name string, opts ...trace.SpanStartOption) (context.Context, trace.Span) {
-	return tracer.Start(ctx, name, opts...)
-}
-
-// AddSpanAttributes adds attributes to the current span
-func AddSpanAttributes(ctx context.Context, attrs ...attribute.KeyValue) {
-	span := trace.SpanFromContext(ctx)
-	span.SetAttributes(attrs...)
-}
-
-// RecordError records an error on the current span
-func RecordError(ctx context.Context, err error) {
-	if err == nil {
-		return
-	}
-	span := trace.SpanFromContext(ctx)
-	span.RecordError(err)
-}
-
-// SetSpanStatus sets the status of the current span
-func SetSpanStatus(ctx context.Context, code codes.Code, description string) {
-	span := trace.SpanFromContext(ctx)
-	span.SetStatus(code, description)
 }
