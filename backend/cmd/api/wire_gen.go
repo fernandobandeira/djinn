@@ -6,34 +6,24 @@
 
 package main
 
-import (
-	"github.com/fernandobandeira/djinn/backend/internal/config"
-	"github.com/fernandobandeira/djinn/backend/internal/database"
-	"github.com/fernandobandeira/djinn/backend/internal/logger"
-	"github.com/fernandobandeira/djinn/backend/internal/server"
-)
-
 // Injectors from wire.go:
 
-// InitializeApp creates a new server with all dependencies injected
+// InitializeApp creates a new application with all dependencies injected
 func InitializeApp() (*Application, error) {
-	configConfig, err := config.Load()
+	config, err := ProvideConfig()
 	if err != nil {
 		return nil, err
 	}
-	slogLogger := logger.New(configConfig)
-	db, err := provideDatabase(configConfig)
+	logger := ProvideLogger(config)
+	db, err := ProvideDatabase(config, logger)
 	if err != nil {
 		return nil, err
 	}
-	serverServer := server.NewServer(configConfig, slogLogger, db)
-	application := NewApplication(configConfig, slogLogger, db, serverServer)
+	server := ProvideServer(config, logger, db)
+	v, err := ProvideTracing(config)
+	if err != nil {
+		return nil, err
+	}
+	application := ProvideApplication(config, logger, db, server, v)
 	return application, nil
-}
-
-// wire.go:
-
-// provideDatabase creates a database connection from config
-func provideDatabase(cfg *config.Config) (*database.DB, error) {
-	return database.Connect(cfg.PgBouncerURL)
 }

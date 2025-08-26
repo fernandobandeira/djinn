@@ -57,6 +57,12 @@ func (s *Server) setupRouter() {
 	s.router.Use(chimiddleware.Compress(5))
 	s.router.Use(chimiddleware.Timeout(60 * time.Second))
 	
+	// Add tracing middleware if enabled
+	if s.config.TracingEnabled {
+		s.router.Use(middleware.TracingMiddleware())
+		s.router.Use(middleware.TracingGraphQLMiddleware())
+	}
+	
 	// Mount routes
 	s.mountRoutes()
 }

@@ -5,25 +5,17 @@ package main
 
 import (
 	"github.com/google/wire"
-	"github.com/fernandobandeira/djinn/backend/internal/config"
-	"github.com/fernandobandeira/djinn/backend/internal/database"
-	"github.com/fernandobandeira/djinn/backend/internal/logger"
-	"github.com/fernandobandeira/djinn/backend/internal/server"
 )
 
-// InitializeApp creates a new server with all dependencies injected
+// InitializeApp creates a new application with all dependencies injected
 func InitializeApp() (*Application, error) {
 	wire.Build(
-		config.Load,
-		logger.New,
-		provideDatabase,
-		server.NewServer,
-		NewApplication,
+		ProvideConfig,
+		ProvideLogger,
+		ProvideDatabase,
+		ProvideServer,
+		ProvideTracing,
+		ProvideApplication,
 	)
 	return nil, nil
-}
-
-// provideDatabase creates a database connection from config
-func provideDatabase(cfg *config.Config) (*database.DB, error) {
-	return database.Connect(cfg.PgBouncerURL)
 }
