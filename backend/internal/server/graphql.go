@@ -10,6 +10,7 @@ import (
 	"github.com/fernandobandeira/djinn/backend/internal/dataloader"
 	"github.com/fernandobandeira/djinn/backend/internal/graph/generated"
 	"github.com/fernandobandeira/djinn/backend/internal/graph/resolver"
+	"github.com/ravilushqa/otelgqlgen"
 )
 
 // graphqlHandler creates the GraphQL handler
@@ -21,6 +22,11 @@ func (s *Server) graphqlHandler() http.Handler {
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{
 		Resolvers: res,
 	}))
+	
+	// Add OpenTelemetry instrumentation for GraphQL
+	if s.config.TracingEnabled {
+		srv.Use(otelgqlgen.Middleware())
+	}
 	
 	// Configure server options
 	srv.SetRecoverFunc(func(ctx context.Context, err interface{}) error {
