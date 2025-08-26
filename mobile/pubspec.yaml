@@ -21,6 +21,10 @@ dependencies:
   ferry: ^0.16.0
   ferry_hive_store: ^0.5.0
   gql_link: ^1.0.0
+  gql_http_link: ^1.0.0
+  gql_error_link: ^1.0.0
+  gql_exec: ^1.0.0
+  gql: ^1.0.0
   
   # Database
   drift: ^2.14.0

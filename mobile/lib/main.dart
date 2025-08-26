@@ -4,9 +4,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/config/environment.dart';
 import 'core/providers/app_providers.dart';
 import 'core/routing/app_router.dart';
+import 'core/graphql/graphql_client.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize configuration
   AppConfig.initialize();
+  
+  // Initialize Hive for GraphQL caching
+  await GraphQLClientFactory.initializeHive();
+  
   runApp(
     ProviderScope(
       observers: AppConfig.isDev ? [DevProviderObserver()] : null,
