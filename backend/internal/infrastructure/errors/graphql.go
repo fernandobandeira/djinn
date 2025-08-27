@@ -9,14 +9,9 @@ import (
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
-// GraphQLErrorPresenter creates a clean, strategy-based GraphQL error presenter
+// GraphQLErrorPresenter creates a clean, efficient GraphQL error presenter
 func GraphQLErrorPresenter(logger *slog.Logger) graphql.ErrorPresenterFunc {
-	mapper := NewErrorMapper()
-	
 	return func(ctx context.Context, err error) *gqlerror.Error {
-		// Create error context
-		errorCtx := CreateErrorContext(ctx, logger)
-		
 		// Convert to gqlerror if needed
 		var gqlErr *gqlerror.Error
 		if !errors.As(err, &gqlErr) {
@@ -25,18 +20,17 @@ func GraphQLErrorPresenter(logger *slog.Logger) graphql.ErrorPresenterFunc {
 			}
 		}
 		
-		// Map the error using our clean strategy pattern
-		mapping := mapper.MapError(err, errorCtx)
+		// Map the error using efficient type switching
+		mapping := MapError(err, ctx, logger)
 		
 		// Apply the mapping
 		gqlErr.Message = mapping.Message
 		gqlErr.Extensions = mapping.Extensions
 		
-		// Log with appropriate level
+		// Log with appropriate level and structured context
 		logger.Log(ctx, mapping.LogLevel, "GraphQL error",
-			"correlation_id", errorCtx.CorrelationID,
 			"error_code", string(mapping.Code),
-			"error", err.Error(),
+			"error_message", err.Error(),
 		)
 		
 		return gqlErr

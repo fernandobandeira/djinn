@@ -7,16 +7,14 @@ import (
 	ctxutil "github.com/fernandobandeira/djinn/backend/internal/infrastructure/context"
 )
 
-// GetErrorCode maps an error to its corresponding error code using the strategy pattern
+// GetErrorCode efficiently maps an error to its corresponding error code
 func GetErrorCode(err error) ErrorCode {
-	// Create a minimal context for the mapper
+	// Create minimal context for the mapper
 	ctx := context.Background()
 	logger := slog.Default()
-	errorCtx := CreateErrorContext(ctx, logger)
 	
-	// Use the error mapper to get the code
-	mapper := NewErrorMapper()
-	mapping := mapper.MapError(err, errorCtx)
+	// Use the efficient error mapper
+	mapping := MapError(err, ctx, logger)
 	return mapping.Code
 }
 

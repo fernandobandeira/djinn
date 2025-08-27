@@ -5,8 +5,8 @@ outpkg: "mocks"
 filename: "mock_{{.InterfaceName}}.go"
 all: false
 packages:
-  github.com/fernandobandeira/djinn/backend/internal/database/generated:
+  github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres/generated:
     interfaces:
       Querier:
         config:
-          dir: "internal/database/mocks"
+          dir: "internal/infrastructure/persistence/postgres/mocks"

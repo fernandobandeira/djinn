@@ -68,6 +68,7 @@ backend/api
 backend/cmd/api/api
 backend/server
 backend/cmd/server/server
+server
 *.exe
 
 # Test coverage
