@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"io"
 	"log/slog"
 	"testing"
 	"time"
@@ -19,7 +20,7 @@ import (
 )
 
 func TestUserRepository_Create(t *testing.T) {
-	logger := slog.New(slog.NewTextHandler(nil, nil))
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
 	tests := []struct {
 		name       string
@@ -101,7 +102,7 @@ func TestUserRepository_Create(t *testing.T) {
 }
 
 func TestUserRepository_GetByID(t *testing.T) {
-	logger := slog.New(slog.NewTextHandler(nil, nil))
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	userID := uuid.New()
 
 	tests := []struct {
@@ -168,7 +169,7 @@ func TestUserRepository_GetByID(t *testing.T) {
 }
 
 func TestUserRepository_GetByFirebaseUID(t *testing.T) {
-	logger := slog.New(slog.NewTextHandler(nil, nil))
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
 	tests := []struct {
 		name        string

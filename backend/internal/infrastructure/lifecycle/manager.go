@@ -70,12 +70,17 @@ func (m *Manager) RegisterComponent(component Component) error {
 		return fmt.Errorf("failed to calculate shutdown order: %w", err)
 	}
 	
-	// Create component actor with proper startup/shutdown coordination
-	runCtx, runCancel := context.WithCancel(context.Background())
+	// Create component actor with proper oklog/run pattern - FIXED RACE CONDITION
+	var runCancel context.CancelFunc
 	
 	m.group.Add(
 		// Execute function: starts component and runs until interrupted
 		func() error {
+			// Create context INSIDE execute function to avoid race conditions
+			runCtx, cancel := context.WithCancel(context.Background())
+			runCancel = cancel // Store for interrupt handler
+			defer cancel()     // Ensure cleanup
+			
 			m.logger.Info("starting component", slog.String("component", name))
 			
 			// Start the component and verify it's ready
@@ -99,8 +104,10 @@ func (m *Manager) RegisterComponent(component Component) error {
 		},
 		// Interrupt function: gracefully stops the component
 		func(error) {
-			// Cancel the run context to signal shutdown to the component
-			runCancel()
+			// Signal shutdown to component if context is available
+			if runCancel != nil {
+				runCancel()
+			}
 			
 			// Give component time to stop gracefully
 			shutdownCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)

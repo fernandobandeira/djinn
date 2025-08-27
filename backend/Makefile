@@ -52,6 +52,30 @@ test-coverage: generate ## Run tests with coverage
 	@go test -v -race -coverprofile=coverage.out ./...
 	@go tool cover -html=coverage.out -o coverage.html
 
+.PHONY: test-coverage-full
+test-coverage-full: generate ## Run all tests including integration with coverage
+	@echo "Running full test suite with coverage (requires Docker for integration tests)..."
+	@go test -v -race -coverprofile=coverage.out -timeout=10m ./...
+	@go tool cover -html=coverage.out -o coverage.html
+
+.PHONY: test-shutdown
+test-shutdown: ## Run graceful shutdown tests (requires Docker)
+	@echo "Running graceful shutdown tests (requires Docker for testcontainers)..."
+	@go test -v -timeout=5m ./internal/infrastructure/persistence/postgres -run TestDatabaseComponent
+	@go test -v -timeout=5m ./internal/infrastructure/database -run TestDatabaseComponent  
+	@go test -v -timeout=5m ./internal/infrastructure/http -run TestHTTPComponent
+	@go test -v -timeout=5m ./internal/infrastructure/lifecycle -run TestLifecycleManager
+
+.PHONY: test-integration
+test-integration: ## Run integration tests (requires Docker, longer timeout)
+	@echo "Running integration tests (requires Docker for testcontainers)..."
+	@go test -v -timeout=10m ./internal/infrastructure -run TestDatabaseComponentIntegration
+
+.PHONY: test-stress
+test-stress: ## Run stress tests (requires Docker, very long timeout)
+	@echo "Running stress tests - this may take a while..."
+	@go test -v -timeout=15m ./internal/infrastructure -run TestDatabaseComponentStressTest
+
 .PHONY: lint
 lint: ## Run linting
 	@go vet ./...

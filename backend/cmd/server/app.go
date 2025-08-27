@@ -132,12 +132,11 @@ func (app *Application) initializeComponents() error {
 
 // createHTTPHandler creates the HTTP handler using the existing server infrastructure
 func (app *Application) createHTTPHandler() (http.Handler, error) {
-	// Create a postgres.DB wrapper for compatibility with existing server code
-	// This bridges the new component-based DB with the existing server expectations
+	// Create postgres.DB instance and set it up with the component's pool
+	// This maintains compatibility while using the component's managed connection
 	db := &postgres.DB{}
 	db.SetPool(app.dbComponent.Pool())
 	
-	// Create resolver and server using existing patterns
 	resolver := app.createResolver(db)
 	srv := server.NewServer(app.config, app.logger, db, resolver)
 	

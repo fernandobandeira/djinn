@@ -12,12 +12,12 @@ import (
 
 // UpdateUserHandler handles the update user command
 type UpdateUserHandler struct {
-	userService *user.Service
+	userService user.ServiceInterface
 	logger      *slog.Logger
 }
 
 // NewUpdateUserHandler creates a new update user handler
-func NewUpdateUserHandler(userService *user.Service, logger *slog.Logger) *UpdateUserHandler {
+func NewUpdateUserHandler(userService user.ServiceInterface, logger *slog.Logger) *UpdateUserHandler {
 	return &UpdateUserHandler{
 		userService: userService,
 		logger:      logger.With(slog.String("handler", "update_user")),
@@ -36,21 +36,12 @@ func (h *UpdateUserHandler) Handle(ctx context.Context, id string, input dto.Upd
 		return nil, fmt.Errorf("invalid user ID: %w", err)
 	}
 
-	// Prepare update values - validation happens in domain
-	var email, name string
-	if input.Email != nil {
-		email = *input.Email
-	}
-	if input.Name != nil {
-		name = *input.Name
-	}
-
-	// Execute domain service
+	// Execute domain service - pass pointers directly for optional fields
 	domainUser, err := h.userService.UpdateUser(
 		ctx,
 		userID,
-		email,
-		name,
+		input.Email,
+		input.Name,
 		input.ProfileImageURL,
 	)
 	if err != nil {

@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"errors"
+	"io"
 	"log/slog"
 	"testing"
 	"time"
@@ -15,7 +16,7 @@ import (
 )
 
 func TestGetUserHandler_Handle(t *testing.T) {
-	logger := slog.New(slog.NewTextHandler(nil, nil))
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	userID := uuid.New()
 	
 	tests := []struct {
@@ -103,7 +104,7 @@ func TestGetUserHandler_Handle(t *testing.T) {
 }
 
 func TestGetUserByFirebaseUIDHandler_Handle(t *testing.T) {
-	logger := slog.New(slog.NewTextHandler(nil, nil))
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	userID := uuid.New()
 	firebaseUID := "firebase123456789012345678901234567890"
 	
@@ -181,7 +182,7 @@ func TestGetUserByFirebaseUIDHandler_Handle(t *testing.T) {
 
 func TestNewGetUserHandler(t *testing.T) {
 	mockService := &MockUserService{}
-	logger := slog.New(slog.NewTextHandler(nil, nil))
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	
 	handler := NewGetUserHandler(mockService, logger)
 	
@@ -192,7 +193,7 @@ func TestNewGetUserHandler(t *testing.T) {
 
 func TestNewGetUserByFirebaseUIDHandler(t *testing.T) {
 	mockService := &MockUserService{}
-	logger := slog.New(slog.NewTextHandler(nil, nil))
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	
 	handler := NewGetUserByFirebaseUIDHandler(mockService, logger)
 	

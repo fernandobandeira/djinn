@@ -11,12 +11,12 @@ import (
 
 // CreateUserHandler handles the create user command
 type CreateUserHandler struct {
-	userService *user.Service
+	userService user.ServiceInterface
 	logger      *slog.Logger
 }
 
 // NewCreateUserHandler creates a new create user handler
-func NewCreateUserHandler(userService *user.Service, logger *slog.Logger) *CreateUserHandler {
+func NewCreateUserHandler(userService user.ServiceInterface, logger *slog.Logger) *CreateUserHandler {
 	return &CreateUserHandler{
 		userService: userService,
 		logger:      logger.With(slog.String("handler", "create_user")),

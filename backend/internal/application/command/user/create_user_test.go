@@ -3,67 +3,28 @@ package user
 import (
 	"context"
 	"errors"
+	"io"
 	"log/slog"
 	"testing"
 	"time"
 
 	"github.com/fernandobandeira/djinn/backend/internal/application/dto"
 	"github.com/fernandobandeira/djinn/backend/internal/domain/user"
+	queryUser "github.com/fernandobandeira/djinn/backend/internal/application/query/user"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
-// MockUserService implements a mock for the user service
-type MockUserService struct {
-	mock.Mock
-}
-
-func (m *MockUserService) CreateUser(ctx context.Context, firebaseUID, email, name string, profileImageURL *string) (*user.User, error) {
-	args := m.Called(ctx, firebaseUID, email, name, profileImageURL)
-	if args.Get(0) == nil {
-		return nil, args.Error(1)
-	}
-	return args.Get(0).(*user.User), args.Error(1)
-}
-
-func (m *MockUserService) GetUser(ctx context.Context, id uuid.UUID) (*user.User, error) {
-	args := m.Called(ctx, id)
-	if args.Get(0) == nil {
-		return nil, args.Error(1)
-	}
-	return args.Get(0).(*user.User), args.Error(1)
-}
-
-func (m *MockUserService) GetUserByFirebaseUID(ctx context.Context, firebaseUID string) (*user.User, error) {
-	args := m.Called(ctx, firebaseUID)
-	if args.Get(0) == nil {
-		return nil, args.Error(1)
-	}
-	return args.Get(0).(*user.User), args.Error(1)
-}
-
-func (m *MockUserService) UpdateUser(ctx context.Context, id uuid.UUID, email, name string, profileImageURL *string) (*user.User, error) {
-	args := m.Called(ctx, id, email, name, profileImageURL)
-	if args.Get(0) == nil {
-		return nil, args.Error(1)
-	}
-	return args.Get(0).(*user.User), args.Error(1)
-}
-
-func (m *MockUserService) DeleteUser(ctx context.Context, id uuid.UUID) error {
-	args := m.Called(ctx, id)
-	return args.Error(0)
-}
 
 func TestCreateUserHandler_Handle(t *testing.T) {
-	logger := slog.New(slog.NewTextHandler(nil, nil))
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	
 	tests := []struct {
 		name      string
 		input     dto.CreateUserInput
-		setupMock func(*MockUserService)
+		setupMock func(*queryUser.MockUserService)
 		want      *dto.UserDTO
 		wantErr   bool
 		errMsg    string
@@ -76,7 +37,7 @@ func TestCreateUserHandler_Handle(t *testing.T) {
 				Name:            "Test User",
 				ProfileImageURL: stringPtr("https://example.com/avatar.jpg"),
 			},
-			setupMock: func(mockService *MockUserService) {
+			setupMock: func(mockService *queryUser.MockUserService) {
 				expectedUser := &user.User{
 					ID:              uuid.New(),
 					FirebaseUID:     "firebase123456789012345678901234567890",
@@ -104,7 +65,7 @@ func TestCreateUserHandler_Handle(t *testing.T) {
 				Email:       "test2@example.com",
 				Name:        "Test User 2",
 			},
-			setupMock: func(mockService *MockUserService) {
+			setupMock: func(mockService *queryUser.MockUserService) {
 				expectedUser := &user.User{
 					ID:          uuid.New(),
 					FirebaseUID: "firebase456789012345678901234567890",
@@ -131,7 +92,7 @@ func TestCreateUserHandler_Handle(t *testing.T) {
 				Email:       "test3@example.com",
 				Name:        "Test User 3",
 			},
-			setupMock: func(mockService *MockUserService) {
+			setupMock: func(mockService *queryUser.MockUserService) {
 				mockService.On("CreateUser",
 					mock.Anything,
 					"firebase789012345678901234567890",
@@ -150,7 +111,7 @@ func TestCreateUserHandler_Handle(t *testing.T) {
 				Email:       "invalid-email",
 				Name:        "",
 			},
-			setupMock: func(mockService *MockUserService) {
+			setupMock: func(mockService *queryUser.MockUserService) {
 				mockService.On("CreateUser",
 					mock.Anything,
 					"invalid",
@@ -165,7 +126,7 @@ func TestCreateUserHandler_Handle(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockService := &MockUserService{}
+			mockService := &queryUser.MockUserService{}
 			handler := NewCreateUserHandler(mockService, logger)
 			
 			tt.setupMock(mockService)
@@ -200,8 +161,8 @@ func TestCreateUserHandler_Handle(t *testing.T) {
 }
 
 func TestNewCreateUserHandler(t *testing.T) {
-	mockService := &MockUserService{}
-	logger := slog.New(slog.NewTextHandler(nil, nil))
+	mockService := &queryUser.MockUserService{}
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	
 	handler := NewCreateUserHandler(mockService, logger)
 	

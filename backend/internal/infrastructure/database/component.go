@@ -144,13 +144,27 @@ func (c *Component) Stop(ctx context.Context) error {
 	return nil
 }
 
-// Pool returns the underlying connection pool
+// Pool returns the underlying connection pool with safety checks
 func (c *Component) Pool() *pgxpool.Pool {
+	c.activeTxMutex.RLock()
+	defer c.activeTxMutex.RUnlock()
+	
+	// SAFETY FIX: Check component state and nil pointers
+	if c.isShuttingDown || c.pool == nil {
+		return nil
+	}
 	return c.pool
 }
 
-// Queries returns the generated database queries
+// Queries returns the generated database queries with safety checks
 func (c *Component) Queries() *generated.Queries {
+	c.activeTxMutex.RLock()
+	defer c.activeTxMutex.RUnlock()
+	
+	// SAFETY FIX: Check component state and nil pointers
+	if c.isShuttingDown || c.queries == nil {
+		return nil
+	}
 	return c.queries
 }
 
@@ -245,4 +259,25 @@ func (c *Component) GetActiveTransactionCount() int {
 	c.activeTxMutex.RLock()
 	defer c.activeTxMutex.RUnlock()
 	return len(c.activeTx)
+}
+
+// Close provides postgres.DB compatibility (delegates to component lifecycle)
+func (c *Component) Close() {
+	// Component closure is handled by lifecycle manager
+	// This method exists for postgres.DB compatibility
+}
+
+// Ping provides postgres.DB compatibility
+func (c *Component) Ping(ctx context.Context) error {
+	return c.HealthCheck(ctx)
+}
+
+// GetPool provides postgres.DB compatibility
+func (c *Component) GetPool() *pgxpool.Pool {
+	return c.pool
+}
+
+// Health provides postgres.DB compatibility
+func (c *Component) Health(ctx context.Context) error {
+	return c.HealthCheck(ctx)
 }

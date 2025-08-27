@@ -16,12 +16,12 @@ import (
 
 // UserRepository is the PostgreSQL implementation of the user repository
 type UserRepository struct {
-	queries *generated.Queries
+	queries generated.Querier
 	logger  *slog.Logger
 }
 
 // NewUserRepository creates a new PostgreSQL user repository
-func NewUserRepository(queries *generated.Queries, logger *slog.Logger) *UserRepository {
+func NewUserRepository(queries generated.Querier, logger *slog.Logger) *UserRepository {
 	return &UserRepository{
 		queries: queries,
 		logger:  logger.With(slog.String("repository", "user")),

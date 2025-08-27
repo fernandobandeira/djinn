@@ -12,12 +12,12 @@ import (
 
 // GetUserHandler handles the get user query
 type GetUserHandler struct {
-	userService *user.Service
+	userService user.ServiceInterface
 	logger      *slog.Logger
 }
 
 // NewGetUserHandler creates a new get user handler
-func NewGetUserHandler(userService *user.Service, logger *slog.Logger) *GetUserHandler {
+func NewGetUserHandler(userService user.ServiceInterface, logger *slog.Logger) *GetUserHandler {
 	return &GetUserHandler{
 		userService: userService,
 		logger:      logger.With(slog.String("handler", "get_user")),
@@ -48,12 +48,12 @@ func (h *GetUserHandler) Handle(ctx context.Context, id string) (*dto.UserDTO, e
 
 // GetUserByFirebaseUIDHandler handles the get user by Firebase UID query
 type GetUserByFirebaseUIDHandler struct {
-	userService *user.Service
+	userService user.ServiceInterface
 	logger      *slog.Logger
 }
 
 // NewGetUserByFirebaseUIDHandler creates a new handler
-func NewGetUserByFirebaseUIDHandler(userService *user.Service, logger *slog.Logger) *GetUserByFirebaseUIDHandler {
+func NewGetUserByFirebaseUIDHandler(userService user.ServiceInterface, logger *slog.Logger) *GetUserByFirebaseUIDHandler {
 	return &GetUserByFirebaseUIDHandler{
 		userService: userService,
 		logger:      logger.With(slog.String("handler", "get_user_by_firebase_uid")),

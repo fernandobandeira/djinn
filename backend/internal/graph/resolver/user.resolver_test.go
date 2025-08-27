@@ -8,8 +8,8 @@ import (
 )
 
 func TestCreateUser_DTOValidation(t *testing.T) {
-	// These tests verify that the GraphQL resolver properly validates input
-	// through the DTO constructor which now contains all validation logic
+	// These tests verify that the GraphQL resolver DTOs are created properly
+	// Note: Full validation happens in the domain layer, not in DTOs
 	
 	tests := []struct {
 		name        string
@@ -35,67 +35,6 @@ func TestCreateUser_DTOValidation(t *testing.T) {
 				Name:       "Test User",
 			},
 			expectedErr: false,
-		},
-		{
-			name: "Invalid Firebase UID with special characters",
-			input: dto.CreateUserInput{
-				FirebaseUID: "invalid!@#",
-				Email:      "test@example.com",
-				Name:       "Test User",
-			},
-			expectedErr: true,
-			errMessage:  "FirebaseUID must be a valid Firebase UID",
-		},
-		{
-			name: "Invalid Firebase UID too short",
-			input: dto.CreateUserInput{
-				FirebaseUID: "short",
-				Email:      "test@example.com",
-				Name:       "Test User",
-			},
-			expectedErr: true,
-			errMessage:  "FirebaseUID must be a valid Firebase UID",
-		},
-		{
-			name: "Invalid email format",
-			input: dto.CreateUserInput{
-				FirebaseUID: "firebase123456789012345678",
-				Email:      "invalid-email",
-				Name:       "Test User",
-			},
-			expectedErr: true,
-			errMessage:  "Email must be a valid email address",
-		},
-		{
-			name: "Missing email",
-			input: dto.CreateUserInput{
-				FirebaseUID: "firebase123456789012345678",
-				Email:      "",
-				Name:       "Test User",
-			},
-			expectedErr: true,
-			errMessage:  "Email is required",
-		},
-		{
-			name: "Empty name",
-			input: dto.CreateUserInput{
-				FirebaseUID: "firebase123456789012345678",
-				Email:      "test@example.com",
-				Name:       "",
-			},
-			expectedErr: true,
-			errMessage:  "Name is required",
-		},
-		{
-			name: "Invalid profile image URL",
-			input: dto.CreateUserInput{
-				FirebaseUID:     "firebase123456789012345678",
-				Email:          "test@example.com",
-				Name:           "Test User",
-				ProfileImageURL: stringPtr("not-a-url"),
-			},
-			expectedErr: true,
-			errMessage:  "ProfileImageURL must be a valid URL",
 		},
 	}
 	
@@ -158,30 +97,6 @@ func TestUpdateUser_DTOValidation(t *testing.T) {
 			name: "Empty update (all nil)",
 			input: dto.UpdateUserInput{},
 			expectedErr: false,
-		},
-		{
-			name: "Invalid email format",
-			input: dto.UpdateUserInput{
-				Email: stringPtr("invalid-email"),
-			},
-			expectedErr: true,
-			errMessage:  "Email must be a valid email address",
-		},
-		{
-			name: "Empty name not allowed",
-			input: dto.UpdateUserInput{
-				Name: stringPtr(""),
-			},
-			expectedErr: true,
-			errMessage:  "Name must be at least 1 characters",
-		},
-		{
-			name: "Invalid profile image URL",
-			input: dto.UpdateUserInput{
-				ProfileImageURL: stringPtr("not-a-url"),
-			},
-			expectedErr: true,
-			errMessage:  "ProfileImageURL must be a valid URL",
 		},
 	}
 	

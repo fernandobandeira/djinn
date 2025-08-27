@@ -88,7 +88,7 @@ func (s *Service) GetUserByFirebaseUID(ctx context.Context, firebaseUID string) 
 }
 
 // UpdateUser updates an existing user
-func (s *Service) UpdateUser(ctx context.Context, id uuid.UUID, email, name string, profileImageURL *string) (*User, error) {
+func (s *Service) UpdateUser(ctx context.Context, id uuid.UUID, email *string, name *string, profileImageURL *string) (*User, error) {
 	s.logger.Debug("Updating user", "user_id", id)
 
 	// Retrieve existing user
@@ -98,10 +98,22 @@ func (s *Service) UpdateUser(ctx context.Context, id uuid.UUID, email, name stri
 		return nil, err
 	}
 
-	// Apply updates to domain entity
-	if err := user.Update(email, name, profileImageURL); err != nil {
-		s.logger.Warn("Invalid update data", "error", err)
-		return nil, err
+	// Apply updates to domain entity - convert pointers to values for non-nil fields
+	emailValue := ""
+	nameValue := ""
+	if email != nil {
+		emailValue = *email
+	}
+	if name != nil {
+		nameValue = *name
+	}
+	
+	// Only update fields that are provided (non-nil)
+	if email != nil || name != nil || profileImageURL != nil {
+		if err := user.Update(emailValue, nameValue, profileImageURL); err != nil {
+			s.logger.Warn("Invalid update data", "error", err)
+			return nil, err
+		}
 	}
 
 	// Persist changes

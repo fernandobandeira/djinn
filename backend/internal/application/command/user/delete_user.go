@@ -11,12 +11,12 @@ import (
 
 // DeleteUserHandler handles the delete user command
 type DeleteUserHandler struct {
-	userService *user.Service
+	userService user.ServiceInterface
 	logger      *slog.Logger
 }
 
 // NewDeleteUserHandler creates a new delete user handler
-func NewDeleteUserHandler(userService *user.Service, logger *slog.Logger) *DeleteUserHandler {
+func NewDeleteUserHandler(userService user.ServiceInterface, logger *slog.Logger) *DeleteUserHandler {
 	return &DeleteUserHandler{
 		userService: userService,
 		logger:      logger.With(slog.String("handler", "delete_user")),

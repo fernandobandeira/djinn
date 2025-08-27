@@ -73,7 +73,9 @@ server
 
 # Test coverage
 coverage.out
+coverage.html
 backend/coverage.out
+backend/coverage.html
 
 # Environment files
 .env

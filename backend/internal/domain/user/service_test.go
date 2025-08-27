@@ -296,7 +296,7 @@ func TestService_UpdateUser(t *testing.T) {
 			ctx := context.Background()
 
 			// Execute
-			result, err := service.UpdateUser(ctx, tt.userID, tt.email, tt.userName, tt.profileImageURL)
+			result, err := service.UpdateUser(ctx, tt.userID, &tt.email, &tt.userName, tt.profileImageURL)
 
 			// Validate
 			if tt.expectedErr {
