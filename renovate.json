@@ -21,6 +21,14 @@
       "platformAutomerge": true
     },
     {
+      "description": "Group all Python dependencies",
+      "matchManagers": ["pip_requirements", "poetry", "pip_setup"],
+      "groupName": "Python dependencies",
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    },
+    {
       "description": "Group Docker base images",
       "matchManagers": ["dockerfile"],
       "matchUpdateTypes": ["minor", "patch"],
