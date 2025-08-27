@@ -615,7 +615,7 @@ func PanicRecoveryMiddleware(serviceName string) func(http.Handler) http.Handler
                 if err := recover(); err != nil {
                     // Capture panic details
                     stackTrace := string(debug.Stack())
-                    correlationID := r.Context().Value("correlation_id").(string)
+                    correlationID := ctxutil.GetCorrelationID(r.Context())
                     
                     // Log with slog (from error-handling-ADR)
                     logger := slog.Default().With(
@@ -670,7 +670,7 @@ func PanicRecoveryMiddleware(serviceName string) func(http.Handler) http.Handler
 func HTTPMiddleware(next http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         start := time.Now()
-        correlationID := r.Context().Value("correlation_id").(string)
+        correlationID := ctxutil.GetCorrelationID(r.Context())
         
         // Add breadcrumb for request
         analytics.AddBreadcrumb(correlationID, Breadcrumb{

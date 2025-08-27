@@ -12,6 +12,9 @@ import (
 	"github.com/google/uuid"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+
+	ctxutil "github.com/fernandobandeira/djinn/backend/internal/infrastructure/context"
+
 )
 
 // MonitoringService integrates all observability components as per ADR
@@ -292,7 +295,7 @@ func (ms *MonitoringService) TrackGraphQLOperation(ctx context.Context, operatio
 
 	// Add breadcrumb
 	if ms.Analytics != nil {
-		correlationID := GetCorrelationID(ctx)
+		correlationID := ctxutil.GetCorrelationID(ctx)
 		ms.Analytics.AddBreadcrumb(correlationID, Breadcrumb{
 			Timestamp: time.Now(),
 			Category:  "graphql",

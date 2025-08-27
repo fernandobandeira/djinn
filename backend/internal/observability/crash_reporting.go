@@ -13,6 +13,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/posthog/posthog-go"
+
+	ctxutil "github.com/fernandobandeira/djinn/backend/internal/infrastructure/context"
 )
 
 // Pre-compiled regex patterns for performance
@@ -79,7 +81,7 @@ func (cr *CrashReporter) PanicRecoveryMiddleware(serviceName string) func(http.H
 				if err := recover(); err != nil {
 					// Capture panic details
 					stackTrace := string(debug.Stack())
-					correlationID := GetCorrelationID(r.Context())
+					correlationID := ctxutil.GetCorrelationID(r.Context())
 					if correlationID == "" {
 						correlationID = uuid.New().String()
 					}
@@ -197,7 +199,7 @@ func (cr *CrashReporter) ReportError(ctx context.Context, err error, category st
 		return
 	}
 
-	correlationID := GetCorrelationID(ctx)
+	correlationID := ctxutil.GetCorrelationID(ctx)
 	userID := GetUserID(ctx)
 
 	report := CrashReport{
@@ -232,7 +234,7 @@ func (cr *CrashReporter) ReportTimeout(ctx context.Context, operation string, du
 	report := CrashReport{
 		ID:            uuid.New().String(),
 		Timestamp:     time.Now().UTC(),
-		CorrelationID: GetCorrelationID(ctx),
+		CorrelationID: ctxutil.GetCorrelationID(ctx),
 		UserID:        GetUserID(ctx),
 		SessionID:     GetSessionID(ctx),
 		Severity:      "error",
@@ -278,18 +280,10 @@ func collectSystemInfo() SystemInfo {
 type contextKey string
 
 const (
-	correlationIDKey contextKey = "correlation_id"
-	userIDKey        contextKey = "user_id"
-	sessionIDKey     contextKey = "session_id"
+	userIDKey    contextKey = "user_id"
+	sessionIDKey contextKey = "session_id"
 )
 
-// GetCorrelationID gets correlation ID from context
-func GetCorrelationID(ctx context.Context) string {
-	if id, ok := ctx.Value(correlationIDKey).(string); ok {
-		return id
-	}
-	return ""
-}
 
 // GetUserID gets user ID from context
 func GetUserID(ctx context.Context) string {
@@ -309,7 +303,7 @@ func GetSessionID(ctx context.Context) string {
 
 // WithCorrelationID adds correlation ID to context
 func WithCorrelationID(ctx context.Context, id string) context.Context {
-	return context.WithValue(ctx, correlationIDKey, id)
+	return ctxutil.WithCorrelationID(ctx, id)
 }
 
 // WithUserID adds user ID to context

@@ -117,7 +117,8 @@ func SetupLogger() *slog.Logger {
 
 // Context-aware logger with correlation ID
 func LoggerWithCorrelationID(ctx context.Context, logger *slog.Logger) *slog.Logger {
-    if correlationID, ok := ctx.Value("correlation_id").(string); ok {
+    // Use centralized correlation ID utility from infrastructure/context
+    if correlationID := ctxutil.GetCorrelationID(ctx); correlationID != "" {
         return logger.With(slog.String("correlation_id", correlationID))
     }
     return logger
@@ -360,7 +361,7 @@ func RequestLogger(logger *slog.Logger) func(http.Handler) http.Handler {
             }
             
             // Add to context
-            ctx := context.WithValue(r.Context(), "correlation_id", correlationID)
+            ctx := ctxutil.WithCorrelationID(r.Context(), correlationID)
             r = r.WithContext(ctx)
             
             // Create request logger
@@ -606,7 +607,127 @@ func ProcessItems(ctx context.Context, items []Item, logger *slog.Logger) error 
 - Approver: [To be assigned]
 - Date: 2025-01-20
 
+## Implementation Update (August 2025)
+
+### GraphQL-Specific Error Handling
+
+As the application uses GraphQL as its primary API layer (not HTTP/gRPC), we've implemented a specialized GraphQL error presenter:
+
+```go
+// GraphQL Error Presenter with Extensions
+func GraphQLErrorPresenter(logger *slog.Logger) graphql.ErrorPresenterFunc {
+    return func(ctx context.Context, err error) *gqlerror.Error {
+        correlationID := ctxutil.GetCorrelationID(ctx)
+        extensions := map[string]interface{}{
+            "correlationId": correlationID,
+        }
+        
+        // Map custom error types to GraphQL extensions
+        var valErr *ValidationError
+        if errors.As(err, &valErr) {
+            extensions["code"] = string(CodeValidationFailed)
+            extensions["field"] = valErr.Field
+            if valErr.Value != nil {
+                extensions["value"] = valErr.Value
+            }
+            // ... detailed error mapping
+        }
+        
+        // Return structured GraphQL error
+        gqlErr.Extensions = extensions
+        return gqlErr
+    }
+}
+```
+
+### Domain-Specific Error Patterns
+
+We've implemented a domain-driven approach where domain packages define their own errors that extend infrastructure error types:
+
+```go
+// Domain-specific errors in internal/domain/user/errors.go
+package user
+
+import "github.com/fernandobandeira/djinn/backend/internal/infrastructure/errors"
+
+// Domain-specific error codes
+const (
+    CodeInvalidFirebaseUID = "USER_INVALID_FIREBASE_UID"
+    CodeInvalidEmail       = "USER_INVALID_EMAIL"
+    CodeInvalidName        = "USER_INVALID_NAME"
+)
+
+// Domain-specific errors using infrastructure error types
+var (
+    ErrUserNotFound      = &errors.NotFoundError{Resource: "user"}
+    ErrUserAlreadyExists = &errors.ConflictError{Resource: "user", Message: "user already exists"}
+    
+    ErrInvalidFirebaseUID = &errors.ValidationError{
+        Field:   "FirebaseUID",
+        Message: "invalid Firebase UID",
+        Code:    CodeInvalidFirebaseUID,
+    }
+    
+    ErrInvalidEmail = &errors.ValidationError{
+        Field:   "Email",
+        Message: "invalid email address",
+        Code:    CodeInvalidEmail,
+    }
+)
+```
+
+### Error Code Mapping System
+
+Instead of HTTP/gRPC handlers, we've implemented a centralized error code mapper:
+
+```go
+// ErrorCodeMapper maps errors to standardized codes
+type ErrorCodeMapper struct{}
+
+func (m *ErrorCodeMapper) MapError(err error) ErrorCode {
+    // Check for typed errors first
+    var valErr *ValidationError
+    if errors.As(err, &valErr) {
+        return CodeValidationFailed
+    }
+    
+    // Check for sentinel errors
+    switch {
+    case errors.Is(err, ErrInvalidCredentials):
+        return CodeInvalidCredentials
+    case errors.Is(err, ErrUserNotFound):
+        return CodeUserNotFound
+    // ... comprehensive error mapping
+    }
+}
+```
+
+### Architecture Benefits
+
+1. **Domain Independence**: Each domain package defines its business-specific errors
+2. **Infrastructure Reuse**: Common error types are shared across domains  
+3. **GraphQL Integration**: Errors are properly formatted for GraphQL responses
+4. **Type Safety**: Domain errors use infrastructure types for consistency
+5. **Correlation Tracking**: All errors include correlation IDs for tracing
+
+### Updated Implementation Status
+
+- ✅ **GraphQL Error Presenter**: Implemented with structured error extensions
+- ✅ **Domain Error Patterns**: User domain demonstrates pattern for other domains
+- ✅ **Error Code Mapping**: Centralized mapping system replacing HTTP/gRPC handlers
+- ✅ **Correlation ID Support**: Consistent tracking across all error scenarios
+- ✅ **Test Coverage**: Comprehensive tests for error infrastructure
+
+### Lessons Learned
+
+1. **GraphQL-First Design**: Specialized error handling provides better developer experience
+2. **Domain Autonomy**: Domain packages should own their error definitions
+3. **Infrastructure Consistency**: Shared error types ensure consistent behavior
+4. **Extensible Design**: New domains can easily adopt the established patterns
+
 ## Revision History
 
 - 2025-01-20: Initial draft created with TypeScript/Node.js patterns
 - 2025-01-20: Complete rewrite with Go-specific patterns and slog integration
+- 2025-08-27: Implementation update with GraphQL-specific handling and domain patterns
+- 2025-08-27: Standardized correlation ID handling with centralized `internal/infrastructure/context` utility

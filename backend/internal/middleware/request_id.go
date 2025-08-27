@@ -4,14 +4,8 @@ import (
 	"context"
 	"net/http"
 
+	ctxutil "github.com/fernandobandeira/djinn/backend/internal/infrastructure/context"
 	"github.com/google/uuid"
-)
-
-type contextKey string
-
-const (
-	// CorrelationIDKey is the context key for correlation ID
-	CorrelationIDKey contextKey = "correlation_id"
 )
 
 // RequestID middleware adds a unique correlation ID to each request
@@ -22,7 +16,7 @@ func RequestID(next http.Handler) http.Handler {
 			correlationID = uuid.New().String()
 		}
 		
-		ctx := context.WithValue(r.Context(), CorrelationIDKey, correlationID)
+		ctx := ctxutil.WithCorrelationID(r.Context(), correlationID)
 		
 		w.Header().Set("X-Correlation-ID", correlationID)
 		
@@ -32,18 +26,10 @@ func RequestID(next http.Handler) http.Handler {
 
 // GetCorrelationID retrieves the correlation ID from context
 func GetCorrelationID(ctx context.Context) string {
-	if correlationID, ok := ctx.Value(CorrelationIDKey).(string); ok {
-		return correlationID
-	}
-	// Fallback to request ID for backward compatibility
-	if requestID, ok := ctx.Value(RequestIDKey).(string); ok {
-		return requestID
-	}
-	return ""
+	return ctxutil.GetCorrelationID(ctx)
 }
 
 // GetRequestID retrieves the request ID from context (deprecated, use GetCorrelationID)
-// Maintained for backward compatibility
 func GetRequestID(ctx context.Context) string {
-	return GetCorrelationID(ctx)
+	return ctxutil.GetCorrelationID(ctx)
 }

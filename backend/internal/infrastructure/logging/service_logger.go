@@ -3,6 +3,8 @@ package logging
 import (
 	"context"
 	"log/slog"
+
+	ctxutil "github.com/fernandobandeira/djinn/backend/internal/infrastructure/context"
 )
 
 // ServiceLogger wraps slog.Logger with service-specific metadata
@@ -28,7 +30,7 @@ func NewServiceLogger(base *slog.Logger, service, version string) *ServiceLogger
 
 // WithCorrelationID adds correlation ID to the logger context
 func (l *ServiceLogger) WithCorrelationID(ctx context.Context) *ServiceLogger {
-	correlationID := getCorrelationID(ctx)
+	correlationID := ctxutil.GetCorrelationID(ctx)
 	if correlationID == "" {
 		return l
 	}
@@ -42,7 +44,7 @@ func (l *ServiceLogger) WithCorrelationID(ctx context.Context) *ServiceLogger {
 
 // LoggerWithCorrelationID creates a logger with correlation ID from context
 func LoggerWithCorrelationID(ctx context.Context, logger *slog.Logger) *slog.Logger {
-	correlationID := getCorrelationID(ctx)
+	correlationID := ctxutil.GetCorrelationID(ctx)
 	if correlationID == "" {
 		return logger
 	}
@@ -100,25 +102,6 @@ func (l *ServiceLogger) DebugContext(ctx context.Context, msg string, args ...an
 	l.WithCorrelationID(ctx).Debug(msg, args...)
 }
 
-// getCorrelationID extracts correlation ID from context
-func getCorrelationID(ctx context.Context) string {
-	// First try correlation_id
-	if id, ok := ctx.Value("correlation_id").(string); ok {
-		return id
-	}
-	// Then try CorrelationIDKey (from middleware)
-	if id, ok := ctx.Value("CorrelationIDKey").(string); ok {
-		return id
-	}
-	// Fallback to request_id for backward compatibility
-	if id, ok := ctx.Value("requestID").(string); ok {
-		return id
-	}
-	if id, ok := ctx.Value("request_id").(string); ok {
-		return id
-	}
-	return ""
-}
 
 // getErrorType returns the type name of an error
 func getErrorType(err error) string {

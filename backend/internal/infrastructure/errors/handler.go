@@ -2,243 +2,120 @@ package errors
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
-	"log/slog"
-	"net/http"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	ctxutil "github.com/fernandobandeira/djinn/backend/internal/infrastructure/context"
 )
 
-// HandleHTTPError handles errors and writes appropriate HTTP responses
-func HandleHTTPError(ctx context.Context, w http.ResponseWriter, err error, logger *slog.Logger) {
-	correlationID := getCorrelationID(ctx)
-	
-	var (
-		statusCode int
-		errResp    *ErrorResponse
-	)
-
-	// Check for specific error types
-	switch {
-	case errors.Is(err, ErrInvalidCredentials):
-		statusCode = http.StatusUnauthorized
-		errResp = NewErrorResponse(CodeInvalidCredentials, "Invalid credentials", correlationID)
-		logger.InfoContext(ctx, "invalid credentials attempt",
-			"correlation_id", correlationID)
-
-	case errors.Is(err, ErrTokenExpired):
-		statusCode = http.StatusUnauthorized
-		errResp = NewErrorResponse(CodeTokenExpired, "Token has expired", correlationID)
-		logger.InfoContext(ctx, "token expired",
-			"correlation_id", correlationID)
-
-	case errors.Is(err, ErrUnauthorized):
-		statusCode = http.StatusUnauthorized
-		errResp = NewErrorResponse(CodeUnauthorized, "Unauthorized", correlationID)
-		logger.InfoContext(ctx, "unauthorized access",
-			"correlation_id", correlationID)
-
-	case errors.Is(err, ErrPermissionDenied):
-		statusCode = http.StatusForbidden
-		errResp = NewErrorResponse(CodePermissionDenied, "Permission denied", correlationID)
-		logger.InfoContext(ctx, "permission denied",
-			"correlation_id", correlationID)
-
-	case errors.Is(err, ErrRateLimited):
-		statusCode = http.StatusTooManyRequests
-		errResp = NewErrorResponse(CodeRateLimited, "Rate limit exceeded", correlationID)
-		logger.WarnContext(ctx, "rate limit exceeded",
-			"correlation_id", correlationID)
-
-	case errors.Is(err, ErrServiceUnavailable):
-		statusCode = http.StatusServiceUnavailable
-		errResp = NewErrorResponse(CodeServiceUnavailable, "Service temporarily unavailable", correlationID)
-		logger.ErrorContext(ctx, "service unavailable",
-			"correlation_id", correlationID)
-
-	default:
-		// Check for custom error types
-		statusCode, errResp = handleCustomError(ctx, err, correlationID, logger)
-	}
-
-	// Write response
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("X-Correlation-ID", correlationID)
-	w.WriteHeader(statusCode)
-	
-	if err := json.NewEncoder(w).Encode(errResp); err != nil {
-		logger.ErrorContext(ctx, "failed to encode error response",
-			"correlation_id", correlationID,
-			"error", err.Error())
-	}
-}
-
-func handleCustomError(ctx context.Context, err error, correlationID string, logger *slog.Logger) (int, *ErrorResponse) {
+// GetErrorCode maps an error to its corresponding error code
+func GetErrorCode(err error) ErrorCode {
+	// Check for typed errors first
 	var valErr *ValidationError
 	if errors.As(err, &valErr) {
-		errResp := NewErrorResponse(CodeValidationFailed, "Validation failed", correlationID)
-		errResp.AddDetail(valErr.Field, valErr.Message, valErr.Value)
-		logger.InfoContext(ctx, "validation error",
-			"correlation_id", correlationID,
-			"field", valErr.Field,
-			"error", valErr.Error())
-		return http.StatusBadRequest, errResp
+		return CodeValidationFailed
 	}
 
 	var notFoundErr *NotFoundError
 	if errors.As(err, &notFoundErr) {
-		errResp := NewErrorResponse(CodeNotFound, notFoundErr.Error(), correlationID)
-		logger.InfoContext(ctx, "not found error",
-			"correlation_id", correlationID,
-			"resource", notFoundErr.Resource,
-			"id", notFoundErr.ID)
-		return http.StatusNotFound, errResp
+		return CodeNotFound
 	}
 
 	var unauthorizedErr *UnauthorizedError
 	if errors.As(err, &unauthorizedErr) {
-		errResp := NewErrorResponse(CodeUnauthorized, unauthorizedErr.Error(), correlationID)
-		logger.InfoContext(ctx, "unauthorized error",
-			"correlation_id", correlationID,
-			"reason", unauthorizedErr.Reason)
-		return http.StatusUnauthorized, errResp
-	}
-
-	var extErr *ExternalServiceError
-	if errors.As(err, &extErr) {
-		errResp := NewErrorResponse(CodeExternalServiceError, "External service error", correlationID)
-		if extErr.RetryAfter > 0 {
-			errResp.SetRetryAfter(extErr.RetryAfter)
-		}
-		logger.ErrorContext(ctx, "external service error",
-			"correlation_id", correlationID,
-			"service", extErr.Service,
-			"operation", extErr.Operation,
-			"status_code", extErr.StatusCode,
-			"error", extErr.Error())
-		return http.StatusBadGateway, errResp
-	}
-
-	var rateLimitErr *RateLimitError
-	if errors.As(err, &rateLimitErr) {
-		errResp := NewErrorResponse(CodeRateLimited, rateLimitErr.Error(), correlationID)
-		errResp.SetRetryAfter(rateLimitErr.RetryAfter)
-		logger.WarnContext(ctx, "rate limit error",
-			"correlation_id", correlationID,
-			"resource", rateLimitErr.Resource,
-			"limit", rateLimitErr.Limit)
-		return http.StatusTooManyRequests, errResp
+		return CodeUnauthorized
 	}
 
 	var conflictErr *ConflictError
 	if errors.As(err, &conflictErr) {
-		errResp := NewErrorResponse(CodeConflict, conflictErr.Error(), correlationID)
-		if conflictErr.Field != "" {
-			errResp.AddDetail(conflictErr.Field, conflictErr.Message, conflictErr.Value)
-		}
-		logger.InfoContext(ctx, "conflict error",
-			"correlation_id", correlationID,
-			"resource", conflictErr.Resource,
-			"field", conflictErr.Field)
-		return http.StatusConflict, errResp
+		return CodeConflict
 	}
 
-	var internalErr *InternalError
-	if errors.As(err, &internalErr) {
-		errResp := NewErrorResponse(CodeInternalError, "Internal server error", correlationID)
-		logger.ErrorContext(ctx, "internal error",
-			"correlation_id", correlationID,
-			"operation", internalErr.Operation,
-			"error", internalErr.Error())
-		return http.StatusInternalServerError, errResp
-	}
-
-	// Default to internal server error
-	errResp := NewErrorResponse(CodeUnknown, "An unexpected error occurred", correlationID)
-	logger.ErrorContext(ctx, "unexpected error",
-		"correlation_id", correlationID,
-		"error", err.Error())
-	return http.StatusInternalServerError, errResp
-}
-
-// HandleGRPCError converts application errors to gRPC status errors
-func HandleGRPCError(ctx context.Context, err error, logger *slog.Logger) error {
-	correlationID := getCorrelationID(ctx)
-
-	switch {
-	case errors.Is(err, ErrUserNotFound):
-	case errors.Is(err, ErrResourceNotFound):
-		logger.InfoContext(ctx, "grpc not found error",
-			"correlation_id", correlationID,
-			"error", err.Error())
-		return status.Error(codes.NotFound, err.Error())
-
-	case errors.Is(err, ErrInvalidCredentials):
-		logger.InfoContext(ctx, "grpc unauthenticated error",
-			"correlation_id", correlationID)
-		return status.Error(codes.Unauthenticated, "Invalid credentials")
-
-	case errors.Is(err, ErrPermissionDenied):
-		logger.InfoContext(ctx, "grpc permission denied",
-			"correlation_id", correlationID)
-		return status.Error(codes.PermissionDenied, "Permission denied")
-
-	case errors.Is(err, ErrInvalidInput):
-	case errors.Is(err, ErrInvalidID):
-		logger.InfoContext(ctx, "grpc invalid argument",
-			"correlation_id", correlationID,
-			"error", err.Error())
-		return status.Error(codes.InvalidArgument, err.Error())
-
-	case errors.Is(err, ErrAlreadyExists):
-		logger.InfoContext(ctx, "grpc already exists",
-			"correlation_id", correlationID,
-			"error", err.Error())
-		return status.Error(codes.AlreadyExists, err.Error())
-
-	case errors.Is(err, ErrRateLimited):
-		logger.WarnContext(ctx, "grpc rate limited",
-			"correlation_id", correlationID)
-		return status.Error(codes.ResourceExhausted, "Rate limit exceeded")
-
-	case errors.Is(err, ErrCircuitOpen):
-		logger.ErrorContext(ctx, "grpc circuit open",
-			"correlation_id", correlationID)
-		return status.Error(codes.Unavailable, "Service temporarily unavailable")
-	}
-
-	// Check custom error types
-	var valErr *ValidationError
-	if errors.As(err, &valErr) {
-		logger.InfoContext(ctx, "grpc validation error",
-			"correlation_id", correlationID,
-			"field", valErr.Field)
-		return status.Error(codes.InvalidArgument, valErr.Error())
+	var rateLimitErr *RateLimitError
+	if errors.As(err, &rateLimitErr) {
+		return CodeRateLimited
 	}
 
 	var extErr *ExternalServiceError
 	if errors.As(err, &extErr) {
-		logger.ErrorContext(ctx, "grpc external service error",
-			"correlation_id", correlationID,
-			"service", extErr.Service)
-		return status.Error(codes.Unavailable, "External service unavailable")
+		return CodeExternalServiceError
 	}
 
-	// Default to internal error
-	logger.ErrorContext(ctx, "grpc internal error",
-		"correlation_id", correlationID,
-		"error", err.Error())
-	return status.Error(codes.Internal, "Internal server error")
+	var internalErr *InternalError
+	if errors.As(err, &internalErr) {
+		return CodeInternalError
+	}
+
+	var authErr *AuthenticationError
+	if errors.As(err, &authErr) {
+		switch authErr.Reason {
+		case "token_expired":
+			return CodeTokenExpired
+		case "token_invalid":
+			return CodeInvalidCredentials
+		case "insufficient_privileges":
+			return CodePermissionDenied
+		default:
+			return CodeInvalidCredentials
+		}
+	}
+
+	var authzErr *AuthorizationError
+	if errors.As(err, &authzErr) {
+		return CodePermissionDenied
+	}
+
+	// Check for sentinel errors
+	switch {
+	case errors.Is(err, ErrInvalidCredentials):
+		return CodeInvalidCredentials
+	case errors.Is(err, ErrTokenExpired):
+		return CodeTokenExpired
+	case errors.Is(err, ErrTokenInvalid):
+		return CodeInvalidCredentials
+	case errors.Is(err, ErrUnauthorized):
+		return CodeUnauthorized
+	case errors.Is(err, ErrPermissionDenied):
+		return CodePermissionDenied
+	case errors.Is(err, ErrRateLimited):
+		return CodeRateLimited
+	case errors.Is(err, ErrServiceUnavailable):
+		return CodeServiceUnavailable
+	case errors.Is(err, ErrBadRequest):
+		return CodeInvalidInput
+	case errors.Is(err, ErrRequestTooLarge):
+		return CodeInvalidInput
+	case errors.Is(err, ErrUnsupportedMediaType):
+		return CodeInvalidInput
+	case errors.Is(err, ErrTimeout):
+		return CodeInternalError
+	case errors.Is(err, ErrInternal):
+		return CodeInternalError
+	case errors.Is(err, ErrUserNotFound):
+		return CodeUserNotFound
+	case errors.Is(err, ErrResourceNotFound):
+		return CodeNotFound
+	case errors.Is(err, ErrAlreadyExists):
+		return CodeAlreadyExists
+	case errors.Is(err, ErrInvalidID):
+		return CodeInvalidInput
+	case errors.Is(err, ErrInvalidInput):
+		return CodeInvalidInput
+	case errors.Is(err, ErrMissingField):
+		return CodeMissingField
+	case errors.Is(err, ErrCircuitOpen):
+		return CodeServiceUnavailable
+	case errors.Is(err, ErrCircuitHalfOpen):
+		return CodeServiceUnavailable
+	case errors.Is(err, ErrConflict):
+		return CodeConflict
+	default:
+		return CodeUnknown
+	}
 }
 
 // getCorrelationID extracts correlation ID from context
 func getCorrelationID(ctx context.Context) string {
-	if id, ok := ctx.Value("correlation_id").(string); ok {
-		return id
-	}
-	if id, ok := ctx.Value("request_id").(string); ok {
+	if id := ctxutil.GetCorrelationID(ctx); id != "" {
 		return id
 	}
 	return "unknown"
