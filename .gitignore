@@ -71,3 +71,7 @@ backend/cmd/api/api
 # Test coverage
 coverage.out
 backend/coverage.out
+
+# Environment files
+.env
+backend/.env
