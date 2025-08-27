@@ -51,13 +51,15 @@ Google Wire will serve as the compile-time dependency injection framework for th
 - **Clear Dependencies**: Explicit provider functions make dependencies visible
 - **Testing Support**: Easy mock injection through interface-based providers
 - **Build Integration**: Seamless integration with existing code generation workflow
+- **Interface-Based Architecture**: All services exposed as interfaces (see ADR-20250127)
 
-**Wire Best Practices (from research):**
+**Wire Best Practices (from research and implementation):**
 - **Provider Organization**: Group providers by architectural layer, export as sets
 - **Interface Binding**: Use `wire.Bind` for dependency inversion and testability
 - **Error Propagation**: Leverage Wire's automatic error handling in providers
 - **Build Constraints**: Separate wire.go files with `//+build wireinject` tag
 - **Provider Naming**: Use `New` prefix consistently for constructor functions
+- **Interface-First Design**: Define interfaces in domain, bind implementations in Wire
 
 #### Root Directory Structure
 ```

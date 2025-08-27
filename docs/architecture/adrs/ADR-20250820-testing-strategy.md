@@ -33,6 +33,7 @@ We will adopt a **pragmatic testing trophy strategy** with the following standar
 - **TDD for Critical Paths**: Apply TDD selectively for business logic and financial calculations
 - **Shift-Left Security**: Security testing integrated from the start
 - **Automated Everything**: All tests must run in CI/CD
+- **Interface-Based Testing**: All services tested via interfaces with mocks (see ADR-20250127)
 
 ### Go Backend Testing Stack
 
@@ -46,6 +47,8 @@ mocking:
   primary: testify/mock
   generator: mockery (v2)
   rationale: "Balance of simplicity and power, good gqlgen integration"
+  organization: "Mocks colocated in query/command packages for easy access"
+  interface_based: "All mocks generated from interfaces (see ADR-20250127)"
   
 integration_testing:
   database: testcontainers-go

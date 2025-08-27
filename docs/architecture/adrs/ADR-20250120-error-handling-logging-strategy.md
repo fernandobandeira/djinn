@@ -33,6 +33,12 @@ We will implement a **Go-Native Error Handling & slog Logging Strategy** that le
 4. **Circuit Breaker Pattern for External Services**
 5. **Middleware for Request Logging and Error Handling**
 
+### Implementation Notes (from actual backend):
+- **Simplified error wrapping**: Using `fmt.Errorf("failed to X: %w", err)` pattern consistently
+- **Domain-specific errors**: Sentinel errors in domain layer (e.g., `ErrInvalidFirebaseUID`)
+- **Service interfaces**: Error handling through interface boundaries (see ADR-20250127)
+- **GraphQL error mapping**: Structured error responses with proper HTTP codes
+
 ### Error Classification:
 
 ```go
