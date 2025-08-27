@@ -9,6 +9,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/fernandobandeira/djinn/backend/internal/dataloader"
 	"github.com/fernandobandeira/djinn/backend/internal/graph/generated"
+	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/errors"
 	"github.com/ravilushqa/otelgqlgen"
 )
 
@@ -25,6 +26,9 @@ func (s *Server) graphqlHandler() http.Handler {
 	if s.config.TracingEnabled {
 		srv.Use(otelgqlgen.Middleware())
 	}
+	
+	// Configure error presenter for GraphQL
+	srv.SetErrorPresenter(errors.GraphQLErrorPresenter(s.logger))
 	
 	// Configure server options
 	srv.SetRecoverFunc(func(ctx context.Context, err interface{}) error {

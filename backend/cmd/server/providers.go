@@ -6,8 +6,8 @@ import (
 	"log/slog"
 
 	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/config"
-	"github.com/fernandobandeira/djinn/backend/internal/database"
-	db "github.com/fernandobandeira/djinn/backend/internal/database/generated"
+	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres"
+	db "github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres/generated"
 	"github.com/fernandobandeira/djinn/backend/internal/graph/resolver"
 	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/server"
 	"github.com/fernandobandeira/djinn/backend/internal/observability"
@@ -19,7 +19,7 @@ func ProvideConfig() (*config.Config, error) {
 }
 
 // ProvideQueries creates database queries from the database connection
-func ProvideQueries(database *database.DB) *db.Queries {
+func ProvideQueries(database *postgres.DB) *db.Queries {
 	if database == nil {
 		panic("database is required")
 	}
@@ -31,7 +31,7 @@ func ProvideQueries(database *database.DB) *db.Queries {
 
 
 // ProvideDatabase creates a database connection
-func ProvideDatabase(cfg *config.Config, logger *slog.Logger) (*database.DB, error) {
+func ProvideDatabase(cfg *config.Config, logger *slog.Logger) (*postgres.DB, error) {
 	// Validate input parameters
 	if cfg == nil {
 		return nil, fmt.Errorf("config is required")
@@ -49,7 +49,7 @@ func ProvideDatabase(cfg *config.Config, logger *slog.Logger) (*database.DB, err
 		return nil, fmt.Errorf("database URL is required")
 	}
 	
-	db, err := database.Connect(url)
+	db, err := postgres.Connect(url)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
@@ -62,7 +62,7 @@ func ProvideDatabase(cfg *config.Config, logger *slog.Logger) (*database.DB, err
 }
 
 // ProvideServer creates the HTTP server
-func ProvideServer(cfg *config.Config, logger *slog.Logger, db *database.DB, resolver *resolver.Resolver) *server.Server {
+func ProvideServer(cfg *config.Config, logger *slog.Logger, db *postgres.DB, resolver *resolver.Resolver) *server.Server {
 	if cfg == nil {
 		panic("config is required")
 	}
@@ -126,7 +126,7 @@ func ProvideMonitoring(cfg *config.Config, logger *slog.Logger) (*observability.
 func ProvideApplication(
 	cfg *config.Config,
 	logger *slog.Logger,
-	db *database.DB,
+	db *postgres.DB,
 	srv *server.Server,
 	monitoring *observability.MonitoringService,
 ) *Application {

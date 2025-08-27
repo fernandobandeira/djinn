@@ -227,3 +227,139 @@ func TestSentinelErrors(t *testing.T) {
 	assert.True(t, errors.Is(ErrUserNotFound, ErrUserNotFound))
 	assert.False(t, errors.Is(ErrUserNotFound, ErrResourceNotFound))
 }
+
+func TestAuthenticationError(t *testing.T) {
+	tests := []struct {
+		name     string
+		err      *AuthenticationError
+		expected string
+	}{
+		{
+			name: "with method",
+			err: &AuthenticationError{
+				Method:  "Bearer",
+				Reason:  "token_expired",
+				Message: "JWT token has expired",
+			},
+			expected: "authentication failed [Bearer]: JWT token has expired",
+		},
+		{
+			name: "without method",
+			err: &AuthenticationError{
+				Reason:  "invalid_credentials",
+				Message: "Invalid username or password",
+			},
+			expected: "authentication failed: Invalid username or password",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expected, tt.err.Error())
+		})
+	}
+}
+
+func TestAuthorizationError(t *testing.T) {
+	tests := []struct {
+		name     string
+		err      *AuthorizationError
+		expected string
+	}{
+		{
+			name: "with principal",
+			err: &AuthorizationError{
+				Resource:  "user",
+				Action:    "delete",
+				Principal: "user123",
+				Message:   "insufficient permissions",
+			},
+			expected: "authorization denied for user123 to delete user: insufficient permissions",
+		},
+		{
+			name: "without principal",
+			err: &AuthorizationError{
+				Resource: "admin",
+				Action:   "access",
+				Message:  "admin access required",
+			},
+			expected: "authorization denied to access admin: admin access required",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expected, tt.err.Error())
+		})
+	}
+}
+
+func TestGetErrorCode(t *testing.T) {
+	tests := []struct {
+		name     string
+		err      error
+		expected ErrorCode
+	}{
+		{
+			name:     "ValidationError",
+			err:      &ValidationError{Field: "email", Message: "invalid"},
+			expected: CodeValidationFailed,
+		},
+		{
+			name:     "NotFoundError",
+			err:      &NotFoundError{Resource: "user", ID: "123"},
+			expected: CodeNotFound,
+		},
+		{
+			name:     "AuthenticationError with token_expired",
+			err:      &AuthenticationError{Reason: "token_expired", Message: "token expired"},
+			expected: CodeTokenExpired,
+		},
+		{
+			name:     "AuthenticationError with token_invalid",
+			err:      &AuthenticationError{Reason: "token_invalid", Message: "invalid token"},
+			expected: CodeInvalidCredentials,
+		},
+		{
+			name:     "AuthenticationError with insufficient_privileges",
+			err:      &AuthenticationError{Reason: "insufficient_privileges", Message: "not enough privileges"},
+			expected: CodePermissionDenied,
+		},
+		{
+			name:     "AuthenticationError with default reason",
+			err:      &AuthenticationError{Reason: "other", Message: "other error"},
+			expected: CodeInvalidCredentials,
+		},
+		{
+			name:     "AuthorizationError",
+			err:      &AuthorizationError{Resource: "admin", Action: "access", Message: "denied"},
+			expected: CodePermissionDenied,
+		},
+		{
+			name:     "ErrInvalidCredentials sentinel",
+			err:      ErrInvalidCredentials,
+			expected: CodeInvalidCredentials,
+		},
+		{
+			name:     "ErrTokenExpired sentinel",
+			err:      ErrTokenExpired,
+			expected: CodeTokenExpired,
+		},
+		{
+			name:     "ErrUserNotFound sentinel",
+			err:      ErrUserNotFound,
+			expected: CodeUserNotFound,
+		},
+		{
+			name:     "Unknown error",
+			err:      errors.New("unknown error"),
+			expected: CodeUnknown,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expected, GetErrorCode(tt.err))
+		})
+	}
+}

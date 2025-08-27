@@ -9,7 +9,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
-	"github.com/fernandobandeira/djinn/backend/internal/database"
+	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres"
 	"github.com/fernandobandeira/djinn/backend/internal/graph/resolver"
 	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/config"
 	"github.com/fernandobandeira/djinn/backend/internal/middleware"
@@ -19,14 +19,14 @@ import (
 type Server struct {
 	config   *config.Config
 	logger   *slog.Logger
-	db       *database.DB
+	db       *postgres.DB
 	resolver *resolver.Resolver  // GraphQL resolver
 	router   *chi.Mux
 	httpSrv  *http.Server
 }
 
 // NewServer creates a new server instance
-func NewServer(cfg *config.Config, logger *slog.Logger, db *database.DB, res *resolver.Resolver) *Server {
+func NewServer(cfg *config.Config, logger *slog.Logger, db *postgres.DB, res *resolver.Resolver) *Server {
 	s := &Server{
 		config:   cfg,
 		logger:   logger,

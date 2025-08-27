@@ -241,7 +241,7 @@ OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
 Key files to be created/modified:
 - `/backend/cmd/api/main.go` - Application entry point
 - `/backend/internal/config/config.go` - Configuration management
-- `/backend/internal/database/connection.go` - Database connection setup
+- `/backend/internal/infrastructure/persistence/postgres/connection.go` - Database connection setup
 - `/backend/internal/graph/schema/user.graphql` - User GraphQL schema
 - `/backend/internal/graph/resolver/user.go` - User resolvers
 - `/backend/migrations/001_create_users_table.sql` - Initial migration
@@ -402,7 +402,7 @@ Key files to be created/modified:
 ### Created Files
 - [ ] `/backend/cmd/api/main.go`
 - [ ] `/backend/internal/config/config.go`
-- [ ] `/backend/internal/database/connection.go`
+- [ ] `/backend/internal/infrastructure/persistence/postgres/connection.go`
 - [ ] `/backend/internal/graph/schema/user.graphql`
 - [ ] `/backend/internal/graph/resolver/user.go`
 - [ ] `/backend/migrations/001_create_users_table.sql`

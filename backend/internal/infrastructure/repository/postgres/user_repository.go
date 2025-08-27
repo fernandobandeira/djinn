@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/fernandobandeira/djinn/backend/internal/database/generated"
+	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres/generated"
 	domainUser "github.com/fernandobandeira/djinn/backend/internal/domain/user"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"

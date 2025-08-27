@@ -5,19 +5,19 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/fernandobandeira/djinn/backend/internal/database"
-	db "github.com/fernandobandeira/djinn/backend/internal/database/generated"
+	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres"
+	db "github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres/generated"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-//go:generate go run github.com/vektah/dataloaden UserLoader string *github.com/fernandobandeira/djinn/backend/internal/database/generated.User
+//go:generate go run github.com/vektah/dataloaden UserLoader string *github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres/generated.User
 
 type UserReader struct {
-	db *database.DB
+	db *postgres.DB
 }
 
-func NewUserReader(database *database.DB) *UserReader {
+func NewUserReader(database *postgres.DB) *UserReader {
 	return &UserReader{
 		db: database,
 	}
@@ -84,7 +84,7 @@ func (u *UserReader) GetUsers(ctx context.Context, ids []string) ([]*db.User, []
 }
 
 // LoaderMiddleware creates a new DataLoader middleware
-func LoaderMiddleware(database *database.DB, next func(context.Context) context.Context) func(context.Context) context.Context {
+func LoaderMiddleware(database *postgres.DB, next func(context.Context) context.Context) func(context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
 		reader := NewUserReader(database)
 		loader := NewUserLoader(UserLoaderConfig{

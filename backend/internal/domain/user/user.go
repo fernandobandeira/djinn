@@ -73,7 +73,6 @@ func (u *User) Validate() error {
 		if validationErrors, ok := err.(validator.ValidationErrors); ok {
 			for _, e := range validationErrors {
 				field := e.Field()
-				tag := e.Tag()
 				
 				// Return field-specific errors wrapped with validator's message
 				var baseErr error

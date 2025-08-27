@@ -7,13 +7,13 @@
 package main
 
 import (
-	"github.com/fernandobandeira/djinn/backend/internal/adapter/repository/postgres"
 	user2 "github.com/fernandobandeira/djinn/backend/internal/application/command/user"
 	user3 "github.com/fernandobandeira/djinn/backend/internal/application/query/user"
 	"github.com/fernandobandeira/djinn/backend/internal/domain/user"
 	"github.com/fernandobandeira/djinn/backend/internal/graph/resolver"
 	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/config"
 	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/logging"
+	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/repository/postgres"
 	"github.com/google/wire"
 )
 

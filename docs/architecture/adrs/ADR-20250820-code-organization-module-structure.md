@@ -37,7 +37,7 @@ From existing ADRs, the system uses:
 #### Generated Code Organization
 
 All generated code follows a consistent naming pattern:
-- `internal/database/generated/` - sqlc generated database code
+- `internal/infrastructure/persistence/postgres/generated/` - sqlc generated database code
 - `internal/graph/generated/` - gqlgen generated GraphQL code
 - `*/wire_gen.go` - Wire generated dependency injection code
 
@@ -382,7 +382,7 @@ var ApplicationSet = wire.NewSet(
 
 ##### Infrastructure Providers
 ```go
-// internal/adapter/repository/postgres/wire.go
+// internal/infrastructure/repository/postgres/wire.go
 package postgres
 
 import (
@@ -422,7 +422,7 @@ import (
     "context"
     "database/sql"
     "github.com/google/wire"
-    "github.com/djinn/internal/adapter/repository/postgres"
+    "github.com/djinn/internal/infrastructure/repository/postgres"
     "github.com/djinn/internal/application"
     "github.com/djinn/internal/domain/account"
     "github.com/djinn/internal/domain/transaction"
@@ -505,7 +505,7 @@ func main() {
 
 ##### Testing with Wire (Mock Injection Pattern)
 ```go
-// internal/adapter/repository/postgres/wire_test.go
+// internal/infrastructure/repository/postgres/wire_test.go
 //+build wireinject
 
 package postgres_test
@@ -827,7 +827,7 @@ import (
     "github.com/djinn/internal/domain/account"
     "github.com/djinn/internal/domain/transaction"
     "github.com/djinn/internal/application/command"
-    "github.com/djinn/internal/adapter/repository/postgres"
+    "github.com/djinn/internal/infrastructure/repository/postgres"
 )
 
 // Dependency direction rules:
@@ -935,7 +935,7 @@ generate-wire:
 .PHONY: generate-sqlc
 generate-sqlc:
 	@echo "Generating database code..."
-	@sqlc generate  # Outputs to internal/database/generated/
+	@sqlc generate  # Outputs to internal/infrastructure/persistence/postgres/generated/
 
 .PHONY: generate-gqlgen  
 generate-gqlgen:
@@ -1096,7 +1096,7 @@ func (h *ErrorHandler) HandleDomainError(err error) error {
 #### Repository with Error Handling
 
 ```go
-// internal/adapter/repository/postgres/account_repository.go
+// internal/infrastructure/repository/postgres/account_repository.go
 package postgres
 
 type AccountRepository struct {

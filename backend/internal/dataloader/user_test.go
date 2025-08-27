@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/fernandobandeira/djinn/backend/internal/database"
-	db "github.com/fernandobandeira/djinn/backend/internal/database/generated"
+	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres"
+	db "github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres/generated"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/assert"
@@ -358,7 +358,7 @@ func TestUserReader_GetUsers(t *testing.T) {
 	})
 	
 	t.Run("Invalid UUID handling", func(t *testing.T) {
-		reader := &UserReader{db: &database.DB{}}
+		reader := &UserReader{db: &postgres.DB{}}
 		
 		ids := []string{"invalid-uuid", "also-invalid"}
 		users, errs := reader.GetUsers(ctx, ids)
@@ -376,7 +376,7 @@ func TestUserReader_GetUsers(t *testing.T) {
 }
 
 func TestLoaderMiddleware(t *testing.T) {
-	db := &database.DB{}
+	db := &postgres.DB{}
 	
 	nextCalled := false
 	next := func(ctx context.Context) context.Context {

@@ -3,7 +3,7 @@ package resolver
 import (
 	commandUser "github.com/fernandobandeira/djinn/backend/internal/application/command/user"
 	queryUser "github.com/fernandobandeira/djinn/backend/internal/application/query/user"
-	"github.com/fernandobandeira/djinn/backend/internal/database"
+	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres"
 	"log/slog"
 )
 
@@ -30,7 +30,7 @@ type Resolver struct {
 
 // NewResolver creates a new GraphQL resolver using Wire dependency injection
 func NewResolver(
-	db *database.DB,
+	db *postgres.DB,
 	logger *slog.Logger,
 	createUserHandler *commandUser.CreateUserHandler,
 	updateUserHandler *commandUser.UpdateUserHandler,

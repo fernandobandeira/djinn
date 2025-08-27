@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/fernandobandeira/djinn/backend/internal/database/generated"
+	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres/generated"
 )
 
 // UserLoaderConfig captures the config to create a new UserLoader

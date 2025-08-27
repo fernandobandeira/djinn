@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/config"
-	"github.com/fernandobandeira/djinn/backend/internal/database"
+	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres"
 	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/server"
 	"github.com/fernandobandeira/djinn/backend/internal/observability"
 )
@@ -18,14 +18,14 @@ import (
 type Application struct {
 	config             *config.Config
 	logger             *slog.Logger
-	db                 *database.DB
+	db                 *postgres.DB
 	server             *server.Server
 	monitoring         *observability.MonitoringService
 	shutdownMonitoring func(context.Context) error
 }
 
 // NewApplication creates a new application instance
-func NewApplication(cfg *config.Config, logger *slog.Logger, db *database.DB, srv *server.Server) *Application {
+func NewApplication(cfg *config.Config, logger *slog.Logger, db *postgres.DB, srv *server.Server) *Application {
 	return &Application{
 		config: cfg,
 		logger: logger,

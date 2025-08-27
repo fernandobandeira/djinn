@@ -6,7 +6,7 @@ package resolver
 import (
 	"github.com/google/wire"
 	
-	"github.com/fernandobandeira/djinn/backend/internal/adapter/repository/postgres"
+	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/repository/postgres"
 	"github.com/fernandobandeira/djinn/backend/internal/application"
 	domainUser "github.com/fernandobandeira/djinn/backend/internal/domain/user"
 )

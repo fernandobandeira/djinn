@@ -7,7 +7,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/fernandobandeira/djinn/backend/internal/database/generated"
+	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres/generated"
 	"github.com/fernandobandeira/djinn/backend/test/fixtures"
 	"github.com/fernandobandeira/djinn/backend/test/integration"
 	"github.com/stretchr/testify/assert"

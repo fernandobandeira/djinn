@@ -108,3 +108,32 @@ func (e *InternalError) Error() string {
 func (e *InternalError) Unwrap() error {
 	return e.Wrapped
 }
+
+// AuthenticationError represents authentication failures
+type AuthenticationError struct {
+	Method  string `json:"method,omitempty"`
+	Reason  string `json:"reason"`
+	Message string `json:"message"`
+}
+
+func (e *AuthenticationError) Error() string {
+	if e.Method != "" {
+		return fmt.Sprintf("authentication failed [%s]: %s", e.Method, e.Message)
+	}
+	return fmt.Sprintf("authentication failed: %s", e.Message)
+}
+
+// AuthorizationError represents authorization/permission failures
+type AuthorizationError struct {
+	Resource  string `json:"resource"`
+	Action    string `json:"action"`
+	Principal string `json:"principal,omitempty"`
+	Message   string `json:"message"`
+}
+
+func (e *AuthorizationError) Error() string {
+	if e.Principal != "" {
+		return fmt.Sprintf("authorization denied for %s to %s %s: %s", e.Principal, e.Action, e.Resource, e.Message)
+	}
+	return fmt.Sprintf("authorization denied to %s %s: %s", e.Action, e.Resource, e.Message)
+}
