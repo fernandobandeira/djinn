@@ -13,9 +13,9 @@
       "platformAutomerge": true
     },
     {
-      "description": "Group all npm dependencies",
-      "matchManagers": ["npm"],
-      "groupName": "npm dependencies",
+      "description": "Group all Flutter/Dart dependencies",
+      "matchManagers": ["pub"],
+      "groupName": "Flutter dependencies",
       "automerge": true,
       "automergeType": "pr",
       "platformAutomerge": true
