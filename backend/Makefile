@@ -23,6 +23,21 @@ migrate-status: ## Check migration status
 db-console: ## Open PostgreSQL console
 	@docker exec -it djinn-postgres psql -U djinn_user -d djinn
 
+.PHONY: run
+run: wire-generate ## Run the API server
+	@echo "Starting Djinn API server..."
+	@go run github.com/fernandobandeira/djinn/backend/cmd/server
+
+.PHONY: run-dev
+run-dev: generate migrate-up ## Run server with all code generation and migrations
+	@echo "Starting Djinn API server in development mode..."
+	@go run github.com/fernandobandeira/djinn/backend/cmd/server
+
+.PHONY: build
+build: generate ## Build the server binary
+	@echo "Building server binary..."
+	@go build -o bin/server github.com/fernandobandeira/djinn/backend/cmd/server
+
 .PHONY: test-db
 test-db: ## Test database operations
 	@go run cmd/test/main.go
@@ -40,8 +55,13 @@ dataloader-generate: ## Generate dataloader code
 	@echo "Generating dataloaders..."
 	@cd internal/dataloader && go generate ./...
 
+.PHONY: wire-generate
+wire-generate: ## Generate Wire dependency injection code
+	@echo "Generating Wire code..."
+	@go run github.com/google/wire/cmd/wire@latest ./cmd/server
+
 .PHONY: generate
-generate: sqlc-generate mockery-generate dataloader-generate ## Generate all code (sqlc, mockery, dataloaders)
+generate: sqlc-generate mockery-generate dataloader-generate wire-generate ## Generate all code (sqlc, mockery, dataloaders, wire)
 
 .PHONY: test
 test: generate ## Run all tests
