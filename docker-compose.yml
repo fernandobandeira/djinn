@@ -106,7 +106,7 @@ services:
       - djinn-network
 
   posthog-db:
-    image: postgres:15-alpine
+    image: postgres:17-alpine
     container_name: djinn-posthog-db
     environment:
       POSTGRES_DB: posthog
