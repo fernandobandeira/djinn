@@ -122,35 +122,5 @@ func ProvideMonitoring(cfg *config.Config, logger *slog.Logger) (*observability.
 	return service, wrappedShutdown, nil
 }
 
-// ProvideApplication creates the main application with monitoring
-func ProvideApplication(
-	cfg *config.Config,
-	logger *slog.Logger,
-	db *postgres.DB,
-	srv *server.Server,
-	monitoring *observability.MonitoringService,
-) *Application {
-	if cfg == nil {
-		panic("config is required")
-	}
-	if logger == nil {
-		panic("logger is required")
-	}
-	if db == nil {
-		panic("database is required")
-	}
-	if srv == nil {
-		panic("server is required")
-	}
-	// monitoring can be nil
-	
-	return &Application{
-		config:             cfg,
-		logger:             logger,
-		db:                 db,
-		server:             srv,
-		monitoring:         monitoring,
-		shutdownMonitoring: nil, // Will be set separately if needed
-	}
-}
+// Legacy providers removed - now using lifecycle-managed application
 

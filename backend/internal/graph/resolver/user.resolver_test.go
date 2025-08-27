@@ -112,7 +112,7 @@ func TestCreateUser_DTOValidation(t *testing.T) {
 			// Assert validation behavior
 			if tt.expectedErr {
 				assert.Error(t, err)
-				if tt.errMessage != "" {
+				if err != nil && tt.errMessage != "" {
 					assert.Contains(t, err.Error(), tt.errMessage)
 				}
 			} else {
@@ -197,7 +197,7 @@ func TestUpdateUser_DTOValidation(t *testing.T) {
 			// Assert validation behavior
 			if tt.expectedErr {
 				assert.Error(t, err)
-				if tt.errMessage != "" {
+				if err != nil && tt.errMessage != "" {
 					assert.Contains(t, err.Error(), tt.errMessage)
 				}
 			} else {

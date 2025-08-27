@@ -7,8 +7,6 @@ import (
 
 	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres"
 	db "github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres/generated"
-	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 //go:generate go run github.com/vektah/dataloaden UserLoader string *github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres/generated.User
@@ -24,58 +22,46 @@ func NewUserReader(database *postgres.DB) *UserReader {
 }
 
 func (u *UserReader) GetUsers(ctx context.Context, ids []string) ([]*db.User, []error) {
-	usersByID := make(map[string]*db.User, len(ids))
 	errors := make([]error, len(ids))
 	
-	// Convert string IDs to UUIDs
-	uuids := make([]pgtype.UUID, 0, len(ids))
-	idToIndex := make(map[string]int)
-	
-	for i, id := range ids {
-		userID, err := uuid.Parse(id)
-		if err != nil {
-			errors[i] = fmt.Errorf("invalid user ID: %w", err)
-			continue
-		}
-		
-		pgUUID := pgtype.UUID{
-			Bytes: userID,
-			Valid: true,
-		}
-		uuids = append(uuids, pgUUID)
-		idToIndex[id] = i
+	// Convert string IDs to pgtype.UUIDs
+	uuids, conversionErrors := StringsToPgUUIDs(ids)
+	for i, err := range conversionErrors {
+		errors[i] = err
 	}
 	
 	// Batch fetch users from database
-	if len(uuids) > 0 {
-		users, err := u.db.Queries.GetUsersByIDs(ctx, uuids)
-		if err != nil {
-			// If batch query fails, set error for all requested IDs
-			for i := range ids {
-				errors[i] = fmt.Errorf("failed to fetch users: %w", err)
-			}
-			return make([]*db.User, len(ids)), errors
-		}
-		
-		// Map users by their ID
-		for _, user := range users {
-			if user.ID.Valid {
-				id, err := uuid.FromBytes(user.ID.Bytes[:])
-				if err == nil {
-					userCopy := user // Create a copy to avoid pointer issues
-					usersByID[id.String()] = &userCopy
-				}
-			}
-		}
+	if len(uuids) == 0 {
+		return make([]*db.User, len(ids)), errors
 	}
 	
-	// Build result slice maintaining the order of requested IDs
+	users, err := u.db.Queries.GetUsersByIDs(ctx, uuids)
+	if err != nil {
+		// If batch query fails, set error for all requested IDs that don't already have errors
+		for i := range ids {
+			if errors[i] == nil {
+				errors[i] = fmt.Errorf("failed to fetch users: %w", err)
+			}
+		}
+		return make([]*db.User, len(ids)), errors
+	}
+	
+	// Create result map for efficient lookup
+	usersByID, _ := CreateOrderedResultMap(users, func(user db.User) (string, error) {
+		return PgUUIDToString(user.ID)
+	})
+	
+	// Build ordered result slice
 	result := make([]*db.User, len(ids))
 	for i, id := range ids {
+		if errors[i] != nil {
+			continue // Skip IDs that had conversion errors
+		}
+		
 		if user, ok := usersByID[id]; ok {
-			result[i] = user
-		} else if errors[i] == nil {
-			// User not found and no parse error
+			userCopy := user // Create a copy to avoid pointer issues
+			result[i] = &userCopy
+		} else {
 			errors[i] = fmt.Errorf("user not found: %s", id)
 		}
 	}

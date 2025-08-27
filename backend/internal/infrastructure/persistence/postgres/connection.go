@@ -94,6 +94,14 @@ func (d *DB) GetPool() *pgxpool.Pool {
 	return d.pool
 }
 
+// SetPool sets the underlying pgxpool.Pool (for component integration)
+func (d *DB) SetPool(pool *pgxpool.Pool) {
+	d.pool = pool
+	if pool != nil {
+		d.Queries = generated.New(pool)
+	}
+}
+
 // Ping checks database connectivity
 func (d *DB) Ping(ctx context.Context) error {
 	return d.pool.Ping(ctx)

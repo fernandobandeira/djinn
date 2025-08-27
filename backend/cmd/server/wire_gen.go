@@ -7,65 +7,23 @@
 package main
 
 import (
-	user2 "github.com/fernandobandeira/djinn/backend/internal/application/command/user"
-	user3 "github.com/fernandobandeira/djinn/backend/internal/application/query/user"
-	"github.com/fernandobandeira/djinn/backend/internal/domain/user"
-	"github.com/fernandobandeira/djinn/backend/internal/graph/resolver"
 	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/config"
 	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/logging"
-	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/repository/postgres"
-	"github.com/google/wire"
 )
 
 // Injectors from wire.go:
 
-// InitializeApp creates a new application with all dependencies injected
+// InitializeApp creates a new lifecycle-managed application
 func InitializeApp() (*Application, func(), error) {
 	configConfig, err := config.Load()
 	if err != nil {
 		return nil, nil, err
 	}
 	logger := logging.NewLogger(configConfig)
-	db, err := ProvideDatabase(configConfig, logger)
+	application, err := NewApplication(configConfig, logger)
 	if err != nil {
 		return nil, nil, err
 	}
-	queries := ProvideQueries(db)
-	userRepository := postgres.NewUserRepository(queries, logger)
-	service := user.NewService(userRepository, logger)
-	createUserHandler := user2.NewCreateUserHandler(service, logger)
-	updateUserHandler := user2.NewUpdateUserHandler(service, logger)
-	deleteUserHandler := user2.NewDeleteUserHandler(service, logger)
-	getUserHandler := user3.NewGetUserHandler(service, logger)
-	getUserByFirebaseUIDHandler := user3.NewGetUserByFirebaseUIDHandler(service, logger)
-	resolverResolver := resolver.NewResolver(db, logger, createUserHandler, updateUserHandler, deleteUserHandler, getUserHandler, getUserByFirebaseUIDHandler)
-	server := ProvideServer(configConfig, logger, db, resolverResolver)
-	monitoringService, cleanup, err := ProvideMonitoring(configConfig, logger)
-	if err != nil {
-		return nil, nil, err
-	}
-	application := ProvideApplication(configConfig, logger, db, server, monitoringService)
 	return application, func() {
-		cleanup()
 	}, nil
 }
-
-// wire.go:
-
-// InfrastructureProviderSet groups infrastructure providers
-var InfrastructureProviderSet = wire.NewSet(config.Load, logging.NewLogger, ProvideDatabase,
-	ProvideQueries,
-	ProvideMonitoring,
-)
-
-// RepositoryProviderSet groups repository providers
-var RepositoryProviderSet = wire.NewSet(postgres.NewUserRepository, wire.Bind(new(user.Repository), new(*postgres.UserRepository)))
-
-// DomainProviderSet groups domain providers
-var DomainProviderSet = wire.NewSet(user.NewService)
-
-// ApplicationProviderSet groups application providers
-var ApplicationProviderSet = wire.NewSet(user2.NewCreateUserHandler, user2.NewUpdateUserHandler, user2.NewDeleteUserHandler, user3.NewGetUserHandler, user3.NewGetUserByFirebaseUIDHandler)
-
-// PresentationProviderSet groups presentation providers
-var PresentationProviderSet = wire.NewSet(resolver.NewResolver, ProvideServer)

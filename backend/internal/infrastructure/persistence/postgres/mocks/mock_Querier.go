@@ -5,7 +5,7 @@ package mocks
 import (
 	context "context"
 
-	db "github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres/generated"
+	generated "github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres/generated"
 	mock "github.com/stretchr/testify/mock"
 
 	pgtype "github.com/jackc/pgx/v5/pgtype"
@@ -81,25 +81,25 @@ func (_c *MockQuerier_CountUsers_Call) RunAndReturn(run func(context.Context) (i
 }
 
 // CreateUser provides a mock function with given fields: ctx, arg
-func (_m *MockQuerier) CreateUser(ctx context.Context, arg db.CreateUserParams) (db.User, error) {
+func (_m *MockQuerier) CreateUser(ctx context.Context, arg generated.CreateUserParams) (generated.User, error) {
 	ret := _m.Called(ctx, arg)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreateUser")
 	}
 
-	var r0 db.User
+	var r0 generated.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, db.CreateUserParams) (db.User, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, generated.CreateUserParams) (generated.User, error)); ok {
 		return rf(ctx, arg)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, db.CreateUserParams) db.User); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, generated.CreateUserParams) generated.User); ok {
 		r0 = rf(ctx, arg)
 	} else {
-		r0 = ret.Get(0).(db.User)
+		r0 = ret.Get(0).(generated.User)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, db.CreateUserParams) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, generated.CreateUserParams) error); ok {
 		r1 = rf(ctx, arg)
 	} else {
 		r1 = ret.Error(1)
@@ -115,24 +115,24 @@ type MockQuerier_CreateUser_Call struct {
 
 // CreateUser is a helper method to define mock.On call
 //   - ctx context.Context
-//   - arg db.CreateUserParams
+//   - arg generated.CreateUserParams
 func (_e *MockQuerier_Expecter) CreateUser(ctx interface{}, arg interface{}) *MockQuerier_CreateUser_Call {
 	return &MockQuerier_CreateUser_Call{Call: _e.mock.On("CreateUser", ctx, arg)}
 }
 
-func (_c *MockQuerier_CreateUser_Call) Run(run func(ctx context.Context, arg db.CreateUserParams)) *MockQuerier_CreateUser_Call {
+func (_c *MockQuerier_CreateUser_Call) Run(run func(ctx context.Context, arg generated.CreateUserParams)) *MockQuerier_CreateUser_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(db.CreateUserParams))
+		run(args[0].(context.Context), args[1].(generated.CreateUserParams))
 	})
 	return _c
 }
 
-func (_c *MockQuerier_CreateUser_Call) Return(_a0 db.User, _a1 error) *MockQuerier_CreateUser_Call {
+func (_c *MockQuerier_CreateUser_Call) Return(_a0 generated.User, _a1 error) *MockQuerier_CreateUser_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockQuerier_CreateUser_Call) RunAndReturn(run func(context.Context, db.CreateUserParams) (db.User, error)) *MockQuerier_CreateUser_Call {
+func (_c *MockQuerier_CreateUser_Call) RunAndReturn(run func(context.Context, generated.CreateUserParams) (generated.User, error)) *MockQuerier_CreateUser_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -232,27 +232,27 @@ func (_c *MockQuerier_DeleteUserByFirebaseUID_Call) RunAndReturn(run func(contex
 }
 
 // GetRecentUsers provides a mock function with given fields: ctx, arg
-func (_m *MockQuerier) GetRecentUsers(ctx context.Context, arg db.GetRecentUsersParams) ([]db.User, error) {
+func (_m *MockQuerier) GetRecentUsers(ctx context.Context, arg generated.GetRecentUsersParams) ([]generated.User, error) {
 	ret := _m.Called(ctx, arg)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetRecentUsers")
 	}
 
-	var r0 []db.User
+	var r0 []generated.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, db.GetRecentUsersParams) ([]db.User, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, generated.GetRecentUsersParams) ([]generated.User, error)); ok {
 		return rf(ctx, arg)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, db.GetRecentUsersParams) []db.User); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, generated.GetRecentUsersParams) []generated.User); ok {
 		r0 = rf(ctx, arg)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]db.User)
+			r0 = ret.Get(0).([]generated.User)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, db.GetRecentUsersParams) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, generated.GetRecentUsersParams) error); ok {
 		r1 = rf(ctx, arg)
 	} else {
 		r1 = ret.Error(1)
@@ -268,45 +268,45 @@ type MockQuerier_GetRecentUsers_Call struct {
 
 // GetRecentUsers is a helper method to define mock.On call
 //   - ctx context.Context
-//   - arg db.GetRecentUsersParams
+//   - arg generated.GetRecentUsersParams
 func (_e *MockQuerier_Expecter) GetRecentUsers(ctx interface{}, arg interface{}) *MockQuerier_GetRecentUsers_Call {
 	return &MockQuerier_GetRecentUsers_Call{Call: _e.mock.On("GetRecentUsers", ctx, arg)}
 }
 
-func (_c *MockQuerier_GetRecentUsers_Call) Run(run func(ctx context.Context, arg db.GetRecentUsersParams)) *MockQuerier_GetRecentUsers_Call {
+func (_c *MockQuerier_GetRecentUsers_Call) Run(run func(ctx context.Context, arg generated.GetRecentUsersParams)) *MockQuerier_GetRecentUsers_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(db.GetRecentUsersParams))
+		run(args[0].(context.Context), args[1].(generated.GetRecentUsersParams))
 	})
 	return _c
 }
 
-func (_c *MockQuerier_GetRecentUsers_Call) Return(_a0 []db.User, _a1 error) *MockQuerier_GetRecentUsers_Call {
+func (_c *MockQuerier_GetRecentUsers_Call) Return(_a0 []generated.User, _a1 error) *MockQuerier_GetRecentUsers_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockQuerier_GetRecentUsers_Call) RunAndReturn(run func(context.Context, db.GetRecentUsersParams) ([]db.User, error)) *MockQuerier_GetRecentUsers_Call {
+func (_c *MockQuerier_GetRecentUsers_Call) RunAndReturn(run func(context.Context, generated.GetRecentUsersParams) ([]generated.User, error)) *MockQuerier_GetRecentUsers_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetUser provides a mock function with given fields: ctx, id
-func (_m *MockQuerier) GetUser(ctx context.Context, id pgtype.UUID) (db.User, error) {
+func (_m *MockQuerier) GetUser(ctx context.Context, id pgtype.UUID) (generated.User, error) {
 	ret := _m.Called(ctx, id)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetUser")
 	}
 
-	var r0 db.User
+	var r0 generated.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, pgtype.UUID) (db.User, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, pgtype.UUID) (generated.User, error)); ok {
 		return rf(ctx, id)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, pgtype.UUID) db.User); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, pgtype.UUID) generated.User); ok {
 		r0 = rf(ctx, id)
 	} else {
-		r0 = ret.Get(0).(db.User)
+		r0 = ret.Get(0).(generated.User)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, pgtype.UUID) error); ok {
@@ -337,33 +337,33 @@ func (_c *MockQuerier_GetUser_Call) Run(run func(ctx context.Context, id pgtype.
 	return _c
 }
 
-func (_c *MockQuerier_GetUser_Call) Return(_a0 db.User, _a1 error) *MockQuerier_GetUser_Call {
+func (_c *MockQuerier_GetUser_Call) Return(_a0 generated.User, _a1 error) *MockQuerier_GetUser_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockQuerier_GetUser_Call) RunAndReturn(run func(context.Context, pgtype.UUID) (db.User, error)) *MockQuerier_GetUser_Call {
+func (_c *MockQuerier_GetUser_Call) RunAndReturn(run func(context.Context, pgtype.UUID) (generated.User, error)) *MockQuerier_GetUser_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetUserByEmail provides a mock function with given fields: ctx, email
-func (_m *MockQuerier) GetUserByEmail(ctx context.Context, email string) (db.User, error) {
+func (_m *MockQuerier) GetUserByEmail(ctx context.Context, email string) (generated.User, error) {
 	ret := _m.Called(ctx, email)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetUserByEmail")
 	}
 
-	var r0 db.User
+	var r0 generated.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string) (db.User, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string) (generated.User, error)); ok {
 		return rf(ctx, email)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string) db.User); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string) generated.User); ok {
 		r0 = rf(ctx, email)
 	} else {
-		r0 = ret.Get(0).(db.User)
+		r0 = ret.Get(0).(generated.User)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
@@ -394,33 +394,33 @@ func (_c *MockQuerier_GetUserByEmail_Call) Run(run func(ctx context.Context, ema
 	return _c
 }
 
-func (_c *MockQuerier_GetUserByEmail_Call) Return(_a0 db.User, _a1 error) *MockQuerier_GetUserByEmail_Call {
+func (_c *MockQuerier_GetUserByEmail_Call) Return(_a0 generated.User, _a1 error) *MockQuerier_GetUserByEmail_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockQuerier_GetUserByEmail_Call) RunAndReturn(run func(context.Context, string) (db.User, error)) *MockQuerier_GetUserByEmail_Call {
+func (_c *MockQuerier_GetUserByEmail_Call) RunAndReturn(run func(context.Context, string) (generated.User, error)) *MockQuerier_GetUserByEmail_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetUserByFirebaseUID provides a mock function with given fields: ctx, firebaseUid
-func (_m *MockQuerier) GetUserByFirebaseUID(ctx context.Context, firebaseUid string) (db.User, error) {
+func (_m *MockQuerier) GetUserByFirebaseUID(ctx context.Context, firebaseUid string) (generated.User, error) {
 	ret := _m.Called(ctx, firebaseUid)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetUserByFirebaseUID")
 	}
 
-	var r0 db.User
+	var r0 generated.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string) (db.User, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string) (generated.User, error)); ok {
 		return rf(ctx, firebaseUid)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string) db.User); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string) generated.User); ok {
 		r0 = rf(ctx, firebaseUid)
 	} else {
-		r0 = ret.Get(0).(db.User)
+		r0 = ret.Get(0).(generated.User)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
@@ -451,34 +451,34 @@ func (_c *MockQuerier_GetUserByFirebaseUID_Call) Run(run func(ctx context.Contex
 	return _c
 }
 
-func (_c *MockQuerier_GetUserByFirebaseUID_Call) Return(_a0 db.User, _a1 error) *MockQuerier_GetUserByFirebaseUID_Call {
+func (_c *MockQuerier_GetUserByFirebaseUID_Call) Return(_a0 generated.User, _a1 error) *MockQuerier_GetUserByFirebaseUID_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockQuerier_GetUserByFirebaseUID_Call) RunAndReturn(run func(context.Context, string) (db.User, error)) *MockQuerier_GetUserByFirebaseUID_Call {
+func (_c *MockQuerier_GetUserByFirebaseUID_Call) RunAndReturn(run func(context.Context, string) (generated.User, error)) *MockQuerier_GetUserByFirebaseUID_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetUsersByIDs provides a mock function with given fields: ctx, dollar_1
-func (_m *MockQuerier) GetUsersByIDs(ctx context.Context, dollar_1 []pgtype.UUID) ([]db.User, error) {
+func (_m *MockQuerier) GetUsersByIDs(ctx context.Context, dollar_1 []pgtype.UUID) ([]generated.User, error) {
 	ret := _m.Called(ctx, dollar_1)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetUsersByIDs")
 	}
 
-	var r0 []db.User
+	var r0 []generated.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, []pgtype.UUID) ([]db.User, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, []pgtype.UUID) ([]generated.User, error)); ok {
 		return rf(ctx, dollar_1)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, []pgtype.UUID) []db.User); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, []pgtype.UUID) []generated.User); ok {
 		r0 = rf(ctx, dollar_1)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]db.User)
+			r0 = ret.Get(0).([]generated.User)
 		}
 	}
 
@@ -510,38 +510,38 @@ func (_c *MockQuerier_GetUsersByIDs_Call) Run(run func(ctx context.Context, doll
 	return _c
 }
 
-func (_c *MockQuerier_GetUsersByIDs_Call) Return(_a0 []db.User, _a1 error) *MockQuerier_GetUsersByIDs_Call {
+func (_c *MockQuerier_GetUsersByIDs_Call) Return(_a0 []generated.User, _a1 error) *MockQuerier_GetUsersByIDs_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockQuerier_GetUsersByIDs_Call) RunAndReturn(run func(context.Context, []pgtype.UUID) ([]db.User, error)) *MockQuerier_GetUsersByIDs_Call {
+func (_c *MockQuerier_GetUsersByIDs_Call) RunAndReturn(run func(context.Context, []pgtype.UUID) ([]generated.User, error)) *MockQuerier_GetUsersByIDs_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListUsers provides a mock function with given fields: ctx, arg
-func (_m *MockQuerier) ListUsers(ctx context.Context, arg db.ListUsersParams) ([]db.User, error) {
+func (_m *MockQuerier) ListUsers(ctx context.Context, arg generated.ListUsersParams) ([]generated.User, error) {
 	ret := _m.Called(ctx, arg)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListUsers")
 	}
 
-	var r0 []db.User
+	var r0 []generated.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, db.ListUsersParams) ([]db.User, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, generated.ListUsersParams) ([]generated.User, error)); ok {
 		return rf(ctx, arg)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, db.ListUsersParams) []db.User); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, generated.ListUsersParams) []generated.User); ok {
 		r0 = rf(ctx, arg)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]db.User)
+			r0 = ret.Get(0).([]generated.User)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, db.ListUsersParams) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, generated.ListUsersParams) error); ok {
 		r1 = rf(ctx, arg)
 	} else {
 		r1 = ret.Error(1)
@@ -557,48 +557,48 @@ type MockQuerier_ListUsers_Call struct {
 
 // ListUsers is a helper method to define mock.On call
 //   - ctx context.Context
-//   - arg db.ListUsersParams
+//   - arg generated.ListUsersParams
 func (_e *MockQuerier_Expecter) ListUsers(ctx interface{}, arg interface{}) *MockQuerier_ListUsers_Call {
 	return &MockQuerier_ListUsers_Call{Call: _e.mock.On("ListUsers", ctx, arg)}
 }
 
-func (_c *MockQuerier_ListUsers_Call) Run(run func(ctx context.Context, arg db.ListUsersParams)) *MockQuerier_ListUsers_Call {
+func (_c *MockQuerier_ListUsers_Call) Run(run func(ctx context.Context, arg generated.ListUsersParams)) *MockQuerier_ListUsers_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(db.ListUsersParams))
+		run(args[0].(context.Context), args[1].(generated.ListUsersParams))
 	})
 	return _c
 }
 
-func (_c *MockQuerier_ListUsers_Call) Return(_a0 []db.User, _a1 error) *MockQuerier_ListUsers_Call {
+func (_c *MockQuerier_ListUsers_Call) Return(_a0 []generated.User, _a1 error) *MockQuerier_ListUsers_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockQuerier_ListUsers_Call) RunAndReturn(run func(context.Context, db.ListUsersParams) ([]db.User, error)) *MockQuerier_ListUsers_Call {
+func (_c *MockQuerier_ListUsers_Call) RunAndReturn(run func(context.Context, generated.ListUsersParams) ([]generated.User, error)) *MockQuerier_ListUsers_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UpdateUser provides a mock function with given fields: ctx, arg
-func (_m *MockQuerier) UpdateUser(ctx context.Context, arg db.UpdateUserParams) (db.User, error) {
+func (_m *MockQuerier) UpdateUser(ctx context.Context, arg generated.UpdateUserParams) (generated.User, error) {
 	ret := _m.Called(ctx, arg)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdateUser")
 	}
 
-	var r0 db.User
+	var r0 generated.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, db.UpdateUserParams) (db.User, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, generated.UpdateUserParams) (generated.User, error)); ok {
 		return rf(ctx, arg)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, db.UpdateUserParams) db.User); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, generated.UpdateUserParams) generated.User); ok {
 		r0 = rf(ctx, arg)
 	} else {
-		r0 = ret.Get(0).(db.User)
+		r0 = ret.Get(0).(generated.User)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, db.UpdateUserParams) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, generated.UpdateUserParams) error); ok {
 		r1 = rf(ctx, arg)
 	} else {
 		r1 = ret.Error(1)
@@ -614,48 +614,48 @@ type MockQuerier_UpdateUser_Call struct {
 
 // UpdateUser is a helper method to define mock.On call
 //   - ctx context.Context
-//   - arg db.UpdateUserParams
+//   - arg generated.UpdateUserParams
 func (_e *MockQuerier_Expecter) UpdateUser(ctx interface{}, arg interface{}) *MockQuerier_UpdateUser_Call {
 	return &MockQuerier_UpdateUser_Call{Call: _e.mock.On("UpdateUser", ctx, arg)}
 }
 
-func (_c *MockQuerier_UpdateUser_Call) Run(run func(ctx context.Context, arg db.UpdateUserParams)) *MockQuerier_UpdateUser_Call {
+func (_c *MockQuerier_UpdateUser_Call) Run(run func(ctx context.Context, arg generated.UpdateUserParams)) *MockQuerier_UpdateUser_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(db.UpdateUserParams))
+		run(args[0].(context.Context), args[1].(generated.UpdateUserParams))
 	})
 	return _c
 }
 
-func (_c *MockQuerier_UpdateUser_Call) Return(_a0 db.User, _a1 error) *MockQuerier_UpdateUser_Call {
+func (_c *MockQuerier_UpdateUser_Call) Return(_a0 generated.User, _a1 error) *MockQuerier_UpdateUser_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockQuerier_UpdateUser_Call) RunAndReturn(run func(context.Context, db.UpdateUserParams) (db.User, error)) *MockQuerier_UpdateUser_Call {
+func (_c *MockQuerier_UpdateUser_Call) RunAndReturn(run func(context.Context, generated.UpdateUserParams) (generated.User, error)) *MockQuerier_UpdateUser_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UpdateUserByFirebaseUID provides a mock function with given fields: ctx, arg
-func (_m *MockQuerier) UpdateUserByFirebaseUID(ctx context.Context, arg db.UpdateUserByFirebaseUIDParams) (db.User, error) {
+func (_m *MockQuerier) UpdateUserByFirebaseUID(ctx context.Context, arg generated.UpdateUserByFirebaseUIDParams) (generated.User, error) {
 	ret := _m.Called(ctx, arg)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdateUserByFirebaseUID")
 	}
 
-	var r0 db.User
+	var r0 generated.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, db.UpdateUserByFirebaseUIDParams) (db.User, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, generated.UpdateUserByFirebaseUIDParams) (generated.User, error)); ok {
 		return rf(ctx, arg)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, db.UpdateUserByFirebaseUIDParams) db.User); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, generated.UpdateUserByFirebaseUIDParams) generated.User); ok {
 		r0 = rf(ctx, arg)
 	} else {
-		r0 = ret.Get(0).(db.User)
+		r0 = ret.Get(0).(generated.User)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, db.UpdateUserByFirebaseUIDParams) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, generated.UpdateUserByFirebaseUIDParams) error); ok {
 		r1 = rf(ctx, arg)
 	} else {
 		r1 = ret.Error(1)
@@ -671,24 +671,24 @@ type MockQuerier_UpdateUserByFirebaseUID_Call struct {
 
 // UpdateUserByFirebaseUID is a helper method to define mock.On call
 //   - ctx context.Context
-//   - arg db.UpdateUserByFirebaseUIDParams
+//   - arg generated.UpdateUserByFirebaseUIDParams
 func (_e *MockQuerier_Expecter) UpdateUserByFirebaseUID(ctx interface{}, arg interface{}) *MockQuerier_UpdateUserByFirebaseUID_Call {
 	return &MockQuerier_UpdateUserByFirebaseUID_Call{Call: _e.mock.On("UpdateUserByFirebaseUID", ctx, arg)}
 }
 
-func (_c *MockQuerier_UpdateUserByFirebaseUID_Call) Run(run func(ctx context.Context, arg db.UpdateUserByFirebaseUIDParams)) *MockQuerier_UpdateUserByFirebaseUID_Call {
+func (_c *MockQuerier_UpdateUserByFirebaseUID_Call) Run(run func(ctx context.Context, arg generated.UpdateUserByFirebaseUIDParams)) *MockQuerier_UpdateUserByFirebaseUID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(db.UpdateUserByFirebaseUIDParams))
+		run(args[0].(context.Context), args[1].(generated.UpdateUserByFirebaseUIDParams))
 	})
 	return _c
 }
 
-func (_c *MockQuerier_UpdateUserByFirebaseUID_Call) Return(_a0 db.User, _a1 error) *MockQuerier_UpdateUserByFirebaseUID_Call {
+func (_c *MockQuerier_UpdateUserByFirebaseUID_Call) Return(_a0 generated.User, _a1 error) *MockQuerier_UpdateUserByFirebaseUID_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockQuerier_UpdateUserByFirebaseUID_Call) RunAndReturn(run func(context.Context, db.UpdateUserByFirebaseUIDParams) (db.User, error)) *MockQuerier_UpdateUserByFirebaseUID_Call {
+func (_c *MockQuerier_UpdateUserByFirebaseUID_Call) RunAndReturn(run func(context.Context, generated.UpdateUserByFirebaseUIDParams) (generated.User, error)) *MockQuerier_UpdateUserByFirebaseUID_Call {
 	_c.Call.Return(run)
 	return _c
 }

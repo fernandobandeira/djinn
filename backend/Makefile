@@ -29,7 +29,33 @@ test-db: ## Test database operations
 
 .PHONY: sqlc-generate
 sqlc-generate: ## Generate sqlc code
-	@sqlc generate
+	@go run github.com/sqlc-dev/sqlc/cmd/sqlc@latest generate
+
+.PHONY: mockery-generate
+mockery-generate: ## Generate mocks with mockery
+	@go run github.com/vektra/mockery/v2@latest
+
+.PHONY: dataloader-generate
+dataloader-generate: ## Generate dataloader code
+	@echo "Generating dataloaders..."
+	@cd internal/dataloader && go generate ./...
+
+.PHONY: generate
+generate: sqlc-generate mockery-generate dataloader-generate ## Generate all code (sqlc, mockery, dataloaders)
+
+.PHONY: test
+test: generate ## Run all tests
+	@go test -v ./...
+
+.PHONY: test-coverage
+test-coverage: generate ## Run tests with coverage
+	@go test -v -race -coverprofile=coverage.out ./...
+	@go tool cover -html=coverage.out -o coverage.html
+
+.PHONY: lint
+lint: ## Run linting
+	@go vet ./...
+	@go run honnef.co/go/tools/cmd/staticcheck@latest ./...
 
 .PHONY: help
 help: ## Show this help message

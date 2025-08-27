@@ -370,8 +370,8 @@ func TestUserReader_GetUsers(t *testing.T) {
 		assert.Nil(t, users[1])
 		assert.Error(t, errs[0])
 		assert.Error(t, errs[1])
-		assert.Contains(t, errs[0].Error(), "invalid user ID")
-		assert.Contains(t, errs[1].Error(), "invalid user ID")
+		assert.Contains(t, errs[0].Error(), "invalid UUID")
+		assert.Contains(t, errs[1].Error(), "invalid UUID")
 	})
 }
 

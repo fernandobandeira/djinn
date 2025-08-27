@@ -104,6 +104,11 @@ func (s *Server) Start() error {
 	return nil
 }
 
+// Handler returns the HTTP handler (router)
+func (s *Server) Handler() http.Handler {
+	return s.router
+}
+
 // Shutdown gracefully shuts down the server
 func (s *Server) Shutdown(ctx context.Context) error {
 	s.logger.Info("Shutting down server...")

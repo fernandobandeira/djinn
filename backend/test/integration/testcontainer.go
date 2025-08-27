@@ -7,18 +7,18 @@ import (
 	"testing"
 	"time"
 
-	"github.com/fernandobandeira/djinn/backend/internal/database"
-	"github.com/fernandobandeira/djinn/backend/internal/database/generated"
+	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres"
+	"github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres/generated"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/modules/postgres"
+	postgrescontainer "github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
 // TestDatabase represents a test database container
 type TestDatabase struct {
-	Container *postgres.PostgresContainer
-	DB        *database.DB
+	Container *postgrescontainer.PostgresContainer
+	DB        *postgres.DB
 	URL       string
 }
 
@@ -35,12 +35,12 @@ func SetupTestDatabase(t *testing.T) *TestDatabase {
 	}
 
 	// Create PostgreSQL container
-	container, err := postgres.Run(ctx,
+	container, err := postgrescontainer.Run(ctx,
 		"postgres:16-alpine",
-		postgres.WithDatabase("djinn_test"),
-		postgres.WithUsername("postgres"),
-		postgres.WithPassword("postgres"),
-		postgres.WithInitScripts(filepath.Join(migrationsPath, "*.up.sql")),
+		postgrescontainer.WithDatabase("djinn_test"),
+		postgrescontainer.WithUsername("postgres"),
+		postgrescontainer.WithPassword("postgres"),
+		postgrescontainer.WithInitScripts(filepath.Join(migrationsPath, "*.up.sql")),
 		testcontainers.WithWaitStrategy(
 			wait.ForLog("database system is ready to accept connections").
 				WithOccurrence(2).
@@ -54,13 +54,13 @@ func SetupTestDatabase(t *testing.T) *TestDatabase {
 	require.NoError(t, err, "Failed to get connection string")
 
 	// Connect to the database
-	config := database.Config{
+	config := postgres.Config{
 		URL:             connStr,
 		MaxConnections:  10,
 		MinConnections:  2,
 		MaxConnLifetime: 5 * time.Minute,
 	}
-	db, err := database.NewConnection(config)
+	db, err := postgres.NewConnection(config)
 	require.NoError(t, err, "Failed to connect to test database")
 
 	// Verify connection

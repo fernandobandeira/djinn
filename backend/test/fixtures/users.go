@@ -1,7 +1,7 @@
 package fixtures
 
 import (
-	db "github.com/fernandobandeira/djinn/backend/internal/database/generated"
+	db "github.com/fernandobandeira/djinn/backend/internal/infrastructure/persistence/postgres/generated"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )

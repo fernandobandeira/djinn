@@ -724,6 +724,48 @@ func (m *ErrorCodeMapper) MapError(err error) ErrorCode {
 2. **Domain Autonomy**: Domain packages should own their error definitions
 3. **Infrastructure Consistency**: Shared error types ensure consistent behavior
 4. **Extensible Design**: New domains can easily adopt the established patterns
+5. **Clean Architecture Principles**: Efficient type switching outperforms pseudo-strategy patterns
+6. **Code Elimination**: Removing unused HTTP/gRPC handlers simplified the architecture significantly
+
+### Final Implementation Architecture
+
+The final implementation consists of:
+
+```go
+// Core error mapping with O(1) type switching
+func MapError(err error, ctx context.Context, logger *slog.Logger) *ErrorMapping {
+    switch e := err.(type) {
+    case *ValidationError:
+        return &ErrorMapping{...}
+    case *AuthenticationError:
+        code := mapAuthenticationReason(e.Reason) // Context-aware
+        return &ErrorMapping{...}
+    default:
+        // Handle sentinel errors efficiently
+        if mapping := mapSentinelError(err, baseExtensions); mapping != nil {
+            return mapping
+        }
+        return &ErrorMapping{Code: CodeUnknown, ...}
+    }
+}
+
+// Clean GraphQL presenter (38 lines)
+func GraphQLErrorPresenter(logger *slog.Logger) graphql.ErrorPresenterFunc {
+    return func(ctx context.Context, err error) *gqlerror.Error {
+        mapping := MapError(err, ctx, logger)
+        gqlErr.Message = mapping.Message
+        gqlErr.Extensions = mapping.Extensions
+        logger.Log(ctx, mapping.LogLevel, "GraphQL error", ...)
+        return gqlErr
+    }
+}
+```
+
+**Performance Characteristics:**
+- **O(1) error mapping** via efficient type switching
+- **Single memory allocation** per error via pre-sized extension maps
+- **38-line GraphQL presenter** (reduced from 250+ lines)
+- **Zero runtime strategy lookup overhead**
 
 ## Revision History
 
@@ -731,3 +773,4 @@ func (m *ErrorCodeMapper) MapError(err error) ErrorCode {
 - 2025-01-20: Complete rewrite with Go-specific patterns and slog integration
 - 2025-08-27: Implementation update with GraphQL-specific handling and domain patterns
 - 2025-08-27: Standardized correlation ID handling with centralized `internal/infrastructure/context` utility
+- 2025-08-27: **Architecture cleanup** - Eliminated redundant HTTP/gRPC handlers, implemented efficient type switching, removed pseudo-strategy pattern in favor of O(1) dispatch

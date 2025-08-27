@@ -81,7 +81,7 @@ func TestNewUser(t *testing.T) {
 				
 				// Check that validation errors are infrastructure ValidationError
 				if tt.checkValidation {
-					var validationErr *errors.ValidationError
+					var validationErr *infraErrors.ValidationError
 					assert.True(t, errors.As(err, &validationErr))
 					assert.NotEmpty(t, validationErr.Field)
 					assert.NotEmpty(t, validationErr.Message)
@@ -151,9 +151,9 @@ func TestUser_Update(t *testing.T) {
 			if tt.wantErr {
 				assert.Error(t, err)
 				// Check for validation error
-				var validationErr ValidationError
+				var validationErr *infraErrors.ValidationError
 				if errors.As(err, &validationErr) {
-					assert.True(t, errors.Is(err, ErrInvalidUser))
+					assert.NotEmpty(t, validationErr.Field)
 				}
 			} else {
 				assert.NoError(t, err)
@@ -218,11 +218,10 @@ func TestUser_Validate(t *testing.T) {
 			if tt.wantErr {
 				assert.Error(t, err)
 				// Check that it returns our custom ValidationError
-				var validationErr ValidationError
+				var validationErr *infraErrors.ValidationError
 				if errors.As(err, &validationErr) {
 					assert.NotEmpty(t, validationErr.Field)
-					assert.NotNil(t, validationErr.Err)
-					assert.True(t, errors.Is(err, ErrInvalidUser))
+					assert.NotEmpty(t, validationErr.Message)
 				}
 			} else {
 				assert.NoError(t, err)
