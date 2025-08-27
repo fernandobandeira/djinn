@@ -1,8 +1,10 @@
 package errors
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"testing"
 	"time"
 
@@ -294,7 +296,10 @@ func TestAuthorizationError(t *testing.T) {
 	}
 }
 
-func TestGetErrorCode(t *testing.T) {
+func TestMapError_ErrorCodeMapping(t *testing.T) {
+	logger := slog.Default()
+	ctx := context.Background()
+
 	tests := []struct {
 		name     string
 		err      error
@@ -359,7 +364,8 @@ func TestGetErrorCode(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.expected, GetErrorCode(tt.err))
+			mapping := MapError(tt.err, ctx, logger)
+			assert.Equal(t, tt.expected, mapping.Code)
 		})
 	}
 }

@@ -10,11 +10,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestErrorMapper_MapError(t *testing.T) {
-	mapper := NewErrorMapper()
+func TestMapError(t *testing.T) {
 	logger := slog.Default()
 	ctx := context.Background()
-	errorCtx := CreateErrorContext(ctx, logger)
 
 	tests := []struct {
 		name           string
@@ -83,7 +81,7 @@ func TestErrorMapper_MapError(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mapping := mapper.MapError(tt.err, errorCtx)
+			mapping := MapError(tt.err, ctx, logger)
 			
 			require.NotNil(t, mapping)
 			assert.Equal(t, tt.expectedCode, mapping.Code)
@@ -97,34 +95,27 @@ func TestErrorMapper_MapError(t *testing.T) {
 			}
 			
 			// Check standard extensions
-			assert.Equal(t, errorCtx.CorrelationID, mapping.Extensions["correlationId"])
+			assert.Contains(t, mapping.Extensions, "correlationId")
 			assert.NotEmpty(t, mapping.Extensions["timestamp"])
 		})
 	}
 }
 
-func TestErrorMapper_MessageSanitization(t *testing.T) {
-	mapper := NewErrorMapper()
+func TestMapError_MessageSanitization(t *testing.T) {
 	logger := slog.Default()
 	ctx := context.Background()
-	errorCtx := CreateErrorContext(ctx, logger)
 
 	// Test that bad request errors are sanitized
-	mapping := mapper.MapError(ErrBadRequest, errorCtx)
+	mapping := MapError(ErrBadRequest, ctx, logger)
 	assert.Equal(t, "Invalid request format", mapping.Message, "Bad request message should be sanitized")
 	
 	// Test that internal errors don't expose details
 	internalErr := &InternalError{Operation: "secret_operation", Message: "sensitive details"}
-	mapping = mapper.MapError(internalErr, errorCtx)
+	mapping = MapError(internalErr, ctx, logger)
 	assert.Equal(t, "Internal server error", mapping.Message, "Internal error details should not be exposed")
 }
 
-func TestErrorMapper_ContextAwareAuthentication(t *testing.T) {
-	mapper := NewErrorMapper()
-	logger := slog.Default()
-	ctx := context.Background()
-	errorCtx := CreateErrorContext(ctx, logger)
-
+func TestMapAuthenticationReason(t *testing.T) {
 	tests := []struct {
 		reason       string
 		expectedCode ErrorCode
@@ -137,26 +128,38 @@ func TestErrorMapper_ContextAwareAuthentication(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.reason, func(t *testing.T) {
-			authErr := &AuthenticationError{Reason: tt.reason, Message: "test"}
-			mapping := mapper.MapError(authErr, errorCtx)
-			
-			assert.Equal(t, tt.expectedCode, mapping.Code)
-			assert.Equal(t, string(tt.expectedCode), mapping.Extensions["code"])
+			code := mapAuthenticationReason(tt.reason)
+			assert.Equal(t, tt.expectedCode, code)
 		})
 	}
 }
 
-func TestCreateErrorContext(t *testing.T) {
-	ctx := context.Background()
-	logger := slog.Default()
+func TestExtendMap(t *testing.T) {
+	base := map[string]interface{}{
+		"correlationId": "test-123",
+		"timestamp":     "2023-01-01T00:00:00Z",
+	}
 	
-	errorCtx := CreateErrorContext(ctx, logger)
+	specific := map[string]interface{}{
+		"code":  "VALIDATION_FAILED",
+		"field": "email",
+		"empty": "",    // Should be filtered out
+		"nil":   nil,   // Should be filtered out
+		"zero":  0,     // Should be included
+	}
 	
-	assert.NotNil(t, errorCtx)
-	// The correlation ID might be empty if ctxutil.GetCorrelationID returns ""
-	// This is fine as long as our mapper handles it properly
-	assert.NotNil(t, errorCtx.CorrelationID) // Can be empty string
-	assert.NotEmpty(t, errorCtx.Timestamp)
-	assert.Equal(t, logger, errorCtx.Logger)
-	assert.Equal(t, ctx, errorCtx.Context)
+	result := extendMap(base, specific)
+	
+	// Check base extensions preserved
+	assert.Equal(t, "test-123", result["correlationId"])
+	assert.Equal(t, "2023-01-01T00:00:00Z", result["timestamp"])
+	
+	// Check specific extensions included
+	assert.Equal(t, "VALIDATION_FAILED", result["code"])
+	assert.Equal(t, "email", result["field"])
+	assert.Equal(t, 0, result["zero"])
+	
+	// Check filtered out values
+	assert.NotContains(t, result, "empty")
+	assert.NotContains(t, result, "nil")
 }
