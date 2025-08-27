@@ -22,7 +22,8 @@
     },
     {
       "description": "Group all Python dependencies",
-      "matchManagers": ["pip_requirements", "poetry", "pip_setup"],
+      "matchManagers": ["pep621", "pip_requirements"],
+      "matchFiles": ["pyproject.toml", "uv.lock", "requirements*.txt"],
       "groupName": "Python dependencies",
       "automerge": true,
       "automergeType": "pr",
