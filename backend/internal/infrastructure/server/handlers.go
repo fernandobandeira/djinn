@@ -37,14 +37,3 @@ func (s *Server) readinessHandler(w http.ResponseWriter, r *http.Request) {
 		"status": "ready",
 	})
 }
-
-// versionHandler returns the service version information
-func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{
-		"service":     s.config.ServiceName,
-		"version":     s.config.ServiceVersion,
-		"environment": s.config.Environment,
-	})
-}

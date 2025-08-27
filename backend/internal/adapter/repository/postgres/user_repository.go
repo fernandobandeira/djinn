@@ -3,11 +3,13 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/fernandobandeira/djinn/backend/internal/database/generated"
 	domainUser "github.com/fernandobandeira/djinn/backend/internal/domain/user"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"log/slog"
 )
@@ -64,7 +66,7 @@ func (r *UserRepository) GetByID(ctx context.Context, id uuid.UUID) (*domainUser
 
 	dbUser, err := r.queries.GetUser(ctx, pgUUID)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) || errors.Is(err, pgx.ErrNoRows) {
 			return nil, domainUser.ErrUserNotFound
 		}
 		r.logger.Error("Failed to get user from database", "user_id", id, "error", err)
@@ -78,7 +80,7 @@ func (r *UserRepository) GetByID(ctx context.Context, id uuid.UUID) (*domainUser
 func (r *UserRepository) GetByFirebaseUID(ctx context.Context, firebaseUID string) (*domainUser.User, error) {
 	dbUser, err := r.queries.GetUserByFirebaseUID(ctx, firebaseUID)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) || errors.Is(err, pgx.ErrNoRows) {
 			return nil, domainUser.ErrUserNotFound
 		}
 		r.logger.Error("Failed to get user by Firebase UID", "firebase_uid", firebaseUID, "error", err)
@@ -112,7 +114,7 @@ func (r *UserRepository) Update(ctx context.Context, user *domainUser.User) erro
 
 	dbUser, err := r.queries.UpdateUser(ctx, params)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) || errors.Is(err, pgx.ErrNoRows) {
 			return domainUser.ErrUserNotFound
 		}
 		r.logger.Error("Failed to update user in database", "user_id", user.ID, "error", err)
@@ -134,7 +136,7 @@ func (r *UserRepository) Delete(ctx context.Context, id uuid.UUID) error {
 
 	err := r.queries.DeleteUser(ctx, pgUUID)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) || errors.Is(err, pgx.ErrNoRows) {
 			return domainUser.ErrUserNotFound
 		}
 		r.logger.Error("Failed to delete user from database", "user_id", id, "error", err)
@@ -148,7 +150,8 @@ func (r *UserRepository) Delete(ctx context.Context, id uuid.UUID) error {
 func (r *UserRepository) Exists(ctx context.Context, firebaseUID string) (bool, error) {
 	_, err := r.queries.GetUserByFirebaseUID(ctx, firebaseUID)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		// Check for both sql.ErrNoRows and pgx.ErrNoRows
+		if errors.Is(err, sql.ErrNoRows) || errors.Is(err, pgx.ErrNoRows) {
 			return false, nil
 		}
 		r.logger.Error("Failed to check user existence", "firebase_uid", firebaseUID, "error", err)

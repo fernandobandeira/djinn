@@ -22,20 +22,6 @@ func HandleHTTPError(ctx context.Context, w http.ResponseWriter, err error, logg
 
 	// Check for specific error types
 	switch {
-	case errors.Is(err, ErrUserNotFound):
-		statusCode = http.StatusNotFound
-		errResp = NewErrorResponse(CodeUserNotFound, "User not found", correlationID)
-		logger.InfoContext(ctx, "user not found",
-			"correlation_id", correlationID,
-			"error", err.Error())
-
-	case errors.Is(err, ErrResourceNotFound):
-		statusCode = http.StatusNotFound
-		errResp = NewErrorResponse(CodeNotFound, "Resource not found", correlationID)
-		logger.InfoContext(ctx, "resource not found",
-			"correlation_id", correlationID,
-			"error", err.Error())
-
 	case errors.Is(err, ErrInvalidCredentials):
 		statusCode = http.StatusUnauthorized
 		errResp = NewErrorResponse(CodeInvalidCredentials, "Invalid credentials", correlationID)
@@ -48,18 +34,17 @@ func HandleHTTPError(ctx context.Context, w http.ResponseWriter, err error, logg
 		logger.InfoContext(ctx, "token expired",
 			"correlation_id", correlationID)
 
+	case errors.Is(err, ErrUnauthorized):
+		statusCode = http.StatusUnauthorized
+		errResp = NewErrorResponse(CodeUnauthorized, "Unauthorized", correlationID)
+		logger.InfoContext(ctx, "unauthorized access",
+			"correlation_id", correlationID)
+
 	case errors.Is(err, ErrPermissionDenied):
 		statusCode = http.StatusForbidden
 		errResp = NewErrorResponse(CodePermissionDenied, "Permission denied", correlationID)
 		logger.InfoContext(ctx, "permission denied",
 			"correlation_id", correlationID)
-
-	case errors.Is(err, ErrAlreadyExists):
-		statusCode = http.StatusConflict
-		errResp = NewErrorResponse(CodeAlreadyExists, "Resource already exists", correlationID)
-		logger.InfoContext(ctx, "resource already exists",
-			"correlation_id", correlationID,
-			"error", err.Error())
 
 	case errors.Is(err, ErrRateLimited):
 		statusCode = http.StatusTooManyRequests
@@ -67,10 +52,10 @@ func HandleHTTPError(ctx context.Context, w http.ResponseWriter, err error, logg
 		logger.WarnContext(ctx, "rate limit exceeded",
 			"correlation_id", correlationID)
 
-	case errors.Is(err, ErrCircuitOpen):
+	case errors.Is(err, ErrServiceUnavailable):
 		statusCode = http.StatusServiceUnavailable
-		errResp = NewErrorResponse(CodeCircuitOpen, "Service temporarily unavailable", correlationID)
-		logger.ErrorContext(ctx, "circuit breaker open",
+		errResp = NewErrorResponse(CodeServiceUnavailable, "Service temporarily unavailable", correlationID)
+		logger.ErrorContext(ctx, "service unavailable",
 			"correlation_id", correlationID)
 
 	default:

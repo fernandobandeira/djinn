@@ -25,7 +25,7 @@ func NewUpdateUserHandler(userService *user.Service, logger *slog.Logger) *Updat
 }
 
 // Handle executes the update user command
-// Input validation is guaranteed by the DTO constructor
+// Validation happens in the domain entity's Update method
 func (h *UpdateUserHandler) Handle(ctx context.Context, id string, input dto.UpdateUserInput) (*dto.UserDTO, error) {
 	h.logger.Info("Updating user", "user_id", id)
 
@@ -36,8 +36,7 @@ func (h *UpdateUserHandler) Handle(ctx context.Context, id string, input dto.Upd
 		return nil, fmt.Errorf("invalid user ID: %w", err)
 	}
 
-	// Input is already validated by DTO constructor
-	// Prepare update values
+	// Prepare update values - validation happens in domain
 	var email, name string
 	if input.Email != nil {
 		email = *input.Email

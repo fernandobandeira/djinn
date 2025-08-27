@@ -32,7 +32,6 @@ const (
 
 	// External Service (502/503)
 	CodeExternalServiceError ErrorCode = "EXTERNAL_SERVICE_ERROR"
-	CodeCircuitOpen         ErrorCode = "CIRCUIT_OPEN"
 	CodeServiceUnavailable  ErrorCode = "SERVICE_UNAVAILABLE"
 
 	// Internal (500)

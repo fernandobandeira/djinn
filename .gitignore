@@ -66,6 +66,8 @@ data/
 # Go binaries
 backend/api
 backend/cmd/api/api
+backend/server
+backend/cmd/server/server
 *.exe
 
 # Test coverage

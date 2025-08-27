@@ -6,33 +6,18 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/fernandobandeira/djinn/backend/internal/graph/generated"
 )
 
-// Empty is the resolver for the _empty field.
-func (r *mutationResolver) Empty(ctx context.Context) (*string, error) {
-	panic(fmt.Errorf("not implemented: Empty - _empty"))
-}
-
 // Health is the resolver for the health field.
 func (r *queryResolver) Health(ctx context.Context) (string, error) {
-	// Check if database is available
-	if r.DB != nil {
-		if err := r.DB.Ping(ctx); err != nil {
-			r.Logger.Error("Database health check failed", "error", err)
-			return "", fmt.Errorf("database unhealthy: %w", err)
-		}
-	}
+	// Simple health check - returns "healthy"
+	// Database readiness is checked in the /ready endpoint
 	return "healthy", nil
 }
-
-// Mutation returns generated.MutationResolver implementation.
-func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
-type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }

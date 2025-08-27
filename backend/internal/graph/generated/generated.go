@@ -51,7 +51,6 @@ type ComplexityRoot struct {
 	Mutation struct {
 		CreateUser func(childComplexity int, input dto.CreateUserInput) int
 		DeleteUser func(childComplexity int, id string) int
-		Empty      func(childComplexity int) int
 		UpdateUser func(childComplexity int, id string, input dto.UpdateUserInput) int
 	}
 
@@ -79,7 +78,6 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	Empty(ctx context.Context) (*string, error)
 	CreateUser(ctx context.Context, input dto.CreateUserInput) (*dto.UserDTO, error)
 	UpdateUser(ctx context.Context, id string, input dto.UpdateUserInput) (*dto.UserDTO, error)
 	DeleteUser(ctx context.Context, id string) (bool, error)
@@ -133,13 +131,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.DeleteUser(childComplexity, args["id"].(string)), true
-
-	case "Mutation._empty":
-		if e.complexity.Mutation.Empty == nil {
-			break
-		}
-
-		return e.complexity.Mutation.Empty(childComplexity), true
 
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
@@ -369,12 +360,6 @@ scalar Time
 type Query {
   # Health check query
   health: String!
-}
-
-# Root mutation type
-type Mutation {
-  # Placeholder for mutations - extended in other files
-  _empty: String
 }`, BuiltIn: false},
 	{Name: "../schema/user.graphql", Input: `# User Management Schema
 
@@ -416,8 +401,8 @@ extend type Query {
   me: User
 }
 
-# Extend root mutation with user mutations
-extend type Mutation {
+# Root mutation type with user mutations
+type Mutation {
   # Create a new user
   createUser(input: CreateUserInput!): User!
   
@@ -574,47 +559,6 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
-
-func (ec *executionContext) _Mutation__empty(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation__empty(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().Empty(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation__empty(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
 
 func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createUser(ctx, field)
@@ -3642,10 +3586,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
-		case "_empty":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation__empty(ctx, field)
-			})
 		case "createUser":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createUser(ctx, field)

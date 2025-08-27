@@ -38,8 +38,8 @@ extend type Query {
   me: User
 }
 
-# Extend root mutation with user mutations
-extend type Mutation {
+# Root mutation type with user mutations
+type Mutation {
   # Create a new user
   createUser(input: CreateUserInput!): User!
   

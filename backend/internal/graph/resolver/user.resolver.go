@@ -9,34 +9,46 @@ import (
 	"fmt"
 
 	"github.com/fernandobandeira/djinn/backend/internal/application/dto"
+	"github.com/fernandobandeira/djinn/backend/internal/graph/generated"
 )
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input dto.CreateUserInput) (*dto.UserDTO, error) {
-	panic(fmt.Errorf("not implemented: CreateUser - createUser"))
+	return r.CreateUserHandler.Handle(ctx, input)
 }
 
 // UpdateUser is the resolver for the updateUser field.
 func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input dto.UpdateUserInput) (*dto.UserDTO, error) {
-	panic(fmt.Errorf("not implemented: UpdateUser - updateUser"))
+	return r.UpdateUserHandler.Handle(ctx, id, input)
 }
 
 // DeleteUser is the resolver for the deleteUser field.
 func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteUser - deleteUser"))
+	err := r.DeleteUserHandler.Handle(ctx, id)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, id string) (*dto.UserDTO, error) {
-	panic(fmt.Errorf("not implemented: User - user"))
+	return r.GetUserHandler.Handle(ctx, id)
 }
 
 // UserByFirebaseUID is the resolver for the userByFirebaseUid field.
 func (r *queryResolver) UserByFirebaseUID(ctx context.Context, firebaseUID string) (*dto.UserDTO, error) {
-	panic(fmt.Errorf("not implemented: UserByFirebaseUID - userByFirebaseUid"))
+	return r.GetUserByFirebaseUIDHandler.Handle(ctx, firebaseUID)
 }
 
 // Me is the resolver for the me field.
 func (r *queryResolver) Me(ctx context.Context) (*dto.UserDTO, error) {
-	panic(fmt.Errorf("not implemented: Me - me"))
+	// TODO: Extract Firebase UID from context (requires auth middleware)
+	// For now, returning an error
+	return nil, fmt.Errorf("authentication required: me query requires auth middleware implementation")
 }
+
+// Mutation returns generated.MutationResolver implementation.
+func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
+
+type mutationResolver struct{ *Resolver }

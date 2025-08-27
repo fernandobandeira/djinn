@@ -32,12 +32,12 @@ func registerCustomValidations(v *validator.Validate) {
 func validateFirebaseUID(fl validator.FieldLevel) bool {
 	uid := fl.Field().String()
 	// Firebase UIDs are typically 28 characters but can vary
-	// They contain alphanumeric characters
-	if len(uid) < 20 || len(uid) > 128 {
+	// They contain alphanumeric characters, underscores, and hyphens
+	if len(uid) < 1 || len(uid) > 128 {
 		return false
 	}
 	for _, r := range uid {
-		if !((r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9')) {
+		if !((r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '_' || r == '-') {
 			return false
 		}
 	}

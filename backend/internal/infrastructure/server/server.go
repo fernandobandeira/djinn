@@ -74,14 +74,8 @@ func (s *Server) mountRoutes() {
 	s.router.Get("/health", s.healthHandler)
 	s.router.Get("/ready", s.readinessHandler)
 	
-	// API routes
-	s.router.Route("/api", func(r chi.Router) {
-		// GraphQL endpoint
-		r.Handle("/graphql", s.graphqlHandler())
-		
-		// Version endpoint
-		r.Get("/version", s.versionHandler)
-	})
+	// GraphQL endpoint
+	s.router.Handle("/graphql", s.graphqlHandler())
 	
 	// GraphQL playground (development only)
 	if s.config.EnablePlayground {

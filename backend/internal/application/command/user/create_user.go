@@ -24,15 +24,14 @@ func NewCreateUserHandler(userService *user.Service, logger *slog.Logger) *Creat
 }
 
 // Handle executes the create user command
-// Input validation is guaranteed by the DTO constructor
+// Validation happens in the domain service when creating the domain entity
 func (h *CreateUserHandler) Handle(ctx context.Context, input dto.CreateUserInput) (*dto.UserDTO, error) {
 	h.logger.Info("Creating user",
 		"firebase_uid", input.FirebaseUID,
 		"email", input.Email,
 	)
 
-	// Input is already validated by DTO constructor
-	// Execute domain service
+	// Pass input to domain service - validation happens there
 	domainUser, err := h.userService.CreateUser(
 		ctx,
 		input.FirebaseUID,

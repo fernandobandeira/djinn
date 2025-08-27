@@ -12,29 +12,19 @@ type contextKey string
 const (
 	// CorrelationIDKey is the context key for correlation ID
 	CorrelationIDKey contextKey = "correlation_id"
-	// RequestIDKey is maintained for backward compatibility
-	RequestIDKey contextKey = "requestID"
 )
 
 // RequestID middleware adds a unique correlation ID to each request
-// It checks for X-Correlation-ID first, then X-Request-ID for backward compatibility
 func RequestID(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		correlationID := r.Header.Get("X-Correlation-ID")
 		if correlationID == "" {
-			correlationID = r.Header.Get("X-Request-ID")
-		}
-		if correlationID == "" {
 			correlationID = uuid.New().String()
 		}
 		
-		// Set both keys for backward compatibility
 		ctx := context.WithValue(r.Context(), CorrelationIDKey, correlationID)
-		ctx = context.WithValue(ctx, RequestIDKey, correlationID)
 		
-		// Set both headers for compatibility
 		w.Header().Set("X-Correlation-ID", correlationID)
-		w.Header().Set("X-Request-ID", correlationID)
 		
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
