@@ -2,5 +2,51 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
-  ]
+  ],
+  "packageRules": [
+    {
+      "description": "Group all Go dependencies",
+      "matchManagers": ["gomod"],
+      "groupName": "Go dependencies",
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    },
+    {
+      "description": "Group all npm dependencies",
+      "matchManagers": ["npm"],
+      "groupName": "npm dependencies",
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    },
+    {
+      "description": "Group Docker base images",
+      "matchManagers": ["dockerfile"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "Docker base images",
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    },
+    {
+      "description": "Auto-merge patch and minor updates",
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    },
+    {
+      "description": "Manual review for major updates",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "groupName": "Major updates",
+      "reviewersFromCodeOwners": true
+    }
+  ],
+  "schedule": ["every weekend"],
+  "timezone": "America/Sao_Paulo",
+  "labels": ["dependencies"],
+  "assigneesFromCodeOwners": true,
+  "reviewersFromCodeOwners": true
 }
