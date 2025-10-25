@@ -41,7 +41,7 @@ services:
 
   postgres:
     # Using PostgreSQL 18 beta for native UUIDv7 support
-    image: postgres:18beta3-alpine
+    image: postgres:18-alpine
     container_name: djinn-postgres
     environment:
       POSTGRES_DB: djinn
