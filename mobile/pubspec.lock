@@ -85,66 +85,66 @@ packages:
     dependency: "direct main"
     description:
       name: drift
-      sha256: "6aaea757f53bb035e8a3baedf3d1d53a79d6549a6c13d84f7546509da9372c7c"
+      sha256: "3669e1b68d7bffb60192ac6ba9fd2c0306804d7a00e5879f6364c69ecde53a7f"
       url: "https://pub.dev"
     source: hosted
-    version: "2.28.1"
+    version: "2.30.0"
   drift_flutter:
     dependency: "direct main"
     description:
       name: drift_flutter
-      sha256: "0bc2f1dde59e59cedde0df67a4ff7bd8f0d42274f18b50bf7e7dae7ca3d77801"
+      sha256: c07120854742a0cae2f7501a0da02493addde550db6641d284983c08762e60a7
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.0"
+    version: "0.2.8"
   fake_async:
     dependency: transitive
     description:
       name: fake_async
-      sha256: "6a95e56b2449df2273fd8c45a662d6947ce1ebb7aafe80e550a3f68297f3cacc"
+      sha256: "5368f224a74523e8d2e7399ea1638b37aecfca824a3cc4dfdf77bf1fa905ac44"
       url: "https://pub.dev"
     source: hosted
-    version: "1.3.2"
+    version: "1.3.3"
   ferry:
     dependency: "direct main"
     description:
       name: ferry
-      sha256: "84928943cc7786c1a1c875a1dba876a2c396d4397e55fba75671d9dc7d4dec88"
+      sha256: cb7e80fdc81ee24f1861bc8d5c176590cc317ac7052718ed0305cda129afc9e6
       url: "https://pub.dev"
     source: hosted
-    version: "0.16.0+1"
+    version: "0.16.1+2"
   ferry_cache:
     dependency: transitive
     description:
       name: ferry_cache
-      sha256: dc0e47dd37e0cb355f36c8d88bb2ebfccd78afeb3567597378073881bdac3280
+      sha256: "6716f5a81371d2f3a67ad7ec592af3747365a8616b63e48631690f0673a58bbc"
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.0+1"
+    version: "0.10.1"
   ferry_exec:
     dependency: transitive
     description:
       name: ferry_exec
-      sha256: "40eaf60a06ba0df21e54bc9ce22a97f89b10449b929ea77d5b5ab28c3781ee65"
+      sha256: f7fead110937ef05031d7f81d476a65c0a813193865f027d86ee3c89c21b755c
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.1"
+    version: "0.7.0"
   ferry_hive_store:
     dependency: "direct main"
     description:
       name: ferry_hive_store
-      sha256: "62a8329dabb2c3f79b8b5161e17a0c9d4e5d570579ea32ea555c78ae2334e095"
+      sha256: "83f8d6341dccda0ea2fe905ad5fbc5603e42ddbfd96ddc88412454108ad17a40"
       url: "https://pub.dev"
     source: hosted
-    version: "0.5.2"
+    version: "0.6.0+1"
   ferry_store:
     dependency: transitive
     description:
       name: ferry_store
-      sha256: "8a1d63aa72fe3f8322ffc7f64963b7c107f74b31c05cb7bddad226f0466538fb"
+      sha256: "04edad00113cf209407f66cbe61938301fc807667d6d814871785120017fba51"
       url: "https://pub.dev"
     source: hosted
-    version: "0.5.3+1"
+    version: "0.6.1"
   ffi:
     dependency: transitive
     description:
@@ -276,26 +276,26 @@ packages:
     dependency: transitive
     description:
       name: leak_tracker
-      sha256: c35baad643ba394b40aac41080300150a4f08fd0fd6a10378f8f7c6bc161acec
+      sha256: "33e2e26bdd85a0112ec15400c8cbffea70d0f9c3407491f672a2fad47915e2de"
       url: "https://pub.dev"
     source: hosted
-    version: "10.0.8"
+    version: "11.0.2"
   leak_tracker_flutter_testing:
     dependency: transitive
     description:
       name: leak_tracker_flutter_testing
-      sha256: f8b613e7e6a13ec79cfdc0e97638fddb3ab848452eff057653abd3edba760573
+      sha256: "1dbc140bb5a23c75ea9c4811222756104fbcd1a27173f0c34ca01e16bea473c1"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.9"
+    version: "3.0.10"
   leak_tracker_testing:
     dependency: transitive
     description:
       name: leak_tracker_testing
-      sha256: "6ba465d5d76e67ddf503e1161d1f4a6bc42306f9d66ca1e8f079a47290fb06d3"
+      sha256: "8d5a2d49f4a66b49744b23b018848400d23e54caf9463f4eb20df3eb8acb2eb1"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.1"
+    version: "3.0.2"
   lints:
     dependency: transitive
     description:
@@ -332,18 +332,18 @@ packages:
     dependency: transitive
     description:
       name: meta
-      sha256: e3641ec5d63ebf0d9b41bd43201a66e3fc79a65db5f61fc181f04cd27aab950c
+      sha256: "23f08335362185a5ea2ad3a4e597f1375e78bce8a040df5c600c8d3552ef2394"
       url: "https://pub.dev"
     source: hosted
-    version: "1.16.0"
+    version: "1.17.0"
   normalize:
     dependency: transitive
     description:
       name: normalize
-      sha256: f78bf0552b9640c76369253f0b8fdabad4f3fbfc06bdae9359e71bee9a5b071b
+      sha256: "703f0af9e6f43a5a71536e977b945238bc89f1a941347e7ba467865a20cc1a9f"
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.1"
+    version: "0.10.0"
   path:
     dependency: "direct main"
     description:
@@ -436,10 +436,10 @@ packages:
     dependency: transitive
     description:
       name: rxdart
-      sha256: "0c7c0cedd93788d996e33041ffecda924cc54389199cde4e6a34b440f50044cb"
+      sha256: "5c3004a4a8dbb94bd4bf5412a4def4acdaa12e12f269737a5751369e12d1a962"
       url: "https://pub.dev"
     source: hosted
-    version: "0.27.7"
+    version: "0.28.0"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -513,10 +513,10 @@ packages:
     dependency: transitive
     description:
       name: test_api
-      sha256: fb31f383e2ee25fbbfe06b40fe21e1e458d14080e3c67e7ba0acfde4df4e0bbd
+      sha256: ab2726c1a94d3176a45960b6234466ec367179b87dd74f1611adb1f3b5fb9d55
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.4"
+    version: "0.7.7"
   typed_data:
     dependency: transitive
     description:
@@ -529,10 +529,10 @@ packages:
     dependency: transitive
     description:
       name: vector_math
-      sha256: "80b3257d1492ce4d091729e3a67a60407d227c27241d6927be0130c98e741803"
+      sha256: d530bd74fea330e6e364cda7a85019c434070188383e1cd8d9777ee586914c5b
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.4"
+    version: "2.2.0"
   vm_service:
     dependency: transitive
     description:
@@ -566,5 +566,5 @@ packages:
     source: hosted
     version: "3.1.3"
 sdks:
-  dart: ">=3.7.0 <4.0.0"
+  dart: ">=3.8.0-0 <4.0.0"
   flutter: ">=3.29.0"
