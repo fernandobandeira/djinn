@@ -1,0 +1,341 @@
+backend_architecture_standards:
+
+  general_principles:
+    architecture_patterns:
+      layered_architecture: "separate_presentation_business_data_layers"
+      clean_architecture: "dependency_inversion_and_boundaries"
+      hexagonal_architecture: "ports_and_adapters_pattern"
+      microservices: "consider_when_team_and_system_complexity_justify"
+    
+    design_principles:
+      solid_principles: "single_responsibility_open_closed_liskov_interface_dependency"
+      dry_principle: "dont_repeat_yourself_but_avoid_premature_abstraction"
+      kiss_principle: "keep_it_simple_and_straightforward"
+      yagni_principle: "you_arent_gonna_need_it_avoid_over_engineering"
+    
+    error_handling:
+      strategy: "fail_fast_and_provide_meaningful_error_messages"
+      logging: "structured_logging_with_correlation_ids"
+      monitoring: "comprehensive_monitoring_and_alerting"
+      recovery: "graceful_degradation_and_circuit_breakers"
+
+  technology_stack:
+    programming_languages:
+      python:
+        version: "3.11+"
+        frameworks:
+          web: "fastapi_for_apis_django_for_full_stack"
+          async: "asyncio_for_async_operations"
+          data: "pandas_numpy_for_data_processing"
+          testing: "pytest_for_testing_framework"
+        
+        best_practices:
+          - "use_type_hints_for_better_code_clarity"
+          - "follow_pep8_style_guidelines"
+          - "use_virtual_environments_for_isolation"
+          - "implement_proper_exception_handling"
+      
+      javascript_nodejs:
+        version: "18+"
+        frameworks:
+          web: "express_fastify_for_web_servers"
+          testing: "jest_for_unit_testing"
+          orm: "prisma_or_typeorm_for_database_access"
+        
+        best_practices:
+          - "use_typescript_for_type_safety"
+          - "implement_proper_async_await_patterns"
+          - "use_eslint_and_prettier_for_code_quality"
+          - "handle_unhandled_promise_rejections"
+      
+      java:
+        version: "17+"
+        frameworks:
+          web: "spring_boot_for_web_applications"
+          testing: "junit5_for_unit_testing"
+          orm: "hibernate_or_jpa_for_database_access"
+        
+        best_practices:
+          - "use_dependency_injection_properly"
+          - "implement_proper_exception_handling"
+          - "follow_java_coding_conventions"
+          - "use_maven_or_gradle_for_build_management"
+
+  api_design:
+    rest_api:
+      design_principles:
+        - "resource_based_urls_not_action_based"
+        - "use_http_methods_semantically"
+        - "stateless_communication"
+        - "consistent_response_formats"
+      
+      versioning:
+        approach: "url_path_versioning_preferred"
+        format: "/api/v1/resource"
+        deprecation: "gradual_deprecation_with_sunset_headers"
+        compatibility: "maintain_backward_compatibility_when_possible"
+      
+      documentation:
+        standard: "openapi_3_0_specification"
+        tools: "swagger_ui_for_interactive_documentation"
+        examples: "provide_request_response_examples"
+        testing: "contract_testing_for_api_consistency"
+    
+    graphql:
+      schema_design:
+        - "design_schema_first_approach"
+        - "use_relay_connection_pattern_for_pagination"
+        - "implement_proper_error_handling"
+        - "avoid_n_plus_1_query_problems"
+      
+      security:
+        - "implement_query_complexity_analysis"
+        - "set_query_depth_limits"
+        - "use_query_whitelisting_for_production"
+        - "implement_rate_limiting"
+    
+    authentication_authorization:
+      authentication:
+        standards: "oauth2_openid_connect_for_sso"
+        tokens: "jwt_with_short_expiration_and_refresh"
+        storage: "secure_token_storage_and_transmission"
+        mfa: "multi_factor_authentication_for_sensitive_operations"
+      
+      authorization:
+        model: "rbac_or_abac_based_on_complexity"
+        implementation: "policy_based_authorization"
+        granularity: "resource_level_permissions"
+        audit: "comprehensive_authorization_audit_trails"
+
+  data_access:
+    database_patterns:
+      repository_pattern: "abstraction_layer_over_data_access"
+      unit_of_work: "transaction_management_pattern"
+      active_record: "simple_crud_operations_pattern"
+      data_mapper: "complex_domain_models_pattern"
+    
+    orm_best_practices:
+      query_optimization:
+        - "use_eager_loading_to_avoid_n_plus_1"
+        - "implement_query_result_caching"
+        - "monitor_query_performance"
+        - "use_database_indexes_effectively"
+      
+      transaction_management:
+        - "keep_transactions_short_and_focused"
+        - "handle_transaction_rollback_properly"
+        - "avoid_nested_transactions_when_possible"
+        - "implement_optimistic_locking_for_concurrency"
+    
+    caching_strategy:
+      levels:
+        application: "in_memory_caching_for_frequently_accessed_data"
+        distributed: "redis_memcached_for_shared_cache"
+        database: "query_result_caching"
+        cdn: "static_content_caching"
+      
+      cache_invalidation:
+        - "time_based_expiration_for_stable_data"
+        - "event_based_invalidation_for_dynamic_data"
+        - "cache_warming_strategies"
+        - "cache_aside_pattern_for_flexibility"
+
+  security:
+    input_validation:
+      approach: "validate_all_inputs_at_boundaries"
+      sanitization: "sanitize_inputs_to_prevent_injection"
+      type_checking: "strong_typing_and_schema_validation"
+      rate_limiting: "implement_rate_limiting_per_user_endpoint"
+    
+    data_protection:
+      encryption:
+        at_rest: "encrypt_sensitive_data_in_database"
+        in_transit: "use_tls_for_all_communications"
+        application: "encrypt_sensitive_fields_in_application_layer"
+      
+      secrets_management:
+        - "never_hardcode_secrets_in_source_code"
+        - "use_secret_management_services"
+        - "rotate_secrets_regularly"
+        - "audit_secret_access_and_usage"
+    
+    security_headers:
+      required_headers:
+        - "strict_transport_security"
+        - "content_security_policy"
+        - "x_frame_options"
+        - "x_content_type_options"
+        - "referrer_policy"
+
+  performance:
+    application_performance:
+      optimization_strategies:
+        - "profile_application_performance_regularly"
+        - "optimize_database_queries_and_indexes"
+        - "implement_connection_pooling"
+        - "use_async_processing_for_long_operations"
+      
+      caching_strategies:
+        - "cache_expensive_computations"
+        - "implement_response_caching"
+        - "use_etag_headers_for_conditional_requests"
+        - "cache_static_resources_with_long_expiry"
+      
+      scaling_patterns:
+        horizontal: "stateless_application_design_for_horizontal_scaling"
+        vertical: "optimize_resource_usage_before_scaling_up"
+        load_balancing: "distribute_load_across_multiple_instances"
+        auto_scaling: "implement_auto_scaling_based_on_metrics"
+    
+    monitoring_and_observability:
+      metrics:
+        application: "response_time_throughput_error_rate"
+        business: "user_engagement_conversion_rates"
+        infrastructure: "cpu_memory_disk_network_usage"
+        custom: "domain_specific_metrics"
+      
+      logging:
+        structured: "json_formatted_logs_with_correlation_ids"
+        levels: "appropriate_log_levels_debug_info_warn_error"
+        centralized: "centralized_logging_with_elk_stack_or_similar"
+        retention: "appropriate_log_retention_policies"
+      
+      tracing:
+        distributed: "implement_distributed_tracing"
+        correlation: "trace_requests_across_service_boundaries"
+        sampling: "intelligent_sampling_for_performance"
+        analysis: "use_tracing_for_performance_analysis"
+
+  testing:
+    testing_pyramid:
+      unit_tests:
+        coverage: "80_percent_code_coverage_minimum"
+        isolation: "test_in_isolation_with_mocks"
+        speed: "fast_execution_under_few_seconds"
+        focus: "business_logic_and_edge_cases"
+      
+      integration_tests:
+        scope: "test_component_interactions"
+        database: "use_test_database_or_containers"
+        external_services: "mock_external_dependencies"
+        scenarios: "happy_path_and_error_scenarios"
+      
+      end_to_end_tests:
+        scope: "critical_business_workflows"
+        environment: "production_like_test_environment"
+        data: "realistic_test_data_sets"
+        maintenance: "keep_e2e_tests_maintainable"
+    
+    test_data_management:
+      approach: "test_data_builders_and_factories"
+      isolation: "isolated_test_data_per_test"
+      cleanup: "clean_up_test_data_after_tests"
+      realistic: "use_production_like_test_data"
+
+  deployment_and_operations:
+    containerization:
+      docker:
+        images: "use_official_base_images"
+        layers: "optimize_docker_layers_for_caching"
+        security: "scan_images_for_vulnerabilities"
+        size: "minimize_image_size"
+      
+      orchestration:
+        kubernetes: "use_kubernetes_for_container_orchestration"
+        health_checks: "implement_health_and_readiness_checks"
+        resource_limits: "set_appropriate_resource_limits"
+        scaling: "implement_horizontal_pod_autoscaling"
+    
+    ci_cd_pipeline:
+      stages:
+        - "source_code_checkout"
+        - "dependency_installation"
+        - "code_quality_checks"
+        - "unit_and_integration_tests"
+        - "security_scanning"
+        - "build_and_package"
+        - "deployment_to_environments"
+      
+      quality_gates:
+        - "code_coverage_thresholds"
+        - "security_vulnerability_checks"
+        - "performance_regression_tests"
+        - "integration_test_success"
+    
+    environment_management:
+      environments:
+        development: "local_development_with_docker_compose"
+        testing: "automated_testing_environment"
+        staging: "production_like_environment"
+        production: "high_availability_production_environment"
+      
+      configuration:
+        - "externalize_configuration_from_code"
+        - "use_environment_variables_for_configuration"
+        - "implement_configuration_validation"
+        - "secure_sensitive_configuration_values"
+
+  messaging_and_communication:
+    synchronous_communication:
+      http_clients:
+        - "implement_timeouts_and_retries"
+        - "use_connection_pooling"
+        - "handle_network_failures_gracefully"
+        - "implement_circuit_breaker_pattern"
+      
+      service_discovery:
+        - "use_service_discovery_for_dynamic_environments"
+        - "implement_health_checks_for_service_registry"
+        - "handle_service_unavailability"
+    
+    asynchronous_communication:
+      message_queues:
+        patterns: "publish_subscribe_and_point_to_point"
+        reliability: "message_persistence_and_acknowledgments"
+        ordering: "handle_message_ordering_requirements"
+        idempotency: "design_for_idempotent_message_processing"
+      
+      event_driven_architecture:
+        - "design_events_as_immutable_facts"
+        - "implement_event_sourcing_when_appropriate"
+        - "handle_eventual_consistency"
+        - "implement_saga_pattern_for_distributed_transactions"
+
+  error_handling_and_resilience:
+    error_handling:
+      exceptions:
+        - "use_specific_exception_types"
+        - "include_meaningful_error_messages"
+        - "log_errors_with_sufficient_context"
+        - "dont_expose_sensitive_information_in_errors"
+      
+      http_status_codes:
+        - "use_appropriate_http_status_codes"
+        - "provide_consistent_error_response_format"
+        - "include_error_codes_for_client_handling"
+    
+    resilience_patterns:
+      circuit_breaker: "prevent_cascading_failures"
+      retry_logic: "exponential_backoff_with_jitter"
+      timeout: "appropriate_timeouts_for_operations"
+      bulkhead: "isolate_critical_resources"
+      graceful_degradation: "provide_fallback_functionality"
+
+  documentation:
+    code_documentation:
+      comments: "explain_why_not_what_in_comments"
+      docstrings: "comprehensive_function_and_class_documentation"
+      readme: "clear_setup_and_usage_instructions"
+      architecture: "document_architectural_decisions"
+    
+    api_documentation:
+      specification: "machine_readable_api_specifications"
+      examples: "realistic_request_response_examples"
+      authentication: "clear_authentication_documentation"
+      errors: "document_error_responses_and_codes"
+    
+    operational_documentation:
+      runbooks: "step_by_step_operational_procedures"
+      troubleshooting: "common_issues_and_solutions"
+      monitoring: "guide_for_monitoring_and_alerting"
+      deployment: "deployment_and_rollback_procedures"

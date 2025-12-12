@@ -1,0 +1,249 @@
+frontend_architecture_standards:
+
+  general_principles:
+    component_architecture:
+      approach: "component_based_architecture"
+      reusability: "design_for_reuse_across_applications"
+      composition: "favor_composition_over_inheritance"
+      separation: "separate_presentation_from_business_logic"
+    
+    state_management:
+      complexity_threshold: "local_state_for_simple_global_for_complex"
+      immutability: "treat_state_as_immutable"
+      single_source_of_truth: "centralize_shared_state"
+      predictability: "make_state_changes_predictable"
+    
+    performance:
+      loading_strategy: "lazy_load_non_critical_resources"
+      bundle_optimization: "code_splitting_and_tree_shaking"
+      caching: "implement_appropriate_caching_strategies"
+      rendering: "optimize_rendering_performance"
+
+  technology_stack:
+    javascript_frameworks:
+      react:
+        version: "18+"
+        patterns:
+          hooks: "prefer_hooks_over_class_components"
+          context: "use_context_for_theme_and_auth_not_frequent_updates"
+          error_boundaries: "implement_error_boundaries_for_robustness"
+          suspense: "use_suspense_for_async_operations"
+        
+        state_management:
+          local_state: "useState_and_useReducer_for_component_state"
+          global_state: "zustand_or_redux_toolkit_for_complex_state"
+          server_state: "react_query_or_swr_for_server_state"
+          forms: "react_hook_form_for_form_management"
+      
+      vue:
+        version: "3+"
+        patterns:
+          composition_api: "prefer_composition_api_over_options_api"
+          teleport: "use_teleport_for_portal_functionality"
+          suspense: "use_suspense_for_async_components"
+        
+        state_management:
+          local_state: "ref_and_reactive_for_component_state"
+          global_state: "pinia_for_global_state_management"
+          forms: "vee_validate_for_form_validation"
+      
+      angular:
+        version: "16+"
+        patterns:
+          standalone_components: "use_standalone_components_for_new_development"
+          signals: "adopt_signals_for_reactive_programming"
+          lazy_loading: "implement_lazy_loading_for_feature_modules"
+        
+        state_management:
+          services: "use_services_for_business_logic"
+          ngrx: "use_ngrx_for_complex_state_management"
+          reactive_forms: "prefer_reactive_forms_over_template_driven"
+
+  styling_and_design:
+    css_architecture:
+      methodology: "use_bem_or_atomic_css_methodology"
+      organization: "organize_styles_by_component_or_utility"
+      custom_properties: "use_css_custom_properties_for_theming"
+      responsive_design: "mobile_first_responsive_design"
+    
+    css_frameworks:
+      utility_first: "tailwind_css_for_utility_first_approach"
+      component_based: "chakra_ui_or_material_ui_for_component_systems"
+      custom_design: "styled_components_or_emotion_for_css_in_js"
+    
+    design_tokens:
+      implementation: "use_design_tokens_for_consistent_design"
+      organization: "organize_tokens_by_category_color_typography_spacing"
+      tooling: "use_style_dictionary_or_similar_for_token_management"
+
+  build_and_development:
+    build_tools:
+      bundler: "vite_for_new_projects_webpack_for_existing"
+      transpilation: "babel_or_swc_for_javascript_transformation"
+      typescript: "use_typescript_for_type_safety"
+      linting: "eslint_with_prettier_for_code_formatting"
+    
+    development_environment:
+      hot_reload: "enable_hot_module_replacement_for_development"
+      source_maps: "generate_source_maps_for_debugging"
+      dev_server: "use_https_in_development_when_needed"
+      environment_variables: "use_environment_variables_for_configuration"
+    
+    code_quality:
+      static_analysis: "use_eslint_with_recommended_rules"
+      type_checking: "strict_typescript_configuration"
+      testing: "unit_integration_and_e2e_testing"
+      code_coverage: "maintain_80_percent_code_coverage"
+
+  testing_strategy:
+    unit_testing:
+      framework: "jest_or_vitest_for_unit_testing"
+      coverage: "focus_on_business_logic_and_utilities"
+      mocking: "mock_external_dependencies_and_apis"
+      assertions: "write_descriptive_test_assertions"
+    
+    integration_testing:
+      approach: "test_component_interactions_and_data_flow"
+      tools: "react_testing_library_or_vue_test_utils"
+      user_interactions: "test_from_user_perspective"
+      accessibility: "include_accessibility_testing"
+    
+    end_to_end_testing:
+      framework: "playwright_or_cypress_for_e2e_testing"
+      scope: "critical_user_journeys_and_business_workflows"
+      data_management: "use_test_data_factories"
+      CI_integration: "run_e2e_tests_in_ci_pipeline"
+
+  performance_optimization:
+    loading_performance:
+      code_splitting: "split_code_by_routes_and_features"
+      lazy_loading: "lazy_load_images_and_non_critical_components"
+      preloading: "preload_critical_resources"
+      compression: "enable_gzip_or_brotli_compression"
+    
+    runtime_performance:
+      rendering: "optimize_rendering_with_memoization"
+      reconciliation: "minimize_unnecessary_re_renders"
+      memory_management: "clean_up_subscriptions_and_listeners"
+      animations: "use_css_animations_over_javascript"
+    
+    bundle_optimization:
+      tree_shaking: "eliminate_unused_code"
+      minification: "minify_javascript_and_css"
+      chunk_splitting: "split_vendor_and_application_code"
+      analysis: "regularly_analyze_bundle_size"
+
+  accessibility:
+    wcag_compliance:
+      level: "aim_for_wcag_2_1_aa_compliance"
+      testing: "automated_and_manual_accessibility_testing"
+      tools: "use_axe_core_for_accessibility_testing"
+    
+    implementation:
+      semantic_html: "use_semantic_html_elements"
+      aria_labels: "provide_appropriate_aria_labels"
+      keyboard_navigation: "ensure_full_keyboard_accessibility"
+      screen_readers: "test_with_screen_reader_software"
+    
+    design_considerations:
+      color_contrast: "maintain_sufficient_color_contrast_ratios"
+      focus_indicators: "provide_clear_focus_indicators"
+      text_scaling: "support_text_scaling_up_to_200_percent"
+      motion: "respect_prefers_reduced_motion"
+
+  security:
+    client_side_security:
+      xss_prevention: "sanitize_user_input_and_use_csp"
+      authentication: "never_store_sensitive_data_in_local_storage"
+      https: "enforce_https_in_production"
+      dependencies: "regularly_audit_and_update_dependencies"
+    
+    data_handling:
+      sensitive_data: "never_log_sensitive_information"
+      api_communication: "validate_api_responses"
+      error_handling: "dont_expose_stack_traces_to_users"
+      content_security: "implement_content_security_policy"
+
+  state_management:
+    local_state:
+      component_state: "use_for_ui_state_and_component_specific_data"
+      form_state: "dedicated_form_libraries_for_complex_forms"
+      temporary_state: "ephemeral_state_that_doesnt_persist"
+    
+    global_state:
+      application_state: "user_authentication_and_global_settings"
+      shared_state: "data_shared_across_multiple_components"
+      persistence: "persist_critical_state_to_local_storage"
+    
+    server_state:
+      caching: "cache_server_responses_appropriately"
+      synchronization: "handle_stale_data_and_refetching"
+      mutations: "optimistic_updates_with_rollback"
+      offline: "graceful_degradation_for_offline_scenarios"
+
+  routing_and_navigation:
+    client_side_routing:
+      approach: "spa_routing_with_history_api"
+      lazy_loading: "lazy_load_route_components"
+      guard_navigation: "implement_navigation_guards_for_auth"
+      error_handling: "handle_404_and_navigation_errors"
+    
+    url_design:
+      structure: "logical_hierarchical_url_structure"
+      parameters: "use_url_parameters_for_sharable_state"
+      seo: "seo_friendly_urls_for_public_content"
+      deep_linking: "support_deep_linking_to_application_state"
+
+  progressive_web_app:
+    pwa_features:
+      service_worker: "implement_service_worker_for_caching"
+      manifest: "provide_web_app_manifest"
+      offline_support: "graceful_offline_functionality"
+      installability: "meet_pwa_installability_criteria"
+    
+    performance:
+      caching_strategy: "cache_first_network_first_strategies"
+      background_sync: "background_sync_for_offline_actions"
+      push_notifications: "implement_push_notifications_carefully"
+
+  monitoring_and_analytics:
+    error_tracking:
+      tools: "sentry_or_bugsnag_for_error_tracking"
+      reporting: "capture_user_actions_leading_to_errors"
+      privacy: "respect_user_privacy_in_error_reporting"
+    
+    performance_monitoring:
+      core_web_vitals: "monitor_lcp_fid_and_cls"
+      user_experience: "track_user_interaction_performance"
+      real_user_monitoring: "rum_for_production_performance_insights"
+    
+    analytics:
+      user_behavior: "track_user_interactions_and_conversion_funnels"
+      feature_usage: "monitor_feature_adoption_and_usage"
+      a_b_testing: "implement_a_b_testing_for_feature_validation"
+
+  deployment_and_ci_cd:
+    build_pipeline:
+      automation: "automated_build_test_and_deployment"
+      environments: "separate_development_staging_production"
+      quality_gates: "automated_quality_checks_in_pipeline"
+      rollback: "automated_rollback_capabilities"
+    
+    deployment_strategies:
+      approach: "blue_green_or_canary_deployments"
+      cdn: "deploy_static_assets_to_cdn"
+      caching: "implement_appropriate_cache_headers"
+      monitoring: "monitor_deployment_health"
+
+  maintenance_and_updates:
+    dependency_management:
+      updates: "regular_dependency_updates_and_security_patches"
+      evaluation: "evaluate_new_dependencies_carefully"
+      removal: "remove_unused_dependencies"
+      security: "monitor_security_vulnerabilities"
+    
+    code_maintenance:
+      refactoring: "regular_code_refactoring_and_cleanup"
+      documentation: "maintain_up_to_date_documentation"
+      technical_debt: "address_technical_debt_systematically"
+      knowledge_sharing: "code_reviews_and_knowledge_transfer"
