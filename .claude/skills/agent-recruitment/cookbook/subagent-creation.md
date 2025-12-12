@@ -2,19 +2,24 @@
 
 ## When to Create a Sub-agent
 
-Create a **sub-agent** when:
-- Task needs isolated context window
-- Work should run in parallel
-- Results returned to calling agent
-- Different tool permissions needed
-- Proactive triggering desired (IMPORTANT keyword)
-- Heavy computation that shouldn't pollute main context
+Create a **sub-agent** ONLY for context isolation:
+- Task needs isolated context window (heavy I/O that would flood main context)
+- Work should run in parallel (independent tasks)
+- Results summarized back to calling agent (process disposable, output matters)
+
+## When NOT to Create a Sub-agent
+
+Do NOT create sub-agents for:
+- Reasoning work (sub-agents can't reason deeply)
+- Anything requiring skill access (sub-agents can't call skills)
+- Interactive work (sub-agents can't ask follow-up questions)
+- Architecture decisions (need full context)
+- Validation (do directly in skill/command)
 
 ## File Location
 
 ```
-.claude/agents/{parent-command}/{name}.md    # Under a command
-.claude/agents/shared/{name}.md              # Shared across commands
+.claude/agents/shared/{name}.md    # Shared across commands (typical)
 ```
 
 ## Sub-agent Structure
@@ -24,7 +29,7 @@ Create a **sub-agent** when:
 name: agent-name
 description: IMPORTANT what this agent does (IMPORTANT for proactive)
 tools: Tool1, Tool2, Tool3
-model: haiku  # or sonnet, opus
+model: haiku  # or sonnet (rarely opus)
 ---
 ```
 
@@ -39,7 +44,7 @@ model: haiku  # or sonnet, opus
 
 ## Output Format
 
-[What to return to caller]
+[What to return to caller - summaries, not raw data]
 
 ## Examples
 
@@ -48,107 +53,114 @@ model: haiku  # or sonnet, opus
 
 ## Process
 
-### 1. Determine Placement
+### 1. Verify Context Isolation Need
+
+Ask: "Is this truly for context isolation?"
 
 ```
-Is this sub-agent specific to one command?
-├── YES → .claude/agents/{command}/{name}.md
-└── NO → .claude/agents/shared/{name}.md
+Does this task:
+├── Generate heavy I/O (research, many file reads)? → Sub-agent
+├── Run independently in parallel? → Sub-agent
+├── Need to summarize large amounts of data? → Sub-agent
+└── Require reasoning, skills, or interaction? → Do directly
 ```
 
 ### 2. Select Model
 
-Use [decision-frameworks/model-selection.md](../decision-frameworks/model-selection.md):
-
 | Task Type | Model |
 |-----------|-------|
-| Validators, formatters | haiku |
-| Reviewers, analyzers | sonnet |
-| Architects, planners | opus |
+| Heavy I/O, formatting | haiku |
+| Research, analysis | sonnet |
+| Complex reasoning | DON'T use sub-agent |
 
-### 3. Plan with agent-planner
+### 3. Plan Architecture
 
+Design the sub-agent:
+```yaml
+name: {name}
+type: subagent
+location: .claude/agents/shared/{name}.md
+purpose: {context isolation purpose}
+tools: {minimal set}
+model: {haiku/sonnet}
+output: {summary format}
 ```
-Create a plan for sub-agent '{name}'.
-Purpose: {purpose}
-Parent command: {command} or shared
-Tools needed: {minimal set}
-Model: {haiku/sonnet/opus}
-Proactive: {yes/no - needs IMPORTANT?}
 
-Return structured plan to Rita.
-```
+### 4. Build File
 
-### 4. Build with agent-builder
-
-```
-Build sub-agent at .claude/agents/{parent}/{name}.md
-
-Specifications:
-- Name: {name}
-- Description: {description}
-- Tools: {tools}
-- Model: {model}
-- Returns: {output format}
-
-Create the file.
-```
+Create using [templates/subagent-template.md](../templates/subagent-template.md):
+- Clear purpose
+- Minimal tools
+- Appropriate model
+- Structured output format
 
 ### 5. Validate
 
-Run validators:
-1. `resource-validator` - File exists?
-2. `constraint-validator` - Balance score?
-3. `coherence-verifier` - Integrates with parent?
+Follow [cookbook/validation-workflow.md](./validation-workflow.md):
+- Resource validation - File exists?
+- Constraint validation - Balance score?
+- Coherence verification - Integrates correctly?
 
 ## Key Fields
 
 ### name
 ```yaml
-name: code-reviewer  # Lowercase, hyphens
+name: market-researcher  # Lowercase, hyphens
 ```
 
 ### description
 ```yaml
 # Standard (called explicitly via Task tool)
-description: Reviews code for quality issues
+description: Researches market data and returns summary
 
 # Proactive (auto-triggers on relevant context)
-description: IMPORTANT reviews code after significant changes
+description: IMPORTANT researches market data when competitive analysis needed
 ```
 
 The `IMPORTANT` keyword enables proactive triggering.
 
 ### tools
 ```yaml
-tools: Read, Grep, Glob  # Minimal set for the task
+tools: Read, Grep, Glob, WebFetch  # Minimal set for the task
 ```
 
 Only include tools the agent actually needs.
 
 ### model
 ```yaml
-model: haiku   # Fast, cheap - validators, formatters
-model: sonnet  # Balanced - reviewers, analyzers
-model: opus    # Powerful - architects, complex reasoning
+model: haiku   # Fast, cheap - I/O heavy, formatting
+model: sonnet  # Balanced - research, data processing
+# Don't use opus for sub-agents - if you need opus reasoning, do it directly
 ```
 
 ## Best Practices
 
+### Focus on Context Isolation
+
+```
+GOOD: Sub-agent that harvests 50 web pages and returns a summary
+GOOD: Sub-agent that generates Mermaid diagrams in parallel
+
+BAD: Sub-agent that validates constraints (do directly)
+BAD: Sub-agent that plans architecture (needs reasoning)
+```
+
 ### Minimal Tool Sets
 
 ```yaml
-# Reviewer (read-only)
-tools: Read, Grep, Glob
+# Research sub-agent
+tools: Read, Grep, WebFetch, WebSearch
 
-# Builder (needs to write)
-tools: Read, Write, MultiEdit, Bash
+# Documentation generator
+tools: Read, Write, Glob
 
-# Analyzer (may need search)
-tools: Read, Grep, Glob, WebSearch
+# Diagram generator
+tools: Read, Write
 ```
 
 ### Clear Output Format
+
+Sub-agents should return summaries, not raw data:
 
 ```markdown
 ## Output Format
@@ -156,11 +168,10 @@ tools: Read, Grep, Glob, WebSearch
 Return to calling agent:
 ```yaml
 status: success | failure
-score: float (0-10)
-issues:
-  - severity: high | medium | low
-    description: string
-    location: string
+summary: string  # Key findings
+data:
+  - item: string
+    relevance: string
 recommendations:
   - string
 ```
@@ -169,230 +180,222 @@ recommendations:
 ### Single Responsibility
 
 ```
-GOOD: constraint-validator - Only validates constraints
-BAD: validator - Validates constraints AND resources AND coherence
+GOOD: market-researcher - Only researches market data
+GOOD: diagram-generator - Only generates diagrams
+
+BAD: research-and-analyze - Does too much
 ```
 
-### Proactive vs Explicit
-
-```yaml
-# Proactive - triggers automatically
-description: IMPORTANT reviews backend code after changes
-
-# Explicit - only when delegated
-description: Analyzes architecture on request
-```
-
-## Example: Simple Validator (Haiku)
+## Example: Research Sub-agent (Sonnet)
 
 ```yaml
 ---
-name: resource-validator
-description: IMPORTANT validates resource references and file existence
-tools: Read, Grep, Glob, Bash
-model: haiku
----
-```
-
-```markdown
-# Resource Validator
-
-Verify all referenced resources exist and are accessible.
-
-## Process
-
-1. Extract all resource references (@path, links)
-2. Check each file exists
-3. Verify load syntax is correct
-4. Report missing or invalid references
-
-## Output Format
-
-```yaml
-status: pass | fail
-files_checked: int
-missing:
-  - path: string
-    referenced_from: string
-valid:
-  - path: string
-```
-
-## Validation Rules
-
-- `@path/file.md` must exist
-- Relative links must resolve
-- YAML frontmatter must parse
-- Markdown links must have targets
-```
-
-## Example: Analyzer (Sonnet)
-
-```yaml
----
-name: code-reviewer
-description: IMPORTANT reviews code for quality, security, and best practices
-tools: Read, Grep, Glob
+name: market-researcher
+description: IMPORTANT Researches market data and competitive landscape
+tools: Read, WebSearch, WebFetch, Grep
 model: sonnet
 ---
 ```
 
 ```markdown
-# Code Reviewer
+# Market Researcher
 
-Review code changes for quality issues.
+Research market data and return summarized findings.
 
-## Review Checklist
+## Purpose
 
-1. **Security** - Injection, auth, data exposure
-2. **Quality** - Clean code, DRY, SOLID
-3. **Performance** - Efficiency, resource usage
-4. **Testing** - Coverage, edge cases
-5. **Documentation** - Comments, docs
+Context isolation for heavy research that would flood main context.
 
-## Process
+## Instructions
 
-1. Read changed files
-2. Identify patterns and anti-patterns
-3. Check against best practices
-4. Generate actionable feedback
+1. Receive research topic and focus areas
+2. Search for relevant market data
+3. Fetch and analyze key sources
+4. Summarize findings concisely
+5. Return structured summary
 
 ## Output Format
 
 ```yaml
-overall_score: float (1-10)
-issues:
-  - severity: critical | high | medium | low
-    category: security | quality | performance | testing | docs
-    file: string
-    line: int
-    description: string
-    suggestion: string
-summary: string
-```
+status: success | partial | failure
+topic: string
+sources_consulted: int
+key_findings:
+  - finding: string
+    source: string
+    confidence: high | medium | low
+market_size: string
+competitors:
+  - name: string
+    position: string
+trends:
+  - string
+recommendations:
+  - string
 ```
 
-## Example: Planner (Opus)
+## Constraints
+
+- Maximum 10 web fetches
+- Summarize, don't dump raw content
+- Focus on actionable insights
+```
+
+## Example: Documentation Generator (Haiku)
 
 ```yaml
 ---
-name: agent-planner
-description: IMPORTANT plans agent architecture with systematic decomposition
-tools: Read, Grep, Glob, WebFetch, Task
-model: opus
+name: documentation-generator
+description: IMPORTANT Generates structured documentation from analysis
+tools: Read, Write, Glob
+model: haiku
 ---
 ```
 
 ```markdown
-# Agent Planner
+# Documentation Generator
 
-Design agent architecture with proper decomposition.
+Generate formatted documentation from structured input.
 
-## Planning Process
+## Purpose
 
-1. **Gather Requirements**
-   - Purpose and goals
-   - User interactions expected
-   - Integration points
+Context isolation for document generation that shouldn't pollute main context.
 
-2. **Determine Type**
-   - Command vs Skill vs Sub-agent
-   - Apply type-selection framework
+## Instructions
 
-3. **Design Architecture**
-   - Tool selection (minimal)
-   - Model selection (appropriate)
-   - Resource structure
-
-4. **Plan Decomposition** (if needed)
-   - Identify sub-agents
-   - Define interfaces
-   - Map delegation flow
+1. Receive documentation requirements
+2. Read relevant source files
+3. Generate formatted documentation
+4. Write to specified location
+5. Return summary of generated files
 
 ## Output Format
 
 ```yaml
-agent_type: command | skill | subagent
-name: string
-location: string
-complexity: simple | moderate | complex
-tools: [list]
-model: haiku | sonnet | opus  # if subagent
-sub_agents: [list]  # if orchestrator
-resources: [list]
-rationale: string
+status: success | failure
+files_generated:
+  - path: string
+    sections: int
+    word_count: int
+errors:
+  - file: string
+    error: string
 ```
 
-## Thinking Levels
+## Supported Formats
 
-- Simple agent: Standard analysis
-- Complex agent: Think hard
-- Orchestrator: Ultrathink about decomposition
+- Markdown documentation
+- API reference
+- User guides
+- Technical specifications
 ```
 
-## Integration with Orchestrators
+## Example: Diagram Generator (Haiku)
+
+```yaml
+---
+name: diagram-generator
+description: IMPORTANT generates technical diagrams in Mermaid/PlantUML format
+tools: Read, Write, Glob
+model: haiku
+---
+```
+
+```markdown
+# Diagram Generator
+
+Generate technical diagrams from specifications.
+
+## Purpose
+
+Context isolation for diagram generation. Returns diagram code, not process.
+
+## Instructions
+
+1. Receive diagram requirements
+2. Read relevant context files
+3. Generate diagram in specified format
+4. Write to file or return code
+5. Return summary
+
+## Output Format
+
+```yaml
+status: success | failure
+diagram_type: flowchart | sequence | class | erd
+format: mermaid | plantuml
+code: string  # The diagram code
+file_path: string | null  # If written to file
+```
+
+## Supported Diagrams
+
+- Mermaid: flowchart, sequence, class, ER
+- PlantUML: all diagram types
+```
+
+## Integration Pattern
 
 Sub-agents are called via Task tool:
 
 ```markdown
-## In Orchestrator (command/skill)
+## Calling a Sub-agent
 
-### Delegation Pattern
-
-For planning:
+For market research (heavy I/O):
 ```
 Task(
-  subagent_type="agent-planner",
-  description="Plan agent architecture",
-  prompt="Analyze requirements for {name}..."
+  subagent_type="market-researcher",
+  description="Research market for X",
+  prompt="Research the market for {topic}. Focus on..."
 )
 ```
 
-For validation:
+For parallel diagram generation:
 ```
 Task(
-  subagent_type="constraint-validator",
-  description="Validate constraints",
-  prompt="Check constraint balance for..."
+  subagent_type="diagram-generator",
+  description="Generate architecture diagram",
+  prompt="Create a Mermaid diagram showing..."
 )
 ```
 ```
 
 ## Common Mistakes
 
+### Using Sub-agents for Reasoning
+```
+BAD: Sub-agent for architecture planning
+GOOD: Do architecture planning directly (needs reasoning + skills)
+```
+
 ### Too Many Tools
 ```yaml
 BAD: tools: Read, Write, Edit, MultiEdit, Bash, Grep, Glob, Task, WebFetch
-GOOD: tools: Read, Grep, Glob  # Only what's needed
+GOOD: tools: Read, WebFetch  # Only what's needed for research
 ```
 
 ### Wrong Model
 ```yaml
-BAD: model: opus  # For simple validator
-GOOD: model: haiku  # Validators are fast, rule-based
+BAD: model: opus  # Sub-agents don't need opus reasoning
+GOOD: model: haiku or sonnet  # Appropriate for I/O tasks
 ```
 
-### Missing IMPORTANT
-```yaml
-BAD: description: reviews code  # Won't trigger proactively
-GOOD: description: IMPORTANT reviews code  # Triggers on relevant context
+### Returning Raw Data
 ```
-
-### Vague Output Format
-```
-BAD: "Return the results"
-GOOD: Structured YAML with specific fields
+BAD: Return all 50 pages of fetched content
+GOOD: Return a 10-line summary of key findings
 ```
 
 ## Checklist
 
 Before finalizing a sub-agent:
 
+- [ ] Truly for context isolation (not reasoning)
 - [ ] Clear, descriptive name
 - [ ] Description includes IMPORTANT (if proactive)
 - [ ] Minimal tool set
-- [ ] Appropriate model selection
-- [ ] Clear output format documented
+- [ ] Appropriate model (haiku/sonnet, not opus)
+- [ ] Output format returns summaries
 - [ ] Single responsibility
-- [ ] Correct file location
-- [ ] Validates with all three validators
+- [ ] Correct file location (agents/shared/)
+- [ ] Validates successfully

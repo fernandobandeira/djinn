@@ -18,15 +18,14 @@ Claude Code supports thinking budget keywords that allocate more reasoning token
 ### Standard Analysis (No Keyword)
 
 **Use for**:
-- Simple validators with clear rules
-- Single-purpose sub-agents
+- Simple sub-agents for context isolation
 - Clear, well-defined requirements
-- Agents under 100 lines expected
 - Copying/adapting existing patterns
+- Mechanical file creation
 
 **Examples**:
-- "Create a sub-agent that validates JSON schema"
-- "Make a command that runs tests"
+- "Create a sub-agent for diagram generation"
+- "Make a documentation generator"
 - "Add a simple greeting responder"
 
 ### Think (4K Tokens)
@@ -70,7 +69,7 @@ Claude Code supports thinking budget keywords that allocate more reasoning token
 ### Ultrathink (32K Tokens)
 
 **Use for**:
-- Orchestrators coordinating sub-agents
+- Orchestrators with complex workflows
 - System decomposition decisions
 - Migration from monolithic to modular
 - Architecture-level decisions
@@ -86,7 +85,7 @@ Claude Code supports thinking budget keywords that allocate more reasoning token
 ```
 
 **Examples**:
-- "Design a scrum master orchestrator, ultrathink about sub-agent coordination"
+- "Design a scrum master orchestrator, ultrathink about workflow phases"
 - "Create an architect agent that designs systems, ultrathink about the workflow"
 - "Migrate this 500-line command to skills, think harder about the split"
 
@@ -99,13 +98,13 @@ Claude Code supports thinking budget keywords that allocate more reasoning token
 | 3-4 | Megathink |
 | 5+ | Ultrathink |
 
-### Sub-agent Coordination
+### Skill Integration
 | Pattern | Suggested Level |
 |---------|-----------------|
-| No sub-agents | Standard/Think |
-| 1-2 sub-agents | Megathink |
-| 3+ sub-agents | Ultrathink |
-| Orchestrator pattern | Ultrathink |
+| No skills needed | Standard/Think |
+| 1-2 skills | Megathink |
+| 3+ skills | Ultrathink |
+| Orchestrator with skills | Ultrathink |
 
 ### Resource Requirements
 | Resources | Suggested Level |
@@ -136,17 +135,17 @@ Before planning any agent:
 
 For simple agents: proceed with standard analysis
 For complex agents: "think hard about the architecture"
-For orchestrators: "ultrathink about decomposition strategy"
+For orchestrators: "ultrathink about workflow phases"
 ```
 
-### In Sub-agent Prompts
+### When Doing Work Directly
 ```markdown
-When delegating to agent-planner:
+When planning a complex agent:
 
 "Analyze requirements for {agent_name}.
-Complexity indicators: {tool_count} tools, {sub_agent_count} sub-agents.
+Complexity indicators: {tool_count} tools, {skill_count} skills.
 {IF complex: "Think hard about" | IF orchestrator: "Ultrathink about"}
-the optimal architecture and decomposition strategy."
+the optimal architecture and skill integration."
 ```
 
 ## Cost-Benefit Guidelines
@@ -159,7 +158,7 @@ the optimal architecture and decomposition strategy."
 - User explicitly requests deep analysis
 
 ### When to Avoid Ultrathink
-- Simple CRUD-style agents
+- Simple context isolation sub-agents
 - Well-established patterns being reused
 - Time-sensitive requests
 - Iterative refinement (use standard, iterate)
@@ -168,14 +167,14 @@ the optimal architecture and decomposition strategy."
 
 ### Over-Thinking
 ```
-BAD: "ultrathink about this simple validator"
-GOOD: Standard analysis for validators
+BAD: "ultrathink about this simple diagram generator"
+GOOD: Standard analysis for context isolation sub-agents
 ```
 
 ### Under-Thinking
 ```
-BAD: Standard analysis for orchestrator with 5 sub-agents
-GOOD: "ultrathink about the coordination strategy"
+BAD: Standard analysis for orchestrator with multiple skills
+GOOD: "ultrathink about the workflow and skill integration"
 ```
 
 ### Thinking Without Action
@@ -203,7 +202,7 @@ GOOD: Apply thinking results to concrete decisions
 
 ### Validation Phase
 ```
-1. Standard analysis for running validators
+1. Standard analysis for validation checks
 2. Think hard if validation reveals design issues
 3. Ultrathink if major refactoring needed
 ```
@@ -215,14 +214,14 @@ GOOD: Apply thinking results to concrete decisions
 │           THINKING LEVEL QUICK GUIDE                │
 ├─────────────────────────────────────────────────────┤
 │                                                     │
-│  Standard    →  Simple, clear, <100 lines          │
-│  Think       →  Moderate, 2-3 tools, some ambiguity│
-│  Megathink   →  Complex, 3-4 tools, multi-component│
-│  Ultrathink  →  Orchestrators, decomposition, novel│
+│  Standard    →  Simple, clear, context isolation    │
+│  Think       →  Moderate, 2-3 tools, some ambiguity │
+│  Megathink   →  Complex, 3-4 tools, multi-component │
+│  Ultrathink  →  Orchestrators, decomposition, novel │
 │                                                     │
 ├─────────────────────────────────────────────────────┤
 │  ALWAYS ULTRATHINK FOR:                             │
-│  • Orchestrators with sub-agents                    │
+│  • Orchestrators with skill integration             │
 │  • System decomposition                             │
 │  • Architecture migrations                          │
 │  • Ambiguous requirements                           │

@@ -4,44 +4,52 @@
 
 | Model | Speed | Cost | Best For |
 |-------|-------|------|----------|
-| **Haiku** | Fast | Low | Simple tasks, validators, quick checks |
-| **Sonnet** | Medium | Medium | Balanced analysis, most agents |
-| **Opus** | Slow | High | Complex reasoning, architecture, planning |
+| **Haiku** | Fast | Low | Simple I/O tasks, context isolation |
+| **Sonnet** | Medium | Medium | Research, analysis sub-agents |
+| **Opus** | Slow | High | DON'T use for sub-agents (do reasoning directly) |
 
 ## Model Selection by Agent Type
 
 ### Commands
 Commands inherit the user's current model. No explicit selection needed.
+Commands do reasoning work directly.
 
 ### Skills
 Skills also inherit. No model field in SKILL.md frontmatter.
+Skills do reasoning work directly.
 
 ### Sub-agents
-Sub-agents SHOULD specify model for predictable behavior:
+Sub-agents SHOULD specify model. But remember: **sub-agents are for context isolation only**, not for reasoning.
 
 ```yaml
 ---
 name: my-subagent
-model: haiku  # or sonnet, opus
+model: haiku  # or sonnet
 ---
 ```
+
+## Key Insight
+
+**If you need opus-level reasoning, don't use a sub-agent.**
+
+Sub-agents can't call skills and have limited reasoning. If the task requires deep reasoning, do it directly in the command/skill.
 
 ## Decision Framework
 
 ```
-What kind of task does the sub-agent perform?
+What kind of task is this sub-agent performing?
 │
-├─► Simple, mechanical, rule-based?
+├─► Heavy I/O, formatting, simple output?
 │   └─► HAIKU
-│       Examples: validators, formatters, simple extractors
+│       Examples: doc generators, diagram generators
 │
-├─► Analytical, requires judgment?
+├─► Research, data gathering, analysis?
 │   └─► SONNET
-│       Examples: reviewers, analyzers, planners (simple)
+│       Examples: market researcher, competitive analyzer
 │
-└─► Complex reasoning, architecture, critical decisions?
-    └─► OPUS
-        Examples: architects, complex planners, strategists
+└─► Complex reasoning, architecture, decisions?
+    └─► DON'T USE SUB-AGENT
+        Do this work directly in command/skill
 ```
 
 ## Detailed Guidelines
@@ -50,122 +58,86 @@ What kind of task does the sub-agent perform?
 
 | Scenario | Rationale |
 |----------|-----------|
-| Validation checks | Rule-based, fast feedback |
+| Document generation | Formatting, no reasoning |
+| Diagram generation | Template-based output |
 | File operations | Mechanical, predictable |
 | Simple transformations | No complex reasoning |
-| Quick lookups | Speed > depth |
-| High-volume operations | Cost efficiency |
+| High-volume I/O | Cost efficiency |
 
 **Examples**:
-- `resource-validator` - Checks if files exist
-- `constraint-validator` - Validates score ranges
-- `coherence-verifier` - Simple consistency checks
-- `file-formatter` - Applies formatting rules
+- `documentation-generator` - Formats docs from input
+- `diagram-generator` - Creates Mermaid/PlantUML
+- Simple data formatters and transformers
 
 ### Use SONNET When
 
 | Scenario | Rationale |
 |----------|-----------|
-| Code review | Needs judgment but not deep architecture |
-| Pattern matching | Some inference required |
-| Documentation | Quality matters, not critical |
-| Standard planning | Follows known patterns |
-| Most sub-agents | Good balance of speed/quality |
+| Web research | Needs to assess sources |
+| Competitive analysis | Some judgment required |
+| Data summarization | Must identify key points |
+| Heavy reading + summary | Context isolation needed |
 
 **Examples**:
-- `backend-qa-reviewer` - Reviews code quality
-- `pattern-extractor` - Identifies patterns
-- `agent-planner` (simple agents) - Plans straightforward agents
-- `documentation-generator` - Creates docs
+- `market-researcher` - Researches and summarizes
+- `competitive-analyzer` - Gathers and compares
+- `insight-synthesizer` - Summarizes findings
 
-### Use OPUS When
+### DON'T Use Sub-agents When
 
-| Scenario | Rationale |
-|----------|-----------|
-| Architecture decisions | Long-term impact |
-| Complex decomposition | Multiple tradeoffs |
-| Novel problem solving | No existing patterns |
-| Critical business logic | Errors are costly |
-| Strategic planning | Requires deep reasoning |
-
-**Examples**:
-- `architecture-analyst` - Deep system analysis
-- `agent-planner` (orchestrators) - Complex agent design
-- `system-designer` - Creates system architectures
-- `strategic-advisor` - Business decisions
+| Scenario | Do Instead |
+|----------|------------|
+| Validation | Do directly in skill |
+| Architecture decisions | Do directly with skills |
+| Planning | Do directly with skills |
+| Anything needing follow-up questions | Do directly |
+| Complex reasoning | Do directly |
 
 ## Context Size Considerations
 
 | Model | Context Window | Implication |
 |-------|----------------|-------------|
-| Haiku | 200K | Sufficient for most tasks |
-| Sonnet | 200K | Sufficient for most tasks |
-| Opus | 200K | Same, but better at using large context |
-
-Choose model based on **reasoning needs**, not context size.
+| Haiku | 200K | Sufficient for I/O tasks |
+| Sonnet | 200K | Sufficient for research |
+| Opus | 200K | Use directly, not in sub-agent |
 
 ## Cost-Performance Tradeoffs
 
-### High Volume Scenarios
+### Heavy I/O (Context Isolation)
 ```
-Processing 100 files for validation:
-- Haiku: Fast, cheap, good enough
-- Sonnet: Slower, 5x cost, marginal benefit
-- Opus: Much slower, 15x cost, overkill
+Generating 10 documentation files:
+- Haiku: Fast, cheap, perfect for formatting
+- Sonnet: Overkill for doc generation
 → Choose HAIKU
 ```
 
-### Critical Decision Scenarios
+### Research (Context Isolation)
 ```
-Designing system architecture:
-- Haiku: Fast, might miss nuances
-- Sonnet: Good analysis, may miss edge cases
-- Opus: Thorough, catches subtleties
-→ Choose OPUS
-```
-
-### Balanced Scenarios
-```
-Reviewing a pull request:
-- Haiku: Too shallow for code review
-- Sonnet: Good depth, reasonable speed
-- Opus: Overkill for most PRs
+Researching 20 web pages and summarizing:
+- Haiku: May miss nuances
+- Sonnet: Good at identifying key points
 → Choose SONNET
 ```
 
-## Model Escalation Pattern
-
-Start with faster/cheaper, escalate if needed:
-
+### Reasoning (Don't Use Sub-agent)
 ```
-1. Try HAIKU first
-   │
-   ├─► Success? → Done
-   │
-   └─► Insufficient? → Escalate to SONNET
-       │
-       ├─► Success? → Done
-       │
-       └─► Still insufficient? → Escalate to OPUS
+Validating agent constraints:
+- Any sub-agent: Can't reason deeply
+→ Do directly in skill/command
 ```
-
-**When to use this pattern**:
-- Uncertain about complexity
-- Cost-sensitive environments
-- Iterative refinement workflows
 
 ## Anti-Patterns
 
-### Using Opus for Everything
+### Using Opus for Sub-agents
 ```
-BAD: All sub-agents use opus "to be safe"
-GOOD: Match model to task complexity
+BAD: model: opus for any sub-agent
+GOOD: If you need opus reasoning, do it directly
 ```
 
-### Using Haiku for Complex Tasks
+### Using Sub-agents for Reasoning
 ```
-BAD: Architecture planning with haiku
-GOOD: Use opus for architectural decisions
+BAD: Sub-agent for validation, planning, architecture
+GOOD: Do reasoning work directly (access to skills)
 ```
 
 ### Not Specifying Model
@@ -181,17 +153,18 @@ GOOD: Always specify model for sub-agents
 │              MODEL SELECTION GUIDE                 │
 ├────────────────────────────────────────────────────┤
 │                                                    │
-│  HAIKU   →  Validators, formatters, lookups       │
-│             Fast, cheap, mechanical tasks          │
+│  HAIKU   →  Document generation, diagrams         │
+│             Simple I/O, formatting tasks          │
 │                                                    │
-│  SONNET  →  Reviewers, analyzers, most agents     │
-│             Balanced speed and quality             │
+│  SONNET  →  Research, competitive analysis        │
+│             Data gathering that needs judgment    │
 │                                                    │
-│  OPUS    →  Architects, strategists, planners     │
-│             Complex reasoning, critical decisions  │
+│  OPUS    →  DON'T USE FOR SUB-AGENTS             │
+│             Do reasoning work directly instead    │
 │                                                    │
 ├────────────────────────────────────────────────────┤
-│  DEFAULT: sonnet (when uncertain)                  │
-│  ESCALATE: haiku → sonnet → opus (if needed)      │
+│  KEY PRINCIPLE:                                    │
+│  Sub-agents are for CONTEXT ISOLATION only        │
+│  Reasoning work → do directly in command/skill    │
 └────────────────────────────────────────────────────┘
 ```

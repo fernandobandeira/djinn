@@ -57,42 +57,33 @@ Before creating, clarify:
 - Does it need resources?
 - Should it have a persona?
 
-### 2. Plan with agent-planner
+### 2. Plan Architecture
 
-Delegate to `agent-planner`:
+Design the command structure:
+```yaml
+name: {name}
+type: command
+location: .claude/commands/{name}.md
+description: {clear description}
+tools: {minimal set}
+has_subcommands: {yes/no}
+persona: {description if applicable}
+resources: {list of resource files}
 ```
-Create a plan for command '{name}'.
-Purpose: {purpose}
-Expected interactions: {dialogue style}
-Tools needed: {tool list}
-Resources needed: {resource list}
 
-Return structured plan to Rita.
-```
+### 3. Build Files
 
-### 3. Build with agent-builder
-
-Provide specifications to `agent-builder`:
-```
-Build command at .claude/commands/{name}.md
-
-Specifications:
-- Name: {name}
-- Description: {description}
-- Tools: {tools}
-- Has sub-commands: {yes/no}
-- Persona: {persona description}
-- Resources: {list}
-
-Create all necessary files.
-```
+Create using [templates/command-template.md](../templates/command-template.md):
+- Apply specifications
+- Create all necessary files
+- Use relative paths for resources
 
 ### 4. Validate
 
-Run all three validators:
-1. `resource-validator` - Files exist?
-2. `constraint-validator` - Balance score?
-3. `coherence-verifier` - Components integrate?
+Follow [cookbook/validation-workflow.md](./validation-workflow.md):
+- Resource validation - All files exist?
+- Constraint validation - Score 8.0-8.5?
+- Coherence verification - Components integrate?
 
 ## Best Practices
 
@@ -111,7 +102,7 @@ BAD: /bp, /sp
 ### Minimal Tool Sets
 ```yaml
 # Only include tools actually needed
-allowed-tools: Read, Task  # For orchestrators
+allowed-tools: Read, Grep, Glob  # For reviewers
 allowed-tools: Read, Write, Bash  # For implementers
 ```
 
@@ -148,30 +139,20 @@ For commands with multiple modes:
 - `*exit` - Exit command mode
 ```
 
-## Orchestrator Pattern
+## Skill Loading Pattern
 
-Commands that coordinate sub-agents:
+Commands can load skills for comprehensive capabilities:
 
 ```markdown
-## Orchestration
+## Skill Loading
 
-I delegate all work to specialized sub-agents:
+This command loads the {skill-name} skill.
 
-### Planning Phase
-Delegate to `agent-planner` for requirements analysis.
-
-### Building Phase
-Delegate to `agent-builder` for file creation.
-
-### Validation Phase
-Run validators in sequence:
-1. `resource-validator`
-2. `constraint-validator`
-3. `coherence-verifier`
-
-### Core Principle
-**Orchestrate, Don't Execute** - Coordinate but don't implement.
+Read the skill:
+@.claude/skills/{skill-name}/SKILL.md
 ```
+
+This gives the command access to all skill cookbooks and resources.
 
 ## Example: Simple Command
 
@@ -201,36 +182,33 @@ Options:
 3. Report results with summary
 ```
 
-## Example: Orchestrator Command
+## Example: Command with Skill
 
 ```markdown
 ---
-description: Scrum master workflow orchestrator
-allowed-tools: Read, Task
+description: Orchestrates agent creation workflows
+allowed-tools: Read, Write, Grep, Glob, Bash, MultiEdit
 ---
 
-# Scrum Master - Sarah
+# Rita - Recruiter
 
 ## Activation
-Hello! I'm Sarah, your Scrum Master.
-I coordinate sprint planning, tracking, and retrospectives.
+Hello! I'm Rita, the Recruiter.
+I create Claude Code agents using best practices.
+
+## Skill Loading
+
+@.claude/skills/agent-recruitment/SKILL.md
 
 ## Commands
 - `*help` - Available commands
-- `*plan` - Sprint planning
-- `*daily` - Daily standup format
-- `*retro` - Retrospective facilitation
+- `*recruit {name}` - Full creation workflow
+- `*plan {name}` - Plan architecture
+- `*build` - Build from plan
+- `*validate` - Run validations
 
-## Orchestration
-
-All work delegated to sub-agents:
-- `sprint-planner` - Planning ceremonies
-- `story-creator` - Story writing
-- `execution-tracker` - Progress tracking
-- `retrospective-facilitator` - Retros
-
-## Resource Loading
-@resources/sm/sprint-templates.md
+## Core Principle
+**Do Work Directly** - Skills do reasoning. Only spawn sub-agents for context isolation.
 ```
 
 ## Common Mistakes
@@ -238,7 +216,7 @@ All work delegated to sub-agents:
 ### Too Many Tools
 ```
 BAD: allowed-tools: Read, Write, Edit, Bash, Grep, Glob, Task, WebFetch
-GOOD: allowed-tools: Read, Task  (for orchestrators)
+GOOD: allowed-tools: Read, Grep, Glob  (for reviewers)
 ```
 
 ### Missing Description
@@ -250,10 +228,10 @@ description: Clear description of what this does
 ---
 ```
 
-### Implementing Instead of Delegating
+### Over-engineering
 ```
-BAD: Command contains 500 lines of implementation
-GOOD: Command delegates to sub-agents, stays under 100 lines
+BAD: Command with 10 sub-agents for simple task
+GOOD: Command does work directly, spawns sub-agents only for context isolation
 ```
 
 ## Checklist
@@ -265,5 +243,5 @@ Before finalizing a command:
 - [ ] Minimal tool set
 - [ ] Sub-commands documented (if any)
 - [ ] Resources load correctly
-- [ ] Validates with all three validators
-- [ ] Under 150 lines (orchestrators can be slightly more)
+- [ ] Validates successfully
+- [ ] Under 150 lines (load skills for more)

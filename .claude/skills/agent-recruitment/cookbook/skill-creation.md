@@ -80,38 +80,37 @@ Tier 2 (On match): SKILL.md body
 Tier 3 (On demand): cookbook/, templates/, reference/
 ```
 
-### 3. Plan with agent-planner
+### 3. Plan Architecture
 
+Design the skill structure:
+```yaml
+name: {skill-name}
+type: skill
+location: .claude/skills/{name}/SKILL.md
+description: {with trigger phrases}
+tools: {minimal set}
+progressive_disclosure:
+  tier1: name + description
+  tier2: SKILL.md body
+  tier3: cookbook files
+cookbook_files: {list}
+templates: {list}
 ```
-Create a plan for skill '{name}'.
-Purpose: {purpose}
-Trigger phrases: {list of phrases}
-Files needed: {cookbook, templates, scripts}
-Progressive disclosure: {what loads when}
 
-Return structured plan to Rita.
-```
+### 4. Build Files
 
-### 4. Build with agent-builder
-
-```
-Build skill at .claude/skills/{name}/
-
-Structure:
-- SKILL.md with description: "{triggers}"
-- cookbook/: {list of recipe files}
-- templates/: {list of templates}
-- scripts/: {list of scripts}
-
-Create all files with proper cross-references.
-```
+Create using [templates/skill-template.md](../templates/skill-template.md):
+- SKILL.md with trigger phrases
+- cookbook/ files for workflows
+- templates/ for reusable patterns
+- Proper cross-references
 
 ### 5. Validate
 
-Run validators:
-1. `resource-validator` - All files exist?
-2. `constraint-validator` - Balance appropriate?
-3. `coherence-verifier` - Files reference correctly?
+Follow [cookbook/validation-workflow.md](./validation-workflow.md):
+- Resource validation - All files exist?
+- Constraint validation - Balance appropriate?
+- Coherence verification - Files reference correctly?
 
 ## Best Practices
 
@@ -335,4 +334,4 @@ Before finalizing a skill:
 - [ ] Tool restrictions appropriate
 - [ ] All referenced files exist
 - [ ] Scripts are executable (if any)
-- [ ] Validates with all three validators
+- [ ] Validates successfully

@@ -1,0 +1,9 @@
+#!/bin/bash
+# Harvest wrapper that ensures correct environment
+# Works from any directory
+
+# Get the absolute path to the .vector_db directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Run harvest_and_store.py with uv (which has crawl4ai installed)
+cd "$SCRIPT_DIR" && exec uv run python harvest_and_store.py "$@"

@@ -7,8 +7,8 @@
                            │
          ┌─────────────────┼─────────────────┐
          ▼                 ▼                 ▼
-    User invokes      Auto-activates    Called by other
-    explicitly?       on context?        agents only?
+    User invokes      Auto-activates    Context isolation
+    explicitly?       on context?        needed?
          │                 │                 │
          ▼                 ▼                 ▼
       COMMAND            SKILL           SUB-AGENT
@@ -37,23 +37,23 @@ START: What capability are you building?
 │   │
 │   └─► NO: Should it auto-activate on context?
 │       │
-│       ├─► YES: Does it need isolated context?
+│       ├─► YES: Does it have multi-file resources?
 │       │   │
-│       │   ├─► YES ────────────────────► SUB-AGENT
-│       │   │   (With IMPORTANT keyword for proactive)
+│       │   ├─► YES ────────────────────► SKILL
+│       │   │   (Progressive disclosure)
 │       │   │
-│       │   └─► NO: Does it have multi-file resources?
-│       │       │
-│       │       ├─► YES ────────────────► SKILL
-│       │       │   (Progressive disclosure)
-│       │       │
-│       │       └─► NO ─────────────────► SKILL or SUB-AGENT
-│       │           (Preference: SKILL)
+│       │   └─► NO ─────────────────────► SKILL
+│       │       (Simpler skill)
 │       │
-│       └─► NO: Is it called by other agents only?
+│       └─► NO: Heavy I/O that would flood context?
 │           │
-│           └─► YES ────────────────────► SUB-AGENT
-│               (Explicit Task tool delegation)
+│           ├─► YES ────────────────────► SUB-AGENT
+│           │   (Context isolation)
+│           │
+│           └─► NO: Can run in parallel?
+│               │
+│               └─► YES ────────────────► SUB-AGENT
+│                   (Parallel execution)
 ```
 
 ## Quick Reference Matrix
@@ -61,23 +61,34 @@ START: What capability are you building?
 | Signal | Command | Skill | Sub-agent |
 |--------|:-------:|:-----:|:---------:|
 | User explicitly invokes with `/` | YES | - | - |
-| Auto-activates on context match | - | YES | partial* |
+| Auto-activates on context match | - | YES | - |
 | Maintains dialogue/state | YES | - | - |
-| Needs isolated context window | - | - | YES |
-| Returns results to caller | - | - | YES |
+| Heavy I/O (would flood context) | - | - | YES |
+| Parallel task execution | - | - | YES |
 | Multi-file resources/scripts | possible | YES | - |
 | Reusable domain expertise | possible | YES | - |
-| Parallel task execution | - | - | YES |
-| Proactive triggering | - | - | YES** |
+| Needs reasoning/skill access | YES | YES | NO |
 
-*Sub-agents can auto-trigger via `IMPORTANT` keyword in description
-**Requires `IMPORTANT` in description field
+## Key Insight: Sub-agents for Context Isolation
+
+**Sub-agents can't reason deeply and can't call skills.**
+
+Use sub-agents ONLY when:
+- Heavy I/O would flood main context (research, many web fetches)
+- Tasks can run independently in parallel
+- Process is disposable, only output matters
+
+Do NOT use sub-agents for:
+- Validation (needs reasoning)
+- Architecture decisions (needs skills + context)
+- Anything interactive (can't ask follow-ups)
+- Any work requiring deep reasoning
 
 ## Examples by Type
 
 ### COMMAND Examples
 - `/dev` - Development workflow with ongoing dialogue
-- `/recruiter` - Agent creation orchestrator
+- `/recruiter` - Agent creation with skills
 - `/review-pr` - Quick shortcut for PR review
 - `/architect` - Architecture design persona
 
@@ -85,31 +96,30 @@ START: What capability are you building?
 - User types `/command` to start
 - Can have `*subcommands` for multi-mode
 - Maintains conversation context
-- Often orchestrates sub-agents
+- Can call skills for reasoning
 
 ### SKILL Examples
 - `pdf-processing` - Auto-activates when user works with PDFs
 - `agent-recruitment` - Auto-activates on "create agent" phrases
 - `go-patterns` - Domain expertise for Go development
-- `testing-strategies` - Auto-loads when discussing tests
+- `ideation` - Brainstorming techniques
 
 **Characteristics**:
 - Triggers on description match
 - Progressive disclosure (loads files as needed)
 - Can include scripts and tools
-- Stateless (no conversation memory)
+- Teaches HOW to think
 
 ### SUB-AGENT Examples
-- `backend-qa-reviewer` - IMPORTANT reviews Go code after changes
-- `agent-planner` - Called by Rita for planning
-- `constraint-validator` - Called for validation checks
-- `pattern-extractor` - Called to learn from success
+- `market-researcher` - Heavy web research, returns summary
+- `diagram-generator` - Generates diagrams in parallel
+- `documentation-generator` - Heavy doc generation
 
 **Characteristics**:
 - Has `tools` field (not `allowed-tools`)
-- Has `model` field (haiku/sonnet/opus)
-- Returns structured results
-- Isolated context window
+- Has `model` field (haiku/sonnet)
+- Returns summarized results
+- Context isolation ONLY
 
 ## The Hybrid Pattern
 
@@ -133,31 +143,31 @@ Sometimes you need BOTH auto-discovery AND explicit invocation:
 
 ## Model Selection by Type
 
-| Type | Default Model | When to Change |
-|------|---------------|----------------|
-| Command | (inherits) | Complex orchestration → sonnet/opus |
-| Skill | (inherits) | N/A (skills don't specify model) |
-| Sub-agent | haiku | Complex analysis → sonnet, Critical decisions → opus |
+| Type | Default Model | Notes |
+|------|---------------|-------|
+| Command | (inherits) | Does work directly |
+| Skill | (inherits) | Does work directly |
+| Sub-agent | haiku/sonnet | For context isolation only |
 
 ## Tool Selection Guidelines
 
 ### Commands
 ```yaml
-allowed-tools: [minimal set for orchestration]
-# Often just: Read, Task (for delegation)
+allowed-tools: [tools needed for the domain]
+# Example: Read, Write, Grep, Glob, Bash, MultiEdit
 ```
 
 ### Skills
 ```yaml
 allowed-tools: [tools needed for the domain]
-# Example: Read, Write, Bash, Grep
+# Example: Read, Write, Bash, Grep, Glob
 ```
 
 ### Sub-agents
 ```yaml
-tools: [specific tools for the task]
-# Be restrictive - only what's needed
-# Example: Read, Grep, Glob (for reviewers)
+tools: [specific tools for isolated I/O]
+# Example: Read, WebFetch, WebSearch (for research)
+# Example: Read, Write (for document generation)
 ```
 
 ## Red Flags: Wrong Type Selected
@@ -172,26 +182,58 @@ tools: [specific tools for the task]
 - Multiple reference files needed
 - Should auto-activate ("when I work with X...")
 
-### Should be SUB-AGENT, not Command
-- Only called by other agents, never by users
-- Needs isolated context (large file analysis)
-- Returns structured data to caller
+### Should be doing work DIRECTLY, not Sub-agent
+- Needs reasoning or judgment
+- Needs access to skills
+- Needs to ask follow-up questions
+- Validation, planning, architecture decisions
 
-### Should be SUB-AGENT, not Skill
-- Needs to run in parallel with other work
-- Must not pollute main conversation context
-- Heavy computation or long-running task
+### Appropriate for SUB-AGENT
+- Heavy I/O (many web fetches, file reads)
+- Can run in parallel with other work
+- Process disposable, only summary matters
 
 ## Decision Checklist
 
 Before finalizing type, verify:
 
-- [ ] **Invocation method** clear (user vs auto vs delegated)
-- [ ] **Context needs** understood (shared vs isolated)
+- [ ] **Invocation method** clear (user vs auto)
+- [ ] **Reasoning needs** understood (direct vs isolated)
 - [ ] **Tool set** appropriate for the type
 - [ ] **Model selection** justified (if sub-agent)
 - [ ] **File location** correct for type
 - [ ] **Progressive disclosure** considered (if complex)
+
+## After Type Selection: Assess Reusability
+
+Once you've determined Command, Skill, or Sub-agent, assess reusability:
+
+**Read [reusability-assessment.md](./reusability-assessment.md)** for the full framework.
+
+### Quick Reference
+
+**For Skills - Which Tier?**
+
+| Tier | Audience | Signal |
+|------|----------|--------|
+| **Tier 1: Universal** | 4+ agents | Fundamental thinking technique, domain-agnostic |
+| **Tier 2: Domain** | 2-3 agents | Domain-adjacent, clear agent cluster |
+| **Embed** | 1 agent | Tightly coupled, not worth extracting |
+
+**For Sub-agents**
+
+Sub-agents go in `agents/shared/` since they're for context isolation and multiple orchestrators might need similar I/O isolation.
+
+### The Key Questions
+
+1. **Is this THINKING or CONTEXT ISOLATION?**
+   - Thinking (how to analyze) → Skill
+   - Context isolation (heavy I/O) → Sub-agent
+
+2. **Who else would use this?**
+   - Many agents → Tier 1 skill
+   - Few agents → Tier 2 skill
+   - One agent → Embed in command/skill
 
 ## When Uncertain: ULTRATHINK
 
@@ -202,3 +244,4 @@ If the decision isn't clear after this framework:
 3. Identify conflicts or edge cases
 4. ULTRATHINK about the tradeoffs
 5. Consider hybrid pattern if needed
+6. **Assess reusability** - who else would use this?
