@@ -12,6 +12,14 @@ What architecture challenge would you like to work on?
 
 **Research First, Think Deeply, Document Clearly** - Search Basic Memory before creating. Use skills for structured thinking. Handle all work directly.
 
+## Basic Memory Protocol
+
+Follow Basic Memory configuration in CLAUDE.md:
+- Read project name(s) from `**Primary**` / `**Shared**` config
+- Use Primary unless writing shared content
+- Always include `project` parameter in MCP calls
+- Search before creating
+
 ## Skills
 
 - `research` - **Use first** for KB search with Basic Memory
@@ -50,7 +58,7 @@ What architecture challenge would you like to work on?
 **Phase 1: Discovery**
 1. Search Basic Memory for existing architecture, ADRs, patterns:
    ```
-   mcp__basic-memory__search_notes(query="{scope} architecture design")
+   mcp__basic-memory__search_notes(query="{scope} architecture design", project="<PRIMARY>")
    ```
 2. Gather requirements (functional, non-functional, constraints)
 3. Document current state if brownfield
@@ -82,7 +90,7 @@ What architecture challenge would you like to work on?
 
 1. **Search Basic Memory**: Find existing architecture docs, ADRs, patterns
    ```
-   mcp__basic-memory__search_notes(query="architecture decision pattern")
+   mcp__basic-memory__search_notes(query="architecture decision pattern", project="<PRIMARY>")
    ```
 2. **Load checklists**: `.claude/resources/architect/checklists/`
    - `architecture-review.md` - General review
@@ -98,7 +106,8 @@ What architecture challenge would you like to work on?
    mcp__basic-memory__write_note(
        title="Architecture Review: {system}",
        content="[review findings with [[links]] to ADRs]",
-       folder="research"
+       folder="research",
+       project="<PRIMARY>"
    )
    ```
 
@@ -106,7 +115,7 @@ What architecture challenge would you like to work on?
 
 1. **Search Basic Memory**:
    ```
-   mcp__basic-memory__search_notes(query="{topic} decision")
+   mcp__basic-memory__search_notes(query="{topic} decision", project="<PRIMARY>")
    ```
 2. **Check existing**: Search for related ADRs
 3. **Load template**: `.claude/resources/architect/templates/adr-template.md`
@@ -134,7 +143,8 @@ Proposed
 - [[project]] - project context
 - [[related-adr]] - related decisions
 """,
-       folder="decisions"
+       folder="decisions",
+       project="<PRIMARY>"
    )
    ```
 
@@ -142,7 +152,7 @@ Proposed
 
 1. **Search Basic Memory**:
    ```
-   mcp__basic-memory__search_notes(query="{name} pattern")
+   mcp__basic-memory__search_notes(query="{name} pattern", project="<PRIMARY>")
    ```
 2. **Load template**: `.claude/resources/architect/templates/pattern-template.md`
 3. **Create pattern note**:
@@ -150,7 +160,8 @@ Proposed
    mcp__basic-memory__write_note(
        title="Pattern: {name}",
        content="[problem, solution, consequences, examples]",
-       folder="patterns"
+       folder="patterns",
+       project="<PRIMARY>"
    )
    ```
 

@@ -54,19 +54,53 @@ git clone https://github.com/your-org/djinn.git my-project
 cd my-project
 ```
 
-## Per-Project Setup
+## Basic Memory Setup
 
-Each project needs Basic Memory initialized:
+### Step 1: Register Your Project(s)
 
+Choose your setup based on your needs:
+
+**Per-project KB** (most common - each project has its own knowledge):
 ```bash
 cd your-project
-
-# Initialize Basic Memory
 basic-memory project add "$(basename $PWD)" ./.memory
-basic-memory project default "$(basename $PWD)"
-
-# Create folder structure
 mkdir -p .memory/{decisions,patterns,research,context,sessions,diagrams}
+```
+
+**Shared KB** (team knowledge across multiple projects):
+```bash
+basic-memory project add "company-kb" ~/Documents/shared-memory
+mkdir -p ~/Documents/shared-memory/{decisions,patterns,research}
+```
+
+**Hybrid** (both project-specific and shared):
+```bash
+# Register per-project KB
+basic-memory project add "myproject" ./.memory
+mkdir -p .memory/{decisions,patterns,research,context,sessions,diagrams}
+
+# Register shared KB (one-time team setup)
+basic-memory project add "company-kb" ~/Documents/shared-memory
+```
+
+### Step 2: Create CLAUDE.md
+
+Copy the template and customize:
+
+```bash
+cp templates/CLAUDE.md ./CLAUDE.md
+# Edit CLAUDE.md and set your project name
+```
+
+**Per-project only:**
+```markdown
+**Primary**: `your-project-name`
+```
+
+**Hybrid setup (project + team KB):**
+```markdown
+**Primary**: `your-project-name`
+**Shared**: `company-kb`
 ```
 
 ### Optional: Create Project Note

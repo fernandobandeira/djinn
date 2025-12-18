@@ -45,9 +45,12 @@ cp -r ~/.djinn/.claude/* ~/.claude/
 
 # 3. Initialize your project
 cd your-project
+cp ~/.djinn/templates/CLAUDE.md ./CLAUDE.md  # Copy and customize
 basic-memory project add "$(basename $PWD)" ./.memory
-basic-memory project default "$(basename $PWD)"
 mkdir -p .memory/{decisions,patterns,research,context,sessions,diagrams}
+
+# 4. Edit CLAUDE.md - set your project name:
+# **Primary**: `your-project-name`
 ```
 
 ## Usage

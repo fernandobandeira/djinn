@@ -2,77 +2,43 @@
 
 Agent architecture project with reusable skills and shared sub-agents.
 
-## Prerequisites
+## Basic Memory Configuration
 
-**Required MCP**: Basic Memory must be installed and configured.
+**Primary**: `djinn`
 
-```bash
-# Install Basic Memory
-uv tool install basic-memory
+### Usage
 
-# Add MCP to Claude Code
-claude mcp add basic-memory -- uvx basic-memory mcp
+Always include `project` parameter in Basic Memory MCP calls:
+
 ```
+mcp__basic-memory__search_notes(query="topic", project="djinn")
 
-## Project Initialization
-
-For each project using Djinn, initialize Basic Memory:
-
-```bash
-cd your-project
-basic-memory project add "$(basename $PWD)" ./.memory
-basic-memory project default "$(basename $PWD)"
-mkdir -p .memory/{decisions,patterns,research,context,sessions,diagrams}
-```
-
-## Knowledge Base System
-
-All project knowledge is stored in `.memory/` using Basic Memory with [[wikilinks]].
-
-### Memory-First Workflow
-1. **Search first** before creating anything
-2. Use [[wikilinks]] to connect related notes
-3. Store decisions, patterns, research in appropriate folders
-
-### Basic Memory Commands
-```
-# Search notes
-mcp__basic-memory__search_notes(query="your search")
-
-# Read a note
-mcp__basic-memory__read_note(permalink="note-name")
-
-# Write a note
 mcp__basic-memory__write_note(
     title="Note Title",
-    content="Content with [[links]]",
-    folder="decisions"
+    content="Content with [[wikilinks]]",
+    folder="decisions",
+    project="djinn"
 )
 
-# Recent activity
-mcp__basic-memory__recent_activity()
+mcp__basic-memory__read_note(identifier="note-name", project="djinn")
 
-# Project overview
-mcp__basic-memory__canvas()
+mcp__basic-memory__recent_activity(project="djinn")
 ```
 
-### Knowledge Structure
-```
-.memory/
-├── project.md              # Vision, goals, overview
-├── architecture.md         # System design
-├── decisions/              # ADRs and key decisions
-├── patterns/               # Documented patterns
-├── research/               # Research outputs
-├── context/                # Current state
-├── sessions/               # Brainstorming sessions
-└── diagrams/               # Technical diagrams
-```
+### Workflow
+1. **Search first** - Always check what exists before creating
+2. **Link notes** - Use [[wikilinks]] to connect related content
+3. **Include project** - Every MCP call needs `project="djinn"`
 
-### Search Before Create
-- Before creating an ADR: `search_notes("decision topic")`
-- Before creating a pattern: `search_notes("pattern name")`
-- Before brainstorming: `search_notes("topic ideas")`
+### Folders
+
+| Content | Folder |
+|---------|--------|
+| Architecture decisions | `decisions/` |
+| Reusable patterns | `patterns/` |
+| Research & analysis | `research/` |
+| Brainstorming sessions | `sessions/` |
+| Technical diagrams | `diagrams/` |
 
 ## Skills Architecture
 

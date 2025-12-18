@@ -61,6 +61,24 @@ recommendations:
 - Rule 2
 - Rule 3
 
+## Basic Memory Protocol
+
+**Sub-agents do NOT write to Basic Memory.** Return structured data to the orchestrator.
+
+The orchestrator handles all KB operations:
+- Decides what to save
+- Applies project configuration from CLAUDE.md
+- Controls formatting and linking
+- Writes to Basic Memory with proper project parameter
+
+If the sub-agent needs to suggest content for storage, include it in the output:
+```yaml
+suggested_content:
+  title: "Note Title"
+  folder: "research"
+  content: "Markdown content..."
+```
+
 ## Examples
 
 {Example inputs and outputs:}
@@ -257,9 +275,10 @@ After creating a sub-agent:
 
 - [ ] Name is lowercase, hyphenated
 - [ ] Description is clear (with IMPORTANT if proactive)
-- [ ] Tool set is minimal
+- [ ] Tool set is minimal (no Write for KB purposes)
 - [ ] Model is appropriate for task
 - [ ] Output format is structured
+- [ ] Returns data to orchestrator (no direct KB writes)
 - [ ] Rules/instructions are clear
 - [ ] Examples provided
 - [ ] Under 100 lines

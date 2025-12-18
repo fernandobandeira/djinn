@@ -16,8 +16,21 @@
               "icon": "lucide-git-fork",
               "title": "Graph view"
             }
+          },
+          {
+            "id": "04f68cf3a18be20f",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.10.6"
+              },
+              "icon": "lucide-book-up",
+              "title": "Release Notes 1.10.6"
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -162,8 +175,16 @@
       "bases:Create new base": false
     }
   },
-  "active": "d33b5d5fedafd113",
+  "active": "04f68cf3a18be20f",
   "lastOpenFiles": [
+    "Guide.md.tmp.3265.1766080228160",
+    "Guide.md.tmp.3265.1766080068600",
+    "Guide.md.tmp.3265.1766079778073",
+    "templates/basic-memory-setup.md",
+    "Guide.md.tmp.3265.1766079758968",
+    "templates/CLAUDE-memory.md",
+    "templates",
+    "Guide.md.tmp.37935.1766078993070",
     "Project.md",
     "Guide.md",
     "Guide.tmp",

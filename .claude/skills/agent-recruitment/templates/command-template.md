@@ -37,6 +37,14 @@ settings:
   option2: value
 ```
 
+## Basic Memory Protocol
+
+Follow Basic Memory configuration in CLAUDE.md:
+- Read project name(s) from `**Primary**` / `**Shared**` config
+- Use Primary unless writing shared content
+- Always include `project` parameter in MCP calls
+- Search before creating
+
 ## Workflow
 
 {Main workflow description. What does this command do?}
@@ -137,6 +145,8 @@ After creating a command:
 - [ ] Frontmatter has description
 - [ ] Tool set is minimal
 - [ ] Sub-commands listed (if multi-mode)
+- [ ] Basic Memory Protocol section included
+- [ ] MCP calls include `project` parameter
 - [ ] Workflow is clear
 - [ ] Examples provided
 - [ ] Under 150 lines
