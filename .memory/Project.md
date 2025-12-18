@@ -1,3 +1,13 @@
+---
+title: Project
+type: note
+permalink: project
+tags:
+- djinn
+- overview
+- vision
+---
+
 # Djinn
 
 AI agent personas for Claude Code that help you brainstorm, research, analyze, and build.
@@ -6,7 +16,7 @@ AI agent personas for Claude Code that help you brainstorm, research, analyze, a
 
 AI assistance is powerful but unstructured. Most interactions are ad-hoc: prompt, respond, forget. No framework for sustained success.
 
-- **No structure** - AI assistance is inconsistent without clear patterns
+- **No structure** - AI assistance is inconsistent without clear patterns for what it should do
 - **No standards** - Teams reinvent workflows instead of building on proven patterns
 - **No methodology** - Proven thinking techniques (SCAMPER, Five Whys) aren't integrated
 - **No memory** - Insights disappear; your 100th conversation isn't smarter than your first
@@ -24,6 +34,10 @@ A framework with three layers:
 
 Type `/architect` and Claude becomes Archie - thinking like an architect, triggering systems-thinking skills, delegating research to sub-agents while keeping reasoning clean.
 
+## Vision
+
+Make AI interactions compound instead of starting fresh every session.
+
 ## Philosophy
 
 **You stay in the loop.** Djinn isn't about vibe coding or blind delegation. AI accelerates your work - drafting research, applying frameworks, generating options - but you remain the decision maker.
@@ -32,46 +46,16 @@ Type `/architect` and Claude becomes Archie - thinking like an architect, trigge
 - **Shared knowledge base** - `.memory/` serves both you and AI; keep it accurate
 - **Structured collaboration** - Personas and skills make AI predictable, not autonomous
 
-## Quick Start
+The goal is faster, better work - not less involvement.
 
-```bash
-# 1. Install Basic Memory
-uv tool install basic-memory
-claude mcp add basic-memory -- uvx basic-memory mcp
+## Goals
 
-# 2. Clone Djinn
-git clone https://github.com/your-org/djinn.git ~/.djinn
-cp -r ~/.djinn/.claude/* ~/.claude/
+- **Extensible standards** - Patterns anyone can build on
+- **Integrated methodology** - Proven thinking techniques baked in
+- **Persistent knowledge** - Decisions and insights accumulate over time
+- **User as reviewer** - AI proposes, you decide
 
-# 3. Initialize your project
-cd your-project
-basic-memory project add "$(basename $PWD)" ./.memory
-basic-memory project default "$(basename $PWD)"
-mkdir -p .memory/{decisions,patterns,research,context,sessions,diagrams}
-```
+## Relations
 
-## Usage
-
-```
-/analyst       # Ana - brainstorming, research, strategic analysis
-/architect     # Archie - system design, ADRs, diagrams
-/recruiter     # Rita - create new agents
-```
-
-Once activated, type `*help` to see available commands.
-
-Skills auto-activate based on context - just mention "brainstorm", "root cause", "SWOT", etc.
-
-## Documentation
-
-Full documentation is in `.memory/`:
-
-- **[Project](.memory/Project.md)** - Vision, goals, and full problem/solution context
-- **[Architecture](.memory/Architecture.md)** - Core concepts, design rules, how to extend
-- **[Guide](.memory/Guide.md)** - Installation details, usage, knowledge management
-
-Use [Obsidian](https://obsidian.md) to browse the docs - they use `[[wikilinks]]` for navigation.
-
-## License
-
-MIT
+- [[architecture]] - Technical design and decision frameworks
+- [[guide]] - Getting started and extension guide

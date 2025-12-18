@@ -79,7 +79,6 @@ mcp__basic-memory__canvas()
 Skills teach HOW to think. They're organized in tiers:
 
 ### Tier 1 (Universal)
-- `research` - **Use first** - KB search, harvesting, source evaluation
 - `root-cause` - Five Whys, First Principles, Jobs-to-be-Done
 - `ideation` - SCAMPER, Walt Disney Method, Reverse Brainstorming
 - `devils-advocate` - Red Team/Blue Team, Pre-mortem Analysis
@@ -93,22 +92,20 @@ Skills teach HOW to think. They're organized in tiers:
 
 ## Shared Sub-Agents
 
-Delegate execution work via Task tool to these in `.claude/agents/shared/`:
+Delegate context-heavy work via Task tool to these in `.claude/agents/shared/`:
 
-### Research & Analysis
-- `market-researcher` - Market research reports
-- `competitive-analyzer` - Competitive analysis
-- `research-architect` - Research methodology design
-- `insight-synthesizer` - Pattern extraction from data
+### Research (Heavy I/O)
+- `market-researcher` - Market research via web search
+- `competitive-analyzer` - Competitive analysis via web search
+- `knowledge-harvester` - Harvest external sources into Basic Memory
 
-### Documentation & Visualization
-- `documentation-generator` - Structured documentation
+### Visualization
 - `diagram-generator` - Mermaid/PlantUML technical diagrams
 
 ## Key Principles
 
-1. **Skills teach HOW to think. Sub-agents DO work.**
-2. **Memory First**: Always search before creating (use `research` skill)
+1. **Skills teach HOW to think. Sub-agents isolate context.**
+2. **Memory First**: Always search before creating
 3. **Link Everything**: Use [[wikilinks]] to connect notes
 4. **Brownfield**: Build on existing knowledge, never recreate
 

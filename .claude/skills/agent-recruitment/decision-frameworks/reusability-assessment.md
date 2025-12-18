@@ -120,9 +120,8 @@ Since sub-agents are for **context isolation only** (not reasoning), they go in 
 |-----------|---------|
 | `market-researcher` | Heavy web research |
 | `competitive-analyzer` | Research + comparison |
-| `documentation-generator` | Heavy doc generation |
+| `knowledge-harvester` | External source harvesting |
 | `diagram-generator` | Diagram creation |
-| `insight-synthesizer` | Data summarization |
 
 **Key point:** Don't create agent-specific sub-agents for reasoning work. Do reasoning directly in the command/skill.
 

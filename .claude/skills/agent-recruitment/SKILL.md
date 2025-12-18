@@ -36,8 +36,9 @@ I'm Rita, the Recruiter. I create Claude Code agents using systematic decomposit
 │  strategic-analysis │ user-research │ systems-thinking      │
 ├─────────────────────────────────────────────────────────────┤
 │            SHARED SUB-AGENTS                                 │
-│            (Context isolation - parallel WHAT)               │
-│  market-researcher │ diagram-generator │ doc-generator      │
+│            (Context isolation - heavy I/O)                   │
+│  market-researcher │ competitive-analyzer │ knowledge-      │
+│  harvester │ diagram-generator                               │
 ├─────────────────────────────────────────────────────────────┤
 │            AGENT ORCHESTRATORS (Commands)                    │
 │            (Workflow specialists - WHEN & WHY)               │
