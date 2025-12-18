@@ -63,4 +63,25 @@ Every note should include a `## Relations` section:
 - [[related-note]] - related content
 ```
 
+## After Delegating to Sub-agents
+
+When you delegate to a sub-agent (market-researcher, competitive-analyzer, diagram-generator, knowledge-harvester), they return synthesis - they don't write to Basic Memory.
+
+**You are responsible for writing their results to KB.**
+
+Sub-agent results include:
+- `synthesized_content` - Markdown ready for storage
+- `suggested_title` - Recommended note title
+- `suggested_folder` - Where to store (research, diagrams, etc.)
+
+After receiving results, write to Basic Memory:
+```python
+mcp__basic-memory__write_note(
+    title=result.suggested_title,
+    content=result.synthesized_content,
+    folder=result.suggested_folder,
+    project="YOUR_PROJECT_NAME"
+)
+```
+
 <!-- Add your project-specific instructions below -->

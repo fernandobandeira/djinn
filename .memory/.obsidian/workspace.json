@@ -21,12 +21,14 @@
             "id": "04f68cf3a18be20f",
             "type": "leaf",
             "state": {
-              "type": "release-notes",
+              "type": "markdown",
               "state": {
-                "currentVersion": "1.10.6"
+                "file": "Architecture.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-book-up",
-              "title": "Release Notes 1.10.6"
+              "icon": "lucide-file",
+              "title": "Architecture"
             }
           }
         ],
@@ -177,6 +179,8 @@
   },
   "active": "04f68cf3a18be20f",
   "lastOpenFiles": [
+    "Architecture.tmp",
+    "patterns/Orchestrator Responsibility Pattern.md",
     "Guide.md.tmp.3265.1766080228160",
     "Guide.md.tmp.3265.1766080068600",
     "Guide.md.tmp.3265.1766079778073",
@@ -189,7 +193,6 @@
     "Guide.md",
     "Guide.tmp",
     "Architecture.md",
-    "Architecture.tmp",
     "Project.tmp",
     "links.md"
   ]

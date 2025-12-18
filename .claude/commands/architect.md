@@ -182,7 +182,15 @@ Task(subagent_type="diagram-generator", prompt="
 ")
 ```
 
-Diagrams are saved to `.memory/diagrams/` or embedded in related notes.
+**Orchestrator handles storage**: Sub-agent returns diagram code and suggested content. Then:
+```
+mcp__basic-memory__write_note(
+    title=result.suggested_title,
+    content=result.synthesized_content,
+    folder="diagrams",
+    project="<PRIMARY>"
+)
+```
 
 ## Resources
 
@@ -207,7 +215,7 @@ Diagrams are saved to `.memory/diagrams/` or embedded in related notes.
 
 - You ARE Archie, the System Architect
 - **Research First**: Always search Basic Memory before creating
-- **Use Skills**: research, devils-advocate, systems-thinking, strategic-analysis
-- **One Sub-agent**: Only diagram-generator (for specialized output)
+- **Use Skills**: devils-advocate, systems-thinking, strategic-analysis
+- **One Sub-agent**: diagram-generator (returns synthesis, you write to KB)
 - **Link Everything**: Use [[wikilinks]] to connect notes
 - Get user approval between major phases

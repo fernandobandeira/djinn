@@ -151,30 +151,31 @@ BAD: Sub-agent that plans architecture (needs reasoning)
 # Research sub-agent
 tools: Read, Grep, WebFetch, WebSearch
 
-# Documentation generator
-tools: Read, Write, Glob
-
-# Diagram generator
-tools: Read, Write
+# Diagram generator (returns code, orchestrator writes)
+tools: Read, Glob
 ```
+
+**Note**: Sub-agents do NOT have Write tool. They return synthesis; orchestrators handle KB writes. See CLAUDE.md "Orchestrator Responsibility Pattern".
 
 ### Clear Output Format
 
-Sub-agents should return summaries, not raw data:
+Sub-agents return synthesis for orchestrator to write:
 
 ```markdown
 ## Output Format
 
-Return to calling agent:
+Return to calling orchestrator:
 ```yaml
 status: success | failure
-summary: string  # Key findings
-data:
-  - item: string
-    relevance: string
-recommendations:
-  - string
+synthesized_content: string    # Markdown ready for storage
+suggested_title: string        # Recommended note title
+suggested_folder: string       # research, diagrams, etc.
+key_findings: [list]           # Structured summary
+relations: [list]              # [[wikilinks]] to include
+confidence: high | medium | low
 ```
+
+The orchestrator then decides what to save and writes to Basic Memory with the correct project parameter.
 ```
 
 ### Single Responsibility
@@ -241,53 +242,55 @@ recommendations:
 - Focus on actionable insights
 ```
 
-## Example: Documentation Generator (Haiku)
+## Example: Knowledge Harvester (Sonnet)
 
 ```yaml
 ---
-name: documentation-generator
-description: IMPORTANT Generates structured documentation from analysis
-tools: Read, Write, Glob
-model: haiku
+name: knowledge-harvester
+description: Harvests knowledge from external sources and returns synthesized content
+tools: WebSearch, WebFetch
+model: sonnet
 ---
 ```
 
 ```markdown
-# Documentation Generator
+# Knowledge Harvester
 
-Generate formatted documentation from structured input.
+Fetch external sources, extract key knowledge, return synthesis.
 
 ## Purpose
 
-Context isolation for document generation that shouldn't pollute main context.
+Context isolation for heavy web research that would flood main context.
 
 ## Instructions
 
-1. Receive documentation requirements
-2. Read relevant source files
-3. Generate formatted documentation
-4. Write to specified location
-5. Return summary of generated files
+1. Receive topic and search queries
+2. Search for relevant sources
+3. Fetch and extract key content
+4. Synthesize findings
+5. Return synthesis to orchestrator
 
 ## Output Format
 
+Return to calling orchestrator:
 ```yaml
 status: success | failure
-files_generated:
-  - path: string
-    sections: int
-    word_count: int
-errors:
-  - file: string
-    error: string
+synthesized_content: |
+  ## Key Concepts
+  [extracted concepts]
+
+  ## Patterns
+  [extracted patterns]
+
+  ## Relations
+  - [[project]] - context
+suggested_title: "External: [Topic]"
+suggested_folder: "research"
+sources_harvested: [list of URLs]
+confidence: high | medium | low
 ```
 
-## Supported Formats
-
-- Markdown documentation
-- API reference
-- User guides
-- Technical specifications
+Orchestrator handles storage with correct project parameter.
 ```
 
 ## Example: Diagram Generator (Haiku)
@@ -296,7 +299,7 @@ errors:
 ---
 name: diagram-generator
 description: IMPORTANT generates technical diagrams in Mermaid/PlantUML format
-tools: Read, Write, Glob
+tools: Read, Glob
 model: haiku
 ---
 ```
@@ -304,34 +307,39 @@ model: haiku
 ```markdown
 # Diagram Generator
 
-Generate technical diagrams from specifications.
+Generate technical diagrams and return synthesis.
 
 ## Purpose
 
-Context isolation for diagram generation. Returns diagram code, not process.
+Context isolation for diagram generation. Returns diagram code to orchestrator.
 
 ## Instructions
 
 1. Receive diagram requirements
 2. Read relevant context files
 3. Generate diagram in specified format
-4. Write to file or return code
-5. Return summary
+4. Return synthesis to orchestrator
 
 ## Output Format
 
+Return to calling orchestrator:
 ```yaml
 status: success | failure
 diagram_type: flowchart | sequence | class | erd
 format: mermaid | plantuml
-code: string  # The diagram code
-file_path: string | null  # If written to file
+diagram_code: string
+synthesized_content: |
+  ## {Diagram Name}
+  ```mermaid
+  {code}
+  ```
+  ## Components
+  [list]
+suggested_title: "Diagram: {name}"
+suggested_folder: "diagrams"
 ```
 
-## Supported Diagrams
-
-- Mermaid: flowchart, sequence, class, ER
-- PlantUML: all diagram types
+Orchestrator writes to KB with correct project.
 ```
 
 ## Integration Pattern
@@ -394,8 +402,9 @@ Before finalizing a sub-agent:
 - [ ] Clear, descriptive name
 - [ ] Description includes IMPORTANT (if proactive)
 - [ ] Minimal tool set
+- [ ] **NO Write tool** (returns synthesis, orchestrator writes to KB)
 - [ ] Appropriate model (haiku/sonnet, not opus)
-- [ ] Output format returns summaries
+- [ ] Output includes `synthesized_content`, `suggested_title`, `suggested_folder`
 - [ ] Single responsibility
 - [ ] Correct file location (agents/shared/)
 - [ ] Validates successfully

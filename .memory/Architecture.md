@@ -132,6 +132,8 @@ Sub-agents are ONLY for context isolation - keeping heavy I/O work separate from
 - Interactive work (can't ask follow-ups)
 - Architecture decisions (needs full context)
 
+**Important:** Sub-agents return synthesis to orchestrators. Orchestrators handle all KB writes. See [[orchestrator-responsibility-pattern]].
+
 ### Commands (Orchestrators)
 
 Commands are workflow personas activated by typing `/command`. They combine skills and sub-agents.
@@ -238,3 +240,4 @@ Making context isolation into skills (or vice versa).
 
 - [[project]] - Vision and goals
 - [[guide]] - How to install and extend
+- [[orchestrator-responsibility-pattern]] - Sub-agents return synthesis, orchestrators write to KB

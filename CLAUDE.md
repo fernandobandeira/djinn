@@ -74,6 +74,28 @@ Delegate context-heavy work via Task tool to these in `.claude/agents/shared/`:
 2. **Memory First**: Always search before creating
 3. **Link Everything**: Use [[wikilinks]] to connect notes
 4. **Brownfield**: Build on existing knowledge, never recreate
+5. **You Write to KB**: Sub-agents return synthesis to you; you handle all KB writes
+
+## After Delegating to Sub-agents
+
+When you delegate to a sub-agent (market-researcher, competitive-analyzer, diagram-generator, knowledge-harvester), they return synthesis - they don't write to Basic Memory.
+
+**You are responsible for writing their results to KB.**
+
+Sub-agent results include:
+- `synthesized_content` - Markdown ready for storage
+- `suggested_title` - Recommended note title
+- `suggested_folder` - Where to store (research, diagrams, etc.)
+
+After receiving results, write to Basic Memory:
+```python
+mcp__basic-memory__write_note(
+    title=result.suggested_title,
+    content=result.synthesized_content,
+    folder=result.suggested_folder,
+    project="djinn"
+)
+```
 
 ## Agent Creation
 

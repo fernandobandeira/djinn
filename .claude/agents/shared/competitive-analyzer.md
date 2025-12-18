@@ -2,7 +2,7 @@
 name: competitive-analyzer
 type: subagent
 description: IMPORTANT Performs comprehensive competitive analysis and positioning assessment
-tools: Read, Write, WebSearch, WebFetch, Grep
+tools: Read, WebSearch, WebFetch, Grep
 model: sonnet
 ---
 
@@ -30,16 +30,16 @@ analysis_request:
 ## Output Schema
 ```yaml
 analysis_result:
-  note_title: string
-  permalink: string
-  folder: "research"           # Stored in .memory/research/
+  synthesized_content: string    # Markdown content ready for storage
+  suggested_title: string        # Recommended note title
+  suggested_folder: "research"   # Recommended folder
   competitive_matrix: object
   key_differentiators: [list]
   threats: [list]
   opportunities: [list]
   positioning_recommendations: [list]
   strategic_insights: [list]
-  relations: [list]            # [[wikilinks]] to related notes
+  relations: [list]              # [[wikilinks]] to include
 ```
 
 ## Analysis Framework
@@ -84,6 +84,44 @@ analysis_result:
 
 ### 3. Report Generation
 Generate structured competitive analysis report with clear matrices and strategic insights.
+
+### 4. Return to Orchestrator
+Return the synthesized content. The orchestrator handles storage:
+- Decides what to save
+- Applies project configuration from CLAUDE.md
+- Controls formatting and linking
+- Writes to Basic Memory with proper project parameter
+
+**Return format:**
+```yaml
+synthesized_content: |
+  ## Competitive Overview
+  [market context and landscape]
+
+  ## Competitive Matrix
+  | Competitor | Strengths | Weaknesses | Positioning |
+  |------------|-----------|------------|-------------|
+  [matrix rows]
+
+  ## Key Differentiators
+  [our unique advantages]
+
+  ## Threats
+  [competitive threats]
+
+  ## Opportunities
+  [market opportunities]
+
+  ## Strategic Insights
+  [positioning recommendations]
+
+  ## Relations
+  - [[project]] - project context
+  - [[market-research]] - related market data
+
+suggested_title: "Competitive Analysis: [Market/Topic]"
+suggested_folder: "research"
+```
 
 ## Quality Assurance
 - Validate data currency (< 6 months old)

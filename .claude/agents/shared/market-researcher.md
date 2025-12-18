@@ -2,7 +2,7 @@
 name: market-researcher
 type: subagent
 description: IMPORTANT Generates comprehensive market research reports from topic and requirements
-tools: Read, Write, WebSearch, WebFetch, Grep
+tools: Read, WebSearch, WebFetch, Grep
 model: sonnet
 ---
 
@@ -30,16 +30,16 @@ research_request:
 ## Output Schema
 ```yaml
 research_result:
-  note_title: string
-  permalink: string
-  folder: "research"           # Stored in .memory/research/
+  synthesized_content: string    # Markdown content ready for storage
+  suggested_title: string        # Recommended note title
+  suggested_folder: "research"   # Recommended folder
   key_findings: [list]
   market_size: string
   growth_rate: string
   opportunities: [list]
   challenges: [list]
   recommendations: [list]
-  relations: [list]            # [[wikilinks]] to related notes
+  relations: [list]              # [[wikilinks]] to include
   confidence_level: high|medium|low
 ```
 
@@ -81,7 +81,46 @@ research_result:
 ### 3. Report Generation
 Generate structured market research report with clear sections and actionable insights.
 
-### 4. Quality Validation
+### 4. Return to Orchestrator
+Return the synthesized content. The orchestrator handles storage:
+- Decides what to save
+- Applies project configuration from CLAUDE.md
+- Controls formatting and linking
+- Writes to Basic Memory with proper project parameter
+
+**Return format:**
+```yaml
+synthesized_content: |
+  ## Market Overview
+  [market summary]
+
+  ## Market Size
+  - TAM: [value]
+  - SAM: [value]
+  - SOM: [value]
+  - CAGR: [value]
+
+  ## Key Findings
+  [findings]
+
+  ## Opportunities
+  [opportunities]
+
+  ## Challenges
+  [challenges]
+
+  ## Recommendations
+  [recommendations]
+
+  ## Relations
+  - [[project]] - project context
+  - [[related-topic]] - related work
+
+suggested_title: "Market Research: [Topic]"
+suggested_folder: "research"
+```
+
+### 5. Quality Validation
 - Cross-reference multiple sources
 - Validate data recency
 - Check for conflicting information

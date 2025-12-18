@@ -208,14 +208,24 @@ Read [cookbook/systems-mapping.md](.claude/skills/systems-thinking/cookbook/syst
 
 Delegate to market-researcher sub-agent:
 - Heavy web research would flood context
-- Results are summarized back
+- Results are synthesized back to you
 
 Task(
   subagent_type="market-researcher",
   description="Research market for X",
-  prompt="Research {topic}. Return summary of findings."
+  prompt="Research {topic}. Return synthesis."
+)
+
+# After receiving results, YOU write to KB:
+mcp__basic-memory__write_note(
+    title=result.suggested_title,
+    content=result.synthesized_content,
+    folder=result.suggested_folder,
+    project="<PRIMARY>"  # From CLAUDE.md
 )
 ```
+
+**Key**: Sub-agents return synthesis. You write to KB with correct project parameter.
 
 ## Example: Rita (Recruiter Orchestrator)
 
@@ -349,6 +359,7 @@ Before finalizing an orchestrator:
 - [ ] Clear workflow phases identified
 - [ ] Reasoning work done directly
 - [ ] Sub-agents only for context isolation
+- [ ] **Orchestrator writes sub-agent results to KB** (sub-agents return synthesis)
 - [ ] Skills loaded for domain expertise
 - [ ] Interfaces defined between phases
 - [ ] State management minimal

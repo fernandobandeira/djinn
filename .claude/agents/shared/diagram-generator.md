@@ -2,7 +2,7 @@
 name: diagram-generator
 type: subagent
 description: IMPORTANT generates technical diagrams in Mermaid/PlantUML format
-tools: Read, Write, Glob
+tools: Read, Glob
 model: haiku
 ---
 
@@ -53,11 +53,12 @@ Data models and relationships.
 diagram_result:
   status: success
   type: string
-  filename: string
-  path: string
   format: mermaid | plantuml
   components_included: [string]
-  diagram_code: string  # The actual Mermaid/PlantUML code
+  diagram_code: string           # The actual Mermaid/PlantUML code
+  synthesized_content: string    # Full markdown ready for storage
+  suggested_title: string        # Recommended note title
+  suggested_folder: "diagrams"   # Recommended folder
 ```
 
 ## Color Standards
@@ -107,11 +108,35 @@ graph TD
 - Keep diagrams readable (max 15-20 nodes for system diagrams)
 - Use subgraphs for grouping related components
 
-## Storage Paths
-All diagrams stored in Basic Memory:
-- Architecture diagrams: `.memory/diagrams/`
-- Flow diagrams: `.memory/diagrams/`
-- Embed in related notes using [[wikilinks]]
+## Return to Orchestrator
+Return the diagram content. The orchestrator handles storage:
+- Decides what to save and where
+- Applies project configuration from CLAUDE.md
+- Controls formatting and linking
+- Writes to Basic Memory with proper project parameter
+
+**Return format:**
+```yaml
+synthesized_content: |
+  ## {Diagram Name}
+
+  {Brief description}
+
+  ```mermaid
+  {diagram code}
+  ```
+
+  ## Components
+  - **Component 1**: Description
+  - **Component 2**: Description
+
+  ## Relations
+  - [[architecture]] - related architecture
+  - [[system]] - parent system
+
+suggested_title: "{Type} Diagram: {Name}"
+suggested_folder: "diagrams"
+```
 
 ## Callers
 Can be called by: Any agent needing to generate technical diagrams (architect, analyst, dev, PM).

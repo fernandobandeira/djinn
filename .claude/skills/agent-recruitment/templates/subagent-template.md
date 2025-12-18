@@ -63,7 +63,7 @@ recommendations:
 
 ## Basic Memory Protocol
 
-**Sub-agents do NOT write to Basic Memory.** Return structured data to the orchestrator.
+**Sub-agents do NOT write to Basic Memory.** Return synthesis to the orchestrator.
 
 The orchestrator handles all KB operations:
 - Decides what to save
@@ -71,12 +71,16 @@ The orchestrator handles all KB operations:
 - Controls formatting and linking
 - Writes to Basic Memory with proper project parameter
 
-If the sub-agent needs to suggest content for storage, include it in the output:
+Include synthesis fields in output:
 ```yaml
-suggested_content:
-  title: "Note Title"
-  folder: "research"
-  content: "Markdown content..."
+synthesized_content: |
+  ## Title
+  [markdown content ready for storage]
+
+  ## Relations
+  - [[related-note]]
+suggested_title: "Note Title"
+suggested_folder: "research"
 ```
 
 ## Examples
