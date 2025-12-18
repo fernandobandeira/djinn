@@ -1,6 +1,6 @@
 # Knowledge Harvesting Cookbook
 
-Extract and index knowledge from external sources using crawl4ai.
+Extract knowledge from external sources and store it in Basic Memory.
 
 ## When to Use
 
@@ -10,144 +10,195 @@ Extract and index knowledge from external sources using crawl4ai.
 - Gathering competitive intelligence
 - Finding troubleshooting solutions
 
+## Harvesting Workflow
+
+1. **Fetch content** using WebFetch
+2. **Extract key information** from the response
+3. **Store as note** in Basic Memory with proper links
+
 ## Basic Harvest
 
-```bash
-./.vector_db/harvest \
-    --url "https://example.com/docs" \
-    --topic "Topic Name" \
-    --profile "deep_research" \
-    --agent "architect"
+```
+# Step 1: Fetch the content
+WebFetch(
+    url="https://docs.example.com/authentication",
+    prompt="Extract the key concepts, patterns, and recommendations for authentication"
+)
+
+# Step 2: Store as a note
+mcp__basic-memory__write_note(
+    title="External: Authentication Patterns from Example.com",
+    content="""
+## Source
+URL: https://docs.example.com/authentication
+Harvested: [date]
+
+## Key Concepts
+[extracted concepts from WebFetch]
+
+## Patterns
+[extracted patterns]
+
+## Recommendations
+[extracted recommendations]
+
+## Relations
+- [[authentication]] - internal auth work
+- [[security-requirements]] - our requirements
+""",
+    folder="research"
+)
 ```
 
-## Harvesting Profiles
+## Harvesting Patterns
 
-| Profile | Depth | Timeout | Best For |
-|---------|-------|---------|----------|
-| `quick_reference` | 1 page | 30s | Single doc page, quick lookups |
-| `deep_research` | 5+ pages | 120s | Comprehensive documentation |
-| `code_examples` | 3 pages | 60s | Implementation examples |
-| `api_documentation` | 4 pages | 90s | API endpoints, schemas |
-| `troubleshooting` | 20 results | 60s | Error solutions, forum posts |
-
-## Profile Selection
-
-### Quick Reference
-Single page extraction for immediate answers.
-```bash
-./.vector_db/harvest --url "URL" --topic "API Reference" --profile "quick_reference" --agent "developer"
+### Technology Assessment
 ```
+# Fetch
+WebFetch(
+    url="https://newframework.io/docs/overview",
+    prompt="Summarize the key features, architecture, and use cases for this framework"
+)
 
-### Deep Research
-Multi-page comprehensive crawling.
-```bash
-./.vector_db/harvest --url "URL" --topic "Framework Architecture" --profile "deep_research" --agent "architect"
-```
-
-### Code Examples
-Focus on extracting code blocks.
-```bash
-./.vector_db/harvest --url "URL" --topic "React Hooks Examples" --profile "code_examples" --agent "developer"
+# Store
+mcp__basic-memory__write_note(
+    title="Research: NewFramework Evaluation",
+    content="[extracted content with [[links]] to related notes]",
+    folder="research"
+)
 ```
 
 ### API Documentation
-Structured API endpoint extraction.
-```bash
-./.vector_db/harvest --url "URL" --topic "REST API Docs" --profile "api_documentation" --agent "developer"
 ```
+# Fetch
+WebFetch(
+    url="https://api.service.com/docs",
+    prompt="Extract API endpoints, authentication methods, and rate limits"
+)
 
-### Troubleshooting
-Problem-solution pairs from forums.
-```bash
-./.vector_db/harvest --url "URL" --topic "Error Resolution" --profile "troubleshooting" --agent "developer"
-```
-
-## Output Location
-
-Harvested content saves to `/harvested/` with subdirectories:
-- `documentation/` - Official docs, guides
-- `research/` - Deep research results
-- `web/` - General web content
-- `troubleshooting/` - Problem-solution pairs
-
-Files include metadata frontmatter:
-```yaml
----
-source: https://original-url.com
-harvested_at: 2025-01-15T10:30:00Z
-profile: deep_research
-agent_context: architect
-topic: Topic Name
----
-```
-
-## Automatic Indexing
-
-Harvested content is **automatically indexed** in the KB under the `harvested` collection. Search it with:
-
-```bash
-./.vector_db/kb search "query" --collection harvested
-```
-
-## Common Harvesting Patterns
-
-### Technology Assessment
-```bash
-./.vector_db/harvest \
-    --url "https://newframework.io/docs" \
-    --topic "NewFramework Evaluation" \
-    --profile "deep_research" \
-    --agent "architect"
-```
-
-### Library Documentation
-```bash
-./.vector_db/harvest \
-    --url "https://library-docs.com/api" \
-    --topic "Library API Reference" \
-    --profile "api_documentation" \
-    --agent "developer"
+# Store
+mcp__basic-memory__write_note(
+    title="External: Service API Reference",
+    content="[extracted API info with [[links]] to our integration notes]",
+    folder="research"
+)
 ```
 
 ### Pattern Research
-```bash
-./.vector_db/harvest \
-    --url "https://patterns-site.com/microservices" \
-    --topic "Microservices Patterns" \
-    --profile "deep_research" \
-    --agent "architect"
+```
+# Fetch
+WebFetch(
+    url="https://patterns-site.com/microservices",
+    prompt="Extract microservices patterns, when to use each, and trade-offs"
+)
+
+# Store
+mcp__basic-memory__write_note(
+    title="Research: Microservices Patterns",
+    content="[extracted patterns with [[links]] to our architecture notes]",
+    folder="patterns"
+)
 ```
 
-### Debug/Troubleshoot
-```bash
-./.vector_db/harvest \
-    --url "https://stackoverflow.com/questions/tagged/react-hooks" \
-    --topic "React Hooks Issues" \
-    --profile "troubleshooting" \
-    --agent "developer"
+### Troubleshooting
+```
+# Search for solutions
+WebSearch(query="React hooks memory leak fix")
+
+# Fetch relevant results
+WebFetch(
+    url="[best result URL]",
+    prompt="Extract the problem description, root cause, and solution"
+)
+
+# Store solution
+mcp__basic-memory__write_note(
+    title="Solution: React Hooks Memory Leak",
+    content="[problem and solution with [[links]] to related issues]",
+    folder="research"
+)
+```
+
+## Note Structure for Harvested Content
+
+```markdown
+## Source
+- URL: [original URL]
+- Harvested: [date]
+- Type: [documentation/article/forum/tutorial]
+
+## Summary
+[Brief overview of what was harvested]
+
+## Key Content
+[Extracted information organized by topic]
+
+## Applicability
+- Relevant to: [[related-project-note]]
+- Constraints: [any limitations or context differences]
+- Confidence: [high/medium/low]
+
+## Relations
+- [[project-note-1]] - how this relates
+- [[project-note-2]] - another connection
 ```
 
 ## Best Practices
 
 1. **Search KB first** - Don't harvest if knowledge exists internally
-2. **Use appropriate profile** - Match profile to content type
-3. **Set agent context** - Helps with relevance scoring
-4. **Be specific with topics** - Descriptive names aid retrieval
-5. **Review harvested content** - Verify quality and relevance
+2. **Use focused prompts** - Tell WebFetch exactly what to extract
+3. **Add context** - Note how harvested content relates to your project
+4. **Link generously** - Connect to existing notes with [[wikilinks]]
+5. **Note limitations** - External content may not fit your context exactly
+6. **Date everything** - Technical content ages quickly
 
-## Crawl4ai Features
+## Multi-Source Research
 
-The harvester uses crawl4ai which provides:
-- **6x faster** than traditional crawlers
-- **JavaScript rendering** for dynamic sites
-- **Adaptive depth** - stops when sufficient info gathered
-- **Stealth mode** - handles protected sites
-- **Smart extraction** - preserves formatting, tables, code
+For comprehensive research, harvest from multiple sources:
 
-## Limitations
+```
+# Fetch from multiple sources
+source1 = WebFetch(url="[official docs]", prompt="[extraction prompt]")
+source2 = WebFetch(url="[tutorial]", prompt="[extraction prompt]")
+source3 = WebFetch(url="[comparison article]", prompt="[extraction prompt]")
 
-- Respects robots.txt
-- Some sites may block crawling
-- Rate limited to avoid overload
-- Large sites may timeout
-- Quality varies by source
+# Synthesize into one note
+mcp__basic-memory__write_note(
+    title="Research: [Topic] Comprehensive Review",
+    content="""
+## Overview
+Synthesized from 3 sources on [topic].
+
+## From Official Docs
+[key points]
+
+## From Tutorial
+[practical examples]
+
+## From Comparison
+[trade-offs and alternatives]
+
+## Synthesis
+[your conclusions combining all sources]
+
+## Relations
+- [[project]] - project context
+- [[decision-to-make]] - what this informs
+""",
+    folder="research"
+)
+```
+
+## Error Handling
+
+- **URL blocked**: Try alternative sources or use WebSearch first
+- **Content too long**: Focus prompt on specific sections
+- **No relevant content**: Refine search or try different URLs
+- **Conflicting info**: Note the conflict in your research note
+
+## Integration with Other Skills
+
+After harvesting:
+- **Source Evaluation** - Assess quality and applicability
+- **Strategic Analysis** - If evaluating options
+- **Devils Advocate** - Challenge the harvested recommendations

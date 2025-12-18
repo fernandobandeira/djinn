@@ -2,13 +2,75 @@
 
 AI agent personas for Claude Code that help you brainstorm, research, analyze, and build.
 
-## What would you like to do?
+## Prerequisites
 
-- **[Brainstorm & Research](#-ana---analyst)** - Market research, competitive analysis, ideation sessions
-- **[Design Systems](#-archie---architect)** - System architecture, ADRs, technical diagrams
-- **[Create New Agents](#-rita---recruiter)** - Build custom commands, skills, and sub-agents
-- **[Use Thinking Skills](#skills)** - Root cause analysis, ideation, strategic analysis
-- **[Understand the Architecture](#architecture)** - How agents are organized
+### Required: Basic Memory MCP
+
+Djinn uses [Basic Memory](https://basicmemory.io) for knowledge management. Install it before using Djinn:
+
+```bash
+# Install Basic Memory
+uv tool install basic-memory
+
+# Add MCP to Claude Code
+claude mcp add basic-memory -- uvx basic-memory mcp
+
+# Verify installation
+claude mcp list
+```
+
+## Installation
+
+### Option 1: Clone to your home directory (Recommended)
+
+```bash
+# Clone Djinn
+git clone https://github.com/your-org/djinn.git ~/.djinn
+
+# Copy to Claude Code config
+cp -r ~/.djinn/.claude/* ~/.claude/
+```
+
+### Option 2: Use as project template
+
+```bash
+# Clone as starting point for a new project
+git clone https://github.com/your-org/djinn.git my-project
+cd my-project
+```
+
+## Per-Project Setup
+
+Each project using Djinn needs Basic Memory initialized:
+
+```bash
+cd your-project
+
+# Initialize Basic Memory for this project
+basic-memory project add "$(basename $PWD)" ./.memory
+basic-memory project default "$(basename $PWD)"
+
+# Create folder structure
+mkdir -p .memory/{decisions,patterns,research,context,sessions,diagrams}
+
+# (Optional) Create initial project note
+cat > .memory/project.md << 'EOF'
+---
+title: Project
+type: note
+permalink: project
+---
+
+## Vision
+[Your project vision here]
+
+## Goals
+- Goal 1
+- Goal 2
+
+## Relations
+EOF
+```
 
 ## Quick Start
 
@@ -23,9 +85,17 @@ Once activated, type `*help` to see what the agent can do.
 
 Skills auto-activate based on context - just mention "brainstorm", "root cause", "SWOT", etc.
 
+## What would you like to do?
+
+- **[Brainstorm & Research](#-ana---analyst)** - Market research, competitive analysis, ideation sessions
+- **[Design Systems](#-archie---architect)** - System architecture, ADRs, technical diagrams
+- **[Create New Agents](#-rita---recruiter)** - Build custom commands, skills, and sub-agents
+- **[Use Thinking Skills](#skills)** - Root cause analysis, ideation, strategic analysis
+- **[Understand the Architecture](#architecture)** - How agents are organized
+
 ## Meet Your Agents
 
-### 📊 Ana - Analyst
+### Ana - Analyst
 
 Your strategic thinking partner for research and ideation.
 
@@ -49,7 +119,7 @@ Ana works iteratively - she'll ask clarifying questions and offer numbered optio
 
 ---
 
-### 🏗️ Archie - Architect
+### Archie - Architect
 
 Your system architecture partner for technical design decisions.
 
@@ -73,7 +143,7 @@ Archie presents options with trade-offs and waits for your approval before proce
 
 ---
 
-### 🎯 Rita - Recruiter
+### Rita - Recruiter
 
 Creates new Claude Code agents using systematic decomposition.
 
@@ -101,6 +171,7 @@ Skills auto-activate based on context and provide thinking techniques any agent 
 ### Tier 1: Universal Skills
 | Skill | Techniques | Trigger phrases |
 |-------|------------|-----------------|
+| `research` | KB Search, Harvesting, Evaluation | "search for", "find existing" |
 | `root-cause` | Five Whys, First Principles, JTBD | "why", "root cause", "first principles" |
 | `ideation` | SCAMPER, Walt Disney, Reverse Brainstorm | "brainstorm", "generate ideas" |
 | `devils-advocate` | Red Team, Pre-mortem | "challenge this", "what could go wrong" |
@@ -116,17 +187,35 @@ Skills auto-activate based on context and provide thinking techniques any agent 
 
 ---
 
+## Knowledge Management
+
+All project knowledge is stored in `.memory/` using Basic Memory:
+
+```
+.memory/
+├── project.md              # Vision, goals, overview
+├── architecture.md         # System design
+├── decisions/              # ADRs and key decisions
+├── patterns/               # Documented patterns
+├── research/               # Research outputs
+├── context/                # Current state
+├── sessions/               # Brainstorming sessions
+└── diagrams/               # Technical diagrams
+```
+
+**Key principle**: Always search before creating. Use [[wikilinks]] to connect notes.
+
+---
+
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                         SKILLS (auto-activate)                       │
-│  root-cause │ ideation │ devils-advocate │ role-playing │ teacher   │
-│  strategic-analysis │ user-research │ systems-thinking              │
-├─────────────────────────────────────────────────────────────────────┤
-│                              You                                     │
-└────────────────────────────────┬────────────────────────────────────┘
-                                 │
+                         SKILLS (auto-activate)
+  research | root-cause | ideation | devils-advocate | role-playing | teacher
+  strategic-analysis | user-research | systems-thinking
+────────────────────────────────────────────────────────────────────────────
+                              You
+────────────────────────────────────────────────────────────────────────────
           ┌──────────────────────┼──────────────────────┐
           ▼                      ▼                      ▼
     ┌──────────┐          ┌───────────┐          ┌──────────┐
@@ -134,17 +223,17 @@ Skills auto-activate based on context and provide thinking techniques any agent 
     │   (Ana)  │          │ (Archie)  │          │  (Rita)  │
     └────┬─────┘          └─────┬─────┘          └────┬─────┘
          │                      │                     │
-         │                      │                     │
          └──────────────────────┼─────────────────────┘
                                 │
                     ┌───────────┴───────────┐
                     ▼                       ▼
             SHARED SUB-AGENTS         AGENT-SPECIFIC
             (any agent can call)      SUB-AGENTS
-            ├── market-researcher     ├── system-designer
-            ├── competitive-analyzer  ├── adr-manager
-            ├── insight-synthesizer   ├── agent-planner
-            ├── documentation-gen     └── agent-builder
+            ├── market-researcher     (future)
+            ├── competitive-analyzer
+            ├── insight-synthesizer
+            ├── documentation-gen
+            ├── diagram-generator
             └── research-architect
 ```
 
@@ -155,7 +244,7 @@ Skills auto-activate based on context and provide thinking techniques any agent 
 |------|--------------|---------|
 | Command | You type `/name` to activate | `/analyst`, `/architect` |
 | Skill | Auto-activates on context | "brainstorm" triggers ideation |
-| Sub-agent | Called by parent agents | market-researcher, system-designer |
+| Sub-agent | Called by parent agents | market-researcher, diagram-generator |
 
 ## Project Structure
 
@@ -163,15 +252,14 @@ Skills auto-activate based on context and provide thinking techniques any agent 
 .claude/
 ├── commands/           # /analyst, /architect, /recruiter
 ├── skills/             # Auto-activating thinking techniques
+│   ├── research/       # KB search, harvesting, evaluation
 │   ├── root-cause/     # Five Whys, First Principles, JTBD
 │   ├── ideation/       # SCAMPER, Walt Disney, Reverse
 │   ├── strategic-analysis/  # SWOT, Porter's, Scenarios
 │   └── ...
 ├── agents/
-│   ├── shared/         # Sub-agents any command can call
-│   ├── architect/      # Archie's specialists
-│   └── recruiter/      # Rita's builders
-└── resources/          # Templates, protocols, data
+│   └── shared/         # Sub-agents any command can call
+└── resources/          # Templates, protocols, checklists
 ```
 
 ## Creating New Agents
@@ -183,6 +271,22 @@ Just ask! Say "create an agent" or use `/recruiter` and Rita will guide you thro
 3. **Architecture planning** - Decomposition and tool selection
 4. **Building** - File creation with proper structure
 5. **Validation** - Coherence, constraints, and resource checks
+
+---
+
+## Git Integration
+
+Add to your `.gitignore`:
+
+```gitignore
+# Basic Memory - keep everything (all Markdown)
+# .memory/ is fully tracked
+
+# Optional: ignore any generated caches
+.memory/.cache/
+```
+
+Your entire project knowledge travels with the repo - clone and you have full context.
 
 ---
 

@@ -247,21 +247,21 @@ Comprehensive security assessment checklist for architectural reviews focusing o
 ## Integration Points
 
 ### With Architecture Review
-```bash
+```
 # Search for security patterns
-./.vector_db/kb search "security pattern" --collection architecture
+mcp__basic-memory__search_notes(query="security pattern")
 
 # Find security ADRs
-./.vector_db/kb search "ADR security" --collection architecture
+mcp__basic-memory__search_notes(query="ADR security decision")
 ```
 
 ### With Compliance Management
-```bash
+```
 # Check compliance requirements
-./.vector_db/kb search "compliance" --collection documentation
+mcp__basic-memory__search_notes(query="compliance requirements")
 
 # Review audit findings
-./.vector_db/kb search "audit" --collection documentation
+mcp__basic-memory__search_notes(query="audit findings")
 ```
 
 ## Security Review Output Template

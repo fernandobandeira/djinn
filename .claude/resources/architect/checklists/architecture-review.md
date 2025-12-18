@@ -284,24 +284,32 @@ Overall Health: [Excellent | Good | Fair | Poor]
 4. Schedule follow-up review
 ```
 
-## Knowledge Base Integration
+## Basic Memory Integration
 
 ### Before Review:
-```bash
+```
 # Search for similar systems
-./.vector_db/kb search "architecture review" --collection architecture
+mcp__basic-memory__search_notes(query="architecture review")
 
 # Find relevant patterns
-./.vector_db/kb search "bottleneck" --collection architecture
+mcp__basic-memory__search_notes(query="bottleneck pattern")
 ```
 
 ### After Review:
-```bash
-# Index review findings
-./.vector_db/kb index --path /docs/architecture/reviews/
+```
+# Save review findings
+mcp__basic-memory__write_note(
+    title="Architecture Review: {system}",
+    content="[findings with [[links]] to ADRs]",
+    folder="research"
+)
 
 # Create ADRs for decisions
-./.vector_db/kb index --path /docs/architecture/adrs/
+mcp__basic-memory__write_note(
+    title="ADR: {decision}",
+    content="[decision content with [[links]]]",
+    folder="decisions"
+)
 ```
 
 ## Remember

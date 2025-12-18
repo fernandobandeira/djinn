@@ -406,21 +406,21 @@ Focus areas: [Specific items to recheck]
 ## Integration Points
 
 ### With Architecture Review
-```bash
+```
 # Find architectural constraints
-./.vector_db/kb search "architecture bottleneck" --collection architecture
+mcp__basic-memory__search_notes(query="architecture bottleneck")
 
 # Check performance ADRs
-./.vector_db/kb search "ADR performance" --collection architecture
+mcp__basic-memory__search_notes(query="ADR performance decision")
 ```
 
 ### With Performance Testing
-```bash
+```
 # Review existing test results
-./.vector_db/kb search "load test" --collection tests
+mcp__basic-memory__search_notes(query="load test results")
 
 # Check performance metrics
-./.vector_db/kb search "performance metric" --collection documentation
+mcp__basic-memory__search_notes(query="performance metrics")
 ```
 
 ## Success Metrics

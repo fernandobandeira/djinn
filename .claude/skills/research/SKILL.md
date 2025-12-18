@@ -1,16 +1,16 @@
 ---
 name: research
-description: Discover and gather knowledge effectively using KB semantic search and external harvesting. Use when user wants to "search for", "find existing", "what do we know about", "research", "look up", "check if we have", or needs to discover existing knowledge before creating something new.
-allowed-tools: Bash, Read, Grep, Glob
+description: Discover and gather knowledge effectively using Basic Memory semantic search and external harvesting. Use when user wants to "search for", "find existing", "what do we know about", "research", "look up", "check if we have", or needs to discover existing knowledge before creating something new.
+allowed-tools: Read, Grep, Glob, WebFetch, WebSearch
 ---
 
 # Research - Knowledge Discovery Skill
 
-Discover existing knowledge before creating new content. Search the KB semantically, harvest external sources, and synthesize findings.
+Discover existing knowledge before creating new content. Search the knowledge base semantically, harvest external sources, and synthesize findings.
 
 ## Quick Start
 
-1. **Always search KB first** before creating anything
+1. **Always search first** before creating anything
 2. Select technique based on what you need
 3. Evaluate sources and synthesize findings
 
@@ -18,8 +18,8 @@ Discover existing knowledge before creating new content. Search the KB semantica
 
 | Need | Use | Why |
 |------|-----|-----|
-| Find existing internal knowledge | KB Search | Semantic search across indexed docs |
-| Gather external documentation | Knowledge Harvesting | Crawl and index external sources |
+| Find existing internal knowledge | KB Search | Semantic search across project notes |
+| Gather external documentation | Knowledge Harvesting | Fetch and store external sources |
 | Assess what you found | Source Evaluation | Determine relevance and quality |
 
 **Default**: Always start with KB Search. Only harvest externally if internal knowledge is insufficient.
@@ -27,12 +27,12 @@ Discover existing knowledge before creating new content. Search the KB semantica
 ## Techniques
 
 ### KB Search
-Semantic search across all indexed project documents using Qdrant vector database.
+Semantic search across all project notes using Basic Memory.
 
 Read [cookbook/kb-search.md](./cookbook/kb-search.md)
 
 ### Knowledge Harvesting
-Extract and index knowledge from external sources using crawl4ai.
+Extract and store knowledge from external sources into Basic Memory.
 
 Read [cookbook/knowledge-harvesting.md](./cookbook/knowledge-harvesting.md)
 
@@ -46,23 +46,49 @@ Read [cookbook/source-evaluation.md](./cookbook/source-evaluation.md)
 1. **Search before create** - Always check what exists first
 2. **Internal first** - Prefer existing project knowledge over external
 3. **Semantic over keyword** - Use meaning-based queries, not just keywords
-4. **Agent context matters** - Use `--agent` flag for optimized results
-5. **Read full files** - Search returns chunks; read full docs for context
+4. **Link everything** - Use [[wikilinks]] to connect related notes
+5. **Read full notes** - Search returns previews; read full docs for context
 
-## KB Commands Reference
+## Basic Memory Commands Reference
 
-```bash
-# Semantic search
-./.vector_db/kb search "query" --agent [architect|analyst|developer]
+```
+# Search notes semantically
+mcp__basic-memory__search_notes(query="your query here")
 
-# Search specific collection
-./.vector_db/kb search "query" --collection [docs|architecture|code|harvested]
+# Read a specific note
+mcp__basic-memory__read_note(permalink="note-permalink")
 
-# Index new documents
-./.vector_db/kb index
+# Write a new note (with links)
+mcp__basic-memory__write_note(
+    title="Note Title",
+    content="Content with [[links]] to other notes",
+    folder="decisions"  # optional subfolder
+)
 
-# Harvest external content
-./.vector_db/harvest --url "URL" --topic "TOPIC" --profile "PROFILE" --agent "AGENT"
+# See recent activity
+mcp__basic-memory__recent_activity()
+
+# Get project canvas (overview)
+mcp__basic-memory__canvas()
+```
+
+## Project Knowledge Structure
+
+Notes are stored in `.memory/` with this structure:
+
+```
+.memory/
+├── project.md              # Vision, goals, overview
+├── architecture.md         # System design
+├── decisions/              # ADRs and key decisions
+│   └── auth-strategy.md
+├── patterns/               # Documented patterns
+│   └── error-handling.md
+├── research/               # Research outputs
+│   └── market-analysis.md
+├── context/                # Current state
+│   └── current-focus.md
+└── sessions/               # Brainstorming sessions
 ```
 
 ## When Research Works Best

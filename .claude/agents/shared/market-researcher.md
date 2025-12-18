@@ -30,13 +30,16 @@ research_request:
 ## Output Schema
 ```yaml
 research_result:
-  report_path: string
+  note_title: string
+  permalink: string
+  folder: "research"           # Stored in .memory/research/
   key_findings: [list]
   market_size: string
   growth_rate: string
   opportunities: [list]
   challenges: [list]
   recommendations: [list]
+  relations: [list]            # [[wikilinks]] to related notes
   confidence_level: high|medium|low
 ```
 

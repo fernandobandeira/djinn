@@ -30,13 +30,16 @@ analysis_request:
 ## Output Schema
 ```yaml
 analysis_result:
-  report_path: string
+  note_title: string
+  permalink: string
+  folder: "research"           # Stored in .memory/research/
   competitive_matrix: object
   key_differentiators: [list]
   threats: [list]
   opportunities: [list]
   positioning_recommendations: [list]
   strategic_insights: [list]
+  relations: [list]            # [[wikilinks]] to related notes
 ```
 
 ## Analysis Framework

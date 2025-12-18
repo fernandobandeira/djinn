@@ -108,9 +108,10 @@ graph TD
 - Use subgraphs for grouping related components
 
 ## Storage Paths
-- Architecture diagrams: `/docs/architecture/diagrams/`
-- Flow diagrams: `/docs/architecture/flows/`
-- General: `/docs/diagrams/`
+All diagrams stored in Basic Memory:
+- Architecture diagrams: `.memory/diagrams/`
+- Flow diagrams: `.memory/diagrams/`
+- Embed in related notes using [[wikilinks]]
 
 ## Callers
 Can be called by: Any agent needing to generate technical diagrams (architect, analyst, dev, PM).

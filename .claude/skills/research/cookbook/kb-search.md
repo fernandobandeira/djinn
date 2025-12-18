@@ -1,6 +1,6 @@
 # KB Search Cookbook
 
-Semantic search across indexed project documents using Qdrant vector database.
+Semantic search across project notes using Basic Memory MCP.
 
 ## When to Use
 
@@ -11,140 +11,176 @@ Semantic search across indexed project documents using Qdrant vector database.
 
 ## Basic Search
 
-```bash
-./.vector_db/kb search "your query here"
+```
+mcp__basic-memory__search_notes(query="your query here")
 ```
 
-## Agent-Optimized Search
+## Search Examples
 
-Different agents get results optimized for their needs:
-
-```bash
-# For architecture work - prioritizes ADRs, patterns, technical docs
-./.vector_db/kb search "query" --agent architect
-
-# For analysis work - prioritizes research, strategy docs
-./.vector_db/kb search "query" --agent analyst
-
-# For development work - prioritizes code, implementation docs
-./.vector_db/kb search "query" --agent developer
+### Before Creating an ADR
+```
+mcp__basic-memory__search_notes(query="authentication strategy decision")
 ```
 
-## Collection-Specific Search
+### Finding Patterns
+```
+mcp__basic-memory__search_notes(query="error handling patterns")
+```
 
-Target specific document types:
-
-```bash
-# Architecture decisions and patterns
-./.vector_db/kb search "query" --collection architecture
-
-# General documentation
-./.vector_db/kb search "query" --collection docs
-
-# Source code
-./.vector_db/kb search "query" --collection code
-
-# External harvested content
-./.vector_db/kb search "query" --collection harvested
+### Research Context
+```
+mcp__basic-memory__search_notes(query="market analysis competitive landscape")
 ```
 
 ## Understanding Results
 
-```
-Found 5 results:
-
-1. Collection: architecture
-   Score: 0.7004
-   File: /docs/architecture/adrs/ADR-20250120-error-handling.md:16
-   Source: internal
-   Preview: Error handling strategy using...
-```
-
-**Key fields:**
-- **Score**: 0.0-1.0, higher = more relevant (0.7+ is highly relevant)
-- **File:N**: Path with chunk index (`:16` means chunk 16)
-- **Source**: `internal` (your docs) vs `harvested` (external)
-- **Preview**: First 200 chars of matching chunk
+Search returns notes with:
+- **Permalink** - Unique identifier to read the full note
+- **Title** - Note title
+- **Preview** - First part of matching content
+- **Relations** - Connected notes via [[wikilinks]]
 
 ## After Finding Results
 
-1. **Read the full file** - chunks are excerpts, get full context
-2. **Note the chunk index** - helps locate specific section
-3. **Check source type** - internal docs are more authoritative
-4. **Cross-reference** - search related terms for completeness
+1. **Read the full note** - Use `read_note` to get complete content
+2. **Follow relations** - Check [[linked]] notes for context
+3. **Note the folder** - Indicates document type (decisions/, patterns/, etc.)
+4. **Cross-reference** - Search related terms for completeness
+
+## Reading a Note
+
+Once you find a relevant note, read it fully:
+
+```
+mcp__basic-memory__read_note(permalink="auth-strategy")
+```
 
 ## Query Construction Tips
 
 ### Be Semantic, Not Keyword-Based
-```bash
+```
 # Good - semantic meaning
-./.vector_db/kb search "handling errors gracefully"
+mcp__basic-memory__search_notes(query="handling errors gracefully in API responses")
 
 # Less effective - just keywords
-./.vector_db/kb search "error"
+mcp__basic-memory__search_notes(query="error")
 ```
 
 ### Use Domain Language
-```bash
+```
 # For architecture
-./.vector_db/kb search "microservices communication patterns"
+mcp__basic-memory__search_notes(query="microservices communication patterns")
 
 # For analysis
-./.vector_db/kb search "competitive landscape assessment"
+mcp__basic-memory__search_notes(query="competitive landscape assessment")
 ```
 
 ### Combine Concepts
-```bash
-./.vector_db/kb search "authentication security best practices"
+```
+mcp__basic-memory__search_notes(query="authentication security best practices JWT")
 ```
 
 ## Common Search Patterns
 
 ### Before Creating an ADR
-```bash
-./.vector_db/kb search "[decision topic]" --agent architect --collection architecture
+```
+mcp__basic-memory__search_notes(query="[decision topic] decision architecture")
 ```
 
 ### Before Writing Code
-```bash
-./.vector_db/kb search "[functionality] implementation" --agent developer
+```
+mcp__basic-memory__search_notes(query="[functionality] implementation pattern")
 ```
 
 ### Before Research/Analysis
-```bash
-./.vector_db/kb search "[topic] analysis research" --agent analyst
+```
+mcp__basic-memory__search_notes(query="[topic] analysis research findings")
 ```
 
 ### Finding Prior Art
-```bash
-./.vector_db/kb search "similar to [concept]" --collection architecture
+```
+mcp__basic-memory__search_notes(query="similar to [concept] pattern example")
 ```
 
-## Indexing New Content
+## Browsing Recent Notes
 
-After creating documents, index them:
+See what's been added recently:
 
-```bash
-# Smart index (only changed files)
-./.vector_db/kb index
+```
+mcp__basic-memory__recent_activity()
+```
 
-# Index specific path
-./.vector_db/kb index --path /docs/architecture/
+## Getting Project Overview
 
-# Force complete re-index
-./.vector_db/kb index --force
+Get a canvas view of the project knowledge:
+
+```
+mcp__basic-memory__canvas()
+```
+
+## Writing New Notes
+
+After research, document findings:
+
+```
+mcp__basic-memory__write_note(
+    title="Research: User Authentication Options",
+    content="""
+## Summary
+Evaluated three authentication approaches for the API.
+
+## Options Considered
+1. JWT with refresh tokens - See [[jwt-research]]
+2. Session-based auth - See [[session-auth-research]]
+3. OAuth2 - See [[oauth-research]]
+
+## Recommendation
+JWT with refresh tokens based on [[security-requirements]] and [[api-design]] constraints.
+
+## Relations
+- [[project]] - main project context
+- [[auth-strategy]] - final decision
+""",
+    folder="research"
+)
+```
+
+## Note Format
+
+Basic Memory notes use this structure:
+
+```markdown
+---
+title: Note Title
+type: note
+permalink: note-title
+---
+
+## Observations
+- Key observation 1
+- Key observation 2
+- See [[related-note]] for more context
+
+## Relations
+- [[project]] - connection to project
+- [[other-note]] - related concept
 ```
 
 ## Troubleshooting
 
 **No results?**
 1. Try broader query terms
-2. Remove collection filter
-3. Try different agent context
-4. Check if content is indexed: `./.vector_db/kb stats`
+2. Use different phrasing (semantic search)
+3. Check if content has been created yet
+4. Try `recent_activity()` to see what exists
 
 **Too many irrelevant results?**
-1. Add collection filter
-2. Use agent context
-3. Be more specific in query
-4. Limit results: `--limit 5`
+1. Be more specific in query
+2. Add domain context words
+3. Combine multiple concepts
+
+## Integration with Other Techniques
+
+After search:
+- **Knowledge Harvesting** - If internal search yields nothing, harvest externally
+- **Source Evaluation** - Assess quality of what you found

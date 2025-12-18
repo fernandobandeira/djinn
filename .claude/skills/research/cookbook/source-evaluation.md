@@ -13,18 +13,16 @@ Assess relevance, quality, and applicability of discovered knowledge.
 
 ### 1. Relevance Assessment
 
-**Score interpretation:**
-| Score | Meaning | Action |
-|-------|---------|--------|
-| 0.8+ | Highly relevant | Read full document, likely useful |
-| 0.6-0.8 | Moderately relevant | Skim for specific sections |
-| 0.4-0.6 | Tangentially related | Quick scan, may have insights |
-| < 0.4 | Low relevance | Skip unless desperate |
-
 **Questions to ask:**
 - Does this directly address my need?
 - Is the context similar to my situation?
 - Are the assumptions still valid?
+
+**Indicators of high relevance:**
+- Matches your use case closely
+- Same or similar technology stack
+- Recent and actively maintained
+- From trusted sources
 
 ### 2. Source Type Priority
 
@@ -44,12 +42,12 @@ Assess relevance, quality, and applicability of discovered knowledge.
 
 ### 3. Freshness Check
 
-**For internal docs:**
-- Check file modification date
-- Look for version/date in frontmatter
+**For internal notes:**
+- Check when the note was last updated
+- Look for version info in content
 - Verify against current codebase
 
-**For external docs:**
+**For external/harvested:**
 - Check publication/update date
 - Verify library/framework version matches
 - Look for deprecation notices
@@ -72,8 +70,8 @@ Assess relevance, quality, and applicability of discovered knowledge.
 
 ### Step 1: Gather
 Collect all relevant search results:
-```bash
-./.vector_db/kb search "topic" --limit 10
+```
+mcp__basic-memory__search_notes(query="topic")
 ```
 
 ### Step 2: Categorize
@@ -85,7 +83,7 @@ Group by source type:
 
 ### Step 3: Prioritize
 Rank by:
-1. Relevance score
+1. Relevance to current need
 2. Source authority
 3. Freshness
 4. Applicability
@@ -107,35 +105,45 @@ Combine findings:
 ## Red Flags
 
 **Discard or verify if:**
-- Score below 0.4
 - Source older than 2 years (tech topics)
 - Contradicts project ADRs
 - From unknown/untrusted source
 - Specific to different tech stack
 - Contains obvious errors
+- No clear provenance
 
 ## Output Template
 
-After evaluation, summarize:
+After evaluation, write a research summary note:
 
-```markdown
-## Research Summary: [Topic]
-
-### Key Findings
+```
+mcp__basic-memory__write_note(
+    title="Research Summary: [Topic]",
+    content="""
+## Key Findings
 1. [Finding from highest-priority source]
 2. [Finding from second source]
 3. [Finding from third source]
 
-### Sources Used
-- [Source 1]: Score X, [internal/external], [date]
-- [Source 2]: Score X, [internal/external], [date]
+## Sources Used
+| Source | Type | Freshness | Confidence |
+|--------|------|-----------|------------|
+| [[source-1]] | ADR | Current | High |
+| [[source-2]] | External | 2024 | Medium |
 
-### Gaps Identified
+## Gaps Identified
 - [What wasn't found]
 - [What needs external research]
 
-### Recommendations
+## Recommendations
 - [What to do next based on findings]
+
+## Relations
+- [[project]] - project context
+- [[related-decision]] - decision this informs
+""",
+    folder="research"
+)
 ```
 
 ## Decision Matrix

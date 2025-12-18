@@ -2,34 +2,77 @@
 
 Agent architecture project with reusable skills and shared sub-agents.
 
+## Prerequisites
+
+**Required MCP**: Basic Memory must be installed and configured.
+
+```bash
+# Install Basic Memory
+uv tool install basic-memory
+
+# Add MCP to Claude Code
+claude mcp add basic-memory -- uvx basic-memory mcp
+```
+
+## Project Initialization
+
+For each project using Djinn, initialize Basic Memory:
+
+```bash
+cd your-project
+basic-memory project add "$(basename $PWD)" ./.memory
+basic-memory project default "$(basename $PWD)"
+mkdir -p .memory/{decisions,patterns,research,context,sessions,diagrams}
+```
+
 ## Knowledge Base System
 
-**MANDATORY**: All agents must use the `research` skill for project discovery and search.
+All project knowledge is stored in `.memory/` using Basic Memory with [[wikilinks]].
 
-### KB-First Workflow
-1. **Invoke `research` skill** for any discovery task
-2. Search KB before creating anything
-3. Use agent context (`--agent architect|analyst|developer`) for optimized results
-4. Read full files after finding relevant chunks
+### Memory-First Workflow
+1. **Search first** before creating anything
+2. Use [[wikilinks]] to connect related notes
+3. Store decisions, patterns, research in appropriate folders
 
-### KB Commands
-```bash
-# Semantic search
-./.vector_db/kb search "query" --agent architect
+### Basic Memory Commands
+```
+# Search notes
+mcp__basic-memory__search_notes(query="your search")
 
-# Index documents after creation
-./.vector_db/kb index
+# Read a note
+mcp__basic-memory__read_note(permalink="note-name")
 
-# Harvest external content
-./.vector_db/harvest --url "URL" --topic "TOPIC" --profile "PROFILE" --agent "AGENT"
+# Write a note
+mcp__basic-memory__write_note(
+    title="Note Title",
+    content="Content with [[links]]",
+    folder="decisions"
+)
+
+# Recent activity
+mcp__basic-memory__recent_activity()
+
+# Project overview
+mcp__basic-memory__canvas()
+```
+
+### Knowledge Structure
+```
+.memory/
+├── project.md              # Vision, goals, overview
+├── architecture.md         # System design
+├── decisions/              # ADRs and key decisions
+├── patterns/               # Documented patterns
+├── research/               # Research outputs
+├── context/                # Current state
+├── sessions/               # Brainstorming sessions
+└── diagrams/               # Technical diagrams
 ```
 
 ### Search Before Create
-- Before creating an ADR → search existing ADRs
-- Before creating a pattern → search existing patterns
-- Before brainstorming → search prior sessions
-
-See `.vector_db/KB-INSTRUCTIONS.md` for full documentation.
+- Before creating an ADR: `search_notes("decision topic")`
+- Before creating a pattern: `search_notes("pattern name")`
+- Before brainstorming: `search_notes("topic ideas")`
 
 ## Skills Architecture
 
@@ -65,8 +108,9 @@ Delegate execution work via Task tool to these in `.claude/agents/shared/`:
 ## Key Principles
 
 1. **Skills teach HOW to think. Sub-agents DO work.**
-2. **Research First**: Always search before creating (use `research` skill)
-3. **Brownfield**: Build on existing knowledge, never recreate
+2. **Memory First**: Always search before creating (use `research` skill)
+3. **Link Everything**: Use [[wikilinks]] to connect notes
+4. **Brownfield**: Build on existing knowledge, never recreate
 
 ## Agent Creation
 
