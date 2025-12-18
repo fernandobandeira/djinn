@@ -193,6 +193,23 @@ Djinn stores project knowledge in `.memory/` using Basic Memory. This is your sh
 
 **Tip:** Use [Obsidian](https://obsidian.md) to browse `.memory/`. The markdown files and `[[wikilinks]]` work perfectly with it.
 
+## Recommended Workflow
+
+**KB is your source of truth. `.claude/` is implementation.**
+
+When using Djinn, follow this pattern:
+
+1. **Think first, document in KB** - Before building, document key decisions in your project's memory
+2. **KB captures WHY** - Principles, rationale, criteria for decisions
+3. **`.claude/` captures HOW** - Implementation details derived from KB principles
+4. **Human reviews KB** - Spend thought energy on decisions, not implementation details
+5. **Refactor from KB** - When changing `.claude/`, reference KB for guidance
+
+This workflow means:
+- You can regenerate `.claude/` artifacts if KB principles are clear
+- New team members understand WHY by reading KB
+- AI assistants make consistent decisions by following KB principles
+
 ## Relations
 
 - [[project]] - What Djinn is and why

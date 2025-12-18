@@ -23,12 +23,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Architecture.md",
+                "file": "reference/Catalog.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Architecture"
+              "title": "Catalog"
             }
           }
         ],
@@ -177,23 +177,42 @@
       "bases:Create new base": false
     }
   },
-  "active": "04f68cf3a18be20f",
+  "active": "3e33dda6d8616fca",
   "lastOpenFiles": [
     "Architecture.tmp",
+    "decisions/orchestrators/Recruiter.md",
+    "decisions/orchestrators/Architect.md",
+    "decisions/orchestrators/Analyst.md",
+    "decisions/orchestrators",
+    "decisions/subagents/Knowledge Harvester.md",
+    "patterns/Orchestrator.tmp",
+    "decisions/subagents/Competitive Analyzer.md",
+    "decisions/subagents/Market Researcher.md",
+    "patterns/Orchestrator.md",
+    "patterns/Skill.md",
+    "patterns/Sub-agent.md",
+    "decisions/commands/Analyst.md",
+    "reference/Catalog.md",
+    "decisions/skills/User Research.md",
+    "decisions/skills/Role Playing.md",
+    "decisions/skills/Ideation.md",
+    "decisions/skills/Devils Advocate.md",
+    "decisions/skills/Agent Recruitment.md",
+    "decisions/subagents/Diagram Generator.md",
+    "decisions/skills/Agent Recruitment.tmp",
+    "decisions/skills/Root Cause.tmp",
+    "decisions/skills/Ideation.tmp",
+    "decisions/skills/Devils Advocate.tmp",
+    "patterns/Skill.tmp",
+    "decisions/skills/Teacher.md",
+    "decisions/skills/Systems Thinking.md",
+    "decisions/skills/Strategic Analysis.md",
+    "decisions/skills/Root Cause.md",
+    "decisions/skills/User Research.tmp",
+    "decisions/commands/Architect.md",
+    "decisions/commands/Recruiter.md",
+    "decisions/commands/Recruiter.tmp",
     "patterns/Orchestrator Responsibility Pattern.md",
-    "Guide.md.tmp.3265.1766080228160",
-    "Guide.md.tmp.3265.1766080068600",
-    "Guide.md.tmp.3265.1766079778073",
-    "templates/basic-memory-setup.md",
-    "Guide.md.tmp.3265.1766079758968",
-    "templates/CLAUDE-memory.md",
-    "templates",
-    "Guide.md.tmp.37935.1766078993070",
-    "Project.md",
-    "Guide.md",
-    "Guide.tmp",
-    "Architecture.md",
-    "Project.tmp",
-    "links.md"
+    "patterns/Orchestrator Pattern.md"
   ]
 }

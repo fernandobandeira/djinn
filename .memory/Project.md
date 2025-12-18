@@ -48,6 +48,8 @@ Make AI interactions compound instead of starting fresh every session.
 
 The goal is faster, better work - not less involvement.
 
+**KB-First Development.** Your memory/knowledge base is the source of truth. Document decisions and principles there. Implementation in `.claude/` flows from those principles. This inverts the typical "code is truth" pattern - here, documented decisions guide implementation. If you need to refactor `.claude/`, reference your KB for guidance.
+
 ## Goals
 
 - **Extensible standards** - Patterns anyone can build on

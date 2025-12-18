@@ -35,17 +35,20 @@ This is the fundamental insight: reasoning and execution have different needs.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  TIER 1: UNIVERSAL SKILLS (HOW to think)                    │
-│  root-cause │ ideation │ devils-advocate │ role-playing     │
+│  FOUNDATIONAL SKILLS (building blocks)                      │
+│  role-playing │ devils-advocate                             │
 ├─────────────────────────────────────────────────────────────┤
-│  TIER 2: DOMAIN SKILLS (domain-specific HOW)                │
-│  strategic-analysis │ user-research │ systems-thinking      │
+│  UNIVERSAL SKILLS (most agents use)                         │
+│  ideation │ root-cause │ teacher                            │
 ├─────────────────────────────────────────────────────────────┤
-│  COMMANDS - Orchestrator Personas (WHEN & WHY)              │
-│  /analyst (Ana) │ /architect (Archie) │ /recruiter (Rita)   │
+│  DOMAIN SKILLS (cluster-specific)                           │
+│  strategic-analysis │ user-research │ agent-recruitment     │
+├─────────────────────────────────────────────────────────────┤
+│  ORCHESTRATORS - Personas (WHEN & WHY)                      │
+│  Ana (Analyst) │ Archie (Architect) │ Rita (Recruiter)      │
 ├─────────────────────────────────────────────────────────────┤
 │  SUB-AGENTS - Context Isolation (heavy I/O)                 │
-│  market-researcher │ competitive-analyzer │ diagram-gen     │
+│  market-researcher │ competitive-analyzer │ knowledge-harv  │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -53,7 +56,7 @@ This is the fundamental insight: reasoning and execution have different needs.
 
 ```
 .claude/
-├── commands/              # Orchestrator personas
+├── commands/              # Orchestrators (Claude Code implementation)
 │   ├── analyst.md
 │   ├── architect.md
 │   └── recruiter.md
@@ -68,7 +71,7 @@ This is the fundamental insight: reasoning and execution have different needs.
 │   └── shared/            # Sub-agents for context isolation
 │       ├── market-researcher.md
 │       ├── competitive-analyzer.md
-│       └── diagram-generator.md
+│       └── knowledge-harvester.md
 └── resources/             # Templates, checklists per agent
     ├── analyst/
     │   └── templates/
@@ -95,10 +98,11 @@ Skills are reusable thinking techniques that auto-activate based on conversation
 
 **Tiers:**
 
-| Tier | Audience | Examples |
-|------|----------|----------|
-| **Tier 1: Universal** | 4+ agents would use | root-cause, ideation, devils-advocate, role-playing, teacher |
-| **Tier 2: Domain** | 2-3 agents in a cluster | strategic-analysis, user-research, systems-thinking |
+| Tier | What it is | Examples |
+|------|------------|----------|
+| **Foundational** | Building blocks other skills compose | role-playing, devils-advocate |
+| **Universal** | Most agents use | ideation, root-cause, teacher |
+| **Domain** | Cluster-specific (2-3 agents) | strategic-analysis, user-research, agent-recruitment |
 
 **When to Create a Skill:**
 - It's a thinking technique (not execution)
@@ -110,7 +114,7 @@ Skills are reusable thinking techniques that auto-activate based on conversation
 
 Sub-agents are ONLY for context isolation - keeping heavy I/O work separate from the main conversation.
 
-**Location:** `.claude/agents/shared/{name}.md`
+**Implementation:** `.claude/agents/shared/{name}.md`
 
 **Current Sub-agents:**
 
@@ -119,7 +123,6 @@ Sub-agents are ONLY for context isolation - keeping heavy I/O work separate from
 | `market-researcher` | Web research for market analysis |
 | `competitive-analyzer` | Competitive landscape analysis |
 | `knowledge-harvester` | Harvest external sources into Basic Memory |
-| `diagram-generator` | Create Mermaid/PlantUML diagrams |
 
 **When to Use Sub-agents:**
 - Parallel execution needed
@@ -132,21 +135,21 @@ Sub-agents are ONLY for context isolation - keeping heavy I/O work separate from
 - Interactive work (can't ask follow-ups)
 - Architecture decisions (needs full context)
 
-**Important:** Sub-agents return synthesis to orchestrators. Orchestrators handle all KB writes. See [[orchestrator-responsibility-pattern]].
+**Important:** Sub-agents return synthesis to orchestrators. Orchestrators handle all KB writes. See [[Orchestrator]].
 
-### Commands (Orchestrators)
+### Orchestrators
 
-Commands are workflow personas activated by typing `/command`. They combine skills and sub-agents.
+Orchestrators are workflow personas that combine skills and sub-agents to guide users through complex tasks.
 
-**Location:** `.claude/commands/{name}.md`
+**Implementation:** `.claude/commands/{name}.md` (invoked via `/name` in Claude Code)
 
-**Current Commands:**
+**Current Orchestrators:**
 
-| Command | Persona | Focus |
-|---------|---------|-------|
-| `/analyst` | Ana | Research, brainstorming, strategic analysis |
-| `/architect` | Archie | System design, ADRs, diagrams |
-| `/recruiter` | Rita | Creating new agents |
+| Orchestrator | Persona | Focus |
+|--------------|---------|-------|
+| Analyst | Ana | Research, brainstorming, strategic analysis |
+| Architect | Archie | System design, ADRs, diagrams |
+| Recruiter | Rita | Creating new agents |
 
 ## Extending Djinn
 
@@ -161,11 +164,12 @@ flowchart TD
     B -->|CONTEXT ISOLATION<br>heavy I/O| D[SUB-AGENT]
     
     C --> E{How many agents<br>would use?}
-    E -->|4+ agents| F[Tier 1]
-    E -->|2-3 agents| G[Tier 2]
+    E -->|Most agents| F[Universal]
+    E -->|2-3 agents| G[Domain]
     E -->|1 agent| H[Embed inline]
+    E -->|Building block| I[Foundational]
     
-    D --> I[Always in<br>agents/shared/]
+    D --> J[agents/shared/]
 ```
 
 ### Reusability Assessment
@@ -205,11 +209,11 @@ Before creating, ask: **Who else would use this?**
 
 ## Reference
 
-### File Locations
+### File Locations (Claude Code Implementation)
 
 | Creating... | Location |
 |-------------|----------|
-| Command | `.claude/commands/{name}.md` |
+| Orchestrator | `.claude/commands/{name}.md` |
 | Skill | `.claude/skills/{name}/SKILL.md` |
 | Skill technique | `.claude/skills/{name}/cookbook/{technique}.md` |
 | Sub-agent | `.claude/agents/shared/{name}.md` |
@@ -221,7 +225,7 @@ Before creating, ask: **Who else would use this?**
 **Creating Sub-agents for Reasoning**
 ```
 BAD: Sub-agent for validation or planning
-GOOD: Do reasoning directly in the skill/command
+GOOD: Do reasoning directly in the skill/orchestrator
 ```
 
 **Over-sharing**
@@ -240,4 +244,4 @@ Making context isolation into skills (or vice versa).
 
 - [[project]] - Vision and goals
 - [[guide]] - How to install and extend
-- [[orchestrator-responsibility-pattern]] - Sub-agents return synthesis, orchestrators write to KB
+- [[Orchestrator]] - Sub-agents return synthesis, orchestrators write to KB
