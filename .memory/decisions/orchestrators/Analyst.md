@@ -65,8 +65,20 @@ Ana is a Business Analyst persona that **challenges assumptions**, grounds ideas
 - **Applies rigor users skip** - Devils advocate, pre-mortem, edge cases
 - **Captures insights** - Research linked in KB for future reference
 
+## Templates
+
+Location: `{templates}/analyst/` (configurable per [[Templates]] pattern)
+
+| Template                | Purpose                         | Key Sections                                                            |
+| ----------------------- | ------------------------------- | ----------------------------------------------------------------------- |
+| project-brief.md        | Project brief structure         | Executive Summary, Objectives, Scope, Timeline, Risks, Success Criteria |
+| brainstorming-output.md | Structured brainstorming output | Session Overview, Ideas by Theme, Top Ideas, Key Insights, Next Steps   |
+
+See [[Templates]] pattern for the platform-agnostic template approach.
+
 ## Relations
 
 - [[Architecture]] - Part of Djinn orchestrator layer
 - [[Catalog]] - Listed in component index
 - [[Orchestrator]] - Ana follows this pattern (guides users, uses skills, delegates to sub-agents for heavy I/O)
+- [[Templates]] - Uses analyst templates

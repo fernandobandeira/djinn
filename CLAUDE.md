@@ -6,6 +6,10 @@ Agent architecture project with reusable skills and shared sub-agents.
 
 **Primary**: `djinn`
 
+## Templates Configuration
+
+**Location**: `templates/`
+
 > **CRITICAL: NEVER manually read, write, or edit files in `.memory/`**
 >
 > The `.memory/` directory is managed exclusively by Basic Memory MCP.
@@ -63,7 +67,6 @@ Skills teach HOW to think. They're organized in tiers:
 ### Tier 2 (Domain)
 - `strategic-analysis` - SWOT, Porter's Five Forces, Scenario Planning
 - `user-research` - Journey Mapping, Interview Design
-- `systems-thinking` - Systems Mapping, Feedback Loops
 
 ## Shared Sub-Agents
 

@@ -16,6 +16,7 @@ An orchestrator is a **persona that guides users** to solve a particular problem
 - **Solves a specific problem** - Each orchestrator has a clear domain
 - **Coordinates resources** - Uses skills for thinking, delegates to sub-agents for heavy I/O
 - **Does reasoning directly** - Never delegates thinking work
+- **Asks before saving** - Always asks user before writing to memory (read is automatic, write is opt-in)
 - **Handles all storage** - Sub-agents return synthesis, orchestrators write to KB
 
 ## Core Principle
@@ -47,8 +48,9 @@ An orchestrator is a **persona that guides users** to solve a particular problem
 3. **Use skills for thinking** - Devils Advocate, Ideation, Root Cause, etc.
 4. **Delegate heavy I/O** - Use sub-agents for research that would flood context
 5. **Control all storage** - Sub-agents return synthesis, orchestrators decide what to save
-6. **Apply configuration** - Use correct project/scope for memory writes
-7. **Link content** - Add wikilinks to connect related notes
+6. **Ask before saving** - Always ask user before writing to memory (prevents polluting project docs)
+7. **Apply configuration** - Use correct project/scope for memory writes
+8. **Link content** - Add wikilinks to connect related notes
 
 ## When to Create an Orchestrator
 

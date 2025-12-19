@@ -137,7 +137,7 @@ phases:
   planning:
     work: Design architecture
     approach: Direct (reasoning)
-    skills: systems-thinking, strategic-analysis
+    skills: strategic-analysis, devils-advocate
 
   research:
     work: Market/competitive research
@@ -197,8 +197,8 @@ Read [cookbook/brainstorming.md](.claude/skills/ideation/cookbook/brainstorming.
 
 Apply SCAMPER technique to explore alternatives.
 
-Use systems-thinking skill for architecture.
-Read [cookbook/systems-mapping.md](.claude/skills/systems-thinking/cookbook/systems-mapping.md)
+Use strategic-analysis skill for trade-offs.
+Read [cookbook/scenario-planning.md](.claude/skills/strategic-analysis/cookbook/scenario-planning.md)
 ```
 
 ### What to Delegate (Context Isolation)

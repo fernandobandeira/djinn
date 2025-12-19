@@ -77,7 +77,6 @@ These DO work that would flood main context:
 | `devils-advocate` | PM, Dev, Architect, Analyst |
 | `role-playing` | PM, UX, Analyst, any decision-maker |
 | `teacher` | Any agent explaining concepts |
-| `research` | Any agent needing KB search |
 
 **Signals it's Tier 1:**
 - Fundamental thinking technique
@@ -94,7 +93,6 @@ These DO work that would flood main context:
 |-------|---------|
 | `strategic-analysis` | Analyst, PM, Marketing |
 | `user-research` | UX, PM, Analyst |
-| `systems-thinking` | Architect, Dev, Analyst |
 
 **Signals it's Tier 2:**
 - Valuable but domain-adjacent
@@ -175,7 +173,7 @@ Before creating, answer these:
 ### Example 5: Architecture Planning
 
 - Is it thinking or context isolation? **Thinking** (complex reasoning)
-- Does it need skill access? **Yes** (systems-thinking, etc.)
+- Does it need skill access? **Yes** (devils-advocate, strategic-analysis)
 - Decision: **Do directly in command** (not a sub-agent)
 
 ## Integration with Type Selection

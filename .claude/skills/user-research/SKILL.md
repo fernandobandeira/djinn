@@ -1,6 +1,6 @@
 ---
 name: user-research
-description: Design and conduct user research to understand needs, behaviors, and experiences. Use when user wants "journey mapping", "user interviews", "survey design", "usability testing", "user research", "customer discovery", or needs to understand users deeply.
+description: Design and conduct user research to understand needs, behaviors, and experiences. Use when user wants "journey mapping", "user interviews", "survey design", "usability testing", "user research", "customer discovery", "card sorting", "information architecture", "accessibility audit", "design critique", "prototype testing", "requirements gathering", or needs to understand users deeply.
 allowed-tools: Read
 ---
 
@@ -21,6 +21,13 @@ Design research approaches that reveal what users actually need, do, and experie
 | Understand end-to-end experience | Journey Mapping | Reveals pain points across touchpoints |
 | Deep qualitative insights | Interview Design | Rich context and "why" behind behaviors |
 | Quantitative data at scale | Survey Design | Measure attitudes and preferences broadly |
+| Information architecture | Card Sorting | Reveals user mental models for navigation |
+| Feature prioritization | User Story Mapping | Connects user goals to features |
+| Design iteration | Design Critique | Structured feedback for improvement |
+| Constraints & specs | Requirements Gathering | Captures technical and business needs |
+| Interaction validation | Prototype Feedback | Fast feedback on low-fidelity concepts |
+| Usability evaluation | Usability Testing | Validates designs with real tasks |
+| Accessibility compliance | Accessibility Audit | Ensures inclusive design (WCAG) |
 
 **Default**: Start with interviews for discovery, use surveys for validation at scale.
 
@@ -40,6 +47,41 @@ Read [cookbook/interview-design.md](./cookbook/interview-design.md)
 Create surveys that collect reliable, actionable data. Avoid bias and get responses you can trust.
 
 Read [cookbook/survey-design.md](./cookbook/survey-design.md)
+
+### Card Sorting
+Understand how users mentally organize content. Reveals natural mental models for information architecture.
+
+Read [cookbook/card-sorting.md](./cookbook/card-sorting.md)
+
+### User Story Mapping
+Visualize the user journey and organize features into a prioritized backlog. Connects user goals to what to build.
+
+Read [cookbook/user-story-mapping.md](./cookbook/user-story-mapping.md)
+
+### Design Critique
+Systematically evaluate designs with structured feedback. Separates preference from user-centered critique.
+
+Read [cookbook/design-critique.md](./cookbook/design-critique.md)
+
+### Requirements Gathering
+Capture constraints, requirements, and trade-offs systematically. Prevents rework and misaligned expectations.
+
+Read [cookbook/requirements-gathering.md](./cookbook/requirements-gathering.md)
+
+### Prototype Feedback
+Gather rapid feedback on low-fidelity prototypes through task-based testing. Validates interaction design early.
+
+Read [cookbook/prototype-feedback.md](./cookbook/prototype-feedback.md)
+
+### Usability Testing
+Systematically evaluate how well users accomplish tasks. Reveals real problems that assumptions miss.
+
+Read [cookbook/usability-testing.md](./cookbook/usability-testing.md)
+
+### Accessibility Audit
+Evaluate products against accessibility standards (WCAG). Ensures inclusive design that works for all users.
+
+Read [cookbook/accessibility-audit.md](./cookbook/accessibility-audit.md)
 
 ## Core Principles
 

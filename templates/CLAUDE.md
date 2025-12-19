@@ -13,6 +13,18 @@
 
 **Primary**: `YOUR_PROJECT_NAME`
 
+## Templates Configuration
+
+**Location**: `templates/`
+
+<!--
+  Templates path can be:
+  - `templates/` - Local project templates (default)
+  - `~/.djinn/templates/` - Global templates (for global install)
+
+  Local templates override global ones, allowing per-project customization.
+-->
+
 > **CRITICAL: NEVER manually read, write, or edit files in `.memory/`**
 >
 > The `.memory/` directory is managed exclusively by Basic Memory MCP.

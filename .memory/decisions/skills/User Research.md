@@ -19,19 +19,30 @@ User needs aren't deeply understood:
 - Features built that nobody uses
 - User pain points remain hidden
 - Decisions based on assumptions, not evidence
+- Information architecture doesn't match user mental models
+- Accessibility barriers exclude users
 
 ## Solution
 
 Research techniques that deeply understand users.
 
-**Techniques:**
+**Core Techniques:**
 - **Journey Mapping** - Visualize user experience end-to-end (uses [[Role Playing]])
-- **Interview Design** - Structured user conversations
-- **Survey Design** - Quantitative user insights
-- **Usability Testing** - Observe users with prototypes
-- **Persona Analysis** - Think through specific user archetypes (uses [[Role Playing]])
+- **Interview Design** - Structured user conversations for qualitative insights
+- **Survey Design** - Quantitative user data at scale
 
-**Auto-activates when:** User mentions "journey map", "user interviews", "survey design", "usability testing", "user research", "customer discovery"
+**Elicitation Techniques:**
+- **Card Sorting** - Understand user mental models for information architecture
+- **User Story Mapping** - Connect user goals to features and prioritize
+- **Design Critique** - Structured feedback to improve designs
+- **Requirements Gathering** - Capture constraints and trade-offs systematically
+- **Prototype Feedback** - Fast validation of interaction concepts
+
+**Validation Techniques:**
+- **Usability Testing** - Observe users accomplishing real tasks
+- **Accessibility Audit** - Evaluate against WCAG standards for inclusive design
+
+**Auto-activates when:** User mentions "journey map", "user interviews", "survey design", "usability testing", "user research", "customer discovery", "card sorting", "information architecture", "accessibility audit", "design critique", "prototype testing", "requirements gathering", "user story mapping"
 
 ## Supported By
 
@@ -39,18 +50,21 @@ Research techniques that deeply understand users.
 
 ## Why It Matters
 
-- **Domain need** - Analyst, UX, PM benefit most
+- **Domain need** - [[UX]], [[Analyst]], [[PM]] benefit most
 - **Grounds decisions** - Evidence over assumption
 - **Reveals hidden needs** - Users often can't articulate wants
 - **Reduces waste** - Build what users actually need
+- **Inclusive design** - Accessibility audits ensure everyone can use it
 
 ## Used By
 
-- [[Analyst]] - Understanding user requirements
-- May extend to UX, PM personas when added
+- [[UX]] - Primary skill for Ulysses; all 10 techniques available
+- [[Analyst]] - Understanding user requirements, journey mapping
+- [[PM]] - User story validation, requirements gathering
 
 ## Relations
 
 - [[Architecture]] - Part of Tier 2 skill layer
 - [[Catalog]] - Listed in component index
 - [[Skill]] - Follows skill pattern
+- [[UX]] - Primary orchestrator using this skill

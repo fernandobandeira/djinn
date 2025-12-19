@@ -33,7 +33,7 @@ I'm Rita, the Recruiter. I create agents using systematic decomposition and best
 ├─────────────────────────────────────────────────────────────┤
 │            TIER 2: DOMAIN SKILLS                             │
 │            (2-3 related agents - domain HOW)                 │
-│  strategic-analysis │ user-research │ systems-thinking      │
+│  strategic-analysis │ user-research                         │
 ├─────────────────────────────────────────────────────────────┤
 │            SHARED SUB-AGENTS                                 │
 │            (Context isolation - heavy I/O)                   │

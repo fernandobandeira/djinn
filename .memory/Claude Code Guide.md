@@ -42,8 +42,20 @@ Use Djinn across all your projects:
 # Clone Djinn
 git clone https://github.com/your-org/djinn.git ~/.djinn
 
-# Copy to framework config
+# Copy implementation to framework config
 cp -r ~/.djinn/.claude/* ~/.claude/
+
+# Templates stay at ~/.djinn/templates/ (referenced by path)
+```
+
+**Note:** Templates remain at `~/.djinn/templates/`. In your project's CLAUDE.md, set:
+```markdown
+**Location**: `~/.djinn/templates/`
+```
+
+To customize templates per-project, copy to local `templates/` and set:
+```markdown
+**Location**: `templates/`
 ```
 
 ### Option 2: Project Template

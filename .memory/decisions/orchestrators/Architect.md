@@ -66,8 +66,22 @@ Archie is a System Architect persona that **challenges architectural decisions i
 - **Decisions documented** - ADRs capture context and rationale
 - **Patterns compound** - Good solutions accumulate over time
 
+## Templates
+
+Location: `{templates}/architect/` (configurable per [[Templates]] pattern)
+
+| Template | Purpose | Key Sections |
+|----------|---------|--------------|
+| adr-template.md | Architecture Decision Record | Status, Context, Decision, Consequences, Alternatives |
+| pattern-template.md | Reusable pattern documentation | Problem, Solution, Consequences, Implementation |
+| rfc-template.md | Request for Comments | Summary, Motivation, Detailed Design, Alternatives |
+| runbook-template.md | Operational runbook | Prerequisites, Workflow Steps, Troubleshooting |
+
+See [[Templates]] pattern for the platform-agnostic template approach.
+
 ## Relations
 
 - [[Architecture]] - Part of Djinn orchestrator layer
 - [[Catalog]] - Listed in component index
 - [[Orchestrator]] - Archie follows this pattern (guides users, uses skills, delegates to sub-agents for heavy I/O)
+- [[Templates]] - Uses architect templates
