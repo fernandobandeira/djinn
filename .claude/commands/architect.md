@@ -93,12 +93,12 @@ Apply these directly when analyzing architectures:
 ### *review-architecture
 
 1. Search memory for existing architecture docs, ADRs
-2. Load relevant checklists from resources
-3. Invoke `devils-advocate` skill:
+2. Invoke `devils-advocate` skill:
    - Challenge assumptions
    - Pre-mortem: "What could go wrong?"
    - Red team: Find weaknesses
-4. Analyze against checklists
+3. Analyze against embedded checklists (Architecture Quality, Security, Scalability, Operational Excellence)
+4. Present findings organized by checklist category
 5. Offer to save review findings
 
 ### *diagram {type}
@@ -117,8 +117,97 @@ Generate diagrams directly using Mermaid or PlantUML:
 - rfc-template.md - Request for Comments
 - runbook-template.md - Operational runbook
 
-**Checklists**: `.claude/resources/architect/checklists/`
-- architecture-review.md, security.md, scalability.md
+## Checklists
+
+Use during `*review-architecture` workflow.
+
+### Architecture Quality
+
+#### Design Principles
+- [ ] Single Responsibility Principle followed
+- [ ] Components loosely coupled, high cohesion
+- [ ] Clear separation of concerns
+- [ ] No over-engineering or premature abstraction
+- [ ] Dependencies minimized, no circular dependencies
+
+#### Component Analysis
+- [ ] Clear service boundaries defined
+- [ ] Communication patterns documented
+- [ ] Failure points identified
+- [ ] API design consistent and versioned
+- [ ] Data models normalized appropriately
+
+### Security
+
+#### Authentication & Authorization
+- [ ] MFA implemented where appropriate
+- [ ] Strong password policies enforced
+- [ ] RBAC with least privilege principle
+- [ ] Token/session management secure
+- [ ] API authentication required
+
+#### Data Security
+- [ ] Encryption at rest (AES-256+)
+- [ ] Encryption in transit (TLS 1.3)
+- [ ] PII classification and handling
+- [ ] Secrets management system used
+- [ ] Audit logging comprehensive
+
+#### Application Security
+- [ ] Input validation comprehensive (server-side)
+- [ ] SQL/NoSQL injection prevention
+- [ ] XSS/CSRF protection
+- [ ] Security headers configured (CSP, HSTS)
+- [ ] Dependency vulnerability scanning
+
+#### Infrastructure Security
+- [ ] Network segmentation implemented
+- [ ] Container image scanning enabled
+- [ ] Secrets not in code/logs
+- [ ] Regular security updates applied
+
+### Scalability
+
+#### Horizontal Scaling
+- [ ] Stateless design principles followed
+- [ ] Auto-scaling policies configured
+- [ ] Load balancing implemented
+- [ ] Database read replicas if needed
+- [ ] Caching strategy defined
+
+#### Performance
+- [ ] P95/P99 latency targets defined
+- [ ] Bottlenecks identified and addressed
+- [ ] N+1 query problems eliminated
+- [ ] Connection pooling configured
+- [ ] Resource utilization monitored
+
+#### Resilience
+- [ ] Circuit breakers implemented
+- [ ] Retry policies with backoff
+- [ ] Health checks configured
+- [ ] Failover mechanisms tested
+- [ ] Single points of failure eliminated
+
+### Operational Excellence
+
+#### Observability
+- [ ] Application metrics collected
+- [ ] Distributed tracing available
+- [ ] Log aggregation configured
+- [ ] Alerting rules defined
+
+#### Deployment
+- [ ] CI/CD pipeline automated
+- [ ] Blue-green or canary deployments
+- [ ] Rollback procedures documented
+- [ ] Infrastructure as Code used
+
+#### Disaster Recovery
+- [ ] Backup strategy implemented
+- [ ] RTO/RPO defined
+- [ ] Recovery procedures documented
+- [ ] DR drills scheduled
 
 ## Storage Locations
 

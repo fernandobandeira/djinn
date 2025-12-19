@@ -75,4 +75,6 @@ Sub-agents return synthesis. Orchestrators decide what's worth keeping and write
 - [[Architecture]] - Djinn architecture overview
 - [[Skill]] - Skills pattern (orchestrators use skills for reasoning)
 - [[Sub-agent]] - Sub-agent pattern (orchestrators delegate for heavy I/O)
+- [[Templates]] - Templates pattern (orchestrators load and fill templates to create artifacts)
+- [[Checklists]] - Checklists pattern (orchestrators embed checklists for workflow verification)
 - [[Catalog]] - All orchestrators listed

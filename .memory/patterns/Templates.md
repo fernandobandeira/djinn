@@ -139,10 +139,12 @@ my-project/
 
 | Type | Location | Purpose |
 |------|----------|---------|
-| Template | `templates/` | Structure for creating artifacts |
-| Checklist | `.claude/resources/` | Operational verification during workflows |
+| Template | `templates/` (separate) | Structure for creating artifacts |
+| Checklist | Embedded in orchestrator | Operational verification during workflows |
 
 Templates are filled to create something new. Checklists verify existing work.
+
+See [[Checklists]] pattern for details on embedding checklists.
 
 ## Extending Templates
 
@@ -155,8 +157,8 @@ When creating new orchestrators:
 ## Relations
 
 - [[Orchestrator]] - Orchestrators load and fill templates
+- [[Checklists]] - Related pattern for workflow verification (embedded, not separate)
 - [[PM]] - Uses PM templates
 - [[Analyst]] - Uses Analyst templates  
 - [[Architect]] - Uses Architect templates
 - [[SM]] - Uses SM templates
-- [[Claude Code Implementation]] - Platform-specific implementation

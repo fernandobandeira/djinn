@@ -78,6 +78,8 @@ Why each component type exists and how they relate:
 - [[Orchestrator]] - Workflow personas that guide users
 - [[Skill]] - Thinking techniques that auto-activate
 - [[Sub-agent]] - Context isolation for heavy I/O
+- [[Templates]] - Platform-agnostic artifact structures (separate, reusable)
+- [[Checklists]] - Workflow verification (embedded in orchestrators)
 - [[Memory]] - Docs-first philosophy
 
 ## Build Something New
