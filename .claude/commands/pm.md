@@ -16,6 +16,31 @@ What would you like to work on?
 
 Follow Basic Memory configuration in CLAUDE.md.
 
+## Working Memory
+
+Use Working Memory for persistent epic/story tracking. See [[Working Memory]] pattern.
+
+When creating epics:
+1. PRD stays in Knowledge Memory (rich documentation)
+2. Create epic in Working Memory with description from PRD
+3. Create stories as children with acceptance criteria
+
+### CLI Commands
+
+```bash
+# Create epic
+bd create "Epic: {title}" -t epic -p {priority} -d "{description}" --json
+
+# Create stories as children
+bd create "Story: {title}" -t feature --deps parent-child:{epic-id} -p {priority} --json
+
+# Add blocking dependencies between stories
+bd dep add {story-id} {blocked-by-id} --type blocks
+
+# View epic tree
+bd dep tree {epic-id}
+```
+
 ## Skills
 
 Use skills for structured thinking:
@@ -82,7 +107,7 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
 2. **Prioritization** - Use `strategic-analysis` for NOW/NEXT/LATER
 3. **Sequencing** - Order epics based on dependencies and value
 4. **Review** - Present to user, get approval
-5. **Storage** - Save to `.memory/requirements/`
+5. **Storage** - Save to `requirements/`
 
 ### *create-epic
 
@@ -91,9 +116,12 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
 3. **Acceptance** - Define clear acceptance criteria (Given/When/Then)
 4. **Dependencies** - Map story dependencies
 5. **Review** - Present to user, get approval
-6. **Storage** - Save to `requirements/epics/`
+6. **Working Memory** - Create epic and stories in beads:
+   - Create epic with description from PRD
+   - Create stories as children with acceptance criteria
+   - Map blocking dependencies between stories
 
-**SM Handoff**: Epics include "Ready for Sprint Planning" status and notes for Scrum Master.
+**SM Handoff**: Epic in Working Memory (beads) with linked stories.
 
 ### *stakeholder-update
 
@@ -101,7 +129,7 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
 2. **Progress** - Summarize completed work and metrics
 3. **Risks** - Identify issues and mitigation
 4. **Review** - Present to user, get approval
-5. **Storage** - Save to `.memory/research/`
+5. **Storage** - Save to `research/product/`
 
 ### *change-assessment
 
@@ -113,21 +141,61 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
 
 ## Resources
 
-**Templates**: `{templates}/pm/` (path from CLAUDE.md `Templates Configuration`)
+**Templates**: `{templates}/pm/` (path from CLAUDE.md)
 - prd-template.md - Product Requirements Document structure
-- epic-template.md - Epic with stories for SM handoff
 - roadmap-template.md - NOW/NEXT/LATER roadmap
 - stakeholder-update.md - Status update format
 
 ## Storage Locations
 
+**Knowledge Memory (Basic Memory)** - Rich documentation:
 | Document Type | Folder |
 |---------------|--------|
 | Project briefs | `research/product/` |
 | Stakeholder updates | `research/product/` |
 | PRDs | `requirements/` |
 | Roadmaps | `requirements/` |
-| Epics | `requirements/epics/` |
+
+**Working Memory (beads)** - Work items with status:
+- Epics, stories → Created via `bd create`
+
+## Status Updates
+
+Track roadmap progress and signal pivots UP to Analyst.
+
+### Monitor Epic Progress
+```bash
+# Check all epics
+bd list --type epic --json
+
+# Check specific epic tree
+bd dep tree {epic-id}
+```
+
+### On Epic Completion (from SM)
+When SM closes an epic, update roadmap status:
+- Move epic from NOW to completed
+- Evaluate next priorities
+
+### On Roadmap Blocker
+When epic blockers affect roadmap:
+```bash
+bd update {epic-id} --status blocked
+```
+- Assess impact on product goals
+- Consider scope adjustments
+
+### Pivot Signals → Analyst
+Flag to Analyst when:
+- Core assumptions invalidated by implementation learnings
+- Market conditions changed significantly
+- User feedback contradicts original brief
+
+### Session End
+```bash
+bd sync
+git push
+```
 
 ## Integration
 
@@ -138,6 +206,10 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
 
 **Downstream (I produce for):**
 - Scrum Master - Epics with stories, priorities, acceptance criteria
+
+**Status flows UP:**
+- Roadmap progress → Stakeholder updates
+- Pivot signals → Analyst re-evaluates assumptions
 
 ## Remember
 

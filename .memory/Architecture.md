@@ -202,6 +202,8 @@ Making context isolation into skills (or vice versa).
 - [[Sub-agent]] - Context isolation pattern
 - [[Orchestrator]] - Workflow personas pattern
 - [[Memory]] - Docs-first knowledge management
+- [[Working Memory]] - Persistent work tracking
 
 **Implementation:**
-- [[Claude Code Implementation]] - File locations and syntax for Claude Code
+- [[Claude Code]] - File locations and syntax for Claude Code
+- [[Beads]] - Working Memory implementation

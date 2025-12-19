@@ -19,6 +19,35 @@ Follow Basic Memory configuration in CLAUDE.md.
 **Read automatically** - Search memory for ADRs, patterns before implementation.
 **Write with permission** - Ask before saving implementation notes.
 
+## Working Memory
+
+Use Working Memory for task tracking and discovery logging. See [[Working Memory]] pattern.
+
+During implementation:
+1. Query ready tasks from Working Memory
+2. Claim tasks when starting work
+3. Log discovered issues linked to current work
+4. Complete tasks with reason
+
+### CLI Commands
+
+```bash
+# Find ready tasks
+bd ready --limit 1 --json
+
+# Claim task (start work)
+bd update {id} --status in_progress --json
+
+# Track discovered issue
+bd create "Found: {issue}" -t bug --deps discovered-from:{current-task-id} -p {priority} --json
+
+# Complete task
+bd close {id} --reason "Implemented and tested" --json
+
+# View story with tasks
+bd dep tree {story-id}
+```
+
 ## Skills
 
 Use skills for structured thinking:
@@ -57,18 +86,20 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
 ### *start {story-id}
 
 **Phase 1: Intake**
-1. Load story from `.memory/requirements/stories/{story-id}.md`
-2. Verify story status is validated (not Draft)
-3. Search memory for related ADRs, patterns
+1. Query Working Memory for story details (or load from Knowledge Memory if no Working Memory)
+2. Verify story has acceptance criteria
+3. Search Knowledge Memory for related ADRs, patterns
 4. Check existing codebase for relevant files
 5. Present story summary, get approval to proceed
 
 **Phase 2: Planning**
 1. Break down tasks from story
-2. Run Complexity Estimation checklist
-3. Identify ADRs that apply to this implementation
-4. Map acceptance criteria to test scenarios
-5. Present implementation plan, get approval
+2. Create tasks in Working Memory with parent-child links
+3. Run Complexity Estimation checklist
+4. Identify ADRs that apply to this implementation
+5. Map acceptance criteria to test scenarios
+6. Claim first task in Working Memory
+7. Present implementation plan, get approval
 
 ### *test
 
@@ -99,7 +130,9 @@ Direct implementation (after tests written):
 1. Check current test status
 2. Implement code following story tasks
 3. Run tests after each significant change
-4. Report progress
+4. **Track discoveries**: If bugs/issues found during work, create in Working Memory with discovered-from link
+5. **Complete**: Mark task done in Working Memory with reason
+6. Report progress
 
 ### *review
 
@@ -251,6 +284,35 @@ If user approves saving:
 | Implementation notes | Basic Memory `decisions/` |
 | Code changes | Codebase directly |
 
+## Status Updates
+
+Update beads status as work progresses. Status flows UP to SM.
+
+### On Task Completion
+```bash
+bd close {task-id} --reason "Implemented and tested"
+```
+
+### On Story Completion
+When all tasks for a story are done:
+```bash
+bd close {story-id} --reason "All acceptance criteria met"
+```
+
+### On Blocker
+When blocked, update status and flag:
+```bash
+bd update {id} --status blocked --json
+bd create "Blocked: {reason}" -t bug --deps blocks:{id} -p 1 --json
+```
+
+### Session End
+Before ending session, sync status:
+```bash
+bd sync
+git push
+```
+
 ## Integration
 
 **Upstream (I consume):**
@@ -259,6 +321,10 @@ If user approves saving:
 
 **Downstream (I produce for):**
 - Users - Working, tested code
+
+**Status flows UP:**
+- Story completion → SM tracks epic progress
+- Blockers → SM escalates to PM if needed
 
 ## Remember
 

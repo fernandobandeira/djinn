@@ -62,11 +62,33 @@ The TDD cycle follows Red-Green-Refactor:
 - **Green** - Write minimal code to make the test pass
 - **Refactor** - Clean up while keeping tests green
 
+## Working Memory
+
+Dev uses [[Working Memory]] for task tracking and discovery logging.
+
+**What Dev Uses Working Memory For:**
+- **Query ready tasks** - Find tasks with no blockers
+- **Claim tasks** - Mark as in_progress when starting work
+- **Track discoveries** - Log bugs/issues found during implementation
+- **Complete tasks** - Mark done with reason
+
+**Workflow:**
+1. Query Working Memory for story/task details
+2. Create tasks as children if not already broken down
+3. Claim first task (mark in_progress)
+4. During implementation, log discovered issues with `discovered-from` link
+5. Complete tasks with reason when done
+
+**Discovery Tracking:** When bugs or issues are found during work, create them in Working Memory linked to the current task. This maintains traceability.
+
 ## Storage Structure
 
-| Content | Folder |
-|---------|--------|
-| Implementation notes | `decisions/implementations/` |
+| Content | Location |
+|---------|----------|
+| Stories | Working Memory (from SM) |
+| Tasks | Working Memory (type: task) |
+| Discovered issues | Working Memory (type: bug, discovered-from link) |
+| Implementation notes | Knowledge Memory `decisions/` |
 | Code changes | Codebase directly |
 
 ## Why It Matters
@@ -75,6 +97,14 @@ The TDD cycle follows Red-Green-Refactor:
 - **TDD discipline** - Tests first prevents fragile code
 - **Structured critique** - Skills provide rigorous review framework
 - **Clear contract** - SM validates, Dev implements
+
+## Status Updates
+
+Status flows UP to [[SM]]:
+
+- **Task completion** - Mark task done in [[Working Memory]]
+- **Story completion** - Mark story done when all tasks complete
+- **Blockers** - Flag blocked status and create blocking issue
 
 ## Integration
 
@@ -85,9 +115,14 @@ The TDD cycle follows Red-Green-Refactor:
 **Downstream (produces for):**
 - Users - Working, tested code
 
+**Status flows UP:**
+- Story completion → SM tracks epic progress
+- Blockers → SM escalates if affecting sprint
+
 ## Relations
 
 - [[Orchestrator]] - Dev follows orchestrator pattern
+- [[Working Memory]] - Uses for task tracking and discoveries
 - [[SM]] - Receives validated stories from SM
 - [[Architect]] - Consumes architecture context
 - [[Catalog]] - Listed in agent catalog

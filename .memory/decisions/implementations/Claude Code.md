@@ -1,12 +1,12 @@
 ---
-title: Claude Code Implementation
+title: Claude Code
 type: note
-permalink: decisions/claude-code-implementation
+permalink: decisions/implementations/claude-code
 ---
 
-# Claude Code Implementation
+# Claude Code
 
-Decision record for implementing Djinn on Claude Code (Anthropic's CLI).
+Implementation of Djinn patterns on Claude Code (Anthropic's CLI).
 
 ## Context
 
@@ -52,6 +52,76 @@ This document serves as:
 - `mcp__basic-memory__build_context` - Build context from memory URI
 
 **Critical Rule:** Never manually read/write/edit `.memory/` files. Manual edits bypass indexing and corrupt the knowledge graph.
+
+---
+
+## Working Memory Layer
+
+Implements [[Working Memory]] pattern for persistent work tracking.
+
+### Beads CLI
+
+**Choice:** Use Beads CLI (`bd`) for operational work tracking
+
+**Rationale:**
+- Git-backed (`.beads/issues.jsonl`) - version controlled, merge-safe
+- Agent-optimized with JSON output
+- Dependency graph with ready-work calculation
+- Hash-based IDs prevent merge conflicts
+- No external service required
+
+**Setup:**
+```bash
+# Install beads (one-time)
+go install github.com/steveyegge/beads/cmd/bd@latest
+
+# Initialize in project
+bd init --quiet
+```
+
+**Concept Mapping:**
+
+| Working Memory Concept | Beads Implementation |
+|-----------------------|---------------------|
+| Epic | `bd create -t epic` |
+| Story/Feature | `bd create -t feature` |
+| Task | `bd create -t task` |
+| Bug | `bd create -t bug` |
+| Parent-child | `--deps parent-child:{id}` |
+| Blocks | `--deps blocks:{id}` |
+| Discovered-from | `--deps discovered-from:{id}` |
+| Ready work | `bd ready --json` |
+| Sprint label | `bd label add {id} sprint-N` |
+| Claim | `bd update {id} --status in_progress` |
+| Complete | `bd close {id} --reason "..."` |
+
+**Common Operations:**
+
+```bash
+# Create epic with stories
+bd create "Epic: Auth System" -t epic -p 1 -d "Full description" --json
+bd create "Story: Login UI" -t feature --deps parent-child:{epic-id} --json
+
+# Plan sprint
+bd ready --type feature --json           # Find ready stories
+bd label add {story-id} sprint-1         # Assign to sprint
+bd create "Task: Form" -t task --deps parent-child:{story-id} --json
+
+# Implement
+bd ready --limit 1 --json                # Get next task
+bd update {id} --status in_progress      # Claim it
+bd create "Found: Bug" -t bug --deps discovered-from:{id} --json
+bd close {id} --reason "Implemented"     # Complete
+
+# Query
+bd blocked --json                        # What's stuck
+bd dep tree {epic-id}                    # Hierarchy view
+bd list --label sprint-1 --json          # Sprint items
+```
+
+**Graceful Degradation:** Working Memory is optional. If beads not initialized, orchestrators use TodoWrite for session-scoped tracking.
+
+**Critical Rule:** Orchestrators reference [[Working Memory]] pattern concepts, not beads commands directly. This keeps orchestrators portable.
 
 ---
 
@@ -349,6 +419,8 @@ project-root/
 
 - [[Architecture]] - Platform-agnostic design patterns
 - [[Memory]] - Docs-first philosophy and access rules
+- [[Working Memory]] - Work tracking pattern (implemented via Beads)
+- [[Beads]] - Working Memory implementation details
 - [[Skill]] - Skill pattern details
 - [[Sub-agent]] - Sub-agent pattern details
 - [[Orchestrator]] - Orchestrator pattern details

@@ -79,13 +79,35 @@ Sprints balance work types:
 
 Velocity calculated as 3-sprint rolling average.
 
+## Working Memory
+
+SM uses [[Working Memory]] for task and sprint tracking.
+
+**What SM Uses Working Memory For:**
+- **Query ready stories** - Find stories with no blockers from PM
+- **Break into tasks** - Create tasks as children of stories
+- **Sprint labels** - Tag stories/tasks for sprint-N
+- **Action items** - Track retrospective action items
+
+**Workflow:**
+1. Query Working Memory for ready stories (no blockers)
+2. Break stories into implementation tasks (parent-child)
+3. Label selected items for sprint assignment
+4. Create action items from retrospectives
+
+**Retrospective Split:**
+- Action items → Working Memory (tracked tasks)
+- Lessons learned → Knowledge Memory (`research/retrospectives/`)
+
 ## Storage Structure
 
-| Content | Folder |
-|---------|--------|
-| Stories | `requirements/stories/` |
-| Sprint plans | `requirements/sprints/` |
-| Retrospectives | `requirements/retrospectives/` |
+| Content | Location |
+|---------|----------|
+| Stories | Working Memory (type: feature) |
+| Tasks | Working Memory (type: task, parent-child) |
+| Sprints | Working Memory (labels: sprint-N) |
+| Action items | Working Memory (type: task) |
+| Retrospective insights | Knowledge Memory `research/retrospectives/` |
 
 ## Templates
 
@@ -93,9 +115,9 @@ Per [[Templates]] pattern, SM uses:
 
 | Template | Purpose |
 |----------|---------|
-| `templates/sm/story-template.md` | User story creation |
-| `templates/sm/sprint-template.md` | Sprint plan creation |
-| `templates/sm/retrospective-template.md` | Retrospective format |
+| `templates/sm/retrospective-template.md` | Retrospective insights format |
+
+Note: Stories and sprints live in [[Working Memory]], not as separate documents.
 
 ## Why It Matters
 
@@ -103,6 +125,15 @@ Per [[Templates]] pattern, SM uses:
 - **Strategic planning** - Skills provide structured prioritization
 - **Continuous improvement** - Root cause analysis drives real change
 - **Story as contract** - Clear specification prevents implementation drift
+
+## Status Updates
+
+Status flows UP to [[PM]]:
+
+- **Story completion** - When Dev closes stories, check epic progress
+- **Epic completion** - Close epic when all stories done
+- **Sprint blockers** - Escalate blockers affecting sprint goals
+- **Velocity data** - Helps PM refine estimates
 
 ## Integration
 
@@ -113,9 +144,14 @@ Per [[Templates]] pattern, SM uses:
 **Downstream (produces for):**
 - [[Dev]] - Validated stories ready for implementation
 
+**Status flows UP:**
+- Epic completion → PM tracks roadmap
+- Blockers → PM adjusts priorities
+
 ## Relations
 
 - [[Orchestrator]] - SM follows orchestrator pattern
+- [[Working Memory]] - Uses for task/sprint tracking
 - [[Templates]] - Uses templates for artifact creation
 - [[PM]] - Receives epics from PM
 - [[Dev]] - Hands off validated stories to Dev

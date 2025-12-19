@@ -81,21 +81,25 @@ Djinn is currently implemented for [Claude Code](https://claude.ai/code) (Anthro
 #### Quick Start
 
 ```bash
-# 1. Install Basic Memory
+# 1. Install Basic Memory (knowledge management)
 uv tool install basic-memory
 claude mcp add basic-memory -- uvx basic-memory mcp
 
-# 2. Clone Djinn
+# 2. Install Beads (work tracking)
+go install github.com/steveyegge/beads/cmd/bd@latest
+
+# 3. Clone Djinn
 git clone https://github.com/your-org/djinn.git ~/.djinn
 cp -r ~/.djinn/.claude/* ~/.claude/
 
-# 3. Initialize your project
+# 4. Initialize your project
 cd your-project
 cp ~/.djinn/templates/CLAUDE.md ./CLAUDE.md  # Copy and customize
 basic-memory project add "$(basename $PWD)" ./.memory
 mkdir -p .memory/{decisions,patterns,research,context,sessions,diagrams}
+bd init --quiet  # Initialize work tracking
 
-# 4. Edit CLAUDE.md - set your project name:
+# 5. Edit CLAUDE.md - set your project name:
 # **Primary**: `your-project-name`
 ```
 
@@ -113,8 +117,9 @@ Skills auto-activate based on context - just mention "brainstorm", "root cause",
 
 #### Docs
 
-- **[Claude Code Guide](.memory/Claude%20Code%20Guide.md)** - Installation and usage
-- **[Claude Code Implementation](.memory/Claude%20Code%20Implementation.md)** - Syntax, file structure, conventions
+- **[Claude Code Guide](.memory/reference/Claude%20Code%20Guide.md)** - Installation and usage
+- **[Claude Code](.memory/decisions/implementations/Claude%20Code.md)** - Syntax, file structure, conventions
+- **[Beads](.memory/decisions/implementations/Beads.md)** - Work tracking CLI
 
 ### Other Platforms
 

@@ -1,7 +1,7 @@
 ---
 title: Claude Code Guide
 type: note
-permalink: claude-code-guide
+permalink: reference/claude-code-guide
 tags:
 - djinn
 - claude-code
@@ -13,7 +13,7 @@ tags:
 
 Guide to installing and using Djinn on Claude Code (Anthropic's CLI).
 
-For the conceptual framework, see [[Architecture]]. For detailed syntax and conventions, see [[Claude Code Implementation]].
+For the conceptual framework, see [[Architecture]]. For detailed syntax and conventions, see [[Claude Code]].
 
 ## Prerequisites
 
@@ -30,6 +30,18 @@ claude mcp add basic-memory -- uvx basic-memory mcp
 
 # Verify installation
 claude mcp list
+```
+
+### Beads CLI (Required)
+
+Djinn uses [Beads](https://github.com/steveyegge/beads) for work tracking (epics, stories, tasks). Install it:
+
+```bash
+# Install Beads
+go install github.com/steveyegge/beads/cmd/bd@latest
+
+# Verify installation
+bd --version
 ```
 
 ## Installation
@@ -249,4 +261,28 @@ See [[Memory]] pattern for the complete docs-first philosophy.
 - [[Project]] - What Djinn is and why
 - [[Architecture]] - Design principles and rules
 - [[Memory]] - Docs-first philosophy
-- [[Claude Code Implementation]] - Detailed syntax and conventions
+- [[Claude Code]] - Detailed syntax and conventions
+
+
+## Work Tracking with Working Memory
+
+Working Memory provides persistent work tracking across sessions. See [[Working Memory]] pattern and [[Beads]] for CLI reference.
+
+| Use Working Memory | Use TodoWrite |
+|-------------------|---------------|
+| Multi-session work | Session progress display |
+| Epic → Story → Task hierarchy | Quick 1-3 item checklist |
+| Blocking dependencies | Simple sequential work |
+| Sprint planning | Immediate visibility |
+
+### Initialize in Project
+
+```bash
+bd init --quiet
+```
+
+### Orchestrator Integration
+
+- **PM**: Creates epics with stories (`bd create -t epic`)
+- **SM**: Tracks sprint tasks, organizes sprints (`bd ready`, `bd label`)
+- **Dev**: Claims tasks, tracks discovered issues (`bd update`, `bd close`)

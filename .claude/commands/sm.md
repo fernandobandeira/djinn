@@ -19,6 +19,37 @@ Follow Basic Memory configuration in CLAUDE.md.
 **Read automatically** - Search memory before any creation.
 **Write with permission** - Ask before saving to memory (orchestrator pattern).
 
+## Working Memory
+
+Use Working Memory for task and sprint tracking. See [[Working Memory]] pattern.
+
+Stories come from PM in Working Memory. SM:
+1. Breaks stories into tasks (parent-child)
+2. Labels items for sprint assignment
+3. Tracks retrospective action items
+
+### CLI Commands
+
+```bash
+# Find ready stories (no blockers)
+bd ready --type feature --json
+
+# Break story into tasks
+bd create "Task: {title}" -t task --deps parent-child:{story-id} -p {priority} --json
+
+# Assign to sprint
+bd label add {id} sprint-{N}
+
+# View sprint board
+bd list --label sprint-{N} --json
+
+# View blocked work
+bd blocked --json
+
+# Create action item from retro
+bd create "Action: {title}" -t task -p {priority} --json
+```
+
 ## Skills
 
 Use skills for structured thinking:
@@ -57,31 +88,26 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
 ### *create-story
 
 1. **Discovery** - Find next story:
-   - Read current epic from `requirements/epics/`
-   - Check `requirements/stories/` for existing stories
-   - Identify next uncreated story from epic
+   - Query Working Memory for epic: `bd dep tree {epic-id}`
+   - Identify next story needing task breakdown
 
 2. **Context** - Gather technical context:
-   - Read relevant architecture docs
+   - Read relevant architecture docs from Knowledge Memory
    - Load PRD for business context
-   - Check dependencies on previous stories
+   - Check dependencies via `bd blocked`
 
-3. **Creation** - Use template:
-   - Load `{templates}/sm/story-template.md`
-   - Fill with story content from epic
-   - Add comprehensive Dev Notes with sources
+3. **Breakdown** - Create tasks:
+   - Break story into implementation tasks
+   - Use `bd create -t task --deps parent-child:{story-id}`
+   - Add Dev Notes to task description
 
 4. **Validation** - Auto-validate:
-   - Run `*validate-story` on created story
+   - Run `*validate-story` on story
    - Present GO/NO-GO decision
-
-5. **Storage** - Save if approved:
-   - Generate filename: `{id}-{slugified-title}.md`
-   - Save to `requirements/stories/`
 
 ### *validate-story {id}
 
-1. **Load** - Read story from `requirements/stories/{id}.md`
+1. **Load** - Read story from Working Memory: `bd show {id} --json`
 
 2. **Challenge** - Apply devils-advocate skill:
    - Pre-mortem: "What could go wrong in implementation?"
@@ -103,27 +129,27 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
 ### *plan-sprint
 
 1. **Velocity** - Calculate capacity:
-   - Read previous sprints from `requirements/sprints/`
+   - Query previous sprints: `bd list --label sprint-{N-1} --json`
    - Calculate 3-sprint rolling average
    - Adjust for team capacity
 
 2. **Backlog** - Prioritize stories:
-   - Load approved stories from `requirements/stories/`
+   - Query Working Memory for ready stories: `bd ready --type feature --json`
    - Apply strategic-analysis skill (SWOT for prioritization)
    - Consider dependencies and risks
 
 3. **Allocation** - Select stories:
    - Match to sprint capacity
    - Balance: features (60-70%), tech debt (20-30%), buffer (10%)
-   - Verify no blocking dependencies
+   - Verify no blocking dependencies: `bd blocked --json`
 
 4. **Goal** - Define sprint goal:
    - Create specific, measurable objective
    - Align with product roadmap
 
-5. **Document** - Use template:
-   - Load `{templates}/sm/sprint-template.md`
-   - Save to `requirements/sprints/sprint-{N}.md`
+5. **Sprint Assignment** - Tag sprint items:
+   - Label selected stories: `bd label add {id} sprint-{N}`
+   - Sprint goal stored in beads label description or epic notes
 
 ### *manage-change
 
@@ -160,13 +186,13 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
    - Identify systemic vs one-off problems
 
 4. **Actions** - Generate SMART items:
-   - Specific, Measurable, Achievable
-   - Assign owners
-   - Set due dates
+   - Create action items in Working Memory (type: task)
+   - Assign owners, set due dates
 
-5. **Document** - Use template:
-   - Load `{templates}/sm/retrospective-template.md`
-   - Save to `requirements/retrospectives/sprint-{N}.md`
+5. **Document** - Store insights:
+   - Action items tracked in Working Memory
+   - Lessons learned stored in Knowledge Memory (`research/retrospectives/`)
+   - Use `{templates}/sm/retrospective-template.md` for insights doc
 
 ## Story Validation Criteria
 
@@ -191,19 +217,54 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
 ## Resources
 
 **Templates**: `{templates}/sm/` (path from CLAUDE.md)
-- story-template.md - Story structure
-- sprint-template.md - Sprint plan structure
-- retrospective-template.md - Retro format
+- retrospective-template.md - Retro insights format
 
 ## Storage Locations
 
-If user approves saving:
+**Working Memory (beads)** - Work items with status:
+- Stories, tasks → Created via `bd create`
+- Sprints → Via `bd label add {id} sprint-{N}`
 
+**Knowledge Memory (Basic Memory)** - Rich documentation (optional):
 | Document Type | Folder |
 |---------------|--------|
-| Stories | `requirements/stories/` |
-| Sprint plans | `requirements/sprints/` |
-| Retrospectives | `requirements/retrospectives/` |
+| Retrospective insights | `research/retrospectives/` |
+
+## Status Updates
+
+Track progress and flow status UP to PM.
+
+### Monitor Story Progress
+```bash
+# Check sprint progress
+bd list --label sprint-{N} --json
+
+# Check blocked items
+bd blocked --json
+```
+
+### On Story Completion (from Dev)
+When Dev closes a story, check epic progress:
+```bash
+bd dep tree {epic-id}  # See remaining stories
+```
+
+### On Epic Completion
+When all stories in epic are done:
+```bash
+bd close {epic-id} --reason "All stories complete"
+```
+
+### On Blocker Escalation
+When blockers affect sprint goals, flag to PM:
+- Update story status: `bd update {id} --status blocked`
+- Document impact on sprint velocity
+
+### Session End
+```bash
+bd sync
+git push
+```
 
 ## Integration
 
@@ -213,6 +274,11 @@ If user approves saving:
 
 **Downstream (I produce for):**
 - Dev agents - Stories ready for implementation
+
+**Status flows UP:**
+- Epic completion → PM tracks roadmap progress
+- Sprint blockers → PM adjusts priorities
+- Velocity data → PM refines estimates
 
 ## Remember
 

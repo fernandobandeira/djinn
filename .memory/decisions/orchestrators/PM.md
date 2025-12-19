@@ -64,14 +64,32 @@ Paul follows a synthesis-first workflow:
 5. **Validate** - Challenge with [[Devils Advocate]]
 6. **Store** - Save with user permission
 
+## Working Memory
+
+PM uses [[Working Memory]] for persistent epic and story tracking.
+
+**What PM Creates in Working Memory:**
+- **Epics** - Container for related stories, with description from PRD
+- **Stories** - Child items with acceptance criteria, sized for 2-4 hour sessions
+- **Dependencies** - Blocking relationships between stories
+
+**Workflow:**
+1. Create PRD in Knowledge Memory (rich documentation)
+2. Create epic in Working Memory with description from PRD
+3. Create stories as children with acceptance criteria
+4. Map blocking dependencies between stories
+
+**SM Handoff:** Epic in Working Memory with linked stories. SM queries ready stories for sprint planning.
+
 ## Storage Structure
 
-| Content | Folder |
-|---------|--------|
-| Project briefs | `research/product/` |
-| Stakeholder updates | `research/product/` |
-| PRDs, roadmaps | `requirements/` |
-| Epics | `requirements/epics/` |
+| Content | Location |
+|---------|----------|
+| Project briefs | Knowledge Memory `research/product/` |
+| Stakeholder updates | Knowledge Memory `research/product/` |
+| PRDs, roadmaps | Knowledge Memory `requirements/` |
+| Epics | Working Memory (type: epic) |
+| Stories | Working Memory (type: feature) |
 
 ## SM Handoff
 
@@ -80,6 +98,14 @@ Epics include "Ready for Sprint Planning" status with:
 - Dependencies mapped between stories
 - Technical context from [[Architect]]
 - Notes for [[SM|Scrum Master]]
+
+## Status Updates
+
+Status flows UP to [[Analyst]]:
+
+- **Epic completion** - When SM closes epics, update roadmap status
+- **Roadmap blockers** - Assess impact on product goals
+- **Pivot signals** - Flag when assumptions invalidated by implementation learnings
 
 ## Integration
 
@@ -103,15 +129,17 @@ Location: `{templates}/pm/` (configurable per [[Templates]] pattern)
 | Template | Purpose | Key Sections |
 |----------|---------|--------------|
 | prd-template.md | Product Requirements Document | Problem, Context, Requirements, User Stories, MVP Scope |
-| epic-template.md | Epic with stories for SM handoff | Value Statement, Stories (2-4hr sized), Acceptance Criteria, Dependencies |
 | roadmap-template.md | NOW/NEXT/LATER strategic roadmap | Vision, Prioritization, Dependencies, Review Cadence |
 | stakeholder-update.md | Status update for business stakeholders | Progress, Metrics, Risks, Decisions Needed |
+
+Note: Epics and stories live in [[Working Memory]], not as separate documents.
 
 See [[Templates]] pattern for the platform-agnostic template approach.
 
 ## Relations
 
 - [[Orchestrator]] - Follows orchestrator pattern
+- [[Working Memory]] - Uses for epic/story tracking
 - [[SM]] - PM hands off epics to SM for execution
 - [[Analyst]] - Consumes research from Analyst
 - [[Architect]] - Consumes ADRs and constraints from Architect

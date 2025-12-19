@@ -72,25 +72,38 @@ Analyst-specific:
 
 ---
 
+---
+
+## Claude Code Implementation
+
+Djinn on Claude Code (Anthropic's CLI):
+
+| Doc | Purpose |
+|-----|---------|
+| [[Claude Code Guide]] | Installation and usage |
+| [[Claude Code]] | Implementation reference (syntax, conventions) |
+| [[Beads]] | Working Memory implementation (beads CLI) |
+
+---
+
 ## Understand the Design
 
 Why each component type exists and how they relate:
 
+**Patterns:**
 - [[Orchestrator]] - Workflow personas that guide users
 - [[Skill]] - Thinking techniques that auto-activate
 - [[Sub-agent]] - Context isolation for heavy I/O
 - [[Templates]] - Platform-agnostic artifact structures (separate, reusable)
 - [[Checklists]] - Workflow verification (embedded in orchestrators)
-- [[Memory]] - Docs-first philosophy
+- [[Memory]] - Docs-first philosophy (Knowledge Memory)
+- [[Working Memory]] - Persistent work tracking (epics, stories, tasks)
 
 ## Build Something New
 
 Use `/recruiter` - Rita guides you through creating orchestrators, skills, and sub-agents.
 
-Technical reference: [[Claude Code Implementation]]
-
 ## Relations
 
 - [[Architecture]] - Design principles
-- [[Claude Code Guide]] - Installation and usage
 - [[Project]] - Vision and philosophy

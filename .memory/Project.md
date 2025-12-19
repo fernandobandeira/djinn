@@ -70,4 +70,4 @@ See [[Memory]] pattern for the full docs-first philosophy.
 - [[Architecture]] - Conceptual design and decision frameworks
 - [[Claude Code Guide]] - Installation and usage for Claude Code
 - [[Memory]] - Docs-first philosophy
-- [[Claude Code Implementation]] - How we implement Djinn on Claude Code
+- [[decisions/implementations/Claude Code]] - How we implement Djinn on Claude Code
