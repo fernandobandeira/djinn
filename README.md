@@ -89,7 +89,7 @@ claude mcp add basic-memory -- uvx basic-memory mcp
 go install github.com/steveyegge/beads/cmd/bd@latest
 
 # 3. Clone Djinn
-git clone https://github.com/your-org/djinn.git ~/.djinn
+git clone https://github.com/fernandobandeira/djinn.git ~/.djinn
 cp -r ~/.djinn/.claude/* ~/.claude/
 
 # 4. Initialize your project
@@ -125,7 +125,7 @@ Skills auto-activate based on context - just mention "brainstorm", "root cause",
 
 Want Djinn on another platform? The patterns are platform-agnostic.
 
-- **Request an implementation** - [Open an issue](https://github.com/your-org/djinn/issues/new) describing your platform
+- **Request an implementation** - [Open an issue](https://github.com/fernandobandeira/djinn/issues/new) describing your platform
 - **Build it yourself** - PRs welcome! See `.memory/` for the conceptual patterns to implement
 
 ## License

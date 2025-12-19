@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "decisions/skills/User Research.md",
+                "file": "reference/Claude Code Guide.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "User Research"
+              "title": "Claude Code Guide"
             }
           }
         ]
@@ -168,11 +168,11 @@
   },
   "active": "0a3ab024e1e60614",
   "lastOpenFiles": [
+    "decisions/skills/User Research.md",
     "decisions/skills/Teacher.md",
     "decisions/skills/User Research.tmp",
     "decisions/skills/Ideation.md",
     "decisions/skills/Root Cause.md",
-    "decisions/skills/User Research.md",
     "decisions/skills/Devils Advocate.md",
     "decisions/skills/Role Playing.md",
     "decisions/skills/Agent Recruitment.tmp",

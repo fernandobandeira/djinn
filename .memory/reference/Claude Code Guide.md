@@ -52,7 +52,7 @@ Use Djinn across all your projects:
 
 ```bash
 # Clone Djinn
-git clone https://github.com/your-org/djinn.git ~/.djinn
+git clone https://github.com/fernandobandeira/djinn.git ~/.djinn
 
 # Copy implementation to framework config
 cp -r ~/.djinn/.claude/* ~/.claude/
@@ -76,7 +76,7 @@ Use Djinn as a starting point for a new project:
 
 ```bash
 # Clone as project template
-git clone https://github.com/your-org/djinn.git my-project
+git clone https://github.com/fernandobandeira/djinn.git my-project
 cd my-project
 ```
 
