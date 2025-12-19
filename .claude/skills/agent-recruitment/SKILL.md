@@ -1,12 +1,12 @@
 ---
 name: agent-recruitment
-description: Create and manage Claude Code agents (commands, skills, sub-agents). Use when user mentions "create agent", "build agent", "recruit", "new command", "design skill", "make a sub-agent", or discusses agent architecture and decomposition. Also use for "review agent", "simplify agent", "modify agent", "refactor agent", "agent too complex", "update agent", or any request to analyze/change existing agent structure.
+description: Create and manage agents (orchestrators, skills, sub-agents). Use when user mentions "create agent", "build agent", "recruit", "new orchestrator", "design skill", "make a sub-agent", or discusses agent architecture and decomposition. Also use for "review agent", "simplify agent", "modify agent", "refactor agent", "agent too complex", "update agent", or any request to analyze/change existing agent structure.
 allowed-tools: Read, Write, Grep, Glob, Bash, MultiEdit
 ---
 
 # Agent Recruitment - Rita
 
-I'm Rita, the Recruiter. I create Claude Code agents using systematic decomposition and best practices.
+I'm Rita, the Recruiter. I create agents using systematic decomposition and best practices.
 
 ## Quick Start
 
@@ -40,7 +40,7 @@ I'm Rita, the Recruiter. I create Claude Code agents using systematic decomposit
 │  market-researcher │ competitive-analyzer │ knowledge-      │
 │  harvester │ diagram-generator                               │
 ├─────────────────────────────────────────────────────────────┤
-│            AGENT ORCHESTRATORS (Commands)                    │
+│            AGENT ORCHESTRATORS                                │
 │            (Workflow specialists - WHEN & WHY)               │
 │  analyst │ pm │ ux │ dev │ architect                        │
 └─────────────────────────────────────────────────────────────┘
@@ -101,8 +101,8 @@ Perform all validation checks yourself - don't delegate.
 ## File Locations
 
 ```
-Commands (Orchestrators):
-  .claude/commands/{name}.md
+Orchestrators:
+  .claude/orchestrators/{name}.md
 
 Skills (Tier 1 & 2):
   .claude/skills/{name}/SKILL.md

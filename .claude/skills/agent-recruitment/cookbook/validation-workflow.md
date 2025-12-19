@@ -64,7 +64,7 @@ Check all referenced files exist and are syntactically correct.
 ### Resolution Rules
 
 ```
-From Commands (.claude/commands/):
+From Orchestrators (.claude/orchestrators/):
   @resources/file.md → .claude/resources/file.md
 
 From Skills (.claude/skills/{name}/):

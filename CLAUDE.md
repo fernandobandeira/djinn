@@ -6,6 +6,15 @@ Agent architecture project with reusable skills and shared sub-agents.
 
 **Primary**: `djinn`
 
+> **CRITICAL: NEVER manually read, write, or edit files in `.memory/`**
+>
+> The `.memory/` directory is managed exclusively by Basic Memory MCP.
+> - **ALWAYS** use `mcp__basic-memory__*` tools for ALL memory operations
+> - **NEVER** use Read, Write, Edit, Bash, or any file system tool on `.memory/`
+> - **NEVER** use `cat`, `grep`, `find`, or any shell command on `.memory/`
+>
+> Manual file operations bypass indexing, break semantic links, and corrupt the knowledge graph.
+
 ### Usage
 
 Always include `project` parameter in Basic Memory MCP calls:

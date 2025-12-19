@@ -10,7 +10,7 @@ tags:
 
 # Djinn
 
-AI agent personas for Claude Code that help you brainstorm, research, analyze, and build.
+AI agent personas that help you brainstorm, research, analyze, and build.
 
 ## The Problem
 
@@ -28,11 +28,11 @@ A framework with three layers:
 
 | Layer | Purpose | Examples |
 |-------|---------|----------|
-| **Commands** | WHO - Role personas with boundaries | /analyst (Ana), /architect (Archie) |
+| **Orchestrators** | WHO - Role personas with boundaries | Analyst, Architect, Recruiter |
 | **Skills** | HOW - Thinking techniques that auto-activate | SCAMPER, Five Whys, Six Hats |
-| **Sub-agents** | ISOLATE - Heavy I/O without polluting context | market-researcher, diagram-generator |
+| **Sub-agents** | ISOLATE - Heavy I/O without polluting context | market-researcher, knowledge-harvester |
 
-Type `/architect` and Claude becomes Archie - thinking like an architect, triggering systems-thinking skills, delegating research to sub-agents while keeping reasoning clean.
+Invoke an orchestrator and the AI becomes that persona - thinking with that role's perspective, using relevant skills, delegating research to sub-agents while keeping reasoning clean.
 
 ## Vision
 
@@ -43,12 +43,20 @@ Make AI interactions compound instead of starting fresh every session.
 **You stay in the loop.** Djinn isn't about vibe coding or blind delegation. AI accelerates your work - drafting research, applying frameworks, generating options - but you remain the decision maker.
 
 - **AI generates, you review** - Research, plans, and decisions are drafts until you validate them
-- **Shared knowledge base** - `.memory/` serves both you and AI; keep it accurate
+- **Shared knowledge base** - Memory serves both you and AI; keep it accurate
 - **Structured collaboration** - Personas and skills make AI predictable, not autonomous
 
 The goal is faster, better work - not less involvement.
 
-**KB-First Development.** Your memory/knowledge base is the source of truth. Document decisions and principles there. Implementation in `.claude/` flows from those principles. This inverts the typical "code is truth" pattern - here, documented decisions guide implementation. If you need to refactor `.claude/`, reference your KB for guidance.
+**Docs-First Development.** Your memory is the source of truth. Implementation is ephemeral.
+
+This inverts the typical "code is truth" pattern. Memory contains decisions, principles, and patterns - the source of truth. Implementation (code, prompts, configs) is derived from memory and can be regenerated.
+
+The docs define WHAT and WHY; implementation defines HOW.
+
+**Human owns the docs.** AI generates drafts to memory. You review them in tools like Obsidian. You refine, correct, and approve. Once reviewed, memory becomes the trusted foundation that guides all future work.
+
+See [[Memory]] pattern for the full docs-first philosophy.
 
 ## Goals
 
@@ -59,5 +67,7 @@ The goal is faster, better work - not less involvement.
 
 ## Relations
 
-- [[architecture]] - Technical design and decision frameworks
-- [[guide]] - Getting started and extension guide
+- [[Architecture]] - Conceptual design and decision frameworks
+- [[Claude Code Guide]] - Installation and usage for Claude Code
+- [[Memory]] - Docs-first philosophy
+- [[Claude Code Implementation]] - How we implement Djinn on Claude Code

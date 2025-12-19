@@ -1,7 +1,7 @@
 ---
 title: Recruiter
 type: note
-permalink: decisions/commands/recruiter
+permalink: decisions/orchestrators/recruiter
 ---
 
 # Recruiter (Rita)
@@ -24,7 +24,7 @@ Users shouldn't need to understand these details to extend Djinn.
 
 Rita is a **meta-agent** - an agent that helps users build agents. She guides users through systematic creation without exposing internals.
 
-**Implementation:** `/recruiter` in Claude Code
+**Implementation:** `/recruiter`
 
 **What Rita Creates:**
 - **Orchestrators** - Workflow personas like Ana, Archie

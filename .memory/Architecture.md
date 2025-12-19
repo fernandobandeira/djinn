@@ -11,98 +11,45 @@ tags:
 
 # Djinn Architecture
 
-The core design principle that guides all decisions in Djinn.
-
-## The "Think vs Do" Distinction
-
-**Skills teach HOW to think. Sub-agents isolate context.**
-
-This is the fundamental insight: reasoning and execution have different needs.
-
-### Reasoning (Skills)
-- Requires full conversation context
-- Needs access to other skills
-- Must be done directly, not delegated
-- Guides HOW to approach problems
-
-### Execution (Sub-agents)
-- Heavy I/O that would pollute context
-- Produces summarized outputs
-- Process is disposable, result matters
-- Does NOT need deep reasoning
-
-## Architecture Layers
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  FOUNDATIONAL SKILLS (building blocks)                      │
-│  role-playing │ devils-advocate                             │
-├─────────────────────────────────────────────────────────────┤
-│  UNIVERSAL SKILLS (most agents use)                         │
-│  ideation │ root-cause │ teacher                            │
-├─────────────────────────────────────────────────────────────┤
-│  DOMAIN SKILLS (cluster-specific)                           │
-│  strategic-analysis │ user-research │ agent-recruitment     │
-├─────────────────────────────────────────────────────────────┤
-│  ORCHESTRATORS - Personas (WHEN & WHY)                      │
-│  Ana (Analyst) │ Archie (Architect) │ Rita (Recruiter)      │
-├─────────────────────────────────────────────────────────────┤
-│  SUB-AGENTS - Context Isolation (heavy I/O)                 │
-│  market-researcher │ competitive-analyzer │ knowledge-harv  │
-└─────────────────────────────────────────────────────────────┘
-```
-
-## Project Structure
-
-```
-.claude/
-├── commands/              # Orchestrators (Claude Code implementation)
-│   ├── analyst.md
-│   ├── architect.md
-│   └── recruiter.md
-├── skills/                # Auto-activating thinking techniques
-│   ├── root-cause/
-│   │   ├── SKILL.md
-│   │   └── cookbook/
-│   ├── ideation/
-│   ├── strategic-analysis/
-│   └── ...
-├── agents/
-│   └── shared/            # Sub-agents for context isolation
-│       ├── market-researcher.md
-│       ├── competitive-analyzer.md
-│       └── knowledge-harvester.md
-└── resources/             # Templates, checklists per agent
-    ├── analyst/
-    │   └── templates/
-    └── architect/
-        ├── templates/
-        └── checklists/
-```
+The core design principle: **Skills teach HOW to think. Sub-agents isolate context.**
 
 ## Components
 
+See [[Catalog]] for current orchestrators, skills, and sub-agents.
+
+### Orchestrators
+
+Orchestrators are workflow personas that guide users through complex tasks. See [[Orchestrator]] pattern for full details.
+
+**Characteristics:**
+- Has a persona with name and identity
+- Guides users through multi-phase workflows
+- Coordinates skills for thinking, sub-agents for heavy I/O
+- Does reasoning directly, never delegates thinking
+- Handles all memory writes (sub-agents return synthesis)
+
+**When to Create an Orchestrator:**
+- Workflow requires multiple phases
+- User needs guided multi-step process
+- Need to coordinate skills and sub-agents
+- Domain has clear boundaries
+
+**When NOT to Create an Orchestrator:**
+- Single-step task (just do it directly)
+- No workflow coordination needed
+- Skill alone would suffice
+
 ### Skills
 
-Skills are reusable thinking techniques that auto-activate based on conversation context.
-
-**Structure:**
-```
-.claude/skills/{name}/
-├── SKILL.md           # Main skill definition, triggers, overview
-└── cookbook/          # Detailed technique guides
-    ├── technique1.md
-    ├── technique2.md
-    └── technique3.md
-```
+Skills are reusable thinking techniques that auto-activate based on conversation context. See [[Skill]] pattern for full details.
 
 **Tiers:**
 
-| Tier | What it is | Examples |
-|------|------------|----------|
-| **Foundational** | Building blocks other skills compose | role-playing, devils-advocate |
-| **Universal** | Most agents use | ideation, root-cause, teacher |
-| **Domain** | Cluster-specific (2-3 agents) | strategic-analysis, user-research, agent-recruitment |
+| Tier | What it is |
+|------|------------|
+| **Foundational** | Building blocks other skills compose |
+| **Universal** | Most agents use, may compose foundational |
+| **Domain** | Cluster-specific (2-3 agents) |
 
 **When to Create a Skill:**
 - It's a thinking technique (not execution)
@@ -112,17 +59,14 @@ Skills are reusable thinking techniques that auto-activate based on conversation
 
 ### Sub-agents
 
-Sub-agents are ONLY for context isolation - keeping heavy I/O work separate from the main conversation.
+Sub-agents are ONLY for context isolation - keeping heavy I/O work separate from the main conversation. See [[Sub-agent]] pattern for full details.
 
-**Implementation:** `.claude/agents/shared/{name}.md`
+**Tiers:**
 
-**Current Sub-agents:**
-
-| Sub-agent | Purpose |
-|-----------|---------|
-| `market-researcher` | Web research for market analysis |
-| `competitive-analyzer` | Competitive landscape analysis |
-| `knowledge-harvester` | Harvest external sources into Basic Memory |
+| Tier | What it is |
+|------|------------|
+| **Foundational** | Used by all orchestrators |
+| **Domain** | Specific to 2-3 related orchestrators |
 
 **When to Use Sub-agents:**
 - Parallel execution needed
@@ -135,21 +79,7 @@ Sub-agents are ONLY for context isolation - keeping heavy I/O work separate from
 - Interactive work (can't ask follow-ups)
 - Architecture decisions (needs full context)
 
-**Important:** Sub-agents return synthesis to orchestrators. Orchestrators handle all KB writes. See [[Orchestrator]].
-
-### Orchestrators
-
-Orchestrators are workflow personas that combine skills and sub-agents to guide users through complex tasks.
-
-**Implementation:** `.claude/commands/{name}.md` (invoked via `/name` in Claude Code)
-
-**Current Orchestrators:**
-
-| Orchestrator | Persona | Focus |
-|--------------|---------|-------|
-| Analyst | Ana | Research, brainstorming, strategic analysis |
-| Architect | Archie | System design, ADRs, diagrams |
-| Recruiter | Rita | Creating new agents |
+**Important:** Sub-agents return synthesis to orchestrators. Orchestrators handle all memory writes.
 
 ## Extending Djinn
 
@@ -160,21 +90,32 @@ Use these frameworks when adding new capabilities to Djinn.
 ```mermaid
 flowchart TD
     A[What are you creating?] --> B{Type?}
-    B -->|THINKING technique| C[SKILL]
-    B -->|CONTEXT ISOLATION<br>heavy I/O| D[SUB-AGENT]
+    B -->|WORKFLOW persona| C{Multi-phase?}
+    B -->|THINKING technique| D{Reusable?}
+    B -->|CONTEXT ISOLATION| E[SUB-AGENT]
     
-    C --> E{How many agents<br>would use?}
-    E -->|Most agents| F[Universal]
-    E -->|2-3 agents| G[Domain]
-    E -->|1 agent| H[Embed inline]
-    E -->|Building block| I[Foundational]
+    C -->|Yes| F[ORCHESTRATOR]
+    C -->|No| G[Reconsider type]
     
-    D --> J[agents/shared/]
+    D -->|Most agents| H[Universal SKILL]
+    D -->|2-3 agents| I[Domain SKILL]
+    D -->|1 agent| J[Embed inline]
+    D -->|Building block| K[Foundational SKILL]
+    
+    E --> L[Shared sub-agent]
 ```
 
 ### Reusability Assessment
 
-Before creating, ask: **Who else would use this?**
+Before creating, ask: **What type of capability is this?**
+
+**For Orchestrators:**
+- Does it need a persona with clear boundaries?
+- Is there a multi-phase workflow to guide?
+- Will it coordinate skills and/or sub-agents?
+- Does it need to manage memory writes?
+
+**If yes → Create orchestrator**
 
 **For Skills:**
 - Is this a thinking technique (not execution)?
@@ -190,37 +131,24 @@ Before creating, ask: **Who else would use this?**
 - Can it return a summary instead of raw data?
 - Would the process flood main context?
 
-**If all yes → Create sub-agent in `agents/shared/`**
+**If all yes → Create shared sub-agent**
 
 ### Design Rules
 
 **DO:**
 1. **Skills do work directly** - Don't delegate reasoning
 2. **Start embedded** - Extract to skill only when 2+ agents need it
-3. **Use cookbook pattern** - SKILL.md + cookbook/*.md
-4. **Put all sub-agents in shared/** - Context isolation is always shared
-5. **Search Basic Memory first** - Before creating any note
+3. **Use progressive disclosure** - Overview + detailed technique docs
+4. **Share sub-agents** - Context isolation is always shared
+5. **Search memory first** - Before creating any note
 
 **DON'T:**
 1. **Never create sub-agents for reasoning** - They can't call skills
-2. **Never skip the cookbook** - Skills need detailed technique docs
-3. **Never make Tier 1 too early** - Start at Tier 2, promote when proven
+2. **Never skip technique docs** - Skills need detailed guides
+3. **Never make Universal too early** - Start at Domain, promote when proven
 4. **Never duplicate thinking techniques** - Extract to skill instead
 
-## Reference
-
-### File Locations (Claude Code Implementation)
-
-| Creating... | Location |
-|-------------|----------|
-| Orchestrator | `.claude/commands/{name}.md` |
-| Skill | `.claude/skills/{name}/SKILL.md` |
-| Skill technique | `.claude/skills/{name}/cookbook/{technique}.md` |
-| Sub-agent | `.claude/agents/shared/{name}.md` |
-| Template | `.claude/resources/{agent}/templates/{file}` |
-| Checklist | `.claude/resources/{agent}/checklists/{file}` |
-
-### Common Mistakes
+## Common Mistakes
 
 **Creating Sub-agents for Reasoning**
 ```
@@ -242,6 +170,15 @@ Making context isolation into skills (or vice versa).
 
 ## Relations
 
-- [[project]] - Vision and goals
-- [[guide]] - How to install and extend
-- [[Orchestrator]] - Sub-agents return synthesis, orchestrators write to KB
+- [[Project]] - Vision and goals
+- [[Claude Code Guide]] - Installation and usage
+- [[Catalog]] - Current skills, orchestrators, sub-agents
+
+**Patterns:**
+- [[Skill]] - Thinking techniques pattern
+- [[Sub-agent]] - Context isolation pattern
+- [[Orchestrator]] - Workflow personas pattern
+- [[Memory]] - Docs-first knowledge management
+
+**Implementation:**
+- [[Claude Code Implementation]] - File locations and syntax for Claude Code

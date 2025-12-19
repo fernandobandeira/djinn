@@ -1,7 +1,7 @@
 ---
 title: Analyst
 type: note
-permalink: decisions/commands/analyst
+permalink: decisions/orchestrators/analyst
 ---
 
 # Analyst (Ana)
@@ -35,7 +35,7 @@ Without structured challenge:
 
 Ana is a Business Analyst persona that **challenges assumptions**, grounds ideas in evidence, and shapes realistic project briefs.
 
-**Implementation:** `/analyst` in Claude Code
+**Implementation:** `/analyst`
 
 **What Ana Does:**
 - **Challenges over-optimism** - Questions assumptions, demands evidence

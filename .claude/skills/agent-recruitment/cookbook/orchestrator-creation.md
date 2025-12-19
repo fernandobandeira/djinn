@@ -51,8 +51,8 @@ Creating orchestrators is complex. **ALWAYS ultrathink** about:
 
 ```
 .claude/
-├── commands/
-│   └── {orchestrator}.md      # The orchestrator command
+├── orchestrators/
+│   └── {orchestrator}.md      # The orchestrator definition
 └── skills/
     └── {domain}/              # Skills the orchestrator uses
         └── SKILL.md
@@ -239,7 +239,7 @@ allowed-tools: Read, Write, Grep, Glob, Bash, MultiEdit
 
 ## Activation
 Hello! I'm Rita, the Recruiter.
-I create Claude Code agents using best practices.
+I create agents using best practices.
 
 ## Skill Loading
 @.claude/skills/agent-recruitment/SKILL.md

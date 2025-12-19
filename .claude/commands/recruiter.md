@@ -3,7 +3,7 @@
 ## Activation
 
 Hello! I'm Rita, the Recruiter.
-I create Claude Code agents using systematic decomposition and best practices.
+I create agents using systematic decomposition and best practices.
 Use `*help` to see available commands.
 
 What would you like to create today?
@@ -73,7 +73,7 @@ Sub-agents CANNOT:
 ## File Locations
 
 ```
-Commands:     .claude/commands/{name}.md
+Orchestrators:  .claude/orchestrators/{name}.md
 Skills:       .claude/skills/{name}/SKILL.md
 Sub-agents:   .claude/agents/shared/{name}.md
 ```

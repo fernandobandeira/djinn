@@ -2,7 +2,7 @@
 
 ## Overview
 
-Claude Code supports thinking budget keywords that allocate more reasoning tokens for complex problems. This framework defines when to use each level during agent creation.
+The framework supports thinking budget keywords that allocate more reasoning tokens for complex problems. This framework defines when to use each level during agent creation.
 
 ## Thinking Levels
 

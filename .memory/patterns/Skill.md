@@ -16,6 +16,10 @@ A skill is a **thinking technique** that auto-activates based on conversation co
 - **Has techniques** - Contains specific, actionable methods (not just concepts)
 - **Reusable** - Multiple agents benefit from the same skill
 
+## Core Principle
+
+**Teach HOW to think, not WHAT to do.** Skills guide reasoning through structured techniques. They stay in the main conversation (never delegated) because thinking requires full context.
+
 ## Skill Structure
 
 Every skill note should follow this structure:
@@ -53,71 +57,22 @@ Links to Architecture, Catalog, Skill pattern.
 
 ## Skill Tiers
 
-| Tier | What it is | Examples |
-|------|------------|----------|
-| **Foundational** | Building blocks other skills compose | Role Playing, Devils Advocate |
-| **Universal** | Most agents use, may compose foundational | Ideation, Root Cause, Teacher |
-| **Domain** | Specific to a cluster of 2-3 agents | Strategic Analysis, User Research, Agent Recruitment |
+| Tier | What it is |
+|------|------------|
+| **Foundational** | Building blocks other skills compose |
+| **Universal** | Most agents use, may compose foundational |
+| **Domain** | Specific to a cluster of 2-3 agents |
 
-### Foundational Skills
+See [[Catalog]] for current skills.
 
-Building blocks that other skills compose. These enable core thinking modes:
+## When to Create a Skill
 
-- [[Role Playing]] - Enables perspective-shifting (stepping into other viewpoints)
-- [[Devils Advocate]] - Enables challenging/critiquing (finding weaknesses)
-
-### Universal Skills
-
-Used by most agents. May compose foundational skills:
-
-- [[Ideation]] - Creative idea generation (composes Role Playing + Devils Advocate)
-- [[Root Cause]] - Deep problem analysis (composes Role Playing + Devils Advocate)
-- [[Teacher]] - Knowledge transfer (independent)
-
-### Domain Skills
-
-Specific to a cluster of related agents:
-
-- [[Strategic Analysis]] - Strategic frameworks (composes Role Playing + Devils Advocate)
-- [[User Research]] - User understanding (composes Role Playing)
-- [[Agent Recruitment]] - Agent creation (meta-skill for building Djinn)
-
-## Skill Interconnections
-
-```
-              FOUNDATIONAL
-    ┌─────────────────────────────────┐
-    │  Role Playing   Devils Advocate │
-    │  (perspectives)   (challenge)   │
-    └───────────┬─────────────────────┘
-                │ compose into
-    ┌───────────┴───────────┐
-    │                       │
-    ▼       UNIVERSAL       ▼
-┌──────────┐ ┌──────────┐ ┌──────────┐
-│ Ideation │ │Root Cause│ │ Teacher  │
-│          │ │          │ │(independ)│
-└──────────┘ └──────────┘ └──────────┘
-
-               DOMAIN
-┌──────────┐ ┌──────────┐ ┌──────────┐
-│Strategic │ │  User    │ │  Agent   │
-│ Analysis │ │ Research │ │Recruitmt │
-└──────────┘ └──────────┘ └──────────┘
-```
-
-## Valid Skill Test
-
-Before creating a skill, verify:
-
-1. **Has structured techniques?** - Not just concepts, but methods with steps
-2. **Teaches thinking?** - Not execution or information retrieval
-3. **Multiple users?** - 2+ agents would benefit
-4. **Recognized methodology?** - Based on established practices
+- Has structured techniques (not just concepts, but methods with steps)
+- Teaches thinking (not execution or information retrieval)
+- 2+ agents would benefit
+- Based on recognized methodology
 
 **If NO to any → Don't create a skill**
-
-Example that failed: Systems Thinking had concepts (feedback loops, leverage points) but no structured techniques with clear steps.
 
 ## Relations
 

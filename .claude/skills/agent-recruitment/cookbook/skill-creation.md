@@ -118,7 +118,7 @@ Follow [cookbook/validation-workflow.md](./validation-workflow.md):
 
 ```yaml
 # Include WHAT and WHEN
-description: Create and manage Claude Code agents (commands, skills,
+description: Create and manage agents (orchestrators, skills,
   sub-agents). Use when user mentions "create agent", "build agent",
   "recruit", "new command", "design skill", or discusses agent
   architecture and decomposition.

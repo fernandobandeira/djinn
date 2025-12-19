@@ -1,7 +1,7 @@
 ---
 title: Architect
 type: note
-permalink: decisions/commands/architect
+permalink: decisions/orchestrators/architect
 ---
 
 # Architect (Archie)
@@ -40,7 +40,7 @@ Without structured challenge:
 
 Archie is a System Architect persona that **challenges architectural decisions in both directions** - questioning unnecessary complexity AND identifying missing requirements.
 
-**Implementation:** `/architect` in Claude Code
+**Implementation:** `/architect`
 
 **What Archie Does:**
 - **Challenges complexity** - Is this simpler than it needs to be? Or more complex?

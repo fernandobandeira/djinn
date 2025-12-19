@@ -16,7 +16,7 @@ Quick reference to all Djinn components. Each links to its decision note documen
 | [[Architect]] | Archie | Misjudged architecture (over/under-engineering) |
 | [[Recruiter]] | Rita | Complex agent creation internals |
 
-*Implementation: Invoked via `/name` in Claude Code*
+*Implementation: Invoked via `/name`*
 
 ## Skills
 
@@ -77,5 +77,5 @@ Analyst-specific:
 ## Relations
 
 - [[Architecture]] - Design principles
-- [[Guide]] - How to use these components
+- [[Claude Code Guide]] - How to use these components
 - [[Project]] - Why Djinn exists

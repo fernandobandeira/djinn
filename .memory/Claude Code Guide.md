@@ -1,17 +1,19 @@
 ---
-title: Guide
+title: Claude Code Guide
 type: note
-permalink: guide
+permalink: claude-code-guide
 tags:
 - djinn
-- guide
+- claude-code
 - installation
-- extension
+- guide
 ---
 
-# Getting Started with Djinn
+# Claude Code Guide
 
-Complete guide to installing, using, and extending Djinn.
+Guide to installing and using Djinn on Claude Code (Anthropic's CLI).
+
+For the conceptual framework, see [[Architecture]]. For detailed syntax and conventions, see [[Claude Code Implementation]].
 
 ## Prerequisites
 
@@ -23,7 +25,7 @@ Djinn uses [Basic Memory](https://github.com/basicmachines-co/basic-memory) for 
 # Install Basic Memory
 uv tool install basic-memory
 
-# Add MCP to Claude Code
+# Add MCP configuration
 claude mcp add basic-memory -- uvx basic-memory mcp
 
 # Verify installation
@@ -40,7 +42,7 @@ Use Djinn across all your projects:
 # Clone Djinn
 git clone https://github.com/your-org/djinn.git ~/.djinn
 
-# Copy to Claude Code config
+# Copy to framework config
 cp -r ~/.djinn/.claude/* ~/.claude/
 ```
 
@@ -171,7 +173,7 @@ Ana: [Delegates to market-researcher sub-agent, returns summary]
 
 | Create a... | When... |
 |-------------|---------|
-| **Command** | You need a role persona with specific behavior and boundaries |
+| **Orchestrator** | You need a role persona with specific behavior and boundaries |
 | **Skill** | You have a thinking technique multiple agents could use |
 | **Sub-agent** | You need to isolate heavy I/O from the main conversation |
 
@@ -179,7 +181,7 @@ Ana: [Delegates to market-researcher sub-agent, returns summary]
 
 ## Knowledge Management
 
-Djinn stores project knowledge in `.memory/` using Basic Memory. This is your shared knowledge base - **review it regularly**.
+Your `.memory/` is a shared knowledge base that serves both you and AI.
 
 | Content | Folder |
 |---------|--------|
@@ -189,28 +191,50 @@ Djinn stores project knowledge in `.memory/` using Basic Memory. This is your sh
 | Brainstorming | `.memory/sessions/` |
 | Diagrams | `.memory/diagrams/` |
 
-**You own this knowledge.** AI generates drafts, but you review and refine. Check research for accuracy, validate decisions, update patterns as you learn. The knowledge base serves both you and AI - keep it trustworthy.
+### Obsidian for Human Review
 
-**Tip:** Use [Obsidian](https://obsidian.md) to browse `.memory/`. The markdown files and `[[wikilinks]]` work perfectly with it.
+Use [Obsidian](https://obsidian.md) to browse and review `.memory/`:
+
+- **Graph view** - See how notes connect via [[wikilinks]]
+- **Search** - Full-text search across all knowledge
+- **Edit** - Refine AI-generated drafts directly
+- **Tags** - Filter by topic or type
+
+The memory is designed to be human-readable. AI generates drafts; you review, validate, and refine. Your review is what makes memory trustworthy.
+
+### Access Through Tools Only
+
+**Critical:** Never manually edit `.memory/` files with code editors or shell commands. Always use memory tools (search, read, write, edit). Manual edits bypass indexing and break semantic links.
+
+See [[Memory]] pattern for the full philosophy.
 
 ## Recommended Workflow
 
-**KB is your source of truth. `.claude/` is implementation.**
+**Docs are the source of truth. Implementation is ephemeral.**
+
+| Layer | Contains | Truth Status |
+|-------|----------|--------------|
+| **Memory** (`.memory/`) | Decisions, principles, patterns | **Source of truth** |
+| **Implementation** (`.claude/`) | Code, prompts, configs | Derived from memory |
 
 When using Djinn, follow this pattern:
 
-1. **Think first, document in KB** - Before building, document key decisions in your project's memory
-2. **KB captures WHY** - Principles, rationale, criteria for decisions
-3. **`.claude/` captures HOW** - Implementation details derived from KB principles
-4. **Human reviews KB** - Spend thought energy on decisions, not implementation details
-5. **Refactor from KB** - When changing `.claude/`, reference KB for guidance
+1. **Document first** - Before building, capture key decisions in memory
+2. **Memory captures WHY** - Principles, rationale, criteria
+3. **Implementation captures HOW** - Details derived from memory
+4. **Human reviews memory** - Spend thought energy on docs, not implementation
+5. **Refactor from memory** - When changing implementation, reference docs for guidance
 
-This workflow means:
-- You can regenerate `.claude/` artifacts if KB principles are clear
-- New team members understand WHY by reading KB
-- AI assistants make consistent decisions by following KB principles
+This means:
+- Implementation can be regenerated if docs are clear
+- New team members understand WHY by reading docs
+- AI makes consistent decisions by following documented principles
+
+See [[Memory]] pattern for the complete docs-first philosophy.
 
 ## Relations
 
-- [[project]] - What Djinn is and why
-- [[architecture]] - Design principles and rules
+- [[Project]] - What Djinn is and why
+- [[Architecture]] - Design principles and rules
+- [[Memory]] - Docs-first philosophy
+- [[Claude Code Implementation]] - Detailed syntax and conventions

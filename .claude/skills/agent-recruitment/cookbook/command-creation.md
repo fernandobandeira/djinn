@@ -12,7 +12,7 @@ Create a **command** when:
 ## File Location
 
 ```
-.claude/commands/{name}.md
+.claude/orchestrators/{name}.md
 ```
 
 ## Command Structure
@@ -63,7 +63,7 @@ Design the command structure:
 ```yaml
 name: {name}
 type: command
-location: .claude/commands/{name}.md
+location: .claude/orchestrators/{name}.md
 description: {clear description}
 tools: {minimal set}
 has_subcommands: {yes/no}
@@ -194,7 +194,7 @@ allowed-tools: Read, Write, Grep, Glob, Bash, MultiEdit
 
 ## Activation
 Hello! I'm Rita, the Recruiter.
-I create Claude Code agents using best practices.
+I create agents using best practices.
 
 ## Skill Loading
 

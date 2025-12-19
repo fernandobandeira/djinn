@@ -18,8 +18,6 @@ An orchestrator is a **persona that guides users** to solve a particular problem
 - **Does reasoning directly** - Never delegates thinking work
 - **Handles all storage** - Sub-agents return synthesis, orchestrators write to KB
 
-**Implementation:** In Claude Code, orchestrators are `.claude/commands/{name}.md` files invoked via `/name`
-
 ## Core Principle
 
 **Do Work Directly. Delegate only for context isolation.**
@@ -42,15 +40,15 @@ An orchestrator is a **persona that guides users** to solve a particular problem
     └─────────┘    └─────────────┘
 ```
 
-## Orchestrator Responsibilities
+## Flow
 
 1. **Guide the user** - Multi-phase workflows with approval gates
-2. **Search KB first** - Always check Basic Memory before creating
+2. **Search memory first** - Always check existing content before creating
 3. **Use skills for thinking** - Devils Advocate, Ideation, Root Cause, etc.
 4. **Delegate heavy I/O** - Use sub-agents for research that would flood context
 5. **Control all storage** - Sub-agents return synthesis, orchestrators decide what to save
-6. **Apply configuration** - Use project parameter from CLAUDE.md for KB writes
-7. **Link content** - Add [[wikilinks]] to connect related notes
+6. **Apply configuration** - Use correct project/scope for memory writes
+7. **Link content** - Add wikilinks to connect related notes
 
 ## When to Create an Orchestrator
 
@@ -59,37 +57,16 @@ An orchestrator is a **persona that guides users** to solve a particular problem
 - Different phases have distinct purposes
 - Need to coordinate skills and sub-agents
 
-## Orchestrator Flow
-
-```
-1. Receive user request
-2. Search Basic Memory for existing content
-3. Use skills for reasoning/analysis
-4. Delegate to sub-agent if heavy I/O needed
-5. Receive synthesis from sub-agent
-6. Review and optionally transform
-7. Write to Basic Memory with correct project
-8. Return confirmation to user
-```
-
 ## Why Orchestrators Handle Storage
 
-Sub-agents execute in isolated contexts and cannot access CLAUDE.md configuration. If sub-agents write directly:
-- Wrong project parameters
-- Inconsistent note structures
-- No orchestrator oversight on what to save
+Memory is the most important artifact - docs are the source of truth. Orchestrators are best positioned to write meaningful content because they:
 
-**Solution:** Sub-agents return synthesis. Orchestrators write with correct config.
+- Have full conversation context and user intent
+- Can apply reasoning and skills to refine content
+- Understand how new content relates to existing notes
+- Can ensure quality standards before committing to memory
 
-See [[Sub-agent]] pattern for sub-agent details.
-
-## Current Orchestrators
-
-| Orchestrator | Persona | Domain |
-|--------------|---------|--------|
-| [[Analyst]] | Ana | Research, assumptions, briefs |
-| [[Architect]] | Archie | Architecture, ADRs, patterns |
-| [[Recruiter]] | Rita | Agent creation |
+Sub-agents return synthesis. Orchestrators decide what's worth keeping and write it properly.
 
 ## Relations
 

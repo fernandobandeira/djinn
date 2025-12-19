@@ -1,6 +1,6 @@
 # Djinn
 
-AI agent personas for Claude Code that help you brainstorm, research, analyze, and build.
+A framework for building AI agent personas that help you brainstorm, research, analyze, and build.
 
 ## The Problem
 
@@ -18,21 +18,51 @@ A framework with three layers:
 
 | Layer | Purpose | Examples |
 |-------|---------|----------|
-| **Commands** | WHO - Role personas with boundaries | /analyst (Ana), /architect (Archie) |
+| **Orchestrators** | WHO - Role personas with boundaries | Analyst, Architect, Recruiter |
 | **Skills** | HOW - Thinking techniques that auto-activate | SCAMPER, Five Whys, Six Hats |
-| **Sub-agents** | ISOLATE - Heavy I/O without polluting context | market-researcher, diagram-generator |
+| **Sub-agents** | ISOLATE - Heavy I/O without polluting context | market-researcher, knowledge-harvester |
 
-Type `/architect` and Claude becomes Archie - thinking like an architect, triggering systems-thinking skills, delegating research to sub-agents while keeping reasoning clean.
+Invoke an orchestrator and the AI becomes that persona - thinking with that role's perspective, using relevant skills, delegating research to sub-agents while keeping reasoning clean.
 
 ## Philosophy
 
 **You stay in the loop.** Djinn isn't about vibe coding or blind delegation. AI accelerates your work - drafting research, applying frameworks, generating options - but you remain the decision maker.
 
 - **AI generates, you review** - Research, plans, and decisions are drafts until you validate them
-- **Shared knowledge base** - `.memory/` serves both you and AI; keep it accurate
+- **Shared knowledge base** - Memory serves both you and AI; keep it accurate
 - **Structured collaboration** - Personas and skills make AI predictable, not autonomous
 
-## Quick Start
+**Docs are the source of truth.** Your memory defines WHAT and WHY. Implementation is ephemeral and can change as long as it follows the docs.
+
+---
+
+## Documentation
+
+Full documentation is in `.memory/` (use [Obsidian](https://obsidian.md) to browse - they use `[[wikilinks]]`):
+
+| Doc | Content |
+|-----|---------|
+| **[Project](.memory/Project.md)** | Vision, goals, philosophy |
+| **[Architecture](.memory/Architecture.md)** | Core concepts, design rules |
+
+### Patterns
+
+| Pattern | Description |
+|---------|-------------|
+| **[Orchestrator](.memory/patterns/Orchestrator.md)** | Workflow personas that guide users |
+| **[Skill](.memory/patterns/Skill.md)** | Thinking techniques that auto-activate |
+| **[Sub-agent](.memory/patterns/Sub-agent.md)** | Context-isolated workers for heavy I/O |
+| **[Memory](.memory/patterns/Memory.md)** | Docs-first knowledge management |
+
+---
+
+## Implementations
+
+### Claude Code
+
+Djinn is currently implemented for [Claude Code](https://claude.ai/code) (Anthropic's CLI).
+
+#### Quick Start
 
 ```bash
 # 1. Install Basic Memory
@@ -53,7 +83,7 @@ mkdir -p .memory/{decisions,patterns,research,context,sessions,diagrams}
 # **Primary**: `your-project-name`
 ```
 
-## Usage
+#### Usage
 
 ```
 /analyst       # Ana - brainstorming, research, strategic analysis
@@ -65,15 +95,17 @@ Once activated, type `*help` to see available commands.
 
 Skills auto-activate based on context - just mention "brainstorm", "root cause", "SWOT", etc.
 
-## Documentation
+#### Docs
 
-Full documentation is in `.memory/`:
+- **[Claude Code Guide](.memory/Claude%20Code%20Guide.md)** - Installation and usage
+- **[Claude Code Implementation](.memory/Claude%20Code%20Implementation.md)** - Syntax, file structure, conventions
 
-- **[Project](.memory/Project.md)** - Vision, goals, and full problem/solution context
-- **[Architecture](.memory/Architecture.md)** - Core concepts, design rules, how to extend
-- **[Guide](.memory/Guide.md)** - Installation details, usage, knowledge management
+### Other Platforms
 
-Use [Obsidian](https://obsidian.md) to browse the docs - they use `[[wikilinks]]` for navigation.
+Want Djinn on another platform? The patterns are platform-agnostic.
+
+- **Request an implementation** - [Open an issue](https://github.com/your-org/djinn/issues/new) describing your platform
+- **Build it yourself** - PRs welcome! See `.memory/` for the conceptual patterns to implement
 
 ## License
 
