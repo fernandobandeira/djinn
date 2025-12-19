@@ -89,7 +89,7 @@ claude mcp add basic-memory -- uvx basic-memory mcp
 go install github.com/steveyegge/beads/cmd/bd@latest
 
 # 3. Clone Djinn
-git clone https://github.com/fernandobandeira/djinn.git ~/.djinn
+git clone git@github.com:fernandobandeira/djinn.git ~/.djinn
 cp -r ~/.djinn/.claude/* ~/.claude/
 
 # 4. Initialize your project
