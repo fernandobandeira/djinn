@@ -177,7 +177,7 @@ Ana: [Delegates to market-researcher sub-agent, returns summary]
 | **Skill** | You have a thinking technique multiple agents could use |
 | **Sub-agent** | You need to isolate heavy I/O from the main conversation |
 
-**Use `/recruiter` to create new components.** Rita knows the file formats, handles structure, and guides you through type selection. See [[architecture]] for design principles.
+**Use `/recruiter` to create new components.** Rita knows the file formats, handles structure, and guides you through type selection. See [[Architecture]] for design principles.
 
 ## Knowledge Management
 
@@ -195,7 +195,7 @@ Your `.memory/` is a shared knowledge base that serves both you and AI.
 
 Use [Obsidian](https://obsidian.md) to browse and review `.memory/`:
 
-- **Graph view** - See how notes connect via [[wikilinks]]
+- **Graph view** - See how notes connect via wikilinks
 - **Search** - Full-text search across all knowledge
 - **Edit** - Refine AI-generated drafts directly
 - **Tags** - Filter by topic or type

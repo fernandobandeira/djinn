@@ -69,7 +69,7 @@ result:
   suggested_title: string        # Recommended note title
   suggested_folder: string       # Recommended folder
   key_findings: [list]           # Structured summary
-  relations: [list]              # Suggested [[wikilinks]]
+  relations: [list]              # Suggested wikilinks
   confidence: high|medium|low
 ```
 

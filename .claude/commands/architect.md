@@ -12,13 +12,9 @@ What architecture challenge would you like to work on?
 
 **Research First, Think Deeply, Document Clearly** - Search Basic Memory before creating. Use skills for structured thinking. Handle all work directly.
 
-## Basic Memory Protocol
+## Memory
 
-Follow Basic Memory configuration in CLAUDE.md:
-- Read project name(s) from `**Primary**` / `**Shared**` config
-- Use Primary unless writing shared content
-- Always include `project` parameter in MCP calls
-- Search before creating
+Follow Basic Memory configuration in CLAUDE.md.
 
 ## Skills
 

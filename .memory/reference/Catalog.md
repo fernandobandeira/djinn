@@ -6,17 +6,15 @@ permalink: reference/catalog
 
 # Component Catalog
 
-Quick reference to all Djinn components. Each links to its decision note documenting problem, solution, and rationale.
+Reference for all Djinn components.
 
 ## Orchestrators
 
-| Orchestrator | Persona | What it solves |
-|--------------|---------|----------------|
-| [[Analyst]] | Ana | Over-optimistic assumptions, unvalidated briefs |
-| [[Architect]] | Archie | Misjudged architecture (over/under-engineering) |
-| [[Recruiter]] | Rita | Complex agent creation internals |
-
-*Implementation: Invoked via `/name`*
+| Orchestrator | Persona | Purpose |
+|--------------|---------|---------|
+| [[Analyst]] | Ana | Research, analysis, brainstorming |
+| [[Architect]] | Archie | System design, ADRs |
+| [[Recruiter]] | Rita | Create new agents |
 
 ## Skills
 
@@ -24,58 +22,69 @@ Quick reference to all Djinn components. Each links to its decision note documen
 
 Building blocks that other skills compose:
 
-| Skill | What it enables |
-|-------|-----------------|
-| [[Role Playing]] | Perspective-shifting (stepping into other viewpoints) |
-| [[Devils Advocate]] | Challenging/critiquing (finding weaknesses) |
+| Skill | Enables |
+|-------|---------|
+| [[Role Playing]] | Perspective-shifting |
+| [[Devils Advocate]] | Challenging/critiquing |
 
 ### Universal
 
 Used by most agents:
 
-| Skill | What it solves |
-|-------|----------------|
+| Skill | Solves |
+|-------|--------|
 | [[Ideation]] | Unfocused brainstorming |
-| [[Root Cause]] | Surface-level problem solving |
-| [[Teacher]] | Poor concept explanation |
+| [[Root Cause]] | Surface-level analysis |
+| [[Teacher]] | Poor explanations |
 
 ### Domain
 
 Cluster-specific (2-3 agents):
 
-| Skill | What it solves |
-|-------|----------------|
-| [[Strategic Analysis]] | Unstructured strategic decisions |
+| Skill | Solves |
+|-------|--------|
+| [[Strategic Analysis]] | Unstructured decisions |
 | [[User Research]] | Shallow user understanding |
-| [[Agent Recruitment]] | Inconsistent component creation |
+| [[Agent Recruitment]] | Inconsistent creation |
 
-## Sub-agents (Context Isolation)
+## Sub-agents
 
 ### Foundational
 
 Used by all orchestrators:
 
-| Sub-agent | What it isolates |
-|-----------|------------------|
-| [[Knowledge Harvester]] | External source gathering and synthesis |
+| Sub-agent | Isolates |
+|-----------|----------|
+| [[Knowledge Harvester]] | External source gathering |
 
 ### Domain
 
 Analyst-specific:
 
-| Sub-agent | What it isolates |
-|-----------|------------------|
-| [[Market Researcher]] | Heavy web research for market analysis |
-| [[Competitive Analyzer]] | Multi-competitor research and comparison |
+| Sub-agent | Isolates |
+|-----------|----------|
+| [[Market Researcher]] | Market research |
+| [[Competitive Analyzer]] | Competitor comparison |
 
-## Key Patterns
+---
 
-- [[Orchestrator]] - Personas that guide users, handle all KB writes
-- [[Skill]] - Thinking techniques; 3 tiers (Foundational → Universal → Domain)
-- [[Sub-agent]] - Context isolation for heavy I/O; returns synthesis
+## Understand the Design
+
+Why each component type exists and how they relate:
+
+- [[Orchestrator]] - Workflow personas that guide users
+- [[Skill]] - Thinking techniques that auto-activate
+- [[Sub-agent]] - Context isolation for heavy I/O
+- [[Memory]] - Docs-first philosophy
+
+## Build Something New
+
+Use `/recruiter` - Rita guides you through creating orchestrators, skills, and sub-agents.
+
+Technical reference: [[Claude Code Implementation]]
 
 ## Relations
 
 - [[Architecture]] - Design principles
-- [[Claude Code Guide]] - How to use these components
-- [[Project]] - Why Djinn exists
+- [[Claude Code Guide]] - Installation and usage
+- [[Project]] - Vision and philosophy

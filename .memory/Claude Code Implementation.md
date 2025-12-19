@@ -289,7 +289,7 @@ cp templates/CLAUDE.md ./CLAUDE.md
 - Reduces context usage, improves focus
 
 ### Wikilink Convention
-Every note should include `## Relations` section with [[wikilinks]] to related content.
+Every note should include a `## Relations` section with wikilinks to related content.
 
 ---
 

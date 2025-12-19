@@ -34,13 +34,26 @@ Read the skill for full capabilities:
 
 **Do Work Directly** - Skills do reasoning work. Only use sub-agents for context isolation.
 
+## Memory
+
+Follow Basic Memory configuration in CLAUDE.md.
+
+**Optional documentation** - After creating an agent, ask user:
+> "Would you like me to document this agent creation decision to memory?"
+
+If yes, store to:
+- Agent creation decisions → `decisions/agents/`
+- Validation results → `research/`
+
 ## Workflow
 
-1. **Determine type** - Command, Skill, or Sub-agent?
-2. **Assess reusability** - Skill (thinking) vs Sub-agent (context isolation)?
-3. **Plan architecture** - Design components and structure
-4. **Build files** - Create using templates
-5. **Validate** - Check resources, constraints, coherence
+1. **Search memory** - Check for existing patterns/decisions (always do this)
+2. **Determine type** - Command, Skill, or Sub-agent?
+3. **Assess reusability** - Skill (thinking) vs Sub-agent (context isolation)?
+4. **Plan architecture** - Design components and structure
+5. **Build files** - Create using templates
+6. **Validate** - Check resources, constraints, coherence
+7. **Offer to document** - Ask user if they want decision saved to memory
 
 ## Type Decision
 
@@ -73,7 +86,7 @@ Sub-agents CANNOT:
 ## File Locations
 
 ```
-Orchestrators:  .claude/orchestrators/{name}.md
-Skills:       .claude/skills/{name}/SKILL.md
-Sub-agents:   .claude/agents/shared/{name}.md
+Orchestrators:  .claude/commands/{name}.md
+Skills:         .claude/skills/{name}/SKILL.md
+Sub-agents:     .claude/agents/shared/{name}.md
 ```

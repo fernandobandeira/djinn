@@ -102,7 +102,7 @@ Perform all validation checks yourself - don't delegate.
 
 ```
 Orchestrators:
-  .claude/orchestrators/{name}.md
+  .claude/commands/{name}.md
 
 Skills (Tier 1 & 2):
   .claude/skills/{name}/SKILL.md

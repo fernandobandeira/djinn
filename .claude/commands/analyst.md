@@ -35,13 +35,9 @@ sub_agents:
 
 # NOTE: Use `research` skill for KB search with Basic Memory
 
-## Basic Memory Protocol
+## Memory
 
-Follow Basic Memory configuration in CLAUDE.md:
-- Read project name(s) from `**Primary**` / `**Shared**` config
-- Use Primary unless writing shared content
-- Always include `project` parameter in MCP calls
-- Search before creating
+Follow Basic Memory configuration in CLAUDE.md.
 
 skills_available:
   # Tier 1: Universal thinking skills
