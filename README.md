@@ -36,14 +36,31 @@ Invoke an orchestrator and the AI becomes that persona - thinking with that role
 
 ---
 
+## Quick Start: What Do You Want to Do?
+
+| Goal | Command | Orchestrator |
+|------|---------|--------------|
+| Validate an idea | `/analyst` | Ana |
+| Design architecture | `/architect` | Archie |
+| Research users | `/ux` | Ulysses |
+| Plan product/epics | `/pm` | Paul |
+| Create stories | `/sm` | Sam |
+| Implement code | `/dev` | Dave |
+| Create new agents | `/recruiter` | Rita |
+
+See **[Orchestrator Workflow](.memory/diagrams/Orchestrator%20Workflow.md)** for the full guide.
+
 ## Documentation
 
-Full documentation is in `.memory/` (use [Obsidian](https://obsidian.md) to browse - they use `[[wikilinks]]`):
+Full documentation is in `.memory/` (use [Obsidian](https://obsidian.md) to browse):
 
-| Doc | Content |
-|-----|---------|
-| **[Project](.memory/Project.md)** | Vision, goals, philosophy |
-| **[Architecture](.memory/Architecture.md)** | Core concepts, design rules |
+### Getting Started
+
+| Doc | What It Covers |
+|-----|----------------|
+| **[Orchestrator Workflow](.memory/diagrams/Orchestrator%20Workflow.md)** | How to use the orchestrators (start here) |
+| **[Catalog](.memory/reference/Catalog.md)** | All orchestrators, skills, and sub-agents |
+| **[Architecture](.memory/Architecture.md)** | Design principles, extending the framework |
 
 ### Patterns
 
@@ -52,7 +69,6 @@ Full documentation is in `.memory/` (use [Obsidian](https://obsidian.md) to brow
 | **[Orchestrator](.memory/patterns/Orchestrator.md)** | Workflow personas that guide users |
 | **[Skill](.memory/patterns/Skill.md)** | Thinking techniques that auto-activate |
 | **[Sub-agent](.memory/patterns/Sub-agent.md)** | Context-isolated workers for heavy I/O |
-| **[Memory](.memory/patterns/Memory.md)** | Docs-first knowledge management |
 
 ---
 

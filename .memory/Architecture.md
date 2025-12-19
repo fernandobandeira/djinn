@@ -81,6 +81,26 @@ Sub-agents are ONLY for context isolation - keeping heavy I/O work separate from
 
 **Important:** Sub-agents return synthesis to orchestrators. Orchestrators handle all memory writes.
 
+## Workflow
+
+See [[Orchestrator Workflow]] for the full diagram.
+
+**1. Discovery:**
+- [[Analyst]] understands the problem, challenges assumptions, creates brief
+
+**2. Context:**
+- [[Architect]] defines technical constraints, ADRs (informed by brief)
+- [[UX]] researches users, creates personas and specs (informed by brief)
+
+**3. Planning:**
+- [[PM]] synthesizes all inputs into epics
+
+**4. Execution:**
+- [[SM]] breaks epics into validated stories
+- [[Dev]] implements stories
+
+**Key principle:** It all starts with Analyst - you can't do architecture or UX without understanding the problem first. Each stage produces validated output that becomes the source of truth for the next.
+
 ## Extending Djinn
 
 Use these frameworks when adding new capabilities to Djinn.
@@ -173,6 +193,9 @@ Making context isolation into skills (or vice versa).
 - [[Project]] - Vision and goals
 - [[Claude Code Guide]] - Installation and usage
 - [[Catalog]] - Current skills, orchestrators, sub-agents
+
+**Diagrams:**
+- [[Orchestrator Workflow]] - The pipeline from Analyst to Dev
 
 **Patterns:**
 - [[Skill]] - Thinking techniques pattern

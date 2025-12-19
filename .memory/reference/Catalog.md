@@ -18,6 +18,7 @@ Reference for all Djinn components.
 | [[Recruiter]] | Rita | Create new agents |
 | [[SM]] | Sam | Sprint planning, story creation |
 | [[UX]] | Ulysses | User research, design, frontend specs |
+| [[Dev]] | Dave | TDD implementation, quality gates |
 
 ## Skills
 

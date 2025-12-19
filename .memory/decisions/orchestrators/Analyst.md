@@ -76,9 +76,14 @@ Location: `{templates}/analyst/` (configurable per [[Templates]] pattern)
 
 See [[Templates]] pattern for the platform-agnostic template approach.
 
+## Integration
+
+**Downstream (produces for):**
+- [[PM]] - Project briefs, market research, competitive analysis for product planning
+
 ## Relations
 
-- [[Architecture]] - Part of Djinn orchestrator layer
+- [[Orchestrator]] - Ana follows orchestrator pattern
+- [[PM]] - PM consumes Analyst's briefs and research
 - [[Catalog]] - Listed in component index
-- [[Orchestrator]] - Ana follows this pattern (guides users, uses skills, delegates to sub-agents for heavy I/O)
 - [[Templates]] - Uses analyst templates

@@ -1,14 +1,39 @@
 # Djinn
 
-Agent architecture project with reusable skills and shared sub-agents.
+Agent framework for going from idea to code using orchestrator personas.
+
+**Core principle:** Skills teach HOW to think. Sub-agents isolate context.
+
+## Orchestrators
+
+| Goal | Command | Orchestrator |
+|------|---------|--------------|
+| Validate an idea | `/analyst` | Ana |
+| Design architecture | `/architect` | Archie |
+| Research users | `/ux` | Ulysses |
+| Plan product/epics | `/pm` | Paul |
+| Create stories | `/sm` | Sam |
+| Implement code | `/dev` | Dave |
+| Create new agents | `/recruiter` | Rita |
+
+## The Workflow
+
+Analyst → Architect/UX → PM → SM → Dev
+
+1. **Discovery** - `/analyst` creates validated brief
+2. **Context** - `/architect` + `/ux` add technical and user context
+3. **Planning** - `/pm` synthesizes into epics
+4. **Execution** - `/sm` creates stories, `/dev` implements
+
+Status flows UP: Dev → SM → PM → Analyst (for pivots)
+
+See `.memory/diagrams/Orchestrator Workflow.md` for full guide.
 
 ## Basic Memory Configuration
 
 **Primary**: `djinn`
 
-## Templates Configuration
-
-**Location**: `templates/`
+**Templates**: `templates/`
 
 > **CRITICAL: NEVER manually read, write, or edit files in `.memory/`**
 >
@@ -53,9 +78,9 @@ mcp__basic-memory__recent_activity(project="djinn")
 | Brainstorming sessions | `sessions/` |
 | Technical diagrams | `diagrams/` |
 
-## Skills Architecture
+## Skills
 
-Skills teach HOW to think. They're organized in tiers:
+Skills teach HOW to think. They're organized in tiers. See `patterns/skill` for the pattern.
 
 ### Tier 1 (Universal)
 - `root-cause` - Five Whys, First Principles, Jobs-to-be-Done
@@ -70,7 +95,7 @@ Skills teach HOW to think. They're organized in tiers:
 
 ## Shared Sub-Agents
 
-Delegate context-heavy work via Task tool to these in `.claude/agents/shared/`:
+Delegate context-heavy work via Task tool. See `patterns/sub-agent` for the pattern.
 
 ### Research (Heavy I/O)
 - `market-researcher` - Market research via web search
@@ -109,6 +134,29 @@ mcp__basic-memory__write_note(
 )
 ```
 
-## Agent Creation
+## Extend the Framework
 
-Use the `agent-recruitment` skill to create new agents. Check `.claude/skills/agent-recruitment/decision-frameworks/reusability-assessment.md` to determine if something should be a skill, shared sub-agent, or agent-specific.
+Use `/recruiter` to create new orchestrators, skills, or sub-agents. Rita guides you through the process.
+
+## Documentation
+
+Key docs in Basic Memory (`.memory/`):
+
+| Doc | Content | Identifier |
+|-----|---------|------------|
+| Orchestrator Workflow | How to use the workflow | `diagrams/orchestrator-workflow` |
+| Catalog | All orchestrators, skills, sub-agents | `reference/catalog` |
+| Architecture | Design principles, extending | `architecture` |
+
+### Patterns
+
+| Pattern | What it defines | Identifier |
+|---------|-----------------|------------|
+| Orchestrator | Workflow personas that guide users | `patterns/orchestrator` |
+| Skill | Thinking techniques that auto-activate | `patterns/skill` |
+| Sub-agent | Context-isolated workers for heavy I/O | `patterns/sub-agent` |
+| Templates | Platform-agnostic artifact structures | `patterns/templates` |
+| Checklists | Workflow verification (embedded) | `patterns/checklists` |
+| Memory | Docs-first philosophy | `patterns/memory` |
+
+Read with: `mcp__basic-memory__read_note(identifier="...", project="djinn")`
