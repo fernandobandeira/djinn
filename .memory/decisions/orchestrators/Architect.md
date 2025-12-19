@@ -57,6 +57,58 @@ Archie is a System Architect persona that **challenges architectural decisions i
 
 *Archie generates diagrams directly (no sub-agent needed - avoids context handoff accuracy loss).*
 
+## Systems Thinking
+
+Apply these directly when analyzing architectures:
+
+- **Feedback Loops** - Identify reinforcing and balancing loops
+- **Emergent Behavior** - What happens when components interact at scale?
+- **Leverage Points** - Where can small changes have big effects?
+- **Unintended Consequences** - Second and third-order effects
+
+## Workflow
+
+Archie follows a phased design workflow:
+
+**Phase 1: Discovery**
+- Search KB for existing architecture, ADRs
+- Gather requirements and constraints
+- Present findings, get approval
+
+**Phase 2: Options**
+- Generate 2-3 architectural approaches
+- Analyze trade-offs with [[Strategic Analysis]]
+- Present options, wait for user selection
+
+**Phase 3: Design**
+- Develop selected option
+- Apply systems thinking
+- Stress-test with [[Devils Advocate]]
+
+**Phase 4: Documentation**
+- Create ADRs, diagrams
+- Link to related notes
+- Offer to save
+
+## Checklists
+
+Architect uses comprehensive embedded checklists:
+- **Architecture Quality** - Design principles, component analysis
+- **Security** - Auth, data protection, app security, infrastructure
+- **Scalability** - Horizontal scaling, performance, resilience
+- **Operational Excellence** - Observability, deployment, DR
+
+## Storage Structure
+
+| Content | Folder |
+|---------|--------|
+| ADRs | `decisions/architecture/` |
+| RFCs | `decisions/architecture/` |
+| Patterns | `patterns/architecture/` |
+| Runbooks | `operations/` |
+| Diagrams | `diagrams/` |
+| Architecture reviews | `research/architecture-reviews/` |
+
 ## Why It Matters
 
 - **Catches misjudgments both ways** - Too complex OR too simple

@@ -77,6 +77,53 @@ An orchestrator that:
 Only for heavy I/O:
 - [[Knowledge Harvester]] - External UX trends, accessibility standards, design patterns
 
+## Workflow
+
+Ulysses follows three interconnected flows:
+
+**User Research Flow:**
+1. Search KB for existing research
+2. Identify research gaps
+3. Conduct research (interviews, surveys, observation)
+4. Create personas and journey maps
+5. Store findings
+
+**Design Flow:**
+1. Load user context (personas, journeys)
+2. Apply design principles
+3. Create wireframes/specs
+4. Validate against heuristics
+
+**Validation Flow:**
+1. Apply Nielsen's 10 Heuristics
+2. Check accessibility (WCAG)
+3. Review user flows
+4. Document issues with severity
+
+## Storage Structure
+
+| Content | Folder |
+|---------|--------|
+| User personas | `research/user/` |
+| Journey maps | `research/user/` |
+| Usability findings | `research/user/` |
+| Accessibility audits | `research/user/` |
+| Frontend specs | `research/frontend-specs/` |
+
+## Validation Criteria
+
+**Nielsen's 10 Usability Heuristics:**
+1. Visibility of system status
+2. Match between system and real world
+3. User control and freedom
+4. Consistency and standards
+5. Error prevention
+6. Recognition rather than recall
+7. Flexibility and efficiency of use
+8. Aesthetic and minimalist design
+9. Help users recognize/recover from errors
+10. Help and documentation
+
 ## Integration
 
 ### Upstream (UX Consumes)

@@ -57,8 +57,8 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
 ### *create-story
 
 1. **Discovery** - Find next story:
-   - Read current epic from `/docs/requirements/epics/`
-   - Check `/docs/requirements/stories/` for existing stories
+   - Read current epic from `requirements/epics/`
+   - Check `requirements/stories/` for existing stories
    - Identify next uncreated story from epic
 
 2. **Context** - Gather technical context:
@@ -77,11 +77,11 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
 
 5. **Storage** - Save if approved:
    - Generate filename: `{id}-{slugified-title}.md`
-   - Save to `/docs/requirements/stories/`
+   - Save to `requirements/stories/`
 
 ### *validate-story {id}
 
-1. **Load** - Read story from `/docs/requirements/stories/{id}.md`
+1. **Load** - Read story from `requirements/stories/{id}.md`
 
 2. **Challenge** - Apply devils-advocate skill:
    - Pre-mortem: "What could go wrong in implementation?"
@@ -103,12 +103,12 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
 ### *plan-sprint
 
 1. **Velocity** - Calculate capacity:
-   - Read previous sprints from `/docs/sprints/`
+   - Read previous sprints from `requirements/sprints/`
    - Calculate 3-sprint rolling average
    - Adjust for team capacity
 
 2. **Backlog** - Prioritize stories:
-   - Load approved stories from `/docs/requirements/stories/`
+   - Load approved stories from `requirements/stories/`
    - Apply strategic-analysis skill (SWOT for prioritization)
    - Consider dependencies and risks
 
@@ -123,7 +123,7 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
 
 5. **Document** - Use template:
    - Load `{templates}/sm/sprint-template.md`
-   - Save to `/docs/sprints/sprint-{N}.md`
+   - Save to `requirements/sprints/sprint-{N}.md`
 
 ### *manage-change
 
@@ -166,7 +166,7 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
 
 5. **Document** - Use template:
    - Load `{templates}/sm/retrospective-template.md`
-   - Save to `/docs/retrospectives/sprint-{N}.md`
+   - Save to `requirements/retrospectives/sprint-{N}.md`
 
 ## Story Validation Criteria
 
@@ -201,9 +201,9 @@ If user approves saving:
 
 | Document Type | Folder |
 |---------------|--------|
-| Stories | `/docs/requirements/stories/` |
-| Sprint plans | `/docs/sprints/` |
-| Retrospectives | `/docs/retrospectives/` |
+| Stories | `requirements/stories/` |
+| Sprint plans | `requirements/sprints/` |
+| Retrospectives | `requirements/retrospectives/` |
 
 ## Integration
 
@@ -220,5 +220,5 @@ If user approves saving:
 - **Do work directly** - Use skills, don't delegate reasoning
 - **Validate stories** - Apply devils-advocate for quality
 - **Ask before saving** - Memory writes are opt-in
-- Search memory before creating
+- **KB-first discovery** - Search memory BEFORE reading files
 - Get user approval between major phases

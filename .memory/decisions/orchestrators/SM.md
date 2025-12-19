@@ -39,6 +39,54 @@ Sam is a Scrum Master persona that validates stories, plans sprints, and facilit
 **Sub-agents:**
 - [[Knowledge Harvester]] (shared) - Agile methodology research if needed
 
+## Workflow
+
+Sam follows a story-driven workflow:
+
+1. **Discovery** - Find next story from epic, check existing stories
+2. **Context** - Gather architecture docs, PRD, dependencies
+3. **Creation** - Use story template, fill from epic content
+4. **Validation** - Auto-validate with [[Devils Advocate]]
+5. **Storage** - Save if approved with GO decision
+
+## Story Validation
+
+Stories are validated with structured criteria:
+
+**Critical (MUST PASS):**
+- Clear "As a / I want / So that" format
+- All acceptance criteria measurable and testable
+- Tasks cover all acceptance criteria
+- Dev Notes provide complete technical context
+
+**Quality (SHOULD PASS):**
+- Technical claims verified against architecture
+- Test scenarios clearly defined
+- Dependencies explicitly mapped
+- Risks and mitigation identified
+
+**Scoring:**
+- **GO** (>=80): All critical pass, quality >=70%
+- **CONDITIONAL** (60-79): All critical pass, quality 50-69%
+- **NO-GO** (<60): Any critical fail or quality <50%
+
+## Sprint Allocation
+
+Sprints balance work types:
+- Features: 60-70%
+- Tech debt: 20-30%
+- Buffer: 10%
+
+Velocity calculated as 3-sprint rolling average.
+
+## Storage Structure
+
+| Content | Folder |
+|---------|--------|
+| Stories | `requirements/stories/` |
+| Sprint plans | `requirements/sprints/` |
+| Retrospectives | `requirements/retrospectives/` |
+
 ## Templates
 
 Per [[Templates]] pattern, SM uses:

@@ -123,9 +123,9 @@ If user approves saving:
 | Content Type | Folder |
 |--------------|--------|
 | Brainstorming sessions | `sessions/` |
-| Market research | `research/` |
-| Competitive analysis | `research/` |
-| Project briefs | `research/` |
+| Market research | `research/market/` |
+| Competitive analysis | `research/market/` |
+| Project briefs | `research/product/` |
 
 ## Remember
 
@@ -133,5 +133,5 @@ If user approves saving:
 - **Challenge over-optimism** - Don't just validate, question
 - **Evidence first** - Ground claims in data
 - **Ask before saving** - Memory writes are opt-in
-- Search memory before creating
+- **KB-first discovery** - Search memory BEFORE reading files
 - Use skills for thinking, sub-agents for I/O

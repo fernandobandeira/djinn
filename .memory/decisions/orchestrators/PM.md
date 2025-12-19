@@ -53,6 +53,34 @@ Only for heavy I/O when gaps exist:
 - [[Competitive Analyzer]] - Competitive positioning
 - [[Knowledge Harvester]] - External requirements
 
+## Workflow
+
+Paul follows a synthesis-first workflow:
+
+1. **Search KB** - Always aggregate existing research first
+2. **Identify Gaps** - Note what's missing vs what exists
+3. **Delegate if needed** - Sub-agents only for gaps
+4. **Synthesize** - Combine all sources into unified artifact
+5. **Validate** - Challenge with [[Devils Advocate]]
+6. **Store** - Save with user permission
+
+## Storage Structure
+
+| Content | Folder |
+|---------|--------|
+| Project briefs | `research/product/` |
+| Stakeholder updates | `research/product/` |
+| PRDs, roadmaps | `requirements/` |
+| Epics | `requirements/epics/` |
+
+## SM Handoff
+
+Epics include "Ready for Sprint Planning" status with:
+- All stories defined with acceptance criteria
+- Dependencies mapped between stories
+- Technical context from [[Architect]]
+- Notes for [[SM|Scrum Master]]
+
 ## Integration
 
 ### Upstream (PM Consumes)

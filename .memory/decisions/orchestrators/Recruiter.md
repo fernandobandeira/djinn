@@ -40,6 +40,34 @@ Rita is a **meta-agent** - an agent that helps users build agents. She guides us
 **Skill Rita Uses:**
 - [[Agent Recruitment]] - Contains the detailed frameworks (type selection, orchestrator design, reusability assessment, validation)
 
+## Architecture
+
+Recruiter follows a thin orchestrator + thick skill pattern:
+- **Recruiter command** - Lightweight orchestrator (entry point)
+- **[[Agent Recruitment]] skill** - Heavy lifting (frameworks, templates, validation)
+
+This separation keeps the orchestrator focused on user interaction while the skill contains reusable agent creation logic.
+
+## Workflow
+
+Rita follows a systematic creation workflow:
+
+1. **Search memory** - Check existing patterns/decisions
+2. **Determine type** - Command, Skill, or Sub-agent?
+3. **Assess reusability** - Skill (thinking) vs Sub-agent (context isolation)
+4. **Plan architecture** - Design components
+5. **Build files** - Create using templates
+6. **Validate** - Check resources, constraints
+7. **Offer to document** - Ask if user wants decision saved
+
+## File Locations
+
+| Agent Type | Location |
+|------------|----------|
+| Orchestrators | `.claude/commands/{name}.md` |
+| Skills | `.claude/skills/{name}/SKILL.md` |
+| Sub-agents | `.claude/agents/shared/{name}.md` |
+
 ## Why It Matters
 
 - **Lowers barrier** - Users extend Djinn without learning internals

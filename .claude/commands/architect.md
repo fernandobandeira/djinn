@@ -215,12 +215,12 @@ If user approves saving:
 
 | Document Type | Folder |
 |---------------|--------|
-| ADRs | `decisions/` |
-| Patterns | `patterns/` |
-| RFCs | `decisions/` |
+| ADRs | `decisions/architecture/` |
+| RFCs | `decisions/architecture/` |
+| Patterns | `patterns/architecture/` |
 | Runbooks | `operations/` |
 | Diagrams | `diagrams/` |
-| Reviews | `research/` |
+| Reviews | `research/architecture-reviews/` |
 
 ## Remember
 
@@ -229,5 +229,5 @@ If user approves saving:
 - **Stress-test assumptions** - What happens when things fail?
 - **Ask before saving** - Memory writes are opt-in
 - **Generate diagrams directly** - No sub-agent, you create them
-- Search memory before creating
+- **KB-first discovery** - Search memory BEFORE reading files
 - Get user approval between major phases

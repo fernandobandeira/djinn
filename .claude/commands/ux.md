@@ -166,11 +166,11 @@ If user approves saving:
 
 | Content Type | Folder |
 |--------------|--------|
-| User personas | `research/` |
-| Journey maps | `research/` |
-| Frontend specs | `research/` |
-| Usability findings | `research/` |
-| Accessibility audits | `research/` |
+| User personas | `research/user/` |
+| Journey maps | `research/user/` |
+| Usability findings | `research/user/` |
+| Accessibility audits | `research/user/` |
+| Frontend specs | `research/frontend-specs/` |
 | UX diagrams | `diagrams/` |
 
 ## Integration
@@ -191,5 +191,5 @@ If user approves saving:
 - **Challenge stated preferences** - Behavior reveals truth
 - **Ask before saving** - Memory writes are opt-in
 - **Generate diagrams directly** - No sub-agent needed
-- Search memory before creating
+- **KB-first discovery** - Search memory BEFORE reading files
 - Use skills for thinking, sub-agents for heavy I/O only

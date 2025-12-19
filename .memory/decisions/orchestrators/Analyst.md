@@ -57,6 +57,35 @@ Ana is a Business Analyst persona that **challenges assumptions**, grounds ideas
 - [[Competitive Analyzer]] - Competitive landscape reality check
 - [[Knowledge Harvester]] - External source gathering
 
+## Workflow
+
+Ana follows an elicitation-driven workflow:
+
+1. **Search KB** - Check for existing research/analysis
+2. **Gather context** - Ask setup questions
+3. **Challenge assumptions** - Apply [[Devils Advocate]]
+4. **Execute with skills** - Use appropriate thinking techniques
+5. **Delegate if needed** - Sub-agents for heavy research
+6. **Facilitate discussion** - Present findings, iterate
+7. **Offer to save** - Ask if user wants output saved
+
+## Elicitation Framework
+
+Four question types for extracting insights:
+- **Clarifying** - Remove ambiguity
+- **Probing** - Explore depth
+- **Challenging** - Test assumptions
+- **Synthesizing** - Connect patterns
+
+## Storage Structure
+
+| Content | Folder |
+|---------|--------|
+| Brainstorming sessions | `sessions/` |
+| Market research | `research/market/` |
+| Competitive analysis | `research/market/` |
+| Project briefs | `research/product/` |
+
 ## Why It Matters
 
 - **Prevents costly mistakes** - Bad assumptions caught early, not after investment
