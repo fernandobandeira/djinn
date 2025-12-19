@@ -1,6 +1,6 @@
 ---
 name: user-research
-description: Design and conduct user research to understand needs, behaviors, and experiences. Use when user wants "journey mapping", "user interviews", "survey design", "usability testing", "user research", "customer discovery", "card sorting", "information architecture", "accessibility audit", "design critique", "prototype testing", "requirements gathering", or needs to understand users deeply.
+description: Design and conduct user research to understand needs, behaviors, and experiences. Use when user wants "journey mapping", "user interviews", "survey design", "usability testing", "user research", "customer discovery", "card sorting", "information architecture", "accessibility audit", "design critique", "prototype testing", "requirements gathering", "discovery phase", "validation phase", "research planning", or needs to understand users deeply.
 allowed-tools: Read
 ---
 
@@ -8,80 +8,76 @@ allowed-tools: Read
 
 Design research approaches that reveal what users actually need, do, and experience. Move from assumptions to evidence about your users.
 
-## Quick Start
+## Start Here
 
-1. Identify what you need to learn about users
-2. Select technique based on the type of understanding needed
-3. Plan and execute the research systematically
+**New to research?** Read [workflow/research-planning.md](./workflow/research-planning.md) first.
 
-## Technique Selection
+**Know what you need?** Read [workflow/phase-selection.md](./workflow/phase-selection.md) to find the right technique.
 
-| Need | Use | Why |
-|------|-----|-----|
-| Understand end-to-end experience | Journey Mapping | Reveals pain points across touchpoints |
-| Deep qualitative insights | Interview Design | Rich context and "why" behind behaviors |
-| Quantitative data at scale | Survey Design | Measure attitudes and preferences broadly |
-| Information architecture | Card Sorting | Reveals user mental models for navigation |
-| Feature prioritization | User Story Mapping | Connects user goals to features |
-| Design iteration | Design Critique | Structured feedback for improvement |
-| Constraints & specs | Requirements Gathering | Captures technical and business needs |
-| Interaction validation | Prototype Feedback | Fast feedback on low-fidelity concepts |
-| Usability evaluation | Usability Testing | Validates designs with real tasks |
-| Accessibility compliance | Accessibility Audit | Ensures inclusive design (WCAG) |
+## Quick Phase Reference
 
-**Default**: Start with interviews for discovery, use surveys for validation at scale.
+| Phase | When | Techniques |
+|-------|------|------------|
+| **Discovery** | Don't know enough about users | Interviews, Journey Maps, Card Sorting |
+| **Validation** | Testing if solution works | Prototypes, Usability, Surveys |
+| **Design** | Shaping the output | Critique, Story Maps, Requirements |
+| **Compliance** | Meeting standards | Accessibility Audit |
 
-## Techniques
+**Default**: Start with Discovery interviews, use Validation surveys for scale.
 
-### Journey Mapping
-Visualize the complete user experience across touchpoints and time. Identify pain points, opportunities, and emotional highs/lows.
+## Phase 1: Discovery
 
-Read [cookbook/journey-mapping.md](./cookbook/journey-mapping.md)
+**Goal**: Understand users deeply before building anything.
 
-### Interview Design
-Plan and conduct user interviews that uncover genuine insights. Ask the right questions the right way.
+Use Discovery when you don't know what users actually need, or need to understand the problem before solving it.
 
-Read [cookbook/interview-design.md](./cookbook/interview-design.md)
+| Technique | Best For | Read |
+|-----------|----------|------|
+| **Interview Design** | Deep motivations, context, "why" | [cookbook/discovery/interview-design.md](./cookbook/discovery/interview-design.md) |
+| **Journey Mapping** | End-to-end experience, pain points | [cookbook/discovery/journey-mapping.md](./cookbook/discovery/journey-mapping.md) |
+| **Card Sorting** | User mental models, information architecture | [cookbook/discovery/card-sorting.md](./cookbook/discovery/card-sorting.md) |
 
-### Survey Design
-Create surveys that collect reliable, actionable data. Avoid bias and get responses you can trust.
+**Triggers**: "understand users", "what do they need", "pain points", "problem space", "discovery"
 
-Read [cookbook/survey-design.md](./cookbook/survey-design.md)
+## Phase 2: Validation
 
-### Card Sorting
-Understand how users mentally organize content. Reveals natural mental models for information architecture.
+**Goal**: Test whether your solution works for users.
 
-Read [cookbook/card-sorting.md](./cookbook/card-sorting.md)
+Use Validation when you have a design or prototype and need evidence that it works.
 
-### User Story Mapping
-Visualize the user journey and organize features into a prioritized backlog. Connects user goals to what to build.
+| Technique | Best For | Read |
+|-----------|----------|------|
+| **Prototype Feedback** | Early concepts, interaction design | [cookbook/validation/prototype-feedback.md](./cookbook/validation/prototype-feedback.md) |
+| **Usability Testing** | Task completion, real product | [cookbook/validation/usability-testing.md](./cookbook/validation/usability-testing.md) |
+| **Survey Design** | Quantitative data at scale | [cookbook/validation/survey-design.md](./cookbook/validation/survey-design.md) |
 
-Read [cookbook/user-story-mapping.md](./cookbook/user-story-mapping.md)
+**Triggers**: "test this design", "will it work", "validate", "feedback", "measure"
 
-### Design Critique
-Systematically evaluate designs with structured feedback. Separates preference from user-centered critique.
+## Phase 3: Design Support
 
-Read [cookbook/design-critique.md](./cookbook/design-critique.md)
+**Goal**: Shape output with research-informed decisions.
 
-### Requirements Gathering
-Capture constraints, requirements, and trade-offs systematically. Prevents rework and misaligned expectations.
+Use Design Support when evaluating options, prioritizing features, or documenting constraints.
 
-Read [cookbook/requirements-gathering.md](./cookbook/requirements-gathering.md)
+| Technique | Best For | Read |
+|-----------|----------|------|
+| **Design Critique** | Structured design feedback | [cookbook/design/design-critique.md](./cookbook/design/design-critique.md) |
+| **User Story Mapping** | Feature prioritization, MVP definition | [cookbook/design/user-story-mapping.md](./cookbook/design/user-story-mapping.md) |
+| **Requirements Gathering** | Constraints, trade-offs, specs | [cookbook/design/requirements-gathering.md](./cookbook/design/requirements-gathering.md) |
 
-### Prototype Feedback
-Gather rapid feedback on low-fidelity prototypes through task-based testing. Validates interaction design early.
+**Triggers**: "prioritize features", "what to build", "requirements", "critique", "constraints"
 
-Read [cookbook/prototype-feedback.md](./cookbook/prototype-feedback.md)
+## Phase 4: Compliance
 
-### Usability Testing
-Systematically evaluate how well users accomplish tasks. Reveals real problems that assumptions miss.
+**Goal**: Ensure the product meets standards.
 
-Read [cookbook/usability-testing.md](./cookbook/usability-testing.md)
+Use Compliance when preparing for launch or ensuring inclusive access.
 
-### Accessibility Audit
-Evaluate products against accessibility standards (WCAG). Ensures inclusive design that works for all users.
+| Technique | Best For | Read |
+|-----------|----------|------|
+| **Accessibility Audit** | WCAG compliance, inclusive design | [cookbook/compliance/accessibility-audit.md](./cookbook/compliance/accessibility-audit.md) |
 
-Read [cookbook/accessibility-audit.md](./cookbook/accessibility-audit.md)
+**Triggers**: "accessibility", "WCAG", "inclusive", "a11y", "compliance"
 
 ## Core Principles
 
@@ -98,15 +94,6 @@ Read [cookbook/accessibility-audit.md](./cookbook/accessibility-audit.md)
 - Prioritizing features (evidence-based decisions)
 - Resolving internal debates (let users decide)
 - Before major investment (de-risk)
-
-## Research Planning Questions
-
-Before any research:
-- What decisions will this inform?
-- What do we already know/assume?
-- Who are the right users to learn from?
-- What's the timeline and budget?
-- How will we share findings?
 
 ## The Research Mindset
 

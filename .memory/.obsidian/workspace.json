@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "patterns/Memory.md",
+                "file": "decisions/skills/User Research.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Memory"
+              "title": "User Research"
             }
           }
         ]
@@ -168,28 +168,34 @@
   },
   "active": "0a3ab024e1e60614",
   "lastOpenFiles": [
+    "decisions/skills/Teacher.md",
+    "decisions/skills/User Research.tmp",
+    "decisions/skills/Ideation.md",
+    "decisions/skills/Root Cause.md",
+    "decisions/skills/User Research.md",
+    "decisions/skills/Devils Advocate.md",
+    "decisions/skills/Role Playing.md",
+    "decisions/skills/Agent Recruitment.tmp",
+    "decisions/skills/Strategic Analysis.tmp",
+    "decisions/skills/Role Playing.tmp",
+    "decisions/skills/Ideation.tmp",
+    "reference/Claude Code Guide.md",
+    "decisions/skills/Root Cause.tmp",
+    "decisions/skills/Devils Advocate.tmp",
+    "patterns/Memory.md",
     "Project.md.tmp.96421.1766167003185",
     "decisions/implementations/Beads.md",
-    "reference/Claude Code Guide.md",
     "Architecture.md",
     "Project.md",
     "decisions/orchestrators/SM.md",
     "decisions/orchestrators/SM.tmp",
     "decisions/orchestrators/Dev.tmp",
-    "decisions/orchestrators/PM.tmp",
-    "decisions/skills/Role Playing.md",
-    "decisions/implementations/Beads.tmp",
-    "decisions/skills/Root Cause.md",
-    "decisions/skills/Teacher.md",
-    "decisions/skills/User Research.md",
     "diagrams/Orchestrator Workflow.md",
     "decisions/implementations/Claude Code.md",
     "decisions/orchestrators/Architect.md",
     "decisions/orchestrators/UX.md",
     "patterns/Skill.md",
-    "decisions/skills/Devils Advocate.md",
     "decisions/skills/Agent Recruitment.md",
-    "patterns/Memory.md",
     "patterns/Checklists.md",
     "patterns/Orchestrator.md",
     "patterns/Sub-agent.md",
@@ -197,13 +203,6 @@
     "patterns/Working Memory.md",
     "reference/Catalog.md",
     "Claude Code Guide.md",
-    "decisions/implementations/Claude Code.tmp",
-    "reference/Claude Code Guide.tmp",
-    "Architecture.tmp",
-    "reference/Catalog.tmp",
-    "Claude Code Guide.tmp",
-    "decisions/implementations",
-    "decisions/Beads Implementation.md",
     "Untitled.canvas"
   ]
 }
