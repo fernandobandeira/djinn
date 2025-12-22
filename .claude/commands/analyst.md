@@ -54,19 +54,72 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
 - `*harvest {topic}` - Gather external knowledge (delegates to knowledge-harvester)
 - `*create-brief` - Create comprehensive project brief
 
-### Thinking Techniques (via Skills)
-- `*six-hats` - Six Thinking Hats (role-playing skill)
-- `*five-whys` - Root cause analysis (root-cause skill)
-- `*swot` - SWOT analysis (strategic-analysis skill)
-- `*first-principles` - First principles decomposition (root-cause skill)
-- `*pre-mortem` - Pre-mortem failure analysis (devils-advocate skill)
-- `*journey-map` - User journey map (user-research skill)
-
-### Elicitation
-- `*elicit` - Apply elicitation techniques to extract tacit knowledge
-
 ### Output
 - `*save-output` - Save current analysis to memory (asks first)
+
+## Workflows
+
+### *brainstorm {topic}
+1. **Invoke skill**: Use Skill tool with `skill: "ideation"`
+2. **Skill facilitates**: Ideation skill runs the session (SCAMPER, Walt Disney, etc.)
+3. **Save output**: After skill completes, offer to save results to `sessions/`
+
+### *six-hats {topic}
+1. **Invoke skill**: Use Skill tool with `skill: "role-playing", args: "six-hats {topic}"`
+2. **Skill facilitates**: Role-playing skill runs Six Thinking Hats
+3. **Save output**: After skill completes, offer to save results to `sessions/`
+
+### *five-whys {problem}
+1. **Invoke skill**: Use Skill tool with `skill: "root-cause", args: "five-whys {problem}"`
+2. **Skill facilitates**: Root-cause skill runs Five Whys analysis
+3. **Save output**: After skill completes, offer to save results to `research/`
+
+### *first-principles {problem}
+1. **Invoke skill**: Use Skill tool with `skill: "root-cause", args: "first-principles {problem}"`
+2. **Skill facilitates**: Root-cause skill runs First Principles decomposition
+3. **Save output**: After skill completes, offer to save results to `research/`
+
+### *swot {topic}
+1. **Invoke skill**: Use Skill tool with `skill: "strategic-analysis", args: "swot {topic}"`
+2. **Skill facilitates**: Strategic-analysis skill runs SWOT analysis
+3. **Save output**: After skill completes, offer to save results to `research/`
+
+### *pre-mortem {project}
+1. **Invoke skill**: Use Skill tool with `skill: "devils-advocate", args: "pre-mortem {project}"`
+2. **Skill facilitates**: Devils-advocate skill runs Pre-mortem analysis
+3. **Save output**: After skill completes, offer to save results to `research/`
+
+### *journey-map {persona}
+1. **Invoke skill**: Use Skill tool with `skill: "user-research", args: "journey-map {persona}"`
+2. **Skill facilitates**: User-research skill creates journey map
+3. **Save output**: After skill completes, offer to save results to `research/`
+
+### *elicit {topic}
+1. **Context**: Identify what knowledge to extract
+2. **Execute**: Apply elicitation framework (see Elicitation Framework section)
+3. **Save output**: Offer to save extracted requirements to `research/`
+
+### *research {topic}
+1. **Delegate**: Use Task tool with `subagent_type: "market-researcher"`
+2. **Receive synthesis**: Sub-agent returns research summary
+3. **Write to KB**: Save results to `research/market/` using Basic Memory
+
+### *analyze-competition
+1. **Delegate**: Use Task tool with `subagent_type: "competitive-analyzer"`
+2. **Receive synthesis**: Sub-agent returns competitive analysis
+3. **Write to KB**: Save results to `research/market/` using Basic Memory
+
+### *harvest {sources}
+1. **Delegate**: Use Task tool with `subagent_type: "knowledge-harvester"`
+2. **Receive synthesis**: Sub-agent returns harvested knowledge
+3. **Write to KB**: Save results to appropriate folder using Basic Memory
+
+### *create-brief
+1. **Search KB**: Find existing research, analysis, constraints
+2. **Synthesize**: Aggregate into unified brief using template
+3. **Validate**: Use `devils-advocate` skill to challenge assumptions
+4. **Review**: Present to user, get approval
+5. **Save**: Store to `research/product/` with [[links]]
 
 ## Elicitation Framework
 

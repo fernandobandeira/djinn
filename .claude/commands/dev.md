@@ -137,7 +137,7 @@ Direct implementation (after tests written):
 ### *review
 
 1. Load implementation diff
-2. Apply `devils-advocate` skill:
+2. **Invoke skill** - Use Skill tool with `skill: "devils-advocate", args: "red-team"`:
    - **Red Team**: Find vulnerabilities, edge cases missed
    - **Pre-mortem**: "What will break in production?"
 3. Run Implementation Quality Gates checklist
@@ -177,7 +177,7 @@ Direct implementation (after tests written):
 ### *debug {issue}
 
 1. Describe the issue
-2. Apply `root-cause` skill:
+2. **Invoke skill** - Use Skill tool with `skill: "root-cause", args: "five-whys"`:
    - **Five Whys**: Chain to root cause
    - **First Principles**: Challenge assumptions
 3. Generate hypothesis

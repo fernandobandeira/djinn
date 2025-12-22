@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "reference/Claude Code Guide.md",
+                "file": "decisions/orchestrators/Analyst.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Claude Code Guide"
+              "title": "Analyst"
             }
           }
         ]
@@ -168,6 +168,10 @@
   },
   "active": "0a3ab024e1e60614",
   "lastOpenFiles": [
+    "decisions/agents/Orchestrator Skill Invocation Pattern.md",
+    "decisions/agents/Orchestrator Skill Invocation Pattern.tmp",
+    "decisions/agents",
+    "reference/Claude Code Guide.md",
     "reference/Claude Code Guide.tmp",
     "decisions/skills/User Research.md",
     "decisions/skills/Teacher.md",
@@ -180,17 +184,13 @@
     "decisions/skills/Strategic Analysis.tmp",
     "decisions/skills/Role Playing.tmp",
     "decisions/skills/Ideation.tmp",
-    "reference/Claude Code Guide.md",
     "decisions/skills/Root Cause.tmp",
     "decisions/skills/Devils Advocate.tmp",
     "patterns/Memory.md",
-    "Project.md.tmp.96421.1766167003185",
     "decisions/implementations/Beads.md",
     "Architecture.md",
     "Project.md",
     "decisions/orchestrators/SM.md",
-    "decisions/orchestrators/SM.tmp",
-    "decisions/orchestrators/Dev.tmp",
     "diagrams/Orchestrator Workflow.md",
     "decisions/implementations/Claude Code.md",
     "decisions/orchestrators/Architect.md",

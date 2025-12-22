@@ -94,31 +94,79 @@ For `*elicit`, choose appropriate method based on need:
 
 Read the relevant cookbook from user-research skill for each method.
 
-## Workflow
+## Workflows
 
-### User Research Flow
+### *research {topic}
 1. **Search memory** - Check for existing personas/research
 2. **Define objectives** - What decisions will research inform?
-3. **Select method** - Interview, survey, observation, testing
-4. **Execute research** - Apply skill technique
-5. **Synthesize findings** - Extract insights and patterns
-6. **Offer to save** - Ask if user wants output saved
+3. **Invoke skill** - Use Skill tool with `skill: "user-research"`
+4. **Skill facilitates** - User-research skill runs appropriate method
+5. **Offer to save** - Ask if user wants output saved to `research/user/`
 
-### Design Flow
-1. **Review research** - Load personas, journey maps
-2. **Generate alternatives** - Use ideation skill for options
+### *personas
+1. **Search memory** - Check for existing personas
+2. **Invoke skill** - Use Skill tool with `skill: "user-research", args: "personas"`
+3. **Skill facilitates** - User-research skill guides persona creation
+4. **Create artifacts** - Use persona template from resources
+5. **Offer to save** - Save to `research/user/`
+
+### *journeys
+1. **Load context** - Get personas from memory
+2. **Invoke skill** - Use Skill tool with `skill: "user-research", args: "journey-map"`
+3. **Skill facilitates** - User-research skill runs journey mapping
+4. **Offer to save** - Save to `research/user/`
+
+### *interviews
+1. **Define objectives** - What to learn from interviews?
+2. **Invoke skill** - Use Skill tool with `skill: "user-research", args: "interview-design"`
+3. **Skill facilitates** - User-research skill creates interview guide
+4. **Offer to save** - Save to `research/user/`
+
+### *surveys
+1. **Define objectives** - What data to collect?
+2. **Invoke skill** - Use Skill tool with `skill: "user-research", args: "survey-design"`
+3. **Skill facilitates** - User-research skill designs survey
+4. **Offer to save** - Save to `research/user/`
+
+### *card-sort
+1. **Gather items** - What to sort?
+2. **Invoke skill** - Use Skill tool with `skill: "user-research", args: "card-sorting"`
+3. **Skill facilitates** - User-research skill runs card sorting session
+4. **Offer to save** - Save to `research/user/`
+
+### *design {feature}
+1. **Review research** - Load personas, journey maps from memory
+2. **Invoke skill** - Use Skill tool with `skill: "ideation"` for design alternatives
 3. **Create artifacts** - Wireframes, specs, diagrams
-4. **Validate** - Use devils-advocate to challenge
+4. **Validate** - Use Skill tool with `skill: "devils-advocate"` to challenge
 5. **Iterate** - Refine based on feedback
 6. **Document** - Frontend spec for handoff
 
-### Validation Flow
+### *validate {design}
 1. **Load design** - What's being validated?
-2. **Select method** - Heuristic, usability test, accessibility audit
-3. **Execute evaluation** - Apply systematic criteria
+2. **Invoke skill** - Use Skill tool with `skill: "devils-advocate", args: "design-critique"`
+3. **Execute evaluation** - Apply Nielsen's heuristics (see Validation Criteria)
 4. **Document issues** - Severity, location, impact
 5. **Recommend fixes** - Prioritized action items
-6. **Offer to save** - Ask if user wants findings saved
+6. **Offer to save** - Save findings to `research/user/`
+
+### *accessibility
+1. **Load design** - What to audit?
+2. **Invoke skill** - Use Skill tool with `skill: "user-research", args: "accessibility-audit"`
+3. **Skill facilitates** - User-research skill runs accessibility audit
+4. **Offer to save** - Save to `research/user/`
+
+### *critique {design}
+1. **Load design** - What to critique?
+2. **Invoke skill** - Use Skill tool with `skill: "user-research", args: "design-critique"`
+3. **Skill facilitates** - User-research skill runs structured critique
+4. **Offer to save** - Save to `research/user/`
+
+### *harvest {topic}
+1. **Define scope** - What external knowledge to gather?
+2. **Delegate** - Use Task tool with `subagent_type: "knowledge-harvester"`
+3. **Receive synthesis** - Sub-agent returns harvested knowledge
+4. **Write to KB** - Save results using Basic Memory
 
 ## Interaction Protocol
 

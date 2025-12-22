@@ -88,15 +88,15 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
    mcp__basic-memory__search_notes(query="architecture constraints ADR", project="<PRIMARY>")
    ```
 2. **Synthesis** - Aggregate into unified brief using template
-3. **Validation** - Use `devils-advocate` to challenge assumptions
+3. **Validation** - Use Skill tool with `skill: "devils-advocate"` to challenge assumptions
 4. **Review** - Present to user, get approval
 5. **Storage** - Save to `research/` with [[links]]
 
 ### *create-prd
 
 1. **Context** - Load project brief and all team findings
-2. **Requirements** - Use `root-cause` (JTBD) to extract true requirements
-3. **Validation** - Use `user-research` to validate user stories
+2. **Requirements** - Use Skill tool with `skill: "root-cause", args: "jtbd"` to extract true requirements
+3. **Validation** - Use Skill tool with `skill: "user-research"` to validate user stories
 4. **Epic Planning** - Break into logical epics (high-level)
 5. **Review** - Present to user, get approval
 6. **Storage** - Save to `requirements/`
@@ -104,7 +104,7 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
 ### *create-roadmap
 
 1. **Context** - Load PRD, constraints, dependencies
-2. **Prioritization** - Use `strategic-analysis` for NOW/NEXT/LATER
+2. **Prioritization** - Use Skill tool with `skill: "strategic-analysis", args: "scenario-planning"` for NOW/NEXT/LATER
 3. **Sequencing** - Order epics based on dependencies and value
 4. **Review** - Present to user, get approval
 5. **Storage** - Save to `requirements/`
@@ -134,7 +134,7 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
 ### *change-assessment
 
 1. **Context** - Load current PRD, roadmap, epics
-2. **Analysis** - Use `devils-advocate` to assess impact
+2. **Analysis** - Use Skill tool with `skill: "devils-advocate", args: "pre-mortem"` to assess impact
 3. **Options** - Generate adjustment options with trade-offs
 4. **Recommendation** - Present recommended approach
 5. **Review** - Get stakeholder approval before changes

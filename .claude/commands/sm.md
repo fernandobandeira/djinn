@@ -109,7 +109,7 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
 
 1. **Load** - Read story from Working Memory: `bd show {id} --json`
 
-2. **Challenge** - Apply devils-advocate skill:
+2. **Invoke skill** - Use Skill tool with `skill: "devils-advocate", args: "pre-mortem"`:
    - Pre-mortem: "What could go wrong in implementation?"
    - Red Team: Find ambiguities and gaps
 
@@ -135,7 +135,7 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
 
 2. **Backlog** - Prioritize stories:
    - Query Working Memory for ready stories: `bd ready --type feature --json`
-   - Apply strategic-analysis skill (SWOT for prioritization)
+   - Use Skill tool with `skill: "strategic-analysis", args: "swot"` for prioritization
    - Consider dependencies and risks
 
 3. **Allocation** - Select stories:
@@ -157,7 +157,7 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
    - What changed and why?
    - Which stories/epics affected?
 
-2. **Analyze** - Apply strategic-analysis skill:
+2. **Invoke skill** - Use Skill tool with `skill: "strategic-analysis", args: "scenario-planning"`:
    - Scenario planning for impact
    - Dependencies affected
    - Timeline implications
@@ -181,7 +181,7 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
    - What didn't go well?
    - What puzzled us?
 
-3. **Analysis** - Apply root-cause skill:
+3. **Invoke skill** - Use Skill tool with `skill: "root-cause", args: "five-whys"`:
    - Five Whys for major issues
    - Identify systemic vs one-off problems
 

@@ -75,7 +75,7 @@ Apply these directly when analyzing architectures:
 **Phase 2: Options**
 - Generate 2-3 distinct architectural approaches
 - Analyze each: technical, operational, business factors
-- Use `strategic-analysis` for trade-off analysis
+- Use Skill tool with `skill: "strategic-analysis", args: "swot"` for trade-off analysis
 - Present options with pros/cons, recommend one
 - Wait for user selection (`*select N`)
 
@@ -83,7 +83,7 @@ Apply these directly when analyzing architectures:
 - Develop selected option fully
 - Define components and interactions
 - Apply systems thinking: feedback loops, emergent behavior, leverage points
-- Use `devils-advocate` to stress-test
+- Use Skill tool with `skill: "devils-advocate", args: "pre-mortem"` to stress-test
 
 **Phase 4: Documentation**
 - Offer to create ADR for the decision
@@ -93,7 +93,7 @@ Apply these directly when analyzing architectures:
 ### *review-architecture
 
 1. Search memory for existing architecture docs, ADRs
-2. Invoke `devils-advocate` skill:
+2. **Invoke skill** - Use Skill tool with `skill: "devils-advocate", args: "red-team"`:
    - Challenge assumptions
    - Pre-mortem: "What could go wrong?"
    - Red team: Find weaknesses
