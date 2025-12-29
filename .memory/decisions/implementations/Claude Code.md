@@ -56,9 +56,93 @@ This document serves as:
 ---
 
 ## Working Memory Layer
-
 Implements [[Working Memory]] pattern for persistent work tracking.
 
+### Beads CLI
+
+**Choice:** Use Beads CLI (`bd`) for operational work tracking
+
+**Rationale:**
+- Git-backed (`.beads/issues.jsonl`) - version controlled, merge-safe
+- Agent-optimized with JSON output
+- Dependency graph with ready-work calculation
+- Hash-based IDs prevent merge conflicts
+- No external service required
+
+**Setup:**
+```bash
+# Install beads (one-time)
+go install github.com/steveyegge/beads/cmd/bd@latest
+
+# Initialize in project
+bd init --quiet
+```
+
+**Concept Mapping:**
+
+| Working Memory Concept | Beads Implementation |
+|-----------------------|---------------------|
+| Epic | `bd create -t epic` |
+| Story/Feature | `bd create -t feature` |
+| Task | `bd create -t task` |
+| Bug | `bd create -t bug` |
+| **Hierarchy** | `--parent {id}` (child belongs to parent) |
+| **Blocks** | `--deps blocks:{id}` (A depends on B) |
+| **Discovered-from** | `--deps discovered-from:{id}` |
+| Ready work | `bd ready --json` |
+| Sprint label | `bd label add {id} sprint-N` |
+| Claim | `bd update {id} --status in_progress` |
+| Complete | `bd close {id} --reason "..."` |
+
+**Rich Issue Fields:**
+
+| Field | Flag | Purpose |
+|-------|------|---------|
+| description | `-d` | What and why |
+| acceptance | `--acceptance` | Testable criteria |
+| design | `--design` | Technical approach |
+
+**Common Operations:**
+
+```bash
+# Create epic with rich context
+bd create "Epic: Auth System" -t epic -p 1 \
+  -d "Complete auth for secure access. Required for MVP." \
+  --design "JWT with refresh. OAuth2 ready." \
+  --acceptance "Users can register, login, reset password" \
+  --json
+
+# Create story as child of epic (--parent for hierarchy)
+bd create "Story: Login UI" -t feature --parent {epic-id} \
+  -d "As a user, I want to log in to access my account." \
+  --design "LoginForm with useAuth hook." \
+  --acceptance "Valid credentials redirect to dashboard" \
+  --json
+
+# Create task as child of story
+bd create "Task: Form component" -t task --parent {story-id} \
+  -d "Build LoginForm with validation." \
+  --design "Formik + Yup. Follow AuthCard pattern." \
+  --acceptance "Form renders, validates on blur" \
+  --json
+
+# Add blocking dependency (separate from hierarchy)
+bd dep add {story-B-id} {story-A-id} --type blocks
+
+# Query
+bd ready --json                # Ready work
+bd blocked --json              # Blocked issues
+bd dep tree {epic-id}          # Hierarchy view
+bd list --label sprint-1       # Sprint items
+```
+
+**Key Distinction:**
+- `--parent` = hierarchy (what contains what)
+- `--deps blocks` = execution order (what must complete first)
+
+**Graceful Degradation:** Working Memory is optional. If beads not initialized, orchestrators use TodoWrite for session-scoped tracking.
+
+**Critical Rule:** Orchestrators reference [[Working Memory]] pattern concepts, not beads commands directly. This keeps orchestrators portable.
 ### Beads CLI
 
 **Choice:** Use Beads CLI (`bd`) for operational work tracking

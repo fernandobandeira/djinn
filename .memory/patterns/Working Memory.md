@@ -34,13 +34,34 @@ The operational work-tracking system that complements Knowledge Memory.
 | **Bug** | Defect to fix | "Login fails with special chars" |
 
 ## Relationships
+### Hierarchy (Containment)
+
+Use hierarchy to organize work items structurally:
 
 | Relationship | Purpose | Example |
 |--------------|---------|---------|
-| **Parent-child** | Hierarchy | Epic → Stories → Tasks |
-| **Blocks** | Hard dependency | Story A blocks Story B |
+| **Epic → Story** | Epic contains stories | "Auth System" contains "Login UI" |
+| **Story → Task** | Story contains tasks | "Login UI" contains "Create form component" |
+
+Hierarchy answers: "What work belongs to what?"
+
+### Dependencies (Blocking)
+
+Use dependencies to control work ordering:
+
+| Relationship | Purpose | Example |
+|--------------|---------|---------|
+| **Blocks** | Hard dependency | Story A must complete before Story B starts |
 | **Discovered-from** | Traceability | Bug found while working on Task |
 
+Dependencies answer: "What must complete before this can start?"
+
+### Key Distinction
+
+- **Hierarchy** = organizational structure (what contains what)
+- **Dependencies** = execution order (what blocks what)
+
+An epic doesn't "block" its stories - it *contains* them. A task doesn't "depend on" its story - it *belongs to* it.
 ## Operations
 
 Working Memory supports these operations (implementation varies by tool):

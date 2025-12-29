@@ -37,6 +37,7 @@ Beads is a git-backed issue tracker optimized for AI agents.
 
 **Dependencies:**
 - `discovered-from` - Link bugs/issues found during implementation
+- `blocks` - Hard dependency (Blocker must resolve before task can continue)
 
 ### Dev Workflows
 
@@ -59,13 +60,27 @@ bd update {task-id} --status in_progress --json
 ```
 
 **Track Discovered Issues:**
-When you find bugs or issues while implementing, log them:
+When you find bugs or issues while implementing, log them with full context:
 ```bash
 # Bug found during implementation
-bd create "Found: Login fails with special characters" -t bug --deps discovered-from:{current-task-id} -p 2 --json
+bd create "Bug: Login fails with special characters in password" -t bug \
+  --deps discovered-from:{current-task-id} -p 2 \
+  -d "Passwords containing '&' or '+' fail authentication. Discovered while testing edge cases in login form." \
+  --design "Root cause: URL encoding issue in API call. Fix: encodeURIComponent on password before sending." \
+  --acceptance "- Password 'test&123' authenticates successfully
+- Password 'test+456' authenticates successfully
+- No regression on standard passwords" \
+  --json
 
 # Unexpected work discovered
-bd create "Found: Need to update user schema" -t task --deps discovered-from:{current-task-id} -p 2 --json
+bd create "Task: Update user schema for email verification" -t task \
+  --deps discovered-from:{current-task-id} -p 2 \
+  -d "User table missing email_verified_at column needed for registration flow. Must add before registration can work." \
+  --design "Add nullable timestamp column. Backfill existing users as verified. Add index for queries." \
+  --acceptance "- Migration adds email_verified_at column
+- Existing users have column set to current timestamp
+- New users have NULL until verified" \
+  --json
 ```
 
 The `discovered-from` link creates traceability - you can see what work uncovered the issue.
@@ -84,8 +99,15 @@ bd close {story-id} --reason "All acceptance criteria met"
 # Mark as blocked
 bd update {task-id} --status blocked
 
-# Optionally create a blocker issue
-bd create "Blocked: Need API endpoint from backend" -t bug --deps blocks:{task-id} -p 1 --json
+# Create a blocker issue with context
+bd create "Blocker: Need API endpoint from backend team" -t bug \
+  --deps blocks:{task-id} -p 1 \
+  -d "Cannot complete auth integration without /api/auth/login endpoint. Backend team ticket pending." \
+  --design "Need: POST /api/auth/login accepting {email, password}, returning {token, user}. See API spec doc." \
+  --acceptance "- Endpoint exists and accepts credentials
+- Returns JWT token on success
+- Returns structured error on failure" \
+  --json
 ```
 
 **View Context:**
@@ -359,10 +381,14 @@ bd close {story-id} --reason "All acceptance criteria met"
 ```
 
 ### On Blocker
-When blocked, update status and flag:
+When blocked, update status and create blocker with context:
 ```bash
 bd update {id} --status blocked --json
-bd create "Blocked: {reason}" -t bug --deps blocks:{id} -p 1 --json
+bd create "Blocker: {reason}" -t bug --deps blocks:{id} -p 1 \
+  -d "{What is blocking and why}" \
+  --design "{What needs to happen to unblock}" \
+  --acceptance "{How we'll know it's resolved}" \
+  --json
 ```
 
 ### Session End

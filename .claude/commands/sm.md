@@ -37,10 +37,12 @@ Beads is a git-backed issue tracker optimized for AI agents.
 
 **Status Flow:** `open` → `in_progress` → `closed` (or `blocked`)
 
+**Hierarchy:**
+- Use `--parent {id}` to create children (task under story)
+
 **Dependencies:**
-- `parent-child` - Hierarchy (story → task)
-- `blocks` - Hard dependency
-- `discovered-from` - Bug found while working on task
+- `blocks` - Hard dependency (Task A must complete before Task B starts)
+- `discovered-from` - Bug/issue found while working on a task
 
 ### SM Workflows
 
@@ -58,12 +60,35 @@ bd show {story-id} --json
 # Get story details first
 bd show {story-id} --json
 
-# Create tasks as children of story
-bd create "Task: Create login form component" -t task --deps parent-child:{story-id} -p 1 --json
-bd create "Task: Add form validation" -t task --deps parent-child:{story-id} -p 2 --json
-bd create "Task: Connect to auth API" -t task --deps parent-child:{story-id} -p 3 --json
+# Create tasks as children of story (use --parent for hierarchy)
+bd create "Task: Create login form component" -t task --parent {story-id} -p 1 \
+  -d "Build LoginForm React component with email/password fields, validation states, and submit handling." \
+  --design "Use Formik + Yup for validation. Follow AuthCard layout pattern from signup. Include 'forgot password' link." \
+  --acceptance "- Form renders with email and password fields
+- Client-side validation runs on blur
+- Submit button disabled during API call
+- Error states display inline" \
+  --json
 
-# Add blocking between tasks if needed
+bd create "Task: Add form validation" -t task --parent {story-id} -p 2 \
+  -d "Implement client and server-side validation for login form inputs." \
+  --design "Yup schema for client validation. API returns field-specific errors. Match existing error display patterns." \
+  --acceptance "- Email format validated before submit
+- Password minimum length enforced
+- Server errors map to specific fields
+- Generic errors display at form level" \
+  --json
+
+bd create "Task: Connect to auth API" -t task --parent {story-id} -p 3 \
+  -d "Wire login form to authentication API endpoint and handle responses." \
+  --design "Use useAuth hook. Store JWT in httpOnly cookie via API. Redirect to returnUrl or dashboard." \
+  --acceptance "- Successful login stores session
+- Failed login shows error without reload
+- Network errors handled gracefully
+- Loading state shown during request" \
+  --json
+
+# Add blocking between tasks if needed (API task needs form to exist first)
 bd dep add {api-task-id} {form-task-id} --type blocks
 ```
 
@@ -178,8 +203,10 @@ Delegate heavy I/O to sub-agents (they return synthesis, you write to KB):
 
 3. **Breakdown** - Create tasks:
    - Break story into implementation tasks
-   - Use `bd create -t task --deps parent-child:{story-id}`
-   - Add Dev Notes to task description
+   - Use `bd create -t task --parent {story-id}` with rich fields:
+     - `-d` - What this task accomplishes and why
+     - `--design` - Technical approach, patterns to use, constraints
+     - `--acceptance` - Testable criteria for completion
 
 4. **Validation** - Auto-validate:
    - Run `*validate-story` on story

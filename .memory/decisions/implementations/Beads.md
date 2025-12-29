@@ -38,21 +38,29 @@ Use beads CLI (`bd`) to implement Working Memory.
 3. One source of truth per concept
 
 ## Mapping
-
 | Working Memory Concept | Beads Implementation |
 |-----------------------|---------------------|
 | Epic | `bd create -t epic` |
 | Story/Feature | `bd create -t feature` |
 | Task | `bd create -t task` |
 | Bug | `bd create -t bug` |
-| Parent-child | `--deps parent-child:{id}` |
-| Blocks | `--deps blocks:{id}` |
-| Discovered-from | `--deps discovered-from:{id}` |
+| **Hierarchy** | `--parent {id}` (child belongs to parent) |
+| **Blocks** | `--deps blocks:{id}` (A depends on B) |
+| **Discovered-from** | `--deps discovered-from:{id}` |
 | Ready work | `bd ready --json` |
 | Sprint label | `bd label add {id} sprint-N` |
 | Claim | `bd update {id} --status in_progress` |
 | Complete | `bd close {id} --reason "..."` |
 
+### Hierarchy vs Dependencies
+
+**Hierarchy** (`--parent`) - Organizational containment:
+- Story belongs to Epic: `bd create "Story" -t feature --parent {epic-id}`
+- Task belongs to Story: `bd create "Task" -t task --parent {story-id}`
+
+**Dependencies** (`--deps`) - Execution order:
+- B blocks A: `bd dep add {A-id} {B-id} --type blocks`
+- Bug discovered from Task: `--deps discovered-from:{task-id}`
 ## Setup
 
 ```bash
@@ -67,23 +75,106 @@ rm -f AGENTS.md @AGENTS.md
 ```
 
 ## Issue Fields
+Beads issues support rich structured data:
 
-Beads issues have these fields that map to Working Memory concepts:
+| Field | Flag | Purpose |
+|-------|------|---------|
+| `title` | positional | Issue name (required) |
+| `description` | `-d` / `--description` | What and why - full context |
+| `acceptance` | `--acceptance` | Testable completion criteria |
+| `design` | `--design` | Technical approach, constraints |
+| `status` | `--status` | open, in_progress, blocked, closed |
+| `priority` | `-p` | 0-4 (0=critical, 4=backlog) |
+| `assignee` | `-a` | Who's working on it |
+| `labels` | `-l` | Sprint tags, categories |
+| `estimate` | `-e` | Time estimate in minutes |
 
-| Field | Purpose |
-|-------|---------|
-| `title` | Issue name (required) |
-| `description` | Full details, context |
-| `acceptance_criteria` | What "done" means |
-| `design` | Technical approach |
-| `notes` | Additional context |
-| `status` | open, in_progress, blocked, closed |
-| `priority` | 0-4 (0=critical, 4=backlog) |
-| `assignee` | Who's working on it |
-| `labels` | Sprint tags, categories |
+### Rich Issue Creation
 
+Always populate description, acceptance, and design fields:
+
+```bash
+bd create "Story: Login UI" -t feature --parent {epic-id} -p 1 \
+  -d "As a user, I want to log in so I can access my account. Entry point for auth." \
+  --design "LoginForm component with useAuth hook. Redirect to dashboard on success." \
+  --acceptance "Given valid credentials, user redirects to dashboard
+Given invalid credentials, error displays without reload" \
+  --json
+```
+
+This provides context for anyone (human or agent) picking up the work.
 ## Common Workflows
+### PM: Create Epic with Stories
 
+```bash
+# Create epic with full context
+bd create "Epic: User Authentication" -t epic -p 1 \
+  -d "Complete auth system for secure access. Required for MVP - blocks user features." \
+  --design "JWT with refresh rotation. OAuth2 ready for future social login." \
+  --acceptance "- Users can register and log in
+- Password reset works end-to-end
+- Protected routes reject unauthenticated requests" \
+  --json
+
+# Create stories as children (use --parent for hierarchy)
+bd create "Story: Login UI" -t feature --parent {epic-id} -p 1 \
+  -d "As a user, I want to log in so I can access my account." \
+  --design "LoginForm with useAuth hook. Redirect to dashboard on success." \
+  --acceptance "Given valid credentials, redirect to dashboard
+Given invalid credentials, show error without reload" \
+  --json
+```
+
+### SM: Break Story into Tasks
+
+```bash
+# Get story details
+bd show {story-id} --json
+
+# Create tasks as children (use --parent for hierarchy)
+bd create "Task: Create login form component" -t task --parent {story-id} -p 1 \
+  -d "Build LoginForm with email/password fields and validation states." \
+  --design "Formik + Yup validation. Follow AuthCard layout pattern." \
+  --acceptance "- Form renders with email/password fields
+- Validation runs on blur
+- Submit disabled during API call" \
+  --json
+
+# Add blocking dependency if needed (API task needs form first)
+bd dep add {api-task-id} {form-task-id} --type blocks
+```
+
+### Dev: Implement and Track Discoveries
+
+```bash
+# Get next ready task
+bd ready --limit 1 --json
+
+# Claim it
+bd update {id} --status in_progress
+
+# Track discovered bug with context
+bd create "Bug: Login fails with special chars" -t bug \
+  --deps discovered-from:{current-task-id} -p 2 \
+  -d "Passwords with '&' or '+' fail. URL encoding issue in API call." \
+  --design "Fix: encodeURIComponent on password before sending." \
+  --acceptance "- Password 'test&123' works
+- Password 'test+456' works
+- No regression on standard passwords" \
+  --json
+
+# Complete task
+bd close {id} --reason "Implemented and tested"
+```
+
+### Query Commands
+
+```bash
+bd ready --json              # Ready work (no blockers)
+bd blocked --json            # Blocked issues
+bd list --label sprint-N     # Sprint items
+bd dep tree {epic-id}        # Hierarchy view
+```
 ### PM: Create Epic
 
 ```bash
@@ -151,12 +242,30 @@ blocked ←───┘
 ```
 
 ## Dependencies
+### Dependency Types
 
-- `blocks` - Hard dependency (B can't start until A is done)
-- `parent-child` - Hierarchy (epic → story → task)
-- `discovered-from` - Traceability (bug found while working on task)
-- `related` - Soft link for context
+| Type | Purpose | When to Use |
+|------|---------|-------------|
+| `blocks` | Hard dependency | B can't start until A done |
+| `discovered-from` | Traceability | Bug/task found while working |
+| `related` | Soft link | Context, no blocking |
 
+### Hierarchy vs Dependencies
+
+**Hierarchy** is NOT a dependency. Use `--parent` during creation:
+- Story under Epic: `--parent {epic-id}`
+- Task under Story: `--parent {story-id}`
+
+**Dependencies** control execution order. Use `--deps` or `bd dep add`:
+- Story B blocked by Story A: `bd dep add {B-id} {A-id} --type blocks`
+- Bug found from Task: `--deps discovered-from:{task-id}`
+
+### Dependency Semantics
+
+`bd dep add A B --type blocks` means:
+- "A depends on B"
+- "B blocks A"
+- "B must complete before A can start"
 ## Git Integration
 
 Beads stores data in `.beads/issues.jsonl` (git-versioned). This provides:
