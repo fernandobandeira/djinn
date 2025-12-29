@@ -63,7 +63,7 @@ bd update {task-id} --status in_progress --json
 When you find bugs or issues while implementing, log them with full context:
 ```bash
 # Bug found during implementation
-bd create "Bug: Login fails with special characters in password" -t bug \
+bd create "Login fails with special characters in password" -t bug \
   --deps discovered-from:{current-task-id} -p 2 \
   -d "Passwords containing '&' or '+' fail authentication. Discovered while testing edge cases in login form." \
   --design "Root cause: URL encoding issue in API call. Fix: encodeURIComponent on password before sending." \
@@ -73,7 +73,7 @@ bd create "Bug: Login fails with special characters in password" -t bug \
   --json
 
 # Unexpected work discovered
-bd create "Task: Update user schema for email verification" -t task \
+bd create "Update user schema for email verification" -t task \
   --deps discovered-from:{current-task-id} -p 2 \
   -d "User table missing email_verified_at column needed for registration flow. Must add before registration can work." \
   --design "Add nullable timestamp column. Backfill existing users as verified. Add index for queries." \
@@ -100,7 +100,7 @@ bd close {story-id} --reason "All acceptance criteria met"
 bd update {task-id} --status blocked
 
 # Create a blocker issue with context
-bd create "Blocker: Need API endpoint from backend team" -t bug \
+bd create "Need API endpoint from backend team" -t bug \
   --deps blocks:{task-id} -p 1 \
   -d "Cannot complete auth integration without /api/auth/login endpoint. Backend team ticket pending." \
   --design "Need: POST /api/auth/login accepting {email, password}, returning {token, user}. See API spec doc." \
@@ -384,7 +384,7 @@ bd close {story-id} --reason "All acceptance criteria met"
 When blocked, update status and create blocker with context:
 ```bash
 bd update {id} --status blocked --json
-bd create "Blocker: {reason}" -t bug --deps blocks:{id} -p 1 \
+bd create "{reason}" -t bug --deps blocks:{id} -p 1 \
   -d "{What is blocking and why}" \
   --design "{What needs to happen to unblock}" \
   --acceptance "{How we'll know it's resolved}" \

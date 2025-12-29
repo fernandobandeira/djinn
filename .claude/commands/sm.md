@@ -61,7 +61,7 @@ bd show {story-id} --json
 bd show {story-id} --json
 
 # Create tasks as children of story (use --parent for hierarchy)
-bd create "Task: Create login form component" -t task --parent {story-id} -p 1 \
+bd create "Create login form component" -t task --parent {story-id} -p 1 \
   -d "Build LoginForm React component with email/password fields, validation states, and submit handling." \
   --design "Use Formik + Yup for validation. Follow AuthCard layout pattern from signup. Include 'forgot password' link." \
   --acceptance "- Form renders with email and password fields
@@ -70,7 +70,7 @@ bd create "Task: Create login form component" -t task --parent {story-id} -p 1 \
 - Error states display inline" \
   --json
 
-bd create "Task: Add form validation" -t task --parent {story-id} -p 2 \
+bd create "Add form validation" -t task --parent {story-id} -p 2 \
   -d "Implement client and server-side validation for login form inputs." \
   --design "Yup schema for client validation. API returns field-specific errors. Match existing error display patterns." \
   --acceptance "- Email format validated before submit
@@ -79,7 +79,7 @@ bd create "Task: Add form validation" -t task --parent {story-id} -p 2 \
 - Generic errors display at form level" \
   --json
 
-bd create "Task: Connect to auth API" -t task --parent {story-id} -p 3 \
+bd create "Connect to auth API" -t task --parent {story-id} -p 3 \
   -d "Wire login form to authentication API endpoint and handle responses." \
   --design "Use useAuth hook. Store JWT in httpOnly cookie via API. Redirect to returnUrl or dashboard." \
   --acceptance "- Successful login stores session
@@ -129,7 +129,7 @@ bd list --status in_progress --json
 bd update {id} --status blocked
 
 # Create blocker issue
-bd create "Blocked: Need API spec from backend" -t task --deps blocks:{blocked-id} -p 1 --json
+bd create "Need API spec from backend" -t task --deps blocks:{blocked-id} -p 1 --json
 ```
 
 **Close Completed Work:**
@@ -144,7 +144,7 @@ bd close {epic-id} --reason "All stories complete"
 **Retrospective Action Items:**
 ```bash
 # Create action item from retro
-bd create "Action: Add pre-commit hooks" -t task -p 2 --json
+bd create "Add pre-commit hooks" -t task -p 2 --json
 bd label add {action-id} retro-actions
 ```
 

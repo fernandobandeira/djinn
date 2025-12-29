@@ -45,7 +45,7 @@ Beads is a git-backed issue tracker optimized for AI agents.
 **Create Epic with Stories:**
 ```bash
 # Create epic with full context
-bd create "Epic: User Authentication" -t epic -p 1 \
+bd create "User Authentication" -t epic -p 1 \
   -d "Implement complete user authentication system enabling secure access to protected resources. Required for MVP launch - blocks all user-specific features." \
   --design "JWT tokens with refresh rotation. Leverage existing session middleware. OAuth2 ready for future social login." \
   --acceptance "- Users can register with email/password
@@ -57,7 +57,7 @@ bd create "Epic: User Authentication" -t epic -p 1 \
 # Returns: { "id": "abc123", ... }
 
 # Create stories as children of epic (use --parent for hierarchy)
-bd create "Story: Login UI" -t feature --parent abc123 -p 1 \
+bd create "Login UI" -t feature --parent abc123 -p 1 \
   -d "As a user, I want to log in with email/password so that I can access my account. Entry point for auth system." \
   --design "LoginForm component using Form primitives. useAuth hook for API. Redirect to dashboard on success." \
   --acceptance "Given valid credentials, user is redirected to dashboard
@@ -65,7 +65,7 @@ Given invalid credentials, error displays without page reload
 Given expired session on protected route, redirect to login with return URL" \
   --json
 
-bd create "Story: Registration Flow" -t feature --parent abc123 -p 2 \
+bd create "Registration Flow" -t feature --parent abc123 -p 2 \
   -d "As a visitor, I want to create an account so that I can access the platform. Self-service onboarding." \
   --design "Multi-step form: email → password → profile. Email verification before activation." \
   --acceptance "User can register with valid email/password
@@ -74,7 +74,7 @@ Email verification sent on registration
 Account activates after email confirmation" \
   --json
 
-bd create "Story: Password Reset" -t feature --parent abc123 -p 3 \
+bd create "Password Reset" -t feature --parent abc123 -p 3 \
   -d "As a user, I want to reset my password so that I can recover access if forgotten." \
   --design "Token-based reset. 24hr expiry. Rate limited to prevent abuse." \
   --acceptance "Reset email sent for valid accounts
