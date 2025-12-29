@@ -164,6 +164,16 @@ Type a slash command to activate an agent persona:
 
 Once activated, type `*help` to see available commands.
 
+**One orchestrator per chat.** Start a new conversation when switching between orchestrators.
+
+```
+Chat 1: /analyst → explore idea, create brief → end session
+Chat 2: /architect → review brief, create ADRs → end session
+Chat 3: /pm → synthesize into epics → end session
+```
+
+Why? Each orchestrator maintains persona and context throughout the session. Mixing them in one chat causes confusion. Your work persists in memory across sessions - nothing is lost.
+
 ### Using Skills
 
 Skills auto-activate based on context. Just mention the trigger:
@@ -279,6 +289,9 @@ Working Memory provides persistent work tracking across sessions. See [[Working 
 
 ```bash
 bd init --quiet
+
+# Remove generated files (orchestrators are our source of truth)
+rm -f AGENTS.md @AGENTS.md
 ```
 
 ### Orchestrator Integration

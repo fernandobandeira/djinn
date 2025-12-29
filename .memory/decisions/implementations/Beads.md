@@ -61,6 +61,9 @@ go install github.com/steveyegge/beads/cmd/bd@latest
 
 # Initialize in project
 bd init --quiet
+
+# Remove generated agent files (orchestrators are our source of truth)
+rm -f AGENTS.md @AGENTS.md
 ```
 
 ## Issue Fields

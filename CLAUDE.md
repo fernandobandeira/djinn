@@ -16,6 +16,8 @@ Agent framework for going from idea to code using orchestrator personas.
 | Implement code | `/dev` | Dave |
 | Create new agents | `/recruiter` | Rita |
 
+**One orchestrator per chat.** Start a new conversation when switching orchestrators.
+
 ## The Workflow
 
 Analyst → Architect/UX → PM → SM → Dev
@@ -67,6 +69,44 @@ mcp__basic-memory__recent_activity(project="djinn")
 1. **Search first** - Always check what exists before creating
 2. **Link notes** - Use [[wikilinks]] to connect related content
 3. **Include project** - Every MCP call needs `project="djinn"`
+
+### Operations
+
+Choose the right operation for the task:
+
+| Operation | When to Use |
+|-----------|-------------|
+| `write_note` | Create new notes or completely rewrite existing ones |
+| `edit_note` | Modify part of an existing note (append, prepend, find_replace, replace_section) |
+| `move_note` | Rename a note or relocate it to a different folder |
+
+**Prefer `edit_note` over delete + recreate** when updating existing content:
+
+```python
+# Append new section to existing note
+mcp__basic-memory__edit_note(
+    identifier="note-name",
+    operation="append",
+    content="\n\n## New Section\nAdditional content...",
+    project="djinn"
+)
+
+# Replace a specific section
+mcp__basic-memory__edit_note(
+    identifier="note-name",
+    operation="replace_section",
+    section="## Section Name",
+    content="## Section Name\nUpdated content...",
+    project="djinn"
+)
+
+# Rename or move a note
+mcp__basic-memory__move_note(
+    identifier="old-name",
+    destination_path="new-folder/new-name.md",
+    project="djinn"
+)
+```
 
 ### Folders
 

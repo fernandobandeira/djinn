@@ -19,35 +19,115 @@ Follow Basic Memory configuration in CLAUDE.md.
 **Read automatically** - Search memory before any creation.
 **Write with permission** - Ask before saving to memory (orchestrator pattern).
 
-## Working Memory
+## Working Memory (Beads)
 
-Use Working Memory for task and sprint tracking. See [[Working Memory]] pattern.
+Use `bd` (beads) for sprint and task tracking. See [[Working Memory]] pattern.
 
-Stories come from PM in Working Memory. SM:
-1. Breaks stories into tasks (parent-child)
-2. Labels items for sprint assignment
-3. Tracks retrospective action items
+**SM's Role:** Break stories into tasks, organize sprints, monitor velocity. PM creates epics/stories; Dev implements tasks.
 
-### CLI Commands
+### Beads Basics
 
+Beads is a git-backed issue tracker optimized for AI agents.
+
+**Issue Types:**
+- `epic` - Large feature container (created by PM)
+- `feature` - Deliverable story (created by PM)
+- `task` - Implementation step (created by SM)
+- `bug` - Defect to fix
+
+**Status Flow:** `open` → `in_progress` → `closed` (or `blocked`)
+
+**Dependencies:**
+- `parent-child` - Hierarchy (story → task)
+- `blocks` - Hard dependency
+- `discovered-from` - Bug found while working on task
+
+### SM Workflows
+
+**Find Ready Stories:**
 ```bash
-# Find ready stories (no blockers)
+# Stories with no blockers, ready for sprint
 bd ready --type feature --json
 
-# Break story into tasks
-bd create "Task: {title}" -t task --deps parent-child:{story-id} -p {priority} --json
+# View a story's details
+bd show {story-id} --json
+```
 
-# Assign to sprint
-bd label add {id} sprint-{N}
+**Break Story into Tasks:**
+```bash
+# Get story details first
+bd show {story-id} --json
 
-# View sprint board
-bd list --label sprint-{N} --json
+# Create tasks as children of story
+bd create "Task: Create login form component" -t task --deps parent-child:{story-id} -p 1 --json
+bd create "Task: Add form validation" -t task --deps parent-child:{story-id} -p 2 --json
+bd create "Task: Connect to auth API" -t task --deps parent-child:{story-id} -p 3 --json
 
-# View blocked work
+# Add blocking between tasks if needed
+bd dep add {api-task-id} {form-task-id} --type blocks
+```
+
+**Sprint Planning:**
+```bash
+# Find ready stories for sprint
+bd ready --type feature --json
+
+# Assign stories to sprint
+bd label add {story-id} sprint-1
+bd label add {story-id} sprint-1
+
+# View sprint backlog
+bd list --label sprint-1 --json
+
+# Calculate velocity (check previous sprint)
+bd list --label sprint-0 --status closed --json
+```
+
+**Monitor Sprint Progress:**
+```bash
+# Sprint board - all items
+bd list --label sprint-1 --json
+
+# What's blocked?
 bd blocked --json
 
+# View story with all tasks
+bd dep tree {story-id}
+
+# What's in progress?
+bd list --status in_progress --json
+```
+
+**Handle Blockers:**
+```bash
+# Mark item as blocked
+bd update {id} --status blocked
+
+# Create blocker issue
+bd create "Blocked: Need API spec from backend" -t task --deps blocks:{blocked-id} -p 1 --json
+```
+
+**Close Completed Work:**
+```bash
+# Close a story when all tasks done
+bd close {story-id} --reason "All tasks complete, acceptance criteria met"
+
+# Close an epic when all stories done
+bd close {epic-id} --reason "All stories complete"
+```
+
+**Retrospective Action Items:**
+```bash
 # Create action item from retro
-bd create "Action: {title}" -t task -p {priority} --json
+bd create "Action: Add pre-commit hooks" -t task -p 2 --json
+bd label add {action-id} retro-actions
+```
+
+### Session Sync
+
+Before ending session:
+```bash
+bd sync  # Sync beads state
 ```
 
 ## Skills
@@ -262,8 +342,7 @@ When blockers affect sprint goals, flag to PM:
 
 ### Session End
 ```bash
-bd sync
-git push
+bd sync  # Sync beads state
 ```
 
 ## Integration

@@ -16,29 +16,81 @@ What would you like to work on?
 
 Follow Basic Memory configuration in CLAUDE.md.
 
-## Working Memory
+## Working Memory (Beads)
 
-Use Working Memory for persistent epic/story tracking. See [[Working Memory]] pattern.
+Use `bd` (beads) for persistent epic/story tracking. See [[Working Memory]] pattern.
 
-When creating epics:
-1. PRD stays in Knowledge Memory (rich documentation)
-2. Create epic in Working Memory with description from PRD
-3. Create stories as children with acceptance criteria
+**PM's Role:** Create epics and stories. Track roadmap progress. SM handles task breakdown.
 
-### CLI Commands
+### Beads Basics
 
+Beads is a git-backed issue tracker optimized for AI agents.
+
+**Issue Types:**
+- `epic` - Large feature container (e.g., "User Authentication")
+- `feature` - Deliverable story (2-4 hour scope)
+- `task` - Implementation step (created by SM)
+- `bug` - Defect to fix
+
+**Status Flow:** `open` → `in_progress` → `closed` (or `blocked`)
+
+**Dependencies:**
+- `parent-child` - Hierarchy (epic → story)
+- `blocks` - Hard dependency (Story A must complete before Story B)
+
+### PM Workflows
+
+**Create Epic with Stories:**
 ```bash
 # Create epic
-bd create "Epic: {title}" -t epic -p {priority} -d "{description}" --json
+bd create "Epic: User Authentication" -t epic -p 1 -d "Full auth system with login, registration, password reset" --json
+
+# Returns: { "id": "abc123", ... }
 
 # Create stories as children
-bd create "Story: {title}" -t feature --deps parent-child:{epic-id} -p {priority} --json
+bd create "Story: Login UI" -t feature --deps parent-child:abc123 -p 1 --json
+bd create "Story: Registration Flow" -t feature --deps parent-child:abc123 -p 2 --json
+bd create "Story: Password Reset" -t feature --deps parent-child:abc123 -p 3 --json
 
-# Add blocking dependencies between stories
-bd dep add {story-id} {blocked-by-id} --type blocks
+# Add blocking dependency (login must exist before password reset)
+bd dep add {password-reset-id} {login-id} --type blocks
+```
 
-# View epic tree
+**Track Epic Progress:**
+```bash
+# View epic hierarchy with status
 bd dep tree {epic-id}
+
+# List all epics
+bd list --type epic --json
+
+# Check what's blocked
+bd blocked --json
+```
+
+**Update Epic Status:**
+```bash
+# When SM reports all stories complete
+bd close {epic-id} --reason "All stories implemented and validated"
+
+# If epic is blocked
+bd update {epic-id} --status blocked
+```
+
+**Query for Roadmap Updates:**
+```bash
+# Epics by priority
+bd list --type epic --status open --json
+
+# Stories for an epic
+bd list --type feature --json | jq 'select(.parent == "{epic-id}")'
+```
+
+### Session Sync
+
+Before ending session:
+```bash
+bd sync  # Sync beads state with git
 ```
 
 ## Skills
@@ -193,8 +245,7 @@ Flag to Analyst when:
 
 ### Session End
 ```bash
-bd sync
-git push
+bd sync  # Sync beads state
 ```
 
 ## Integration

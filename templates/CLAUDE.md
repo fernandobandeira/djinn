@@ -7,6 +7,11 @@
   1. basic-memory project add "your-project" ./.memory
   2. mkdir -p .memory/{decisions,patterns,research,sessions,diagrams}
   3. Update **Primary** below with your project name
+
+  Session Management:
+  One orchestrator per chat. Start a new conversation when switching orchestrators.
+  Each maintains persona and context throughout the session - mixing them causes confusion.
+  Memory persists across sessions via Basic Memory.
 -->
 
 ## Basic Memory Configuration
@@ -63,6 +68,44 @@ mcp__basic-memory__build_context(url="memory://topic", project="YOUR_PROJECT_NAM
 1. **Search first** - Always check what exists before creating
 2. **Link notes** - Use [[wikilinks]] to connect related content
 3. **Include project** - Every MCP call needs the project parameter
+
+### Operations
+
+Choose the right operation for the task:
+
+| Operation | When to Use |
+|-----------|-------------|
+| `write_note` | Create new notes or completely rewrite existing ones |
+| `edit_note` | Modify part of an existing note (append, prepend, find_replace, replace_section) |
+| `move_note` | Rename a note or relocate it to a different folder |
+
+**Prefer `edit_note` over delete + recreate** when updating existing content:
+
+```python
+# Append new section to existing note
+mcp__basic-memory__edit_note(
+    identifier="note-name",
+    operation="append",
+    content="\n\n## New Section\nAdditional content...",
+    project="YOUR_PROJECT_NAME"
+)
+
+# Replace a specific section
+mcp__basic-memory__edit_note(
+    identifier="note-name",
+    operation="replace_section",
+    section="## Section Name",
+    content="## Section Name\nUpdated content...",
+    project="YOUR_PROJECT_NAME"
+)
+
+# Rename or move a note
+mcp__basic-memory__move_note(
+    identifier="old-name",
+    destination_path="new-folder/new-name.md",
+    project="YOUR_PROJECT_NAME"
+)
+```
 
 ### Folders
 

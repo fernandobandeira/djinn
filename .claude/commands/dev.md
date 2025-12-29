@@ -19,33 +19,92 @@ Follow Basic Memory configuration in CLAUDE.md.
 **Read automatically** - Search memory for ADRs, patterns before implementation.
 **Write with permission** - Ask before saving implementation notes.
 
-## Working Memory
+## Working Memory (Beads)
 
-Use Working Memory for task tracking and discovery logging. See [[Working Memory]] pattern.
+Use `bd` (beads) for task tracking and discovery logging. See [[Working Memory]] pattern.
 
-During implementation:
-1. Query ready tasks from Working Memory
-2. Claim tasks when starting work
-3. Log discovered issues linked to current work
-4. Complete tasks with reason
+**Dev's Role:** Claim tasks, implement code, track discoveries, complete work. SM creates tasks; you implement them.
 
-### CLI Commands
+### Beads Basics
 
+Beads is a git-backed issue tracker optimized for AI agents.
+
+**Issue Types:**
+- `task` - Implementation step (what you work on)
+- `bug` - Defect to fix or discovered issue
+
+**Status Flow:** `open` → `in_progress` → `closed` (or `blocked`)
+
+**Dependencies:**
+- `discovered-from` - Link bugs/issues found during implementation
+
+### Dev Workflows
+
+**Find Available Work:**
 ```bash
-# Find ready tasks
+# Get next ready task (no blockers)
 bd ready --limit 1 --json
 
-# Claim task (start work)
-bd update {id} --status in_progress --json
+# See all ready tasks
+bd ready --type task --json
 
-# Track discovered issue
-bd create "Found: {issue}" -t bug --deps discovered-from:{current-task-id} -p {priority} --json
+# View task details
+bd show {task-id} --json
+```
 
-# Complete task
-bd close {id} --reason "Implemented and tested" --json
+**Claim Work:**
+```bash
+# Mark task as in progress (you're working on it)
+bd update {task-id} --status in_progress --json
+```
 
-# View story with tasks
+**Track Discovered Issues:**
+When you find bugs or issues while implementing, log them:
+```bash
+# Bug found during implementation
+bd create "Found: Login fails with special characters" -t bug --deps discovered-from:{current-task-id} -p 2 --json
+
+# Unexpected work discovered
+bd create "Found: Need to update user schema" -t task --deps discovered-from:{current-task-id} -p 2 --json
+```
+
+The `discovered-from` link creates traceability - you can see what work uncovered the issue.
+
+**Complete Work:**
+```bash
+# Task done
+bd close {task-id} --reason "Implemented and tested"
+
+# Story done (all tasks complete)
+bd close {story-id} --reason "All acceptance criteria met"
+```
+
+**Handle Blockers:**
+```bash
+# Mark as blocked
+bd update {task-id} --status blocked
+
+# Optionally create a blocker issue
+bd create "Blocked: Need API endpoint from backend" -t bug --deps blocks:{task-id} -p 1 --json
+```
+
+**View Context:**
+```bash
+# See story with all tasks
 bd dep tree {story-id}
+
+# See what's blocking what
+bd blocked --json
+
+# See your in-progress work
+bd list --status in_progress --json
+```
+
+### Session Sync
+
+Before ending session:
+```bash
+bd sync  # Sync beads state
 ```
 
 ## Skills
@@ -309,8 +368,7 @@ bd create "Blocked: {reason}" -t bug --deps blocks:{id} -p 1 --json
 ### Session End
 Before ending session, sync status:
 ```bash
-bd sync
-git push
+bd sync  # Sync beads state
 ```
 
 ## Integration

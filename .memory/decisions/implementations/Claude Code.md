@@ -133,6 +133,8 @@ bd list --label sprint-1 --json          # Sprint items
 
 **Invocation:** User types `/{name}` (e.g., `/analyst`, `/architect`)
 
+**Session Rule:** One orchestrator per chat. Start a new conversation when switching orchestrators. Each maintains persona and context throughout the session - mixing them causes confusion. Memory persists across sessions via Basic Memory.
+
 **Frontmatter:**
 ```yaml
 ---

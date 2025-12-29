@@ -78,46 +78,9 @@ Full documentation is in `.memory/` (use [Obsidian](https://obsidian.md) to brow
 
 Djinn is currently implemented for [Claude Code](https://claude.ai/code) (Anthropic's CLI).
 
-#### Quick Start
+**[Read the Claude Code Guide](.memory/reference/Claude%20Code%20Guide.md)** for installation and usage instructions.
 
-```bash
-# 1. Install Basic Memory (knowledge management)
-uv tool install basic-memory
-claude mcp add basic-memory -- uvx basic-memory mcp
-
-# 2. Install Beads (work tracking)
-go install github.com/steveyegge/beads/cmd/bd@latest
-
-# 3. Clone Djinn
-git clone git@github.com:fernandobandeira/djinn.git ~/.djinn
-cp -r ~/.djinn/.claude/* ~/.claude/
-
-# 4. Initialize your project
-cd your-project
-cp ~/.djinn/templates/CLAUDE.md ./CLAUDE.md  # Copy and customize
-basic-memory project add "$(basename $PWD)" ./.memory
-mkdir -p .memory/{decisions,patterns,research,context,sessions,diagrams}
-bd init --quiet  # Initialize work tracking
-
-# 5. Edit CLAUDE.md - set your project name:
-# **Primary**: `your-project-name`
-```
-
-#### Usage
-
-```
-/analyst       # Ana - brainstorming, research, strategic analysis
-/architect     # Archie - system design, ADRs, diagrams
-/recruiter     # Rita - create new agents
-```
-
-Once activated, type `*help` to see available commands.
-
-Skills auto-activate based on context - just mention "brainstorm", "root cause", "SWOT", etc.
-
-#### Docs
-
-- **[Claude Code Guide](.memory/reference/Claude%20Code%20Guide.md)** - Installation and usage
+Additional references:
 - **[Claude Code](.memory/decisions/implementations/Claude%20Code.md)** - Syntax, file structure, conventions
 - **[Beads](.memory/decisions/implementations/Beads.md)** - Work tracking CLI
 

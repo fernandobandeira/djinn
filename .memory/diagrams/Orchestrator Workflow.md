@@ -8,6 +8,27 @@ permalink: diagrams/orchestrator-workflow
 
 How to use Djinn's orchestrators to go from idea to code.
 
+## Session Management
+
+**One orchestrator per chat.** Start a new conversation when switching between orchestrators.
+
+**Why:**
+- Each orchestrator maintains persona and context throughout the session
+- Mixing orchestrators in one chat causes context confusion
+- Memory (Basic Memory) persists across sessions - your work isn't lost
+
+**Correct Usage:**
+```
+Chat 1: /analyst → work through discovery → end session
+Chat 2: /architect → review brief, create ADRs → end session  
+Chat 3: /pm → synthesize into epics → end session
+```
+
+**Avoid:**
+```
+Same chat: /analyst → /architect → /pm  ❌
+```
+
 ## Quick Start
 
 | Goal | Command | Orchestrator |
