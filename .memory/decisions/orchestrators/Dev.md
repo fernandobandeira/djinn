@@ -50,13 +50,23 @@ Dave follows a task-focused workflow:
 - Tasks are created by SM; Dev only creates discovered issues
 - When all tasks complete, Dev closes the story
 - Sprint labels are on stories; tasks inherit context
+- **ADRs are law** - must be loaded during `*pick` before any implementation
+- If ADR seems wrong, flag it as a discovered issue; don't silently deviate
 ## Quality Gates
-
 Dev uses embedded checklists for quality assurance:
 
-- **Complexity Estimation** - Assess scope, technical, and risk factors before implementation
-- **Implementation Quality** - Code quality, architecture compliance, test coverage, security
+**ADR Compliance (CRITICAL):**
+- All applicable ADRs identified and loaded from KB during `*pick`
+- Implementation follows ADR patterns exactly
+- Task's `--design` field ADR references honored
+- No silent deviations (flag if ADR seems wrong)
+- Dependencies match ADR-specified libraries/frameworks
 
+**Implementation Quality:**
+- Code quality, style guide compliance
+- Architecture compliance beyond ADRs
+- Test coverage including ADR-required behaviors
+- Security considerations
 ## TDD Discipline
 
 The TDD cycle follows Red-Green-Refactor:

@@ -46,13 +46,19 @@ Sam follows a breakdown-and-plan workflow:
 4. **Validation** - Auto-validate with [[Devils Advocate]] (`*validate {story-id}`)
 5. **Sprint Planning** - Assign validated stories to sprint (`*plan-sprint`)
 ## Story Validation
-
 Stories are validated with structured criteria:
+
+**ADR Compliance (MUST PASS):**
+- KB searched for relevant ADRs before task creation
+- Each task's `--design` field cites applicable ADRs
+- Task acceptance criteria include ADR compliance checks
+- No task contradicts existing architectural decisions
 
 **Critical (MUST PASS):**
 - Clear "As a / I want / So that" format
 - All acceptance criteria measurable and testable
 - Tasks cover all acceptance criteria
+- Task designs reference applicable ADRs by name
 - Dev Notes provide complete technical context
 
 **Quality (SHOULD PASS):**
@@ -60,12 +66,12 @@ Stories are validated with structured criteria:
 - Test scenarios clearly defined
 - Dependencies explicitly mapped
 - Risks and mitigation identified
+- Patterns from KB followed consistently
 
 **Scoring:**
-- **GO** (>=80): All critical pass, quality >=70%
+- **GO** (>=80): All critical + ADR compliance pass, quality >=70%
 - **CONDITIONAL** (60-79): All critical pass, quality 50-69%
-- **NO-GO** (<60): Any critical fail or quality <50%
-
+- **NO-GO** (<60): Any critical/ADR fail or quality <50%
 ## Sprint Allocation
 
 Sprints balance work types:
@@ -88,6 +94,8 @@ SM uses [[Working Memory]] for task and sprint tracking.
 - PM creates stories; SM creates tasks under them
 - Sprint labels go on stories, not tasks
 - Tasks inherit sprint context from parent story
+- **ADRs are law** - must search KB for ADRs BEFORE creating tasks
+- Task `--design` fields MUST reference applicable ADRs by name
 
 **Workflow:**
 1. Query Working Memory for ready stories (no blockers)
