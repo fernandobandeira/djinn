@@ -14,11 +14,11 @@ Reference for all Djinn components.
 |--------------|---------|---------|
 | [[Analyst]] | Ana | Research, analysis, brainstorming |
 | [[Architect]] | Archie | System design, ADRs |
-| [[PM]] | Paul | Product requirements, roadmaps, epics |
+| [[PM]] | Paul | Product requirements, epics with stories |
 | [[Recruiter]] | Rita | Create new agents |
-| [[SM]] | Sam | Sprint planning, story creation |
+| [[SM]] | Sam | Sprint planning, story breakdown into tasks |
 | [[UX]] | Ulysses | User research, design, frontend specs |
-| [[Dev]] | Dave | TDD implementation, quality gates |
+| [[Dev]] | Dave | Task implementation, TDD, quality gates |
 
 ## Skills
 

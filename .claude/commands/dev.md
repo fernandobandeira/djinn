@@ -54,7 +54,7 @@ bd list --type story --label sprint:{current} --json
 bd dep tree {story-id}
 
 # Get next ready task (no blockers)
-bd ready --type task --limit 1 --json
+bd ready --json | jq '[.[] | select(.issue_type == "task")][0]'
 ```
 
 **Claim Work:**
@@ -210,9 +210,10 @@ Claim a story and prepare to work its tasks:
 4. Check existing codebase for relevant files
 
 **Phase 2: Show Work**
-1. List ready tasks: `bd ready --type task --json` (filter to story's children)
-2. Run Complexity Estimation checklist on story scope
-3. Present story summary with tasks:
+1. List ready tasks: `bd ready --json | jq '[.[] | select(.issue_type == "task")]'`
+2. Filter to story's children from dep tree
+3. Run Complexity Estimation checklist on story scope
+4. Present story summary with tasks:
    ```
    Story: {story-id} - {title}
 
@@ -227,11 +228,12 @@ Claim a story and prepare to work its tasks:
 ### *next
 
 Get and claim next ready task from current story:
-1. Find ready tasks for current story
-2. Pick highest priority ready task
-3. Claim it: `bd update {task-id} --status in_progress --json`
-4. Show task details and acceptance criteria
-5. Ready for `*test` or `*implement`
+1. Find ready tasks: `bd ready --json | jq '[.[] | select(.issue_type == "task")]'`
+2. Filter to current story's children (check parent in dep tree)
+3. Pick highest priority ready task
+4. Claim it: `bd update {task-id} --status in_progress --json`
+5. Show task details and acceptance criteria
+6. Ready for `*test` or `*implement`
 
 ### *test
 

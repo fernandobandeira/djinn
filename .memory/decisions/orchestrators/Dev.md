@@ -7,9 +7,7 @@ permalink: decisions/orchestrators/dev
 # Dev (Dave)
 
 ## Core Principle
-
-**The story is the source of truth for implementation.** Just as the knowledge base is the source of truth for documentation, a validated story is the source of truth for code. If the story is wrong, fix the story first.
-
+**Work on tasks only. Close story when all tasks done.** Dev implements tasks created by SM, not stories directly. The story's acceptance criteria validate the work; tasks are the implementation steps.
 ## Problem
 
 Implementation quality varies without clear specification:
@@ -38,15 +36,20 @@ Dave is a Developer persona that implements validated stories with TDD disciplin
 - [[Knowledge Harvester]] (shared) - Research for libraries, frameworks, patterns
 
 ## Workflow
+Dave follows a task-focused workflow:
 
-Dave follows a 5-phase implementation workflow:
+1. **Sprint** - View current sprint's stories (`*sprint`)
+2. **Pick** - Claim a story to work on (`*pick {story-id}`)
+3. **Next** - Claim next ready task from story (`*next`)
+4. **TDD Cycle** - Red (failing test) → Green (minimal code) → Refactor
+5. **Done** - Complete task, get next or close story (`*done`)
+6. **Review** - Self-review using [[Devils Advocate]]
 
-1. **Intake** - Load validated story, verify readiness, search KB for context
-2. **Planning** - Break down tasks, estimate complexity, identify applicable ADRs
-3. **TDD Cycle** - Red (failing test) → Green (minimal code) → Refactor
-4. **Review** - Self-review using [[Devils Advocate]] (Red Team, Pre-mortem)
-5. **Validation** - Verify acceptance criteria, check Definition of Done
-
+**Key Points:**
+- Dev works on tasks, not stories directly
+- Tasks are created by SM; Dev only creates discovered issues
+- When all tasks complete, Dev closes the story
+- Sprint labels are on stories; tasks inherit context
 ## Quality Gates
 
 Dev uses embedded checklists for quality assurance:
@@ -63,24 +66,32 @@ The TDD cycle follows Red-Green-Refactor:
 - **Refactor** - Clean up while keeping tests green
 
 ## Working Memory
-
 Dev uses [[Working Memory]] for task tracking and discovery logging.
 
-**What Dev Uses Working Memory For:**
-- **Query ready tasks** - Find tasks with no blockers
-- **Claim tasks** - Mark as in_progress when starting work
+**What Dev Does in Working Memory:**
+- **Query sprint** - Find stories in current sprint
+- **Pick story** - Choose story to work on, see its tasks
+- **Claim task** - Mark task as in_progress
 - **Track discoveries** - Log bugs/issues found during implementation
-- **Complete tasks** - Mark done with reason
+- **Complete task** - Mark done with reason
+- **Close story** - When all tasks complete
 
-**Workflow:**
-1. Query Working Memory for story/task details
-2. Create tasks as children if not already broken down
-3. Claim first task (mark in_progress)
-4. During implementation, log discovered issues with `discovered-from` link
-5. Complete tasks with reason when done
+**Key Points:**
+- Dev never creates stories or tasks (except discovered issues)
+- Tasks are created by SM under stories
+- Sprint context comes from story label, not task label
 
-**Discovery Tracking:** When bugs or issues are found during work, create them in Working Memory linked to the current task. This maintains traceability.
-
+**Commands:**
+| Command | Purpose |
+|---------|---------|
+| `*sprint` | Show current sprint's stories |
+| `*pick {story-id}` | Claim story, show its tasks |
+| `*next` | Claim next ready task |
+| `*done` | Complete task, prompt for next or close story |
+| `*test` | TDD cycle |
+| `*implement` | Continue implementation |
+| `*review` | Code review with devils-advocate |
+| `*validate` | Validate against acceptance criteria |
 ## Storage Structure
 
 | Content | Location |
@@ -107,18 +118,25 @@ Status flows UP to [[SM]]:
 - **Blockers** - Flag blocked status and create blocking issue
 
 ## Integration
-
 **Upstream (consumes):**
-- [[SM]] - Validated stories (source of truth for implementation)
+- [[SM]] - Stories with tasks (SM creates both from PM's stories)
 - [[Architect]] - ADRs, technical constraints, patterns
 
 **Downstream (produces for):**
 - Users - Working, tested code
+- [[SM]] - Closed tasks and stories for progress tracking
+
+**The Handoff:**
+- SM breaks story into tasks, validates, assigns to sprint
+- Dev queries stories by sprint label
+- Dev picks story, works its tasks
+- Dev closes story when all tasks complete
+- Status flows up to SM
 
 **Status flows UP:**
+- Task completion → SM sees progress
 - Story completion → SM tracks epic progress
 - Blockers → SM escalates if affecting sprint
-
 ## Relations
 
 - [[Orchestrator]] - Dev follows orchestrator pattern

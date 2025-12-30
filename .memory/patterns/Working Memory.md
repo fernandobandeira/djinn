@@ -84,13 +84,23 @@ Working Memory supports these operations (implementation varies by tool):
 - **Add label** - Tag for sprint/category
 
 ## Integration with Orchestrators
+| Orchestrator | Creates | Works On | Closes |
+|--------------|---------|----------|--------|
+| **PM** | Epics, Stories | - | Epics (when all stories done) |
+| **SM** | Tasks (under stories) | Stories | - |
+| **Dev** | Discovered issues only | Tasks | Tasks, Stories (when all tasks done) |
 
-| Orchestrator | Uses Working Memory For |
-|--------------|------------------------|
-| **PM** | Create epics with stories, track completion |
-| **SM** | Break stories into tasks, organize sprints |
-| **Dev** | Claim tasks, track progress, log discoveries |
+**The Flow:**
+1. **PM** creates epic with stories (acceptance criteria defined)
+2. **SM** breaks stories into tasks (`*breakdown`), validates, assigns to sprint
+3. **Dev** works tasks (`*sprint` → `*pick` → `*next` → `*done`)
+4. **Dev** closes story when all tasks complete
+5. **SM** closes epic when all stories complete (or PM does)
 
+**Sprint Labels:**
+- Stories get sprint labels (`sprint:N`)
+- Tasks inherit sprint context from parent story
+- Dev queries stories by sprint, then works child tasks
 ## Graceful Degradation
 
 Working Memory is optional. Without it:
