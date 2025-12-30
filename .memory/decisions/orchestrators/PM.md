@@ -54,16 +54,27 @@ Only for heavy I/O when gaps exist:
 - [[Knowledge Harvester]] - External requirements
 
 ## Workflow
-
 Paul follows a synthesis-first workflow:
 
-1. **Search KB** - Always aggregate existing research first
-2. **Identify Gaps** - Note what's missing vs what exists
-3. **Delegate if needed** - Sub-agents only for gaps
-4. **Synthesize** - Combine all sources into unified artifact
-5. **Validate** - Challenge with [[Devils Advocate]]
-6. **Store** - Save with user permission
+1. **KB Discovery** - MANDATORY before creating anything:
+   - **Analyst**: Project brief, market research, competitive analysis
+   - **Architect**: ADRs, patterns, technical constraints
+   - **UX**: Personas, journey maps, frontend specs
 
+2. **Synthesize** - Combine all sources into unified artifact:
+   - Stories must be feasible within ADR constraints
+   - Stories must align with user journeys
+   - Acceptance criteria must respect architectural patterns
+
+3. **Validate** - Challenge with [[Devils Advocate]]
+
+4. **Store** - Save with user permission, link to sources
+
+**Key Points:**
+- Stories include ADR references for SM context
+- Stories include relevant personas
+- Stories include key UX constraints
+- SM gets full context to break into tasks
 ## Working Memory
 
 PM uses [[Working Memory]] for persistent epic and story tracking.
@@ -92,13 +103,23 @@ PM uses [[Working Memory]] for persistent epic and story tracking.
 | Stories | Working Memory (type: feature) |
 
 ## SM Handoff
+Stories in Working Memory include context for SM:
 
-Epics include "Ready for Sprint Planning" status with:
+**What PM provides in story description:**
+- Applicable ADRs (e.g., "Uses JWT auth per ADR-001")
+- Relevant personas (e.g., "Primary: Power User persona")
+- Key UX constraints (e.g., "Must follow dashboard interaction patterns")
+- Links to source materials in KB
+
+**Why this matters:**
+- SM needs ADR context to create compliant tasks
+- SM needs personas to understand user expectations
+- SM needs UX constraints to sequence work correctly
+
+Epics marked "Ready for Sprint Planning" when:
 - All stories defined with acceptance criteria
+- Stories include ADR/persona/UX references
 - Dependencies mapped between stories
-- Technical context from [[Architect]]
-- Notes for [[SM|Scrum Master]]
-
 ## Status Updates
 
 Status flows UP to [[Analyst]]:
