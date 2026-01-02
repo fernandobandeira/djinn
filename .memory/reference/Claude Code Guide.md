@@ -15,26 +15,27 @@ Guide to installing and using Djinn on Claude Code (Anthropic's CLI).
 
 For the conceptual framework, see [[Architecture]]. For detailed syntax and conventions, see [[Claude Code]].
 
-## Prerequisites
+---
 
-### Basic Memory MCP (Required)
+## Part 1: Core Setup (One-Time)
 
-Djinn uses [Basic Memory](https://github.com/basicmachines-co/basic-memory) for knowledge management. Install it first:
+These steps configure your global environment. Do this once.
+
+### 1.1 Install Basic Memory
+
+[Basic Memory](https://github.com/basicmachines-co/basic-memory) provides knowledge management.
 
 ```bash
 # Install Basic Memory
 uv tool install basic-memory
 
-# Add MCP configuration
-claude mcp add basic-memory -- uvx basic-memory mcp
-
 # Verify installation
-claude mcp list
+basic-memory --version
 ```
 
-### Beads CLI (Required)
+### 1.2 Install Beads CLI
 
-Djinn uses [Beads](https://github.com/steveyegge/beads) for work tracking (epics, stories, tasks). Install it:
+[Beads](https://github.com/steveyegge/beads) provides work tracking (epics, stories, tasks).
 
 ```bash
 # Install Beads
@@ -44,92 +45,69 @@ go install github.com/steveyegge/beads/cmd/bd@latest
 bd --version
 ```
 
-## Installation
+### 1.3 Install Djinn Framework
 
-### Option 1: Clone to Home Directory (Recommended)
-
-Use Djinn across all your projects:
+Clone Djinn and copy to your global Claude config:
 
 ```bash
 # Clone Djinn
 git clone git@github.com:fernandobandeira/djinn.git ~/.djinn
 
-# Copy implementation to framework config
+# Copy implementation to global Claude config
 cp -r ~/.djinn/.claude/* ~/.claude/
-
-# Templates stay at ~/.djinn/templates/ (referenced by path)
 ```
 
-**Note:** Templates remain at `~/.djinn/templates/`. In your project's CLAUDE.md, set:
-```markdown
-**Location**: `~/.djinn/templates/`
-```
+**Templates** stay at `~/.djinn/templates/` and are referenced by path.
 
-To customize templates per-project, copy to local `templates/` and set:
-```markdown
-**Location**: `templates/`
-```
+---
 
-### Option 2: Project Template
+## Part 2: Per-Project Setup
 
-Use Djinn as a starting point for a new project:
+Run these steps for **every new project** using Djinn.
 
-```bash
-# Clone as project template
-git clone git@github.com:fernandobandeira/djinn.git my-project
-cd my-project
-```
+### 2.1 Add Basic Memory MCP
 
-## Basic Memory Setup
-
-### Step 1: Register Your Project(s)
-
-Choose your setup based on your needs:
-
-**Per-project KB** (most common - each project has its own knowledge):
 ```bash
 cd your-project
+
+# Add MCP to this project
+claude mcp add basic-memory -- uvx basic-memory mcp
+
+# Verify
+claude mcp list
+```
+
+### 2.2 Create Basic Memory Project
+
+```bash
+# Register project with Basic Memory
 basic-memory project add "$(basename $PWD)" ./.memory
+
+# Create folder structure
 mkdir -p .memory/{decisions,patterns,research,context,sessions,diagrams}
 ```
 
-**Shared KB** (team knowledge across multiple projects):
-```bash
-basic-memory project add "company-kb" ~/Documents/shared-memory
-mkdir -p ~/Documents/shared-memory/{decisions,patterns,research}
-```
-
-**Hybrid** (both project-specific and shared):
-```bash
-# Register per-project KB
-basic-memory project add "myproject" ./.memory
-mkdir -p .memory/{decisions,patterns,research,context,sessions,diagrams}
-
-# Register shared KB (one-time team setup)
-basic-memory project add "company-kb" ~/Documents/shared-memory
-```
-
-### Step 2: Create CLAUDE.md
-
-Copy the template and customize:
+### 2.3 Initialize Beads
 
 ```bash
-cp templates/CLAUDE.md ./CLAUDE.md
-# Edit CLAUDE.md and set your project name
+# Initialize work tracking
+bd init --quiet
+
+# Remove generated files (orchestrators are our source of truth)
+rm -f AGENTS.md @AGENTS.md
 ```
 
-**Per-project only:**
-```markdown
-**Primary**: `your-project-name`
+### 2.4 Copy CLAUDE.md Template
+
+```bash
+# Copy template
+cp ~/.djinn/templates/CLAUDE.md ./CLAUDE.md
+
+# Edit and set your project name
+# Change: **Primary**: `your-project-name`
 ```
 
-**Hybrid setup (project + team KB):**
-```markdown
-**Primary**: `your-project-name`
-**Shared**: `company-kb`
-```
-
-### Optional: Create Project Note
+### 2.5 Optional: Create Project Note
 
 ```bash
 cat > .memory/project.md << 'EOF'
@@ -149,6 +127,8 @@ permalink: project
 ## Relations
 EOF
 ```
+
+---
 
 ## Using Djinn
 
@@ -203,6 +183,8 @@ You: *research the market for this feature
 Ana: [Delegates to market-researcher sub-agent, returns summary]
 ```
 
+---
+
 ## Extending Djinn
 
 | Create a... | When... |
@@ -212,6 +194,8 @@ Ana: [Delegates to market-researcher sub-agent, returns summary]
 | **Sub-agent** | You need to isolate heavy I/O from the main conversation |
 
 **Use `/recruiter` to create new components.** Rita knows the file formats, handles structure, and guides you through type selection. See [[Architecture]] for design principles.
+
+---
 
 ## Knowledge Management
 
@@ -242,39 +226,9 @@ The memory is designed to be human-readable. AI generates drafts; you review, va
 
 See [[Memory]] pattern for the full philosophy.
 
-## Recommended Workflow
+---
 
-**Docs are the source of truth. Implementation is ephemeral.**
-
-| Layer | Contains | Truth Status |
-|-------|----------|--------------|
-| **Memory** (`.memory/`) | Decisions, principles, patterns | **Source of truth** |
-| **Implementation** (`.claude/`) | Code, prompts, configs | Derived from memory |
-
-When using Djinn, follow this pattern:
-
-1. **Document first** - Before building, capture key decisions in memory
-2. **Memory captures WHY** - Principles, rationale, criteria
-3. **Implementation captures HOW** - Details derived from memory
-4. **Human reviews memory** - Spend thought energy on docs, not implementation
-5. **Refactor from memory** - When changing implementation, reference docs for guidance
-
-This means:
-- Implementation can be regenerated if docs are clear
-- New team members understand WHY by reading docs
-- AI makes consistent decisions by following documented principles
-
-See [[Memory]] pattern for the complete docs-first philosophy.
-
-## Relations
-
-- [[Project]] - What Djinn is and why
-- [[Architecture]] - Design principles and rules
-- [[Memory]] - Docs-first philosophy
-- [[Claude Code]] - Detailed syntax and conventions
-
-
-## Work Tracking with Working Memory
+## Work Tracking
 
 Working Memory provides persistent work tracking across sessions. See [[Working Memory]] pattern and [[Beads]] for CLI reference.
 
@@ -285,17 +239,35 @@ Working Memory provides persistent work tracking across sessions. See [[Working 
 | Blocking dependencies | Simple sequential work |
 | Sprint planning | Immediate visibility |
 
-### Initialize in Project
-
-```bash
-bd init --quiet
-
-# Remove generated files (orchestrators are our source of truth)
-rm -f AGENTS.md @AGENTS.md
-```
-
 ### Orchestrator Integration
 
 - **PM**: Creates epics with stories (`bd create -t epic`)
 - **SM**: Tracks sprint tasks, organizes sprints (`bd ready`, `bd label`)
 - **Dev**: Claims tasks, tracks discovered issues (`bd update`, `bd close`)
+
+---
+
+## Recommended Workflow
+
+**Docs are the source of truth. Implementation is ephemeral.**
+
+| Layer | Contains | Truth Status |
+|-------|----------|--------------|
+| **Memory** (`.memory/`) | Decisions, principles, patterns | **Source of truth** |
+| **Implementation** (`.claude/`) | Code, prompts, configs | Derived from memory |
+
+1. **Document first** - Before building, capture key decisions in memory
+2. **Memory captures WHY** - Principles, rationale, criteria
+3. **Implementation captures HOW** - Details derived from memory
+4. **Human reviews memory** - Spend thought energy on docs, not implementation
+5. **Refactor from memory** - When changing implementation, reference docs for guidance
+
+See [[Memory]] pattern for the complete docs-first philosophy.
+
+## Relations
+
+- [[Architecture]] - Design principles and rules
+- [[Memory]] - Docs-first philosophy
+- [[Claude Code]] - Detailed syntax and conventions
+- [[Working Memory]] - Work tracking pattern
+- [[Beads]] - CLI reference

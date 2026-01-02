@@ -20,14 +20,14 @@
 
 ## Templates Configuration
 
-**Location**: `templates/`
+**Location**: `~/.djinn/templates/`
 
 <!--
   Templates path can be:
-  - `templates/` - Local project templates (default)
-  - `~/.djinn/templates/` - Global templates (for global install)
+  - `~/.djinn/templates/` - Global templates (default)
+  - `templates/` - Local project templates (for per-project customization)
 
-  Local templates override global ones, allowing per-project customization.
+  Local templates override global ones.
 -->
 
 > **CRITICAL: NEVER manually read, write, or edit files in `.memory/`**

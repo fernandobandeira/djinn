@@ -83,6 +83,6 @@ This pattern was applied to all orchestrators:
 
 ## Related
 
-- [[Skill Pattern]] - How skills are structured
-- [[Orchestrator Pattern]] - How orchestrators work
+- [[Skill]] - How skills are structured
+- [[Orchestrator]] - How orchestrators work
 - [[Architecture]] - Overall framework design
