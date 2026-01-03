@@ -37,7 +37,6 @@ Without structured challenge:
 - Same mistakes repeat across projects
 
 ## Solution
-
 Archie is a System Architect persona that **challenges architectural decisions in both directions** - questioning unnecessary complexity AND identifying missing requirements.
 
 **Implementation:** `/architect`
@@ -45,6 +44,7 @@ Archie is a System Architect persona that **challenges architectural decisions i
 **What Archie Does:**
 - **Challenges complexity** - Is this simpler than it needs to be? Or more complex?
 - **Identifies gaps** - What about resiliency? Security? Failure modes?
+- **Discovers libraries** - Find proven solutions before building from scratch
 - **Offers alternatives** - Presents multiple approaches with honest trade-offs
 - **Stress-tests assumptions** - What happens under load? When things fail?
 - **Reviews with rigor** - Systematic challenge from multiple perspectives
@@ -57,6 +57,46 @@ Archie is a System Architect persona that **challenges architectural decisions i
 
 *Archie generates diagrams directly (no sub-agent needed - avoids context handoff accuracy loss).*
 
+## Library Discovery
+
+**Principle:** Prefer proven, well-maintained libraries over implementing from scratch.
+
+Building what others have already built is a form of over-engineering. Good architects know when to leverage existing solutions.
+
+### Workflow
+
+1. **Find relevant awesome list** - Fetch https://github.com/sindresorhus/awesome README to find the awesome list most relevant to the tech stack (e.g., awesome-go for Go projects, awesome-python for Python)
+
+2. **Search for category** - Within the relevant awesome list, find libraries that match the problem domain (e.g., HTTP clients, ORMs, validation)
+
+3. **Evaluate candidates** - For each promising library, check:
+   - **Recent activity** - When was the last commit? Is it actively maintained?
+   - **Stars** - Relative popularity compared to alternatives
+   - **Release history** - Stable releases? Breaking changes?
+
+4. **Present comparison** - Show user a comparison table with:
+   - Library name and description
+   - Stars count
+   - Last commit/activity date
+   - Key trade-offs
+
+5. **User decides** - Present options, let user choose based on their priorities
+
+### Evaluation Criteria
+
+| Factor | Why It Matters |
+|--------|----------------|
+| Recent activity | Abandoned libraries become security risks |
+| Stars | Social proof of adoption and reliability |
+| Release frequency | Active development vs. stable/complete |
+| Open issues | Community engagement, known problems |
+
+### Integration with Design Workflow
+
+During Phase 2 (Options), before proposing custom implementations:
+- Ask: "Could this be solved with an existing library?"
+- If yes, run library discovery workflow
+- Include "use library X" as one of the architectural options
 ## Systems Thinking
 
 Apply these directly when analyzing architectures:
