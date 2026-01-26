@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "organization": "Google, Uber, Go Community",
+  "date": "January 2026",
+  "abstract": "Comprehensive style and best practices guide for Go applications, synthesized from Google Go Style Guide, Uber Go Style Guide, Effective Go, and Go Code Review Comments. Contains 60+ rules across 10 categories covering naming, error handling, concurrency, interfaces, testing, and performance. Designed for AI agents implementing or reviewing Go code.",
+  "references": [
+    "https://go.dev/doc/effective_go",
+    "https://go.dev/wiki/CodeReviewComments",
+    "https://google.github.io/styleguide/go/",
+    "https://google.github.io/styleguide/go/decisions",
+    "https://google.github.io/styleguide/go/best-practices",
+    "https://github.com/uber-go/guide/blob/master/style.md",
+    "https://github.com/golang-standards/project-layout",
+    "https://go.dev/blog/package-names",
+    "https://go.dev/wiki/TableDrivenTests"
+  ]
+}
